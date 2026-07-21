@@ -15,11 +15,28 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // User::factory(10)->create();
-
+        // Buat admin default
         User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
+            'name' => 'Admin',
+            'email' => 'admin@pickupsystem.com',
+            'role' => 'admin',
         ]);
+
+        // Buat customer test
+        User::factory()->create([
+            'name' => 'Test Customer',
+            'email' => 'customer@example.com',
+            'role' => 'customer',
+        ]);
+
+        // Buat driver test
+        User::factory()->create([
+            'name' => 'Test Driver',
+            'email' => 'driver@example.com',
+            'role' => 'driver',
+        ]);
+
+        // Seed kategori barang
+        $this->call(CategorySeeder::class);
     }
 }
