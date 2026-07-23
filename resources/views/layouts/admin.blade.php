@@ -87,18 +87,6 @@
                 </a>
             </nav>
 
-            <div class="admin-sidebar__support mt-auto">
-                <div class="admin-sidebar__support-icon" aria-hidden="true">
-                    <svg viewBox="0 0 24 24">
-                        <path d="M5 5.5h14v10H12l-4 3v-3H5z" />
-                        <path d="M8.5 9.5h7M8.5 12.5h4" />
-                    </svg>
-                </div>
-                <strong>Butuh bantuan?</strong>
-                <p>Hubungi tim Indoprima Group untuk dukungan sistem.</p>
-                <a href="tel:+62312977777">(+62-31) 2977777</a>
-            </div>
-
             <div class="admin-sidebar__foot">
                 <span>© 2026 Indoprima Group</span>
                 <span>v1.0.0</span>
@@ -159,29 +147,6 @@
             <main class="admin-content" id="main-content">
                 @yield('content')
             </main>
-
-            <footer class="admin-footer">
-                <div class="admin-footer__brand">
-                    <span class="admin-brand__mark admin-brand__mark--small" role="img"
-                        aria-label="Indoprima Group logo not found">
-                        <span class="admin-brand__mark-red"></span>
-                        <span class="admin-brand__mark-blue"></span>
-                    </span>
-                    <span>Pick Up System · Indoprima Group</span>
-                </div>
-                <div class="admin-footer__contact">
-                    <span>HEADQUARTERS</span>
-                    <span>Jl. Gardu Induk PLN No. 5, Margomulyo, Tandes Lor, Kec. Tandes, Surabaya 60187 –
-                        Indonesia</span>
-
-                    <div class="admin-footer__links">
-                        <a href="tel:+62312977777">(+62-31) 2977777</a>
-                        <a href="mailto:hrd@imligroup.com">hrd@imligroup.com</a>
-                        <a href="https://www.instagram.com/imli_official/" target="_blank"
-                            rel="noopener noreferrer">Instagram</a>
-                    </div>
-                </div>
-            </footer>
         </div>
     </div>
 </body>

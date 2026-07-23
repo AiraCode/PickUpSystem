@@ -20,7 +20,14 @@ html {
 body.admin-shell {
     background: var(--canvas);
     color: var(--ink);
-    font-family: 'Inter', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-family:
+        "Inter",
+        ui-sans-serif,
+        system-ui,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        sans-serif;
 }
 
 button,
@@ -32,7 +39,12 @@ input {
 
 button,
 a {
-    transition: color 160ms ease, background-color 160ms ease, border-color 160ms ease, box-shadow 160ms ease, transform 160ms ease;
+    transition:
+        color 160ms ease,
+        background-color 160ms ease,
+        border-color 160ms ease,
+        box-shadow 160ms ease,
+        transform 160ms ease;
 }
 
 button:focus-visible,
@@ -92,7 +104,7 @@ select:focus-visible {
 .admin-brand__mark::after {
     border: 2px solid #fff;
     border-radius: 4px;
-    content: '';
+    content: "";
     height: 17px;
     position: absolute;
     transform: rotate(-28deg);
@@ -236,14 +248,6 @@ select:focus-visible {
     opacity: 0.7;
 }
 
-.admin-sidebar__support {
-    background: #f8f8f9;
-    border: 1px solid #ededee;
-    border-radius: 14px;
-    margin: auto 4px 16px;
-    padding: 16px;
-}
-
 .admin-sidebar__support-icon {
     align-items: center;
     background: #fff0f1;
@@ -304,6 +308,8 @@ select:focus-visible {
     flex: 1;
     flex-direction: column;
     min-width: 0;
+
+    padding-bottom: 90px;
 }
 
 .admin-topbar {
@@ -979,15 +985,26 @@ select:focus-visible {
 }
 
 .admin-footer {
-    align-items: flex-start;
-    border-top: 1px solid var(--line);
-    color: #8c9098;
+    position: fixed;
+    bottom: 0;
+    left: 272px;
+    width: calc(100% - 272px);
+
+    z-index: 1000;
+    box-sizing: border-box;
+
     display: flex;
-    font-size: 10px;
-    gap: 30px;
     justify-content: space-between;
-    margin: 0 40px;
-    padding: 20px 0 28px;
+    align-items: flex-start;
+    gap: 30px;
+
+    padding: 20px 40px 28px;
+
+    background: #fff;
+    border-top: 1px solid var(--line);
+
+    color: #8c9098;
+    font-size: 10px;
 }
 
 .admin-footer__brand {
@@ -1078,11 +1095,6 @@ select:focus-visible {
         padding-right: 28px;
     }
 
-    .admin-footer {
-        margin-left: 28px;
-        margin-right: 28px;
-    }
-
     .admin-search {
         width: 190px;
     }
@@ -1119,6 +1131,11 @@ select:focus-visible {
     .admin-dashboard-grid--main,
     .admin-dashboard-grid--bottom {
         grid-template-columns: minmax(0, 1fr);
+    }
+
+    .admin-footer {
+        left: 0;
+        width: 100%;
     }
 }
 
@@ -1204,22 +1221,21 @@ select:focus-visible {
     .admin-footer {
         flex-direction: column;
         gap: 15px;
-        margin: 0 17px;
+
+        .admin-footer__contact {
+            justify-content: flex-start;
+            text-align: left;
+        }
     }
 
-    .admin-footer__contact {
-        justify-content: flex-start;
-        text-align: left;
-    }
-}
+    @media (max-width: 390px) {
+        .admin-stat-grid {
+            grid-template-columns: minmax(0, 1fr);
+        }
 
-@media (max-width: 390px) {
-    .admin-stat-grid {
-        grid-template-columns: minmax(0, 1fr);
-    }
-
-    .admin-page-heading__actions {
-        align-items: stretch;
-        flex-direction: column;
+        .admin-page-heading__actions {
+            align-items: stretch;
+            flex-direction: column;
+        }
     }
 }
