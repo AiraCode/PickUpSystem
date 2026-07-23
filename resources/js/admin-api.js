@@ -25,6 +25,57 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const rupiah = (n) => new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', maximumFractionDigits: 0 }).format(n);
 
+    // Custom Toast Notification Helper
+    window.showToast = (message, type = 'success') => {
+        const toast = document.getElementById('admin-toast');
+        const msg = document.getElementById('admin-toast-message');
+        const icon = document.getElementById('admin-toast-icon');
+        if (!toast) return;
+
+        msg.innerText = message;
+        if (type === 'error') {
+            toast.style.background = '#ba1b2b';
+            icon.innerText = '✕';
+        } else if (type === 'warning') {
+            toast.style.background = '#f59e0b';
+            icon.innerText = '⚠';
+        } else {
+            toast.style.background = '#10b981';
+            icon.innerText = '✓';
+        }
+        toast.style.display = 'flex';
+        toast.style.opacity = '1';
+
+        setTimeout(() => {
+            toast.style.opacity = '0';
+            setTimeout(() => { toast.style.display = 'none'; }, 300);
+        }, 3200);
+    };
+
+    // Custom Confirmation Dialog Helper
+    window.showConfirm = (title, message, onOk) => {
+        const modal = document.getElementById('modal-custom-confirm');
+        if (!modal) {
+            if (confirm(message)) onOk();
+            return;
+        }
+        document.getElementById('confirm-title').innerText = title;
+        document.getElementById('confirm-message').innerText = message;
+        modal.style.display = 'flex';
+
+        const btnOk = document.getElementById('btn-confirm-ok');
+        const btnCancel = document.getElementById('btn-confirm-cancel');
+
+        btnOk.onclick = () => {
+            modal.style.display = 'none';
+            onOk();
+        };
+
+        btnCancel.onclick = () => {
+            modal.style.display = 'none';
+        };
+    };
+
     const statusBadge = (status) => {
         const colors = {
             pending:    { bg: '#fef3c7', color: '#92400e' },
@@ -128,7 +179,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     document.getElementById('auth-user-initial').innerText = res.user.name.charAt(0).toUpperCase();
                 }
                 modalEditProfile.style.display = 'none';
-                alert('Profil berhasil diperbarui!');
+                showToast('Profil berhasil diperbarui!', 'success');
             } else {
                 profileError.innerText = res.message || 'Gagal memperbarui profil.';
                 profileError.style.display = 'block';
@@ -223,6 +274,9 @@ document.addEventListener('DOMContentLoaded', () => {
         const uploadInput = document.getElementById('upload-proof');
         const uploadPreview = document.getElementById('upload-preview');
         const uploadPlaceholder = document.getElementById('upload-placeholder');
+        const containerCancelReason = document.getElementById('container-cancel-reason');
+        const cancelReasonInput = document.getElementById('cancel-reason');
+        const orderUpdateError = document.getElementById('order-update-error');
 
         if (uploadArea && uploadInput) {
             uploadArea.addEventListener('click', () => uploadInput.click());
@@ -266,12 +320,20 @@ document.addEventListener('DOMContentLoaded', () => {
 
         window.editOrderStatus = (id, currentStatus) => {
             document.getElementById('update-order-id').value = id;
+            if (orderUpdateError) orderUpdateError.style.display = 'none';
+
             const radios = document.querySelectorAll('input[name="order_status"]');
             radios.forEach(r => {
                 r.checked = (r.value === currentStatus);
                 const card = r.closest('label');
                 card.style.borderColor = r.checked ? '#3b82f6' : '#e5e7eb';
             });
+
+            if (containerCancelReason) {
+                containerCancelReason.style.display = (currentStatus === 'cancelled') ? 'block' : 'none';
+                if (cancelReasonInput) cancelReasonInput.value = '';
+            }
+
             uploadPreview.style.display = 'none';
             uploadPlaceholder.style.display = 'block';
             uploadInput.value = '';
@@ -280,9 +342,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
         document.querySelectorAll('input[name="order_status"]').forEach(radio => {
             radio.addEventListener('change', () => {
+                if (orderUpdateError) orderUpdateError.style.display = 'none';
                 document.querySelectorAll('input[name="order_status"]').forEach(r => {
                     r.closest('label').style.borderColor = r.checked ? '#3b82f6' : '#e5e7eb';
                 });
+                if (containerCancelReason) {
+                    containerCancelReason.style.display = (radio.value === 'cancelled') ? 'block' : 'none';
+                }
             });
         });
 
@@ -309,12 +375,63 @@ document.addEventListener('DOMContentLoaded', () => {
         if (formUpdate) {
             formUpdate.addEventListener('submit', async (e) => {
                 e.preventDefault();
+                if (orderUpdateError) orderUpdateError.style.display = 'none';
+
                 const id = document.getElementById('update-order-id').value;
                 const selected = document.querySelector('input[name="order_status"]:checked');
-                if (!selected) { alert('Pilih status terlebih dahulu'); return; }
-                await fetchApi(`/orders/${id}/status`, { method: 'PUT', body: JSON.stringify({ status: selected.value }) });
-                document.getElementById('modal-update-order').style.display = 'none';
-                loadOrders();
+                if (!selected) {
+                    if (orderUpdateError) {
+                        orderUpdateError.innerText = 'Pilih status terlebih dahulu.';
+                        orderUpdateError.style.display = 'block';
+                    }
+                    return;
+                }
+
+                const statusVal = selected.value;
+                const payload = { status: statusVal };
+
+                // Validation for Cancelled
+                if (statusVal === 'cancelled') {
+                    const reason = cancelReasonInput ? cancelReasonInput.value.trim() : '';
+                    if (!reason) {
+                        if (orderUpdateError) {
+                            orderUpdateError.innerText = 'Wajib memasukkan alasan pembatalan!';
+                            orderUpdateError.style.display = 'block';
+                        }
+                        return;
+                    }
+                    payload.cancel_reason = reason;
+                }
+
+                // Validation for Completed
+                if (statusVal === 'completed') {
+                    const hasFile = uploadInput && uploadInput.files && uploadInput.files.length > 0;
+                    const hasPreview = uploadPreview && uploadPreview.style.display !== 'none';
+                    if (!hasFile && !hasPreview) {
+                        if (orderUpdateError) {
+                            orderUpdateError.innerText = 'Wajib mengunggah foto bukti pembayaran / penyerahan untuk status Completed!';
+                            orderUpdateError.style.display = 'block';
+                        }
+                        return;
+                    }
+                    payload.proof_image = 'uploaded';
+                }
+
+                const res = await fetchApi(`/orders/${id}/status`, {
+                    method: 'PUT',
+                    body: JSON.stringify(payload)
+                });
+
+                if (res.data) {
+                    document.getElementById('modal-update-order').style.display = 'none';
+                    showToast('Status pesanan berhasil diperbarui!', 'success');
+                    loadOrders();
+                } else {
+                    if (orderUpdateError) {
+                        orderUpdateError.innerText = res.message || 'Gagal memperbarui status order.';
+                        orderUpdateError.style.display = 'block';
+                    }
+                }
             });
         }
     }
@@ -374,35 +491,75 @@ document.addEventListener('DOMContentLoaded', () => {
         window.viewCityAccus = async (cityId, cityName) => {
             activeCityId = cityId;
             activeCityName = cityName;
+            
+            const modalTitle = document.getElementById('city-price-modal-title');
+            if (modalTitle) modalTitle.innerText = `Daftar Harga Aki: ${cityName}`;
+
+            document.getElementById('modal-view-city-prices').style.display = 'flex';
+
             const res = await fetchApi(`/cities/${cityId}/accus`);
-            const tbody = document.getElementById('city-accus-tbody');
+            const tbody = document.getElementById('modal-city-accus-tbody');
             if (res.data && res.data.accus && res.data.accus.length) {
                 tbody.innerHTML = res.data.accus.map(a => `
                     <tr>
-                        <td style="font-weight:500;">${cityName}</td>
-                        <td>${a.brand}</td>
+                        <td style="font-weight:500;">${a.brand}</td>
                         <td>${a.name}</td>
-                        <td>${rupiah(a.price)}</td>
+                        <td style="font-weight:600; color:#10b981;">${rupiah(a.price)}</td>
                         <td>
-                            <button onclick="deleteCityAccu(${cityId}, ${a.id})" class="admin-button admin-button--secondary" style="height:30px; font-size:11px; color:#ba1b2b;">Hapus</button>
+                            <div style="display:flex; gap:6px; justify-content:flex-end;">
+                                <button onclick="editCityAccuPrice(${cityId}, ${a.id}, ${a.price})" class="admin-button admin-button--primary" style="height:28px; font-size:11px;">Edit Harga</button>
+                                <button onclick="deleteCityAccu(${cityId}, ${a.id})" class="admin-button admin-button--secondary" style="height:28px; font-size:11px; color:#ba1b2b;">Hapus</button>
+                            </div>
                         </td>
                     </tr>`).join('');
             } else {
-                tbody.innerHTML = `<tr><td colspan="5"><div class="admin-table-empty"><strong>Belum ada harga untuk kota ${cityName}</strong></div></td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="4"><div class="admin-table-empty"><strong>Belum ada harga diset untuk kota ${cityName}</strong></div></td></tr>`;
             }
         };
 
-        window.deleteCity = async (id) => {
-            if (confirm('Yakin hapus kota ini?')) { await fetchApi(`/cities/${id}`, { method: 'DELETE' }); loadCities(); }
-        };
-        window.deleteAccu = async (id) => {
-            if (confirm('Yakin hapus aki ini?')) { await fetchApi(`/accus/${id}`, { method: 'DELETE' }); loadAccus(); }
-        };
-        window.deleteCityAccu = async (cityId, accuId) => {
-            if (confirm('Yakin hapus harga ini?')) {
-                await fetchApi(`/cities/${cityId}/accus/${accuId}`, { method: 'DELETE' });
-                viewCityAccus(activeCityId, activeCityName);
+        window.openAddPriceForCurrentCity = () => {
+            if (activeCityId) {
+                const citySel = document.getElementById('set-price-city');
+                if (citySel) citySel.value = activeCityId;
             }
+            document.getElementById('set-price-modal-head').innerText = 'Tambah Harga Aki';
+            document.getElementById('modal-set-price').style.display = 'flex';
+        };
+
+        window.editCityAccuPrice = (cityId, accuId, currentPrice) => {
+            const citySel = document.getElementById('set-price-city');
+            const accuSel = document.getElementById('set-price-accu');
+            const priceVal = document.getElementById('set-price-value');
+            if (citySel) citySel.value = cityId;
+            if (accuSel) accuSel.value = accuId;
+            if (priceVal) priceVal.value = currentPrice;
+
+            document.getElementById('set-price-modal-head').innerText = 'Edit Harga Aki';
+            document.getElementById('modal-set-price').style.display = 'flex';
+        };
+
+        window.deleteCity = (id) => {
+            showConfirm('Hapus Kota', 'Yakin ingin menghapus kota ini?', async () => {
+                await fetchApi(`/cities/${id}`, { method: 'DELETE' });
+                showToast('Kota berhasil dihapus', 'success');
+                loadCities();
+            });
+        };
+
+        window.deleteAccu = (id) => {
+            showConfirm('Hapus Aki', 'Yakin ingin menghapus jenis aki ini?', async () => {
+                await fetchApi(`/accus/${id}`, { method: 'DELETE' });
+                showToast('Aki berhasil dihapus', 'success');
+                loadAccus();
+            });
+        };
+
+        window.deleteCityAccu = (cityId, accuId) => {
+            showConfirm('Hapus Harga', 'Yakin ingin menghapus harga aki ini dari kota?', async () => {
+                await fetchApi(`/cities/${cityId}/accus/${accuId}`, { method: 'DELETE' });
+                showToast('Harga aki berhasil dihapus', 'success');
+                viewCityAccus(activeCityId, activeCityName);
+            });
         };
 
         document.getElementById('form-add-city').addEventListener('submit', async (e) => {
@@ -410,6 +567,7 @@ document.addEventListener('DOMContentLoaded', () => {
             await fetchApi('/cities', { method: 'POST', body: JSON.stringify({ name: document.getElementById('city-name').value }) });
             document.getElementById('modal-add-city').style.display = 'none';
             document.getElementById('form-add-city').reset();
+            showToast('Kota berhasil ditambahkan!', 'success');
             loadCities();
         });
 
@@ -421,6 +579,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }) });
             document.getElementById('modal-add-accu').style.display = 'none';
             document.getElementById('form-add-accu').reset();
+            showToast('Aki baru berhasil ditambahkan!', 'success');
             loadAccus();
         });
 
@@ -433,8 +592,10 @@ document.addEventListener('DOMContentLoaded', () => {
             }) });
             document.getElementById('modal-set-price').style.display = 'none';
             document.getElementById('form-set-price').reset();
-            const cityOpt = cachedCities.find(c => c.id == cityId);
-            viewCityAccus(cityId, cityOpt ? cityOpt.name : '');
+            showToast('Harga aki berhasil disimpan!', 'success');
+            if (activeCityId && activeCityId == cityId) {
+                viewCityAccus(activeCityId, activeCityName);
+            }
         });
     }
 
@@ -499,7 +660,10 @@ document.addEventListener('DOMContentLoaded', () => {
             e.preventDefault();
             const lat = document.getElementById('storage-lat').value;
             const lng = document.getElementById('storage-long').value;
-            if (!lat || !lng) { alert('Pilih lokasi di peta terlebih dahulu'); return; }
+            if (!lat || !lng) {
+                showToast('Pilih lokasi di peta terlebih dahulu', 'warning');
+                return;
+            }
             await fetchApi('/storages', { method: 'POST', body: JSON.stringify({
                 name: document.getElementById('storage-name').value,
                 address: document.getElementById('storage-address').value,
@@ -510,11 +674,16 @@ document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('form-add-storage').reset();
             document.getElementById('map-coords').innerText = 'Belum ada titik dipilih';
             if (addMarker) { addMap.removeLayer(addMarker); addMarker = null; }
+            showToast('Gudang berhasil ditambahkan!', 'success');
             loadStorages();
         });
 
-        window.deleteStorage = async (id) => {
-            if (confirm('Yakin hapus gudang ini?')) { await fetchApi(`/storages/${id}`, { method: 'DELETE' }); loadStorages(); }
+        window.deleteStorage = (id) => {
+            showConfirm('Hapus Gudang', 'Yakin ingin menghapus gudang ini?', async () => {
+                await fetchApi(`/storages/${id}`, { method: 'DELETE' });
+                showToast('Gudang berhasil dihapus', 'success');
+                loadStorages();
+            });
         };
     }
 
@@ -549,11 +718,16 @@ document.addEventListener('DOMContentLoaded', () => {
             await fetchApi('/users', { method: 'POST', body: JSON.stringify(payload) });
             document.getElementById('modal-add-user').style.display = 'none';
             document.getElementById('form-add-user').reset();
+            showToast('Staf admin berhasil ditambahkan!', 'success');
             loadUsers();
         });
 
-        window.deleteUser = async (id) => {
-            if (confirm('Yakin hapus pengguna ini?')) { await fetchApi(`/users/${id}`, { method: 'DELETE' }); loadUsers(); }
+        window.deleteUser = (id) => {
+            showConfirm('Hapus Pengguna', 'Yakin ingin menghapus staf admin ini?', async () => {
+                await fetchApi(`/users/${id}`, { method: 'DELETE' });
+                showToast('Staf admin berhasil dihapus', 'success');
+                loadUsers();
+            });
         };
     }
 });

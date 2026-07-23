@@ -3,15 +3,33 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Accu extends Model
 {
     public $incrementing = false;
 
-    protected $fillable = ['id', 'brand', 'name', 'img'];
+    protected $fillable = ['id', 'brands_id', 'name', 'img'];
 
-    protected $appends = ['img_url'];
+    protected $appends = ['img_url', 'brand'];
+
+    public function brandRelation(): BelongsTo
+    {
+        return $this->belongsTo(Brand::class, 'brands_id');
+    }
+
+    public function getBrandAttribute(): string
+    {
+        if ($this->relationLoaded('brandRelation') && $this->brandRelation) {
+            return $this->brandRelation->name;
+        }
+        if ($this->brands_id) {
+            $b = Brand::find($this->brands_id);
+            return $b ? $b->name : '-';
+        }
+        return '-';
+    }
 
     public function getImgUrlAttribute()
     {

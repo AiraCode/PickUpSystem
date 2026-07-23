@@ -32,7 +32,14 @@ class OrderController extends Controller
     public function updateStatus(UpdateOrderStatusRequest $request, int $id): JsonResponse
     {
         $order = Order::findOrFail($id);
-        $order->update(['status' => $request->status]);
+        
+        $updateData = ['status' => $request->status];
+        
+        if ($request->status === 'cancelled' && $request->filled('cancel_reason')) {
+            $updateData['pickup_address_note'] = 'Batal: ' . $request->cancel_reason;
+        }
+
+        $order->update($updateData);
 
         return response()->json([
             'message' => 'Status order berhasil diperbarui',

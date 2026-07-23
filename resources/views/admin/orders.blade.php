@@ -35,7 +35,7 @@
 </article>
 
 <div id="modal-update-order" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,.45); z-index:100; align-items:center; justify-content:center;">
-    <div class="admin-panel" style="width:440px;">
+    <div class="admin-panel" style="width:460px;">
         <div class="admin-panel__head"><h2>Update Status Pesanan</h2></div>
         <form id="form-update-order">
             <input type="hidden" id="update-order-id">
@@ -60,29 +60,37 @@
                         <input type="radio" name="order_status" value="completed" style="accent-color:#10b981; width:16px; height:16px;">
                         <div>
                             <span style="font-weight:600; font-size:13px; color:#111318;">Completed</span>
-                            <span style="display:block; font-size:11px; color:#6d727c;">Pesanan selesai, aki sudah diterima</span>
+                            <span style="display:block; font-size:11px; color:#6d727c;">Pesanan selesai (wajib upload foto bukti)</span>
                         </div>
                     </label>
                     <label style="display:flex; align-items:center; gap:10px; padding:10px 14px; border:2px solid #e5e7eb; border-radius:8px; cursor:pointer; transition:border-color .15s;" onmouseover="this.style.borderColor='#3b82f6'" onmouseout="if(!this.querySelector('input').checked) this.style.borderColor='#e5e7eb'">
                         <input type="radio" name="order_status" value="cancelled" style="accent-color:#ef4444; width:16px; height:16px;">
                         <div>
                             <span style="font-weight:600; font-size:13px; color:#111318;">Cancelled</span>
-                            <span style="display:block; font-size:11px; color:#6d727c;">Pesanan dibatalkan</span>
+                            <span style="display:block; font-size:11px; color:#6d727c;">Pesanan dibatalkan (wajib beri alasan)</span>
                         </div>
                     </label>
                 </div>
             </div>
+
+            <!-- Field Alasan Pembatalan (Tampil jika Cancelled dipilih) -->
+            <div id="container-cancel-reason" style="display:none; margin-bottom:18px;">
+                <label style="display:block; font-size:12px; font-weight:600; margin-bottom:6px; color:#ba1b2b;">Alasan Pembatalan (Wajib)</label>
+                <input type="text" id="cancel-reason" class="admin-select" style="width:100%; padding:8px 10px; border-radius:6px;" placeholder="Contoh: Barang tidak sesuai / Customer membatalkan">
+            </div>
+
             <div style="margin-bottom:18px;">
-                <label style="display:block; font-size:12px; font-weight:600; margin-bottom:6px; color:#4a4f59;">Bukti Pembayaran (opsional)</label>
+                <label id="proof-label" style="display:block; font-size:12px; font-weight:600; margin-bottom:6px; color:#4a4f59;">Bukti Pembayaran / Penyerahan</label>
                 <div id="upload-area" style="border:2px dashed #d1d5db; border-radius:8px; padding:20px; text-align:center; cursor:pointer; transition:border-color .15s;" onmouseover="this.style.borderColor='#3b82f6'" onmouseout="this.style.borderColor='#d1d5db'">
                     <input type="file" id="upload-proof" accept="image/*" style="display:none;">
                     <div id="upload-placeholder">
                         <svg viewBox="0 0 24 24" style="width:32px; height:32px; fill:none; stroke:#9ca3af; stroke-width:1.5; margin:0 auto 8px;"><path d="M12 16V4m0 0L8 8m4-4 4 4"/><path d="M20 16v2a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-2"/></svg>
-                        <p style="font-size:12px; color:#6d727c; margin:0;">Klik untuk upload atau seret file ke sini</p>
+                        <p style="font-size:12px; color:#6d727c; margin:0;">Klik untuk upload foto atau seret file ke sini</p>
                     </div>
                     <img id="upload-preview" style="display:none; max-width:100%; max-height:150px; border-radius:6px; margin:0 auto;">
                 </div>
             </div>
+            <div id="order-update-error" style="display:none; background:#fee2e2; color:#991b1b; padding:10px 14px; border-radius:6px; font-size:12px; font-weight:600; margin-bottom:16px;"></div>
             <div style="display:flex; gap:10px; justify-content:flex-end;">
                 <button type="button" class="admin-button admin-button--secondary" onclick="document.getElementById('modal-update-order').style.display='none'">Batal</button>
                 <button type="submit" class="admin-button admin-button--primary">Simpan</button>

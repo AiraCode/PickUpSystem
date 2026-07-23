@@ -129,6 +129,26 @@
         </div>
     </div>
 
+    <!-- Custom Toast Floating Notification -->
+    <div id="admin-toast" style="display:none; position:fixed; top:24px; right:24px; z-index:999; background:#10b981; color:#fff; padding:12px 20px; border-radius:8px; box-shadow:0 10px 25px rgba(0,0,0,0.18); font-size:13px; font-weight:600; align-items:center; gap:10px; opacity:0; transition:opacity .25s ease;">
+        <span id="admin-toast-icon">✓</span>
+        <span id="admin-toast-message">Notifikasi</span>
+    </div>
+
+    <!-- Custom Modal Konfirmasi (Ganti confirm bawaan browser) -->
+    <div id="modal-custom-confirm" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,.45); z-index:200; align-items:center; justify-content:center;">
+        <div class="admin-panel" style="width:380px; text-align:center;">
+            <div style="margin-bottom:14px;">
+                <h3 id="confirm-title" style="font-size:16px; color:#111318; margin-bottom:8px; font-weight:700;">Konfirmasi Hapus</h3>
+                <p id="confirm-message" style="font-size:13px; color:#6d727c; margin:0; line-height:1.4;"></p>
+            </div>
+            <div style="display:flex; gap:10px; justify-content:center; margin-top:20px;">
+                <button type="button" id="btn-confirm-cancel" class="admin-button admin-button--secondary" style="width:100px;">Batal</button>
+                <button type="button" id="btn-confirm-ok" class="admin-button admin-button--primary" style="width:110px; background:#ba1b2b;">Ya, Hapus</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Modal Edit Profil Admin -->
     <div id="modal-edit-profile" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,.45); z-index:110; align-items:center; justify-content:center;">
         <div class="admin-panel" style="width:420px;">
