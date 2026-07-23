@@ -89,11 +89,19 @@ select:focus-visible {
     margin: 0 10px 34px;
 }
 
-.admin-brand {
-    align-items: center;
-    display: inline-flex;
-    gap: 11px;
-    min-width: 0;
+.admin-brand{
+    display:flex;
+    align-items:center;
+    gap:14px;
+    min-width:0;
+}
+
+.admin-brand__logo{
+    width: 46px;
+    height: 46px;
+    object-fit: contain;
+    flex-shrink: 0;
+    display: block;
 }
 
 .admin-brand__mark {

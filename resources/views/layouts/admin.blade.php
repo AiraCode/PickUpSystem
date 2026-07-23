@@ -16,14 +16,15 @@
         <aside class="admin-sidebar" id="admin-sidebar" aria-label="Navigasi utama admin">
             <div class="admin-sidebar__head">
                 <a href="{{ url('/admin/dashboard') }}" class="admin-brand" aria-label="Pick Up System admin">
-                    <span class="admin-brand__mark" role="img" aria-label="Indoprima Group logo">
-                        <span class="admin-brand__mark-red"></span>
-                        <span class="admin-brand__mark-blue"></span>
-                    </span>
+
+                    <img src="{{ Vite::asset('resources/img/indoprima_logo.png') }}" alt="Indoprima Group"
+                        class="admin-brand__logo" style=>
+
                     <span class="admin-brand__copy">
                         <strong>Indoprima Group</strong>
                         <small>Pick Up System</small>
                     </span>
+
                 </a>
                 <button type="button" class="sidebar-close" data-sidebar-close aria-label="Tutup navigasi">
                     <svg viewBox="0 0 24 24" aria-hidden="true">
@@ -130,45 +131,65 @@
     </div>
 
     <!-- Custom Toast Floating Notification -->
-    <div id="admin-toast" style="display:none; position:fixed; top:24px; right:24px; z-index:999; background:#10b981; color:#fff; padding:12px 20px; border-radius:8px; box-shadow:0 10px 25px rgba(0,0,0,0.18); font-size:13px; font-weight:600; align-items:center; gap:10px; opacity:0; transition:opacity .25s ease;">
+    <div id="admin-toast"
+        style="display:none; position:fixed; top:24px; right:24px; z-index:999; background:#10b981; color:#fff; padding:12px 20px; border-radius:8px; box-shadow:0 10px 25px rgba(0,0,0,0.18); font-size:13px; font-weight:600; align-items:center; gap:10px; opacity:0; transition:opacity .25s ease;">
         <span id="admin-toast-icon">✓</span>
         <span id="admin-toast-message">Notifikasi</span>
     </div>
 
     <!-- Custom Modal Konfirmasi (Ganti confirm bawaan browser) -->
-    <div id="modal-custom-confirm" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,.45); z-index:200; align-items:center; justify-content:center;">
+    <div id="modal-custom-confirm"
+        style="display:none; position:fixed; inset:0; background:rgba(0,0,0,.45); z-index:200; align-items:center; justify-content:center;">
         <div class="admin-panel" style="width:380px; text-align:center;">
             <div style="margin-bottom:14px;">
-                <h3 id="confirm-title" style="font-size:16px; color:#111318; margin-bottom:8px; font-weight:700;">Konfirmasi Hapus</h3>
+                <h3 id="confirm-title" style="font-size:16px; color:#111318; margin-bottom:8px; font-weight:700;">
+                    Konfirmasi Hapus</h3>
                 <p id="confirm-message" style="font-size:13px; color:#6d727c; margin:0; line-height:1.4;"></p>
             </div>
             <div style="display:flex; gap:10px; justify-content:center; margin-top:20px;">
-                <button type="button" id="btn-confirm-cancel" class="admin-button admin-button--secondary" style="width:100px;">Batal</button>
-                <button type="button" id="btn-confirm-ok" class="admin-button admin-button--primary" style="width:110px; background:#ba1b2b;">Ya, Hapus</button>
+                <button type="button" id="btn-confirm-cancel" class="admin-button admin-button--secondary"
+                    style="width:100px;">Batal</button>
+                <button type="button" id="btn-confirm-ok" class="admin-button admin-button--primary"
+                    style="width:110px; background:#ba1b2b;">Ya, Hapus</button>
             </div>
         </div>
     </div>
 
     <!-- Modal Edit Profil Admin -->
-    <div id="modal-edit-profile" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,.45); z-index:110; align-items:center; justify-content:center;">
+    <div id="modal-edit-profile"
+        style="display:none; position:fixed; inset:0; background:rgba(0,0,0,.45); z-index:110; align-items:center; justify-content:center;">
         <div class="admin-panel" style="width:420px;">
-            <div class="admin-panel__head"><h2>Edit Profil Admin</h2></div>
+            <div class="admin-panel__head">
+                <h2>Edit Profil Admin</h2>
+            </div>
             <form id="form-edit-profile">
                 <div style="margin-bottom:14px;">
-                    <label style="display:block; font-size:12px; font-weight:600; margin-bottom:6px; color:#4a4f59;">Nama Admin</label>
-                    <input type="text" id="profile-name" class="admin-select" style="width:100%; padding:8px 10px; border-radius:6px;" required>
+                    <label
+                        style="display:block; font-size:12px; font-weight:600; margin-bottom:6px; color:#4a4f59;">Nama
+                        Admin</label>
+                    <input type="text" id="profile-name" class="admin-select"
+                        style="width:100%; padding:8px 10px; border-radius:6px;" required>
                 </div>
                 <div style="margin-bottom:14px;">
-                    <label style="display:block; font-size:12px; font-weight:600; margin-bottom:6px; color:#4a4f59;">Password Saat Ini (Wajib jika ganti password)</label>
-                    <input type="password" id="profile-current-password" class="admin-select" style="width:100%; padding:8px 10px; border-radius:6px;" placeholder="Password lama">
+                    <label
+                        style="display:block; font-size:12px; font-weight:600; margin-bottom:6px; color:#4a4f59;">Password
+                        Saat Ini (Wajib jika ganti password)</label>
+                    <input type="password" id="profile-current-password" class="admin-select"
+                        style="width:100%; padding:8px 10px; border-radius:6px;" placeholder="Password lama">
                 </div>
                 <div style="margin-bottom:18px;">
-                    <label style="display:block; font-size:12px; font-weight:600; margin-bottom:6px; color:#4a4f59;">Password Baru (Opsional)</label>
-                    <input type="password" id="profile-new-password" class="admin-select" style="width:100%; padding:8px 10px; border-radius:6px;" placeholder="Kosongkan jika tidak diubah">
+                    <label
+                        style="display:block; font-size:12px; font-weight:600; margin-bottom:6px; color:#4a4f59;">Password
+                        Baru (Opsional)</label>
+                    <input type="password" id="profile-new-password" class="admin-select"
+                        style="width:100%; padding:8px 10px; border-radius:6px;"
+                        placeholder="Kosongkan jika tidak diubah">
                 </div>
-                <div id="profile-error" style="display:none; color:#ba1b2b; font-size:12px; margin-bottom:14px;"></div>
+                <div id="profile-error" style="display:none; color:#ba1b2b; font-size:12px; margin-bottom:14px;">
+                </div>
                 <div style="display:flex; gap:10px; justify-content:flex-end;">
-                    <button type="button" class="admin-button admin-button--secondary" onclick="document.getElementById('modal-edit-profile').style.display='none'">Batal</button>
+                    <button type="button" class="admin-button admin-button--secondary"
+                        onclick="document.getElementById('modal-edit-profile').style.display='none'">Batal</button>
                     <button type="submit" class="admin-button admin-button--primary">Simpan Profil</button>
                 </div>
             </form>
@@ -176,19 +197,29 @@
     </div>
 
     <!-- Modal Konfirmasi Logout dengan Password -->
-    <div id="modal-logout-confirm" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,.45); z-index:110; align-items:center; justify-content:center;">
+    <div id="modal-logout-confirm"
+        style="display:none; position:fixed; inset:0; background:rgba(0,0,0,.45); z-index:110; align-items:center; justify-content:center;">
         <div class="admin-panel" style="width:400px;">
-            <div class="admin-panel__head"><h2>Konfirmasi Keluar</h2></div>
+            <div class="admin-panel__head">
+                <h2>Konfirmasi Keluar</h2>
+            </div>
             <form id="form-logout-confirm">
-                <p style="font-size:13px; color:#4a4f59; margin-bottom:14px;">Masukkan password Anda untuk mengonfirmasi keluar dari sistem.</p>
+                <p style="font-size:13px; color:#4a4f59; margin-bottom:14px;">Masukkan password Anda untuk
+                    mengonfirmasi keluar dari sistem.</p>
                 <div style="margin-bottom:16px;">
-                    <label style="display:block; font-size:12px; font-weight:600; margin-bottom:6px; color:#4a4f59;">Password Admin</label>
-                    <input type="password" id="logout-password" class="admin-select" style="width:100%; padding:8px 10px; border-radius:6px;" placeholder="Masukkan password Anda" required>
+                    <label
+                        style="display:block; font-size:12px; font-weight:600; margin-bottom:6px; color:#4a4f59;">Password
+                        Admin</label>
+                    <input type="password" id="logout-password" class="admin-select"
+                        style="width:100%; padding:8px 10px; border-radius:6px;" placeholder="Masukkan password Anda"
+                        required>
                 </div>
                 <div id="logout-error" style="display:none; color:#ba1b2b; font-size:12px; margin-bottom:14px;"></div>
                 <div style="display:flex; gap:10px; justify-content:flex-end;">
-                    <button type="button" class="admin-button admin-button--secondary" onclick="document.getElementById('modal-logout-confirm').style.display='none'">Batal</button>
-                    <button type="submit" class="admin-button admin-button--primary" style="background:#ba1b2b;">Keluar</button>
+                    <button type="button" class="admin-button admin-button--secondary"
+                        onclick="document.getElementById('modal-logout-confirm').style.display='none'">Batal</button>
+                    <button type="submit" class="admin-button admin-button--primary"
+                        style="background:#ba1b2b;">Keluar</button>
                 </div>
             </form>
         </div>

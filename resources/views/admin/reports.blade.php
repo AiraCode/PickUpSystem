@@ -9,12 +9,12 @@
         <h1>Laporan</h1>
         <p>Ringkasan data analitik untuk evaluasi bisnis.</p>
     </div>
-    <div class="admin-page-heading__actions">
+    {{-- <div class="admin-page-heading__actions">
         <button type="button" class="admin-button admin-button--primary">
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4.5h14v15H5zM8 8h8M8 12h8M8 16h5" /></svg>
             Export PDF
         </button>
-    </div>
+    </div> --}}
 </div>
 
 <div class="admin-dashboard-grid admin-dashboard-grid--main">
