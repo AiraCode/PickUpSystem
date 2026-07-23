@@ -21,8 +21,11 @@ Route::get('/receipt', function () {
 });
 Route::get('/user/receipt', function () {
     return view('user.receipt');
+    return view('user.landing');
 });
-
+Route::get('/admin', function () {
+    return redirect('admin/login');
+});
 Route::get('/admin/login', function () {
     return view('admin.login');
 })->name('login');

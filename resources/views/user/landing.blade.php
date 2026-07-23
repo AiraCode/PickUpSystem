@@ -1,10 +1,11 @@
-﻿@extends('user.layouts.app')
+@extends('user.layouts.app')
 
 @section('content')
     <div id="top">
         @include('user.partials.header', ['headerClass' => 'user-header--hero'])
 
         <main>
+            <!-- Hero Section -->
             <section class="user-hero">
                 <div class="user-hero__media" aria-label="Area gambar hero">
                     <img src="https://images.unsplash.com/photo-1475332658283-d79d63a83da6?w=1920&h=1080&fit=crop&auto=format"
@@ -26,6 +27,7 @@
                 </div>
             </section>
 
+            <!-- Section Cara Menjual -->
             <section class="user-process user-section" id="cara-menjual">
                 <div class="user-container">
                     <div class="user-section-heading user-section-heading--split">
@@ -71,6 +73,7 @@
                 </div>
             </section>
 
+            <!-- Section Katalog -->
             <section class="user-catalog user-section" id="daftar-harga">
                 <div class="user-container">
                     <div class="user-section-heading">
@@ -285,6 +288,7 @@
                 </div>
             </section>
 
+            <!-- Section FAQ -->
             <section class="user-faq user-section" id="faq">
                 <div class="user-container user-faq__inner">
                     <div>
