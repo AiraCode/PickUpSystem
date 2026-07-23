@@ -9,7 +9,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('brands', function (Blueprint $table) {
-            $table->id() ->autoIncrement();
+            $table->id() ->autoIncrement() -> nullable(false);
             $table->string('name', 45);
             $table->timestamps();
         });
