@@ -21,6 +21,7 @@ return new class extends Migration
             $table->integer('id')->primary();
             $table->string('brand', 45);
             $table->string('name', 45);
+            $table->string('img', 255)->nullable();
             $table->timestamp('created_at');
             $table->timestamp('updated_at');
         });
@@ -45,7 +46,7 @@ return new class extends Migration
             $table->string('name', 100);
             $table->string('address', 500);
             $table->string('address_note', 500)->nullable();
-            $table->decimal('lat', 11, 8); 
+            $table->decimal('lat', 11, 8);
             $table->decimal('long', 11, 8);
             $table->string('ktp', 45);
             $table->string('account_name', 100);
