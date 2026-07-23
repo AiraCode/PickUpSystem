@@ -69,14 +69,14 @@
                     </svg>
                     <span>Gudang &amp; Lokasi</span>
                 </a>
-                <a href="{{ url('/admin/pengguna') }}"
+                {{-- <a href="{{ url('/admin/pengguna') }}"
                     class="admin-nav__link {{ request()->is('admin/pengguna') ? 'is-active' : '' }}" data-nav-link>
                     <svg viewBox="0 0 24 24" aria-hidden="true">
                         <circle cx="12" cy="8" r="3.5" />
                         <path d="M5 20c.8-3.2 3.1-5 7-5s6.2 1.8 7 5" />
                     </svg>
                     <span>Pengguna</span>
-                </a>
+                </a> --}}
                 <a href="{{ url('/admin/laporan') }}"
                     class="admin-nav__link {{ request()->is('admin/laporan') ? 'is-active' : '' }}" data-nav-link>
                     <svg viewBox="0 0 24 24" aria-hidden="true">
@@ -96,6 +96,12 @@
         <div class="admin-main">
             <header class="admin-topbar">
                 <div class="admin-topbar__left">
+                    <button id="sidebarToggle" class="sidebar-toggle" type="button">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="none"
+                            viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+                        </svg>
+                    </button>
                     <button type="button" class="sidebar-open" data-sidebar-open aria-label="Buka navigasi">
                         <svg viewBox="0 0 24 24" aria-hidden="true">
                             <path d="M4 7h16M4 12h16M4 17h16" />
@@ -150,5 +156,28 @@
         </div>
     </div>
 </body>
+<script>
+    const toggle = document.getElementById('sidebarToggle');
+    const sidebar = document.querySelector('.admin-sidebar');
+    const footer = document.querySelector('.admin-footer');
+
+    function updateSidebar(collapsed) {
+        sidebar.classList.toggle('collapsed', collapsed);
+
+        if (footer) {
+            footer.classList.toggle('expanded', collapsed);
+        }
+
+        localStorage.setItem('sidebarCollapsed', collapsed);
+    }
+
+    const savedState = localStorage.getItem('sidebarCollapsed') === 'true';
+
+    updateSidebar(savedState);
+
+    toggle.addEventListener('click', () => {
+        updateSidebar(!sidebar.classList.contains('collapsed'));
+    });
+</script>
 
 </html>

@@ -61,17 +61,25 @@ select:focus-visible {
 }
 
 .admin-sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+
+    width: 272px;
+    height: 100vh;
+
+    display: flex;
+    flex-direction: column;
+
     background: var(--surface);
     border-right: 1px solid var(--line);
-    display: flex;
-    flex: 0 0 272px;
-    flex-direction: column;
-    min-height: 100vh;
+
     padding: 24px 16px 18px;
-    position: sticky;
-    top: 0;
-    transition: transform 180ms ease;
-    z-index: 40;
+
+    z-index: 100;
+    transition:
+        width 0.3s ease,
+        padding 0.3s ease;
 }
 
 .admin-sidebar__head {
@@ -248,6 +256,36 @@ select:focus-visible {
     opacity: 0.7;
 }
 
+.sidebar-toggle {
+    width: 42px;
+    height: 42px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border: 1px solid var(--line);
+    border-radius: 12px;
+
+    background: #fff;
+    color: #555;
+
+    cursor: pointer;
+
+    transition: 0.2s;
+}
+
+.sidebar-toggle:hover {
+    background: #2250fc;
+    border-color: #2250fc;
+    color: #fff;
+}
+
+.sidebar-toggle:active {
+    background: #ba1b2b;
+    border-color: #ba1b2b;
+}
+
 .admin-sidebar__support-icon {
     align-items: center;
     background: #fff0f1;
@@ -258,6 +296,68 @@ select:focus-visible {
     justify-content: center;
     margin-bottom: 12px;
     width: 30px;
+}
+
+.admin-sidebar {
+    flex: 0 0 272px;
+    width: 272px;
+    transition: all 0.3s ease;
+}
+
+.admin-sidebar.collapsed{
+    width:80px;
+    padding:24px 8px 18px;
+}
+
+.admin-sidebar.collapsed ~ .admin-main{
+    margin-left:80px;
+}
+
+.admin-sidebar.collapsed .admin-brand__copy,
+.admin-sidebar.collapsed .admin-sidebar__section-label,
+.admin-sidebar.collapsed .admin-nav__link span,
+.admin-sidebar.collapsed .admin-sidebar__foot {
+    display: none;
+}
+
+.admin-sidebar.collapsed .admin-sidebar__head {
+    margin: 0;
+    width: 100%;
+    justify-content: center;
+    margin-bottom: 24px;
+}
+
+.admin-sidebar.collapsed .admin-brand {
+    width: 42px;
+    justify-content: center;
+}
+
+.admin-sidebar.collapsed .admin-brand__copy {
+    display: none;
+}
+
+.admin-sidebar.collapsed .admin-brand__mark {
+    flex-shrink: 0;
+}
+
+.admin-sidebar.collapsed .admin-nav__link {
+    justify-content: center;
+    padding: 0;
+}
+
+.admin-sidebar.collapsed .admin-nav__link svg {
+    margin: 0;
+}
+
+.admin-footer {
+    transition:
+        left 0.3s ease,
+        width 0.3s ease;
+}
+
+.admin-footer.expanded {
+    left: 0;
+    width: 100%;
 }
 
 .admin-sidebar__support-icon svg {
@@ -304,12 +404,14 @@ select:focus-visible {
 }
 
 .admin-main {
+    margin-left: 272px;
     display: flex;
     flex: 1;
     flex-direction: column;
     min-width: 0;
-
     padding-bottom: 90px;
+
+    transition: margin-left 0.3s ease;
 }
 
 .admin-topbar {
