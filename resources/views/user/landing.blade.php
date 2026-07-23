@@ -7,8 +7,7 @@
         <main>
             <section class="user-hero">
                 <div class="user-hero__media" aria-label="Area gambar hero">
-                    <img src="{{ asset('images/not-found/user/hero-factory.jpg') }}" alt="Gambar pabrik dan gudang Indoprima belum tersedia (not found)" class="user-hero__image">
-                    <span class="user-image-not-found user-image-not-found--hero">Gambar hero · not found</span>
+                    <img src="https://images.unsplash.com/photo-1475332658283-d79d63a83da6?w=1920&h=1080&fit=crop&auto=format" alt="Gambar pabrik dan gudang Indoprima belum tersedia (not found)" class="user-hero__image">
                     <span class="user-hero__overlay" aria-hidden="true"></span>
                 </div>
                 <div class="user-hero__content user-container">
@@ -20,11 +19,6 @@
                             <a href="#daftar-harga" class="user-button user-button--primary">Jual Sekarang <span aria-hidden="true">→</span></a>
                             <a href="#daftar-harga" class="user-button user-button--ghost">Lihat Daftar Harga</a>
                         </div>
-                    </div>
-                    <div class="user-hero__bottom">
-                        <span>PROSES PENJUALAN AKI</span>
-                        <span class="user-hero__line" aria-hidden="true"></span>
-                        <span>01 — 03</span>
                     </div>
                 </div>
             </section>

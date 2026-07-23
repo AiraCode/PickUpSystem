@@ -30,7 +30,7 @@ body.user-shell button:focus-visible,body.user-shell a:focus-visible,body.user-s
 .user-menu-toggle { align-items:center; background:transparent; border:0; color:currentColor; cursor:pointer; display:none; justify-content:center; padding:8px; }
 .user-menu-toggle svg { fill:none; height:22px; stroke:currentColor; stroke-linecap:round; stroke-linejoin:round; stroke-width:1.7; width:22px; }
 
-.user-hero { background:var(--user-ink); color:var(--user-white); min-height:760px; overflow:hidden; position:relative; }
+.user-hero { color:var(--user-white); min-height:760px; overflow:hidden; }
 .user-hero__media,.user-hero__image,.user-hero__overlay { inset:0; position:absolute; }
 .user-hero__media { background:var(--user-ink); } .user-hero__image { height:100%; object-fit:cover; opacity:.34; width:100%; } .user-hero__overlay { background:rgba(34,80,252,.57); }
 .user-image-not-found { background:rgba(17,19,24,.7); border:1px solid rgba(255,255,255,.22); border-radius:6px; color:var(--user-white); display:inline-flex; font-size:9px; letter-spacing:.04em; padding:5px 7px; position:absolute; text-transform:uppercase; z-index:2; }
