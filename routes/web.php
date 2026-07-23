@@ -3,9 +3,11 @@
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
-    return redirect('/admin/dashboard');
+    return view('user.landing');
 });
-
+Route::get('/admin', function () {
+    return redirect('admin/login');
+});
 Route::get('/admin/login', function () {
     return view('admin.login');
 })->name('login');

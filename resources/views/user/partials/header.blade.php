@@ -1,4 +1,4 @@
-﻿<header class="user-header {{ $headerClass ?? '' }}" data-user-header>
+<header class="user-header {{ $headerClass ?? '' }}" data-user-header>
     <div class="user-header__inner">
         <a href="/user" class="user-brand" aria-label="Pick Up System user">
             <span class="user-brand__mark" role="img" aria-label="Indoprima Group logo not found">
