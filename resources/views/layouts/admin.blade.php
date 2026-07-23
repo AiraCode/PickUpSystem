@@ -86,11 +86,13 @@
                     </div>
 
                     <div class="admin-topbar__right">
+                        <!--
                         <label class="admin-search" for="admin-search">
                             <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.8" cy="10.8" r="6.3" /><path d="m16 16 4.3 4.3" /></svg>
                             <input id="admin-search" type="search" placeholder="Cari di dashboard" autocomplete="off">
                             <span class="admin-search__shortcut">⌘ K</span>
                         </label>
+                        -->
                         <button type="button" class="topbar-icon-button" aria-label="Notifikasi">
                             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.5 16.5h11l-1.2-1.8V10a4.3 4.3 0 0 0-8.6 0v4.7z" /><path d="M10 19h4" /></svg>
                             <span class="topbar-icon-button__dot"></span>

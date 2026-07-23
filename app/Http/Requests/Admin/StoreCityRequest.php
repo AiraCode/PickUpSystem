@@ -14,7 +14,6 @@ class StoreCityRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'id' => 'required|integer|unique:cities,id',
             'name' => 'required|string|max:45',
         ];
     }

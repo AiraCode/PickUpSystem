@@ -14,9 +14,9 @@ class StoreAccuRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'id' => 'required|integer|unique:accus,id',
             'brand' => 'required|string|max:45',
             'name' => 'required|string|max:45',
+            'img' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ];
     }
 }

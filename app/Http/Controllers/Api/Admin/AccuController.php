@@ -7,6 +7,7 @@ use App\Http\Requests\Admin\StoreAccuRequest;
 use App\Http\Requests\Admin\UpdateAccuRequest;
 use App\Models\Accu;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Storage;
 
 class AccuController extends Controller
 {
@@ -22,7 +23,16 @@ class AccuController extends Controller
 
     public function store(StoreAccuRequest $request): JsonResponse
     {
-        $accu = Accu::create($request->validated());
+        $data = $request->validated();
+        $data['id'] = (Accu::max('id') ?? 0) + 1;
+        
+        if ($request->hasFile('img')) {
+            $data['img'] = $request->file('img')->store('accus', 'public');
+        } else {
+            $data['img'] = 'default/accu-default.png';
+        }
+
+        $accu = Accu::create($data);
 
         return response()->json([
             'message' => 'Accu berhasil ditambahkan',
@@ -43,7 +53,16 @@ class AccuController extends Controller
     public function update(UpdateAccuRequest $request, int $id): JsonResponse
     {
         $accu = Accu::findOrFail($id);
-        $accu->update($request->validated());
+        $data = $request->validated();
+
+        if ($request->hasFile('img')) {
+            if ($accu->img && $accu->img !== 'default/accu-default.png' && Storage::disk('public')->exists($accu->img)) {
+                Storage::disk('public')->delete($accu->img);
+            }
+            $data['img'] = $request->file('img')->store('accus', 'public');
+        }
+
+        $accu->update($data);
 
         return response()->json([
             'message' => 'Accu berhasil diperbarui',
@@ -54,6 +73,11 @@ class AccuController extends Controller
     public function destroy(int $id): JsonResponse
     {
         $accu = Accu::findOrFail($id);
+        
+        if ($accu->img && $accu->img !== 'default/accu-default.png' && Storage::disk('public')->exists($accu->img)) {
+            Storage::disk('public')->delete($accu->img);
+        }
+
         $accu->delete();
 
         return response()->json([

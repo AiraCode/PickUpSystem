@@ -9,7 +9,17 @@ class Accu extends Model
 {
     public $incrementing = false;
 
-    protected $fillable = ['id', 'brand', 'name'];
+    protected $fillable = ['id', 'brand', 'name', 'img'];
+
+    protected $appends = ['img_url'];
+
+    public function getImgUrlAttribute()
+    {
+        if ($this->img) {
+            return asset('storage/' . $this->img);
+        }
+        return null;
+    }
 
     public function cities(): BelongsToMany
     {

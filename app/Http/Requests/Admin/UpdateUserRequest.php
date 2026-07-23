@@ -4,7 +4,7 @@ namespace App\Http\Requests\Admin;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class UpdateAccuRequest extends FormRequest
+class UpdateUserRequest extends FormRequest
 {
     public function authorize(): bool
     {
@@ -14,9 +14,8 @@ class UpdateAccuRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'brand' => 'sometimes|required|string|max:45',
-            'name' => 'sometimes|required|string|max:45',
-            'img' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'name' => 'sometimes|required|string|max:45|unique:users,name,' . $this->route('user'),
+            'password' => 'nullable|string|min:8',
         ];
     }
 }

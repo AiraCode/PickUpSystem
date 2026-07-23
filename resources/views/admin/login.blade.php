@@ -97,8 +97,8 @@
             <div class="error-message" id="login-error"></div>
             <form id="login-form">
                 <div class="form-group">
-                    <label class="form-label" for="email">Email</label>
-                    <input type="email" id="email" class="form-input" placeholder="admin@imligroup.com" required>
+                    <label class="form-label" for="name">Nama Admin</label>
+                    <input type="text" id="name" class="form-input" placeholder="Misal: Budi" required>
                 </div>
                 <div class="form-group">
                     <label class="form-label" for="password">Password</label>

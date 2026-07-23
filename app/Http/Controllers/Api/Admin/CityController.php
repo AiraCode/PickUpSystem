@@ -22,7 +22,9 @@ class CityController extends Controller
 
     public function store(StoreCityRequest $request): JsonResponse
     {
-        $city = City::create($request->validated());
+        $data = $request->validated();
+        $data['id'] = (City::max('id') ?? 0) + 1;
+        $city = City::create($data);
 
         return response()->json([
             'message' => 'Kota berhasil ditambahkan',
