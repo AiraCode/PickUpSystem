@@ -304,13 +304,13 @@ select:focus-visible {
     transition: all 0.3s ease;
 }
 
-.admin-sidebar.collapsed{
-    width:80px;
-    padding:24px 8px 18px;
+.admin-sidebar.collapsed {
+    width: 80px;
+    padding: 24px 8px 18px;
 }
 
-.admin-sidebar.collapsed ~ .admin-main{
-    margin-left:80px;
+.admin-sidebar.collapsed ~ .admin-main {
+    margin-left: 80px;
 }
 
 .admin-sidebar.collapsed .admin-brand__copy,
@@ -617,6 +617,51 @@ select:focus-visible {
     stroke: var(--brand-blue);
 }
 
+/* ===============================
+   DASHBOARD LAYOUT
+=================================*/
+
+.admin-dashboard{
+    display:grid;
+    grid-template-columns:minmax(0,1fr) 380px;
+    gap:24px;
+    align-items:stretch;
+    margin-bottom:24px;
+}
+
+.admin-dashboard__left{
+    display:flex;
+    flex-direction:column;
+    gap:24px;
+}
+
+.admin-dashboard__right{
+    display:flex;
+}
+
+.admin-dashboard__right .admin-panel{
+    width:100%;
+    height:100%;
+}
+
+.admin-chart-panel{
+    min-height:330px;
+}
+
+.admin-table-panel{
+    flex:1;
+}
+
+.admin-activity-panel{
+    display:flex;
+    flex-direction:column;
+}
+
+#activity-list-container{
+    flex:1;
+    overflow-y:auto;
+}
+
 .admin-profile-menu {
     background: #fff;
     border: 1px solid var(--line);
@@ -811,20 +856,6 @@ select:focus-visible {
     display: block;
     font-size: 10px;
     margin-top: 9px;
-}
-
-.admin-dashboard-grid {
-    display: grid;
-    gap: 18px;
-}
-
-.admin-dashboard-grid--main,
-.admin-dashboard-grid--bottom {
-    grid-template-columns: minmax(0, 1.6fr) minmax(320px, 0.9fr);
-}
-
-.admin-dashboard-grid--main {
-    margin-bottom: 18px;
 }
 
 .admin-panel {
@@ -1187,6 +1218,8 @@ select:focus-visible {
     display: none;
 }
 
+
+
 @media (max-width: 1180px) {
     .admin-topbar {
         padding: 0 28px;
@@ -1230,9 +1263,16 @@ select:focus-visible {
         grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 
-    .admin-dashboard-grid--main,
-    .admin-dashboard-grid--bottom {
-        grid-template-columns: minmax(0, 1fr);
+    .admin-dashboard {
+        grid-template-columns: 1fr;
+    }
+
+    .admin-dashboard__right {
+        order: 2;
+    }
+
+    .admin-main {
+        margin-left: 0;
     }
 
     .admin-footer {
