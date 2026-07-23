@@ -1057,6 +1057,13 @@ select:focus-visible {
     color: var(--brand-red);
 }
 
+.admin-footer__links {
+    margin-top: 8px; /* atur sesuai kebutuhan */
+}
+
+.admin-footer__links a {
+    margin-right: 20px;
+}
 .admin-sidebar-overlay {
     display: none;
 }
