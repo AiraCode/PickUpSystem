@@ -3,7 +3,24 @@
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
-    return redirect('/admin/dashboard');
+    return view('user.landing');
+});
+Route::get('/user', function () {
+    return redirect('/');
+});
+
+Route::get('/identity', function () {
+    return view('user.identity');
+});
+Route::get('/user/identitas', function () {
+    return view('user.identity');
+});
+
+Route::get('/receipt', function () {
+    return view('user.receipt');
+});
+Route::get('/user/receipt', function () {
+    return view('user.receipt');
 });
 
 Route::get('/admin/login', function () {

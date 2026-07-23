@@ -13,12 +13,22 @@ use App\Http\Controllers\Api\Admin\WarehouseController;
 use App\Http\Controllers\Api\Admin\ShipmentController;
 use App\Http\Controllers\Api\Admin\DashboardStatsController;
 use App\Http\Controllers\Api\Admin\UserController;
+use App\Http\Controllers\Api\Public\CustomerPublicController;
 use Illuminate\Support\Facades\Route;
 
+// Public Customer API Endpoints (Tanpa Login)
+Route::prefix('public')->group(function () {
+    Route::get('cities', [CustomerPublicController::class, 'getCities']);
+    Route::get('cities/{cityId}/accus', [CustomerPublicController::class, 'getAccuPrices']);
+    Route::get('banks', [CustomerPublicController::class, 'getBanks']);
+    Route::post('orders', [CustomerPublicController::class, 'createOrder']);
+    Route::get('orders/{id}', [CustomerPublicController::class, 'getOrderReceipt']);
+});
 
+// Admin Auth & Protected API Endpoints
 Route::post('/login', [AuthController::class, 'login']);
-Route::middleware('auth:sanctum')->group(function () {
 
+Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::prefix('admin')->group(function () {
         Route::get('dashboard-stats', [DashboardStatsController::class, 'index']);
@@ -35,7 +45,6 @@ Route::middleware('auth:sanctum')->group(function () {
 
         Route::apiResource('customers', CustomerController::class)->only(['index', 'show']);
         Route::put('customers/{id}/flag', [CustomerController::class, 'updateFlag']);
-        // Route::post('customers/verify-ktp', [CustomerController::class, 'verifyKtp']);
         Route::apiResource('orders', OrderController::class)->only(['index', 'show']);
         Route::put('orders/{id}/status', [OrderController::class, 'updateStatus']);
         Route::apiResource('transfers', TransferController::class)->only(['index', 'show', 'update']);
