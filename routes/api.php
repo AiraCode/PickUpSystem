@@ -1,52 +1,77 @@
 <?php
 
 use App\Http\Controllers\Api\AuthController;
-use App\Http\Controllers\Api\Admin\AccuController;
-use App\Http\Controllers\Api\Admin\BankController;
+
+// Admin API Controllers
+use App\Http\Controllers\Api\Admin\AccuController as AdminAccuController;
+use App\Http\Controllers\Api\Admin\BankController as AdminBankController;
 use App\Http\Controllers\Api\Admin\CityAccuPriceController;
-use App\Http\Controllers\Api\Admin\CityController;
-use App\Http\Controllers\Api\Admin\ReceiptController;
-use App\Http\Controllers\Api\Admin\CustomerController;
-use App\Http\Controllers\Api\Admin\OrderController;
-use App\Http\Controllers\Api\Admin\TransferController;
-use App\Http\Controllers\Api\Admin\WarehouseController;
-use App\Http\Controllers\Api\Admin\ShipmentController;
+use App\Http\Controllers\Api\Admin\CityController as AdminCityController;
+use App\Http\Controllers\Api\Admin\CustomerController as AdminCustomerController;
 use App\Http\Controllers\Api\Admin\DashboardStatsController;
+use App\Http\Controllers\Api\Admin\OrderController as AdminOrderController;
+use App\Http\Controllers\Api\Admin\ReceiptController as AdminReceiptController;
+use App\Http\Controllers\Api\Admin\ShipmentController;
+use App\Http\Controllers\Api\Admin\TransferController;
 use App\Http\Controllers\Api\Admin\UserController;
-use App\Http\Controllers\Api\Public\CustomerPublicController;
+use App\Http\Controllers\Api\Admin\WarehouseController;
+
+// Customer API Controllers
+use App\Http\Controllers\Api\Customer\AccuController as CustomerAccuController;
+use App\Http\Controllers\Api\Customer\BankController as CustomerBankController;
+use App\Http\Controllers\Api\Customer\CityController as CustomerCityController;
+use App\Http\Controllers\Api\Customer\OrderController as CustomerOrderController;
+use App\Http\Controllers\Api\Customer\ReceiptController as CustomerReceiptController;
+use App\Http\Controllers\Api\Customer\StorageController as CustomerStorageController;
+
 use Illuminate\Support\Facades\Route;
 
-// Public Customer API Endpoints (Tanpa Login)
-Route::prefix('public')->group(function () {
-    Route::get('cities', [CustomerPublicController::class, 'getCities']);
-    Route::get('cities/{cityId}/accus', [CustomerPublicController::class, 'getAccuPrices']);
-    Route::get('banks', [CustomerPublicController::class, 'getBanks']);
-    Route::post('orders', [CustomerPublicController::class, 'createOrder']);
-    Route::get('orders/{id}', [CustomerPublicController::class, 'getOrderReceipt']);
+/*
+|--------------------------------------------------------------------------
+| CUSTOMER API ROUTES (Public - Tanpa Login)
+| Prefix: /api/customer/
+|--------------------------------------------------------------------------
+*/
+
+Route::prefix('customer')->group(function () {
+    Route::get('cities', [CustomerCityController::class, 'index']);
+    Route::get('cities/{cityId}/accus', [CustomerAccuController::class, 'getByCity']);
+    Route::get('storages', [CustomerStorageController::class, 'index']);
+    Route::get('banks', [CustomerBankController::class, 'index']);
+    Route::post('orders', [CustomerOrderController::class, 'store']);
+    Route::get('orders/{id}', [CustomerOrderController::class, 'show']);
+    Route::get('receipts/{orderId}', [CustomerReceiptController::class, 'show']);
 });
 
-// Admin Auth & Protected API Endpoints
+/*
+|--------------------------------------------------------------------------
+| ADMIN API ROUTES (Protected - Perlu Login Sanctum)
+| Prefix: /api/admin/
+|--------------------------------------------------------------------------
+*/
 Route::post('/login', [AuthController::class, 'login']);
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
+    Route::put('/admin/profile', [AuthController::class, 'updateProfile']);
+
     Route::prefix('admin')->group(function () {
         Route::get('dashboard-stats', [DashboardStatsController::class, 'index']);
         Route::apiResource('users', UserController::class);
 
-        Route::apiResource('cities', CityController::class);
-        Route::apiResource('accus', AccuController::class);
+        Route::apiResource('cities', AdminCityController::class);
+        Route::apiResource('accus', AdminAccuController::class);
         Route::get('cities/{cityId}/accus', [CityAccuPriceController::class, 'index']);
         Route::post('cities/{cityId}/accus', [CityAccuPriceController::class, 'store']);
         Route::put('cities/{cityId}/accus/{accuId}', [CityAccuPriceController::class, 'update']);
         Route::delete('cities/{cityId}/accus/{accuId}', [CityAccuPriceController::class, 'destroy']);
-        Route::apiResource('banks', BankController::class)->except(['show']);
-        Route::apiResource('receipts', ReceiptController::class);
+        Route::apiResource('banks', AdminBankController::class)->except(['show']);
+        Route::apiResource('receipts', AdminReceiptController::class);
 
-        Route::apiResource('customers', CustomerController::class)->only(['index', 'show']);
-        Route::put('customers/{id}/flag', [CustomerController::class, 'updateFlag']);
-        Route::apiResource('orders', OrderController::class)->only(['index', 'show']);
-        Route::put('orders/{id}/status', [OrderController::class, 'updateStatus']);
+        Route::apiResource('customers', AdminCustomerController::class)->only(['index', 'show']);
+        Route::put('customers/{id}/flag', [AdminCustomerController::class, 'updateFlag']);
+        Route::apiResource('orders', AdminOrderController::class)->only(['index', 'show']);
+        Route::put('orders/{id}/status', [AdminOrderController::class, 'updateStatus']);
         Route::apiResource('transfers', TransferController::class)->only(['index', 'show', 'update']);
         Route::apiResource('storages', WarehouseController::class);
         Route::apiResource('shipments', ShipmentController::class);
