@@ -16,6 +16,7 @@ use App\Http\Controllers\Api\Admin\UserController;
 use App\Http\Controllers\Api\Public\CustomerPublicController;
 use Illuminate\Support\Facades\Route;
 
+// Public Customer API Endpoints (Tanpa Login)
 Route::prefix('public')->group(function () {
     Route::get('cities', [CustomerPublicController::class, 'getCities']);
     Route::get('cities/{cityId}/accus', [CustomerPublicController::class, 'getAccuPrices']);

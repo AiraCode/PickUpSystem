@@ -255,6 +255,13 @@ body.user-shell textarea:focus-visible {
     min-height: 760px;
     overflow: hidden;
 }
+.user-hero {
+    background: var(--user-ink);
+    color: var(--user-white);
+    min-height: 760px;
+    overflow: hidden;
+    position: relative;
+}
 .user-hero__media,
 .user-hero__image,
 .user-hero__overlay {
@@ -1891,6 +1898,56 @@ body.user-shell textarea:focus-visible {
     .user-checkout-card,
     .user-form-layout .user-flow-summary {
         order: -1;
+    }
+}
+@media (max-width: 940px) {
+    .user-menu-toggle {
+        display: inline-flex;
+        margin-left: auto;
+        margin-right: 12px;
+    }
+    .user-nav {
+        background: var(--user-white);
+        border: 1px solid var(--user-line);
+        border-radius: 10px;
+        box-shadow: 0 14px 30px rgba(17, 19, 24, 0.12);
+        color: var(--user-ink);
+        display: none;
+        flex-direction: column;
+        gap: 0;
+        left: 20px;
+        margin: 0;
+        padding: 8px;
+        position: absolute;
+        right: 20px;
+        top: 72px;
+    }
+    .user-nav.is-open {
+        display: flex;
+    }
+    .user-nav a {
+        padding: 11px 10px;
+    }
+    .user-nav a::after {
+        display: none;
+    }
+    .user-header__actions {
+        gap: 10px;
+    }
+    .user-language {
+        display: none;
+    }
+    .user-catalog-layout,
+    .user-form-layout {
+        grid-template-columns: minmax(0, 1fr);
+    }
+    .user-checkout-card,
+    .user-flow-summary {
+        position: static;
+    }
+    .user-checkout-card,
+    .user-form-layout .user-flow-summary {
+        order: 2;
     }
 }
 @media (max-width: 720px) {

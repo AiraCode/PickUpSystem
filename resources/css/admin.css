@@ -1363,11 +1363,11 @@ select:focus-visible {
     .admin-footer {
         flex-direction: column;
         gap: 15px;
+    }
 
-        .admin-footer__contact {
-            justify-content: flex-start;
-            text-align: left;
-        }
+    .admin-footer__contact {
+        justify-content: flex-start;
+        text-align: left;
     }
 
     @media (max-width: 390px) {
