@@ -8,7 +8,7 @@
             <!-- Hero Section -->
             <section class="user-hero">
                 <div class="user-hero__media" aria-label="Area gambar hero">
-                    <img src="https://images.unsplash.com/photo-1475332658283-d79d63a83da6?w=1920&h=1080&fit=crop&auto=format"
+                    <img src="https://images.unsplash.com/photo-1676337167629-d896b3ed5724?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
                         alt="Gambar pabrik dan gudang Indoprima belum tersedia (not found)" class="user-hero__image">
                     <span class="user-hero__overlay" aria-hidden="true"></span>
                 </div>
