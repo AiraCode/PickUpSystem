@@ -21,7 +21,6 @@ return new class extends Migration
             $table->integer('id')->primary();
             $table->string('brand', 45);
             $table->string('name', 45);
-            $table->string('img', 255)->nullable();
             $table->timestamp('created_at');
             $table->timestamp('updated_at');
         });
