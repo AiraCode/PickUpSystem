@@ -19,7 +19,7 @@
     </head>
     <body class="bg-gray-100 flex items-center justify-center min-h-screen">
     <h1 class="text-5xl font-bold text-blue-600">
-        Halo Indoprima 🚀
+        PT. Indra Eramulti Logam Industri (IMLI) 🚀
     </h1>
     </body>
 </html>
