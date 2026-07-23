@@ -36,14 +36,103 @@ document.addEventListener('DOMContentLoaded', () => {
         return `<span style="padding:4px 10px; border-radius:20px; font-size:11px; font-weight:600; background:${c.bg}; color:${c.color}; text-transform:uppercase;">${status}</span>`;
     };
 
+    // Logout Modal Konfirmasi dengan Password
     const btnLogout = document.getElementById('btn-logout');
-    if (btnLogout) {
-        btnLogout.addEventListener('click', async (e) => {
+    const modalLogout = document.getElementById('modal-logout-confirm');
+    const formLogout = document.getElementById('form-logout-confirm');
+    const logoutError = document.getElementById('logout-error');
+
+    if (btnLogout && modalLogout) {
+        btnLogout.addEventListener('click', (e) => {
             e.preventDefault();
-            await fetch('/api/logout', { method: 'POST', headers: { 'Authorization': `Bearer ${token}` } });
-            localStorage.removeItem('admin_token');
-            localStorage.removeItem('admin_user');
-            window.location.href = '/admin/login';
+            if (profileMenu) profileMenu.hidden = true;
+            document.getElementById('logout-password').value = '';
+            if (logoutError) logoutError.style.display = 'none';
+            modalLogout.style.display = 'flex';
+        });
+    }
+
+    if (formLogout) {
+        formLogout.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const password = document.getElementById('logout-password').value;
+            logoutError.style.display = 'none';
+
+            try {
+                const res = await fetch('/api/logout', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ password })
+                });
+
+                const data = await res.json();
+
+                if (res.ok) {
+                    localStorage.removeItem('admin_token');
+                    localStorage.removeItem('admin_user');
+                    window.location.href = '/admin/login';
+                } else {
+                    logoutError.innerText = data.message || (data.errors?.password ? data.errors.password[0] : 'Password salah.');
+                    logoutError.style.display = 'block';
+                }
+            } catch (err) {
+                logoutError.innerText = 'Terjadi kesalahan sistem';
+                logoutError.style.display = 'block';
+            }
+        });
+    }
+
+    // Edit Profile Modal Logic
+    const btnEditProfile = document.getElementById('btn-edit-profile');
+    const modalEditProfile = document.getElementById('modal-edit-profile');
+    const formEditProfile = document.getElementById('form-edit-profile');
+    const profileError = document.getElementById('profile-error');
+
+    if (btnEditProfile && modalEditProfile) {
+        btnEditProfile.addEventListener('click', (e) => {
+            e.preventDefault();
+            if (profileMenu) profileMenu.hidden = true;
+            const currentUser = JSON.parse(localStorage.getItem('admin_user') || '{}');
+            document.getElementById('profile-name').value = currentUser.name || '';
+            document.getElementById('profile-current-password').value = '';
+            document.getElementById('profile-new-password').value = '';
+            if (profileError) profileError.style.display = 'none';
+            modalEditProfile.style.display = 'flex';
+        });
+    }
+
+    if (formEditProfile) {
+        formEditProfile.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            profileError.style.display = 'none';
+
+            const payload = {
+                name: document.getElementById('profile-name').value,
+                current_password: document.getElementById('profile-current-password').value,
+                new_password: document.getElementById('profile-new-password').value,
+            };
+
+            const res = await fetchApi('/profile', {
+                method: 'PUT',
+                body: JSON.stringify(payload),
+            });
+
+            if (res.user) {
+                localStorage.setItem('admin_user', JSON.stringify(res.user));
+                if (document.getElementById('auth-user-name')) {
+                    document.getElementById('auth-user-name').innerText = res.user.name;
+                    document.getElementById('auth-user-initial').innerText = res.user.name.charAt(0).toUpperCase();
+                }
+                modalEditProfile.style.display = 'none';
+                alert('Profil berhasil diperbarui!');
+            } else {
+                profileError.innerText = res.message || 'Gagal memperbarui profil.';
+                profileError.style.display = 'block';
+            }
         });
     }
 

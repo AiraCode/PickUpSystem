@@ -16,7 +16,7 @@
         <aside class="admin-sidebar" id="admin-sidebar" aria-label="Navigasi utama admin">
             <div class="admin-sidebar__head">
                 <a href="{{ url('/admin/dashboard') }}" class="admin-brand" aria-label="Pick Up System admin">
-                    <span class="admin-brand__mark" role="img" aria-label="Indoprima Group logo not found">
+                    <span class="admin-brand__mark" role="img" aria-label="Indoprima Group logo">
                         <span class="admin-brand__mark-red"></span>
                         <span class="admin-brand__mark-blue"></span>
                     </span>
@@ -69,14 +69,6 @@
                     </svg>
                     <span>Gudang &amp; Lokasi</span>
                 </a>
-                {{-- <a href="{{ url('/admin/pengguna') }}"
-                    class="admin-nav__link {{ request()->is('admin/pengguna') ? 'is-active' : '' }}" data-nav-link>
-                    <svg viewBox="0 0 24 24" aria-hidden="true">
-                        <circle cx="12" cy="8" r="3.5" />
-                        <path d="M5 20c.8-3.2 3.1-5 7-5s6.2 1.8 7 5" />
-                    </svg>
-                    <span>Pengguna</span>
-                </a> --}}
                 <a href="{{ url('/admin/laporan') }}"
                     class="admin-nav__link {{ request()->is('admin/laporan') ? 'is-active' : '' }}" data-nav-link>
                     <svg viewBox="0 0 24 24" aria-hidden="true">
@@ -117,33 +109,15 @@
                 </div>
 
                 <div class="admin-topbar__right">
-                    <!--
-                        <label class="admin-search" for="admin-search">
-                            <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.8" cy="10.8" r="6.3" /><path d="m16 16 4.3 4.3" /></svg>
-                            <input id="admin-search" type="search" placeholder="Cari di dashboard" autocomplete="off">
-                            <span class="admin-search__shortcut">⌘ K</span>
-                        </label>
-                        -->
-                    {{-- <button type="button" class="topbar-icon-button" aria-label="Notifikasi">
-                        <svg viewBox="0 0 24 24" aria-hidden="true">
-                            <path d="M6.5 16.5h11l-1.2-1.8V10a4.3 4.3 0 0 0-8.6 0v4.7z" />
-                            <path d="M10 19h4" />
-                        </svg>
-                        <span class="topbar-icon-button__dot"></span>
-                    </button> --}}
-                    {{-- <span class="topbar-divider" aria-hidden="true"></span> --}}
                     <button type="button" class="admin-profile" id="admin-profile-btn" aria-expanded="false">
                         <span class="admin-profile__avatar" id="auth-user-initial">A</span>
                         <span class="admin-profile__copy">
                             <strong id="auth-user-name">Admin</strong>
                             <small>Administrator</small>
                         </span>
-                        {{-- <svg class="admin-profile__chevron" viewBox="0 0 24 24" aria-hidden="true">
-                            <path d="m7 10 5 5 5-5" />
-                        </svg> --}}
                     </button>
                     <div class="admin-profile-menu" id="admin-profile-menu" hidden>
-                        <a href="#">Profil Saya</a>
+                        <a href="#" id="btn-edit-profile">Edit Profil</a>
                         <a href="#" id="btn-logout">Keluar</a>
                     </div>
                 </div>
@@ -154,6 +128,51 @@
             </main>
         </div>
     </div>
+
+    <!-- Modal Edit Profil Admin -->
+    <div id="modal-edit-profile" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,.45); z-index:110; align-items:center; justify-content:center;">
+        <div class="admin-panel" style="width:420px;">
+            <div class="admin-panel__head"><h2>Edit Profil Admin</h2></div>
+            <form id="form-edit-profile">
+                <div style="margin-bottom:14px;">
+                    <label style="display:block; font-size:12px; font-weight:600; margin-bottom:6px; color:#4a4f59;">Nama Admin</label>
+                    <input type="text" id="profile-name" class="admin-select" style="width:100%; padding:8px 10px; border-radius:6px;" required>
+                </div>
+                <div style="margin-bottom:14px;">
+                    <label style="display:block; font-size:12px; font-weight:600; margin-bottom:6px; color:#4a4f59;">Password Saat Ini (Wajib jika ganti password)</label>
+                    <input type="password" id="profile-current-password" class="admin-select" style="width:100%; padding:8px 10px; border-radius:6px;" placeholder="Password lama">
+                </div>
+                <div style="margin-bottom:18px;">
+                    <label style="display:block; font-size:12px; font-weight:600; margin-bottom:6px; color:#4a4f59;">Password Baru (Opsional)</label>
+                    <input type="password" id="profile-new-password" class="admin-select" style="width:100%; padding:8px 10px; border-radius:6px;" placeholder="Kosongkan jika tidak diubah">
+                </div>
+                <div id="profile-error" style="display:none; color:#ba1b2b; font-size:12px; margin-bottom:14px;"></div>
+                <div style="display:flex; gap:10px; justify-content:flex-end;">
+                    <button type="button" class="admin-button admin-button--secondary" onclick="document.getElementById('modal-edit-profile').style.display='none'">Batal</button>
+                    <button type="submit" class="admin-button admin-button--primary">Simpan Profil</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal Konfirmasi Logout dengan Password -->
+    <div id="modal-logout-confirm" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,.45); z-index:110; align-items:center; justify-content:center;">
+        <div class="admin-panel" style="width:400px;">
+            <div class="admin-panel__head"><h2>Konfirmasi Keluar</h2></div>
+            <form id="form-logout-confirm">
+                <p style="font-size:13px; color:#4a4f59; margin-bottom:14px;">Masukkan password Anda untuk mengonfirmasi keluar dari sistem.</p>
+                <div style="margin-bottom:16px;">
+                    <label style="display:block; font-size:12px; font-weight:600; margin-bottom:6px; color:#4a4f59;">Password Admin</label>
+                    <input type="password" id="logout-password" class="admin-select" style="width:100%; padding:8px 10px; border-radius:6px;" placeholder="Masukkan password Anda" required>
+                </div>
+                <div id="logout-error" style="display:none; color:#ba1b2b; font-size:12px; margin-bottom:14px;"></div>
+                <div style="display:flex; gap:10px; justify-content:flex-end;">
+                    <button type="button" class="admin-button admin-button--secondary" onclick="document.getElementById('modal-logout-confirm').style.display='none'">Batal</button>
+                    <button type="submit" class="admin-button admin-button--primary" style="background:#ba1b2b;">Keluar</button>
+                </div>
+            </form>
+        </div>
+    </div>
 </body>
 <script>
     const toggle = document.getElementById('sidebarToggle');
@@ -162,16 +181,13 @@
 
     function updateSidebar(collapsed) {
         sidebar.classList.toggle('collapsed', collapsed);
-
         if (footer) {
             footer.classList.toggle('expanded', collapsed);
         }
-
         localStorage.setItem('sidebarCollapsed', collapsed);
     }
 
     const savedState = localStorage.getItem('sidebarCollapsed') === 'true';
-
     updateSidebar(savedState);
 
     toggle.addEventListener('click', () => {
