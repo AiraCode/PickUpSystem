@@ -124,27 +124,26 @@
                             <span class="admin-search__shortcut">⌘ K</span>
                         </label>
                         -->
-                    <button type="button" class="topbar-icon-button" aria-label="Notifikasi">
+                    {{-- <button type="button" class="topbar-icon-button" aria-label="Notifikasi">
                         <svg viewBox="0 0 24 24" aria-hidden="true">
                             <path d="M6.5 16.5h11l-1.2-1.8V10a4.3 4.3 0 0 0-8.6 0v4.7z" />
                             <path d="M10 19h4" />
                         </svg>
                         <span class="topbar-icon-button__dot"></span>
-                    </button>
-                    <span class="topbar-divider" aria-hidden="true"></span>
+                    </button> --}}
+                    {{-- <span class="topbar-divider" aria-hidden="true"></span> --}}
                     <button type="button" class="admin-profile" id="admin-profile-btn" aria-expanded="false">
                         <span class="admin-profile__avatar" id="auth-user-initial">A</span>
                         <span class="admin-profile__copy">
                             <strong id="auth-user-name">Admin</strong>
                             <small>Administrator</small>
                         </span>
-                        <svg class="admin-profile__chevron" viewBox="0 0 24 24" aria-hidden="true">
+                        {{-- <svg class="admin-profile__chevron" viewBox="0 0 24 24" aria-hidden="true">
                             <path d="m7 10 5 5 5-5" />
-                        </svg>
+                        </svg> --}}
                     </button>
                     <div class="admin-profile-menu" id="admin-profile-menu" hidden>
                         <a href="#">Profil Saya</a>
-                        <a href="#">Pengaturan</a>
                         <a href="#" id="btn-logout">Keluar</a>
                     </div>
                 </div>

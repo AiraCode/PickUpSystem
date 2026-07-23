@@ -9,20 +9,6 @@
             <h1>Dashboard</h1>
             <p>Kelola aktivitas Pick Up System dari satu ruang kerja terpusat.</p>
         </div>
-        <div class="admin-page-heading__actions">
-            <button type="button" class="admin-button admin-button--secondary">
-                <svg viewBox="0 0 24 24" aria-hidden="true">
-                    <path d="M5 4.5h14v15H5zM8 8h8M8 12h8M8 16h5" />
-                </svg>
-                Export laporan
-            </button>
-            <button type="button" class="admin-button admin-button--primary">
-                <svg viewBox="0 0 24 24" aria-hidden="true">
-                    <path d="M12 5v14M5 12h14" />
-                </svg>
-                Tambah data
-            </button>
-        </div>
     </div>
 
     <section class="admin-stat-grid" id="dashboard-stats-container">
