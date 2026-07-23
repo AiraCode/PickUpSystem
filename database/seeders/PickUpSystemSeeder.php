@@ -19,10 +19,15 @@ class PickUpSystemSeeder extends Seeder
             ['id' => 2, 'name' => 'Surabaya', 'created_at' => $now, 'updated_at' => $now],
         ]);
 
+        DB::table('brands')->insert([
+            ['id' => 1, 'name' => 'GS', 'created_at' => $now, 'updated_at' => $now],
+            ['id' => 2, 'name' => 'Yuasa', 'created_at' => $now, 'updated_at' => $now],
+        ]);
+
         // Dummy Accu
         DB::table('accus')->insert([
-            ['id' => 1, 'brand' => 'GS Astra', 'name' => 'NS40Z', 'created_at' => $now, 'updated_at' => $now],
-            ['id' => 2, 'brand' => 'Yuasa', 'name' => 'NS60', 'created_at' => $now, 'updated_at' => $now],
+            ['id' => 1, 'name' => 'NS40Z', 'brands_id' => 1, 'created_at' => $now, 'updated_at' => $now],
+            ['id' => 2, 'name' => 'NS60', 'brands_id' => 2, 'created_at' => $now, 'updated_at' => $now],
         ]);
 
         // Dummy User
@@ -139,5 +144,7 @@ class PickUpSystemSeeder extends Seeder
                 'updated_at' => $now
             ]
         ]);
+
+        
     }
 }
