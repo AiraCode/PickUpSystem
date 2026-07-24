@@ -17,7 +17,7 @@
                 <h2>Area Layanan (Kota)</h2>
             </div>
             <button class="admin-button admin-button--primary"
-                onclick="document.getElementById('modal-add-city').style.display='flex'">Tambah Kota</button>
+                onclick="openAddCityModal()">Tambah Kota</button>
         </div>
         <div class="admin-table-wrap">
             <table class="admin-table">
@@ -44,7 +44,7 @@
                 <h2>Daftar Jenis Aki</h2>
             </div>
             <button class="admin-button admin-button--primary"
-                onclick="document.getElementById('modal-add-accu').style.display='flex'">Tambah Aki</button>
+                onclick="openAddAccuModal()">Tambah Aki</button>
         </div>
         <div class="admin-table-wrap">
             <table class="admin-table">

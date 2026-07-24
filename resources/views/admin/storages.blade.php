@@ -17,7 +17,7 @@
 <article class="admin-panel admin-table-panel">
     <div class="admin-panel__head">
         <div><h2>Daftar Gudang</h2></div>
-        <button class="admin-button admin-button--primary" onclick="document.getElementById('modal-add-storage').style.display='flex'; setTimeout(()=>{ if(window.addMap) window.addMap.invalidateSize(); }, 200);">Tambah Gudang</button>
+        <button class="admin-button admin-button--primary" onclick="openAddStorageModal()">Tambah Gudang</button>
     </div>
     <div class="admin-table-wrap">
         <table class="admin-table">

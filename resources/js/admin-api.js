@@ -688,6 +688,18 @@ document.addEventListener("DOMContentLoaded", () => {
             document.getElementById("modal-set-price").style.display = "flex";
         };
 
+        window.openAddCityModal = () => {
+            loadCities();
+            loadTrashedCities();
+            document.getElementById("modal-add-city").style.display = "flex";
+        };
+
+        window.openAddAccuModal = () => {
+            loadAccus();
+            loadTrashedAccus();
+            document.getElementById("modal-add-accu").style.display = "flex";
+        };
+
         window.deleteCity = (id) => {
             showConfirm(
                 "Hapus Kota",
@@ -696,6 +708,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     await fetchApi(`/cities/${id}`, { method: "DELETE" });
                     showToast("Kota berhasil dihapus", "success");
                     loadCities();
+                    loadTrashedCities();
                 },
             );
         };
@@ -708,6 +721,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     await fetchApi(`/accus/${id}`, { method: "DELETE" });
                     showToast("Aki berhasil dihapus", "success");
                     loadAccus();
+                    loadTrashedAccus();
                 },
             );
         };
@@ -722,6 +736,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     });
                     showToast("Harga aki berhasil dihapus", "success");
                     viewCityAccus(activeCityId, activeCityName);
+                    loadTrashedAccus();
                 },
             );
         };
@@ -1074,6 +1089,15 @@ document.addEventListener("DOMContentLoaded", () => {
                     showToast(res.message || "Gagal menyimpan gudang", "error");
                 }
             });
+
+        window.openAddStorageModal = () => {
+            loadStorages();
+            loadTrashedStorages();
+            document.getElementById("modal-add-storage").style.display = "flex";
+            setTimeout(() => {
+                if (window.addMap) window.addMap.invalidateSize();
+            }, 200);
+        };
 
         window.deleteStorage = (id) => {
             document.getElementById("delete-storage-id").value = id;
