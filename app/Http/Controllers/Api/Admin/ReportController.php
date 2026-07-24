@@ -25,7 +25,6 @@ class ReportController extends Controller
 
         $selectedYear = (int)$request->input('year', $availableYears[0]);
 
-        // Monthly revenue for the selected year (Jan - Dec)
         $monthlyRaw = Receipt::selectRaw('MONTH(created_at) as mth, SUM(price_received) as total_revenue, COUNT(id) as total_receipts')
             ->whereYear('created_at', $selectedYear)
             ->groupBy('mth')
@@ -45,7 +44,6 @@ class ReportController extends Controller
             ];
         }
 
-        // Summary Statistics for selected year
         $ordersQuery = Order::whereYear('created_at', $selectedYear);
         $totalOrdersCount = (clone $ordersQuery)->count();
         $completedOrdersCount = (clone $ordersQuery)->where('status', 'completed')->count();
@@ -53,16 +51,15 @@ class ReportController extends Controller
         $processingOrdersCount = (clone $ordersQuery)->where('status', 'processing')->count();
         $cancelledOrdersCount = (clone $ordersQuery)->where('status', 'cancelled')->count();
 
-        $cancellationRate = $totalOrdersCount > 0 
-            ? round(($cancelledOrdersCount / $totalOrdersCount) * 100, 1) 
+        $cancellationRate = $totalOrdersCount > 0
+            ? round(($cancelledOrdersCount / $totalOrdersCount) * 100, 1)
             : 0;
 
         $totalSalesSum = (float)Receipt::whereYear('created_at', $selectedYear)->sum('price_received');
-        $avgTransactionValue = $completedOrdersCount > 0 
-            ? round($totalSalesSum / $completedOrdersCount) 
+        $avgTransactionValue = $completedOrdersCount > 0
+            ? round($totalSalesSum / $completedOrdersCount)
             : 0;
 
-        // Top 5 Accus Sold
         $topAccus = DB::table('accus_has_receipts')
             ->join('receipts', 'accus_has_receipts.receipts_id', '=', 'receipts.id')
             ->join('accus', 'accus_has_receipts.accus_id', '=', 'accus.id')
@@ -74,7 +71,6 @@ class ReportController extends Controller
             ->take(5)
             ->get();
 
-        // Top 5 Cities by Volume
         $topCities = DB::table('orders')
             ->join('cities', 'orders.cities_id', '=', 'cities.id')
             ->whereYear('orders.created_at', $selectedYear)

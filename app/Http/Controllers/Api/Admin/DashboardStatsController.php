@@ -34,7 +34,6 @@ class DashboardStatsController extends Controller
             'receipts' => $recentReceipts,
         ];
 
-        // Period filter for activity chart: 7days, 30days, year
         $period = $request->input('period', '7days');
         $activityChart = [];
 
@@ -73,7 +72,6 @@ class DashboardStatsController extends Controller
                 ];
             }
         } else {
-            // Default 7days
             $rawChart = Order::selectRaw('DATE(created_at) as dt, COUNT(id) as total_orders')
                 ->where('created_at', '>=', Carbon::now()->subDays(6)->startOfDay())
                 ->groupBy('dt')

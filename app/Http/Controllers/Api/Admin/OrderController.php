@@ -12,7 +12,6 @@ class OrderController extends Controller
 {
     public function index(Request $request): JsonResponse
     {
-        // Base filter query for calculating counts according to active filters (excluding status & text search)
         $filterCountsQuery = Order::query();
 
         if ($request->filled('city_id')) {
@@ -47,25 +46,22 @@ class OrderController extends Controller
         $search = $request->input('search');
         $status = $request->input('status');
 
-        // Global search across all statuses if search query is provided
         if (!empty($search)) {
             $query->where(function ($q) use ($search) {
                 $q->where('id', 'like', "%{$search}%")
-                  ->orWhere('pickup_address', 'like', "%{$search}%")
-                  ->orWhereHas('customer', function ($cq) use ($search) {
-                      $cq->where('name', 'like', "%{$search}%")
-                         ->orWhere('phone_number', 'like', "%{$search}%");
-                  })
-                  ->orWhereHas('city', function ($ciq) use ($search) {
-                      $ciq->where('name', 'like', "%{$search}%");
-                  });
+                    ->orWhere('pickup_address', 'like', "%{$search}%")
+                    ->orWhereHas('customer', function ($cq) use ($search) {
+                        $cq->where('name', 'like', "%{$search}%")
+                            ->orWhere('phone_number', 'like', "%{$search}%");
+                    })
+                    ->orWhereHas('city', function ($ciq) use ($search) {
+                        $ciq->where('name', 'like', "%{$search}%");
+                    });
             });
-            // When searching, search across all statuses unless user explicitly clicked a specific status tab
             if (!empty($status) && $status !== 'all') {
                 $query->where('status', $status);
             }
         } else {
-            // Default status tab is 'pending' if no search or status filter specified
             if (empty($status)) {
                 $status = 'pending';
             }
@@ -120,9 +116,9 @@ class OrderController extends Controller
     public function updateStatus(UpdateOrderStatusRequest $request, int $id): JsonResponse
     {
         $order = Order::findOrFail($id);
-        
+
         $updateData = ['status' => $request->status];
-        
+
         if ($request->status === 'cancelled' && $request->filled('cancel_reason')) {
             $updateData['cancel_reason'] = $request->cancel_reason;
         }
