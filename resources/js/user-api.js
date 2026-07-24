@@ -35,6 +35,28 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     };
 
+    // ── CITY COORDINATES FOR MAP CENTERING ──
+    const cityCoordinates = {};
+    // Will be populated from storages/warehouses API data
+    // Fallback coordinates for common cities
+    const fallbackCityCoords = {
+        'surabaya': { lat: -7.2575, lng: 112.7521 },
+        'jakarta': { lat: -6.2088, lng: 106.8456 },
+        'bandung': { lat: -6.9175, lng: 107.6191 },
+        'semarang': { lat: -6.9666, lng: 110.4196 },
+        'yogyakarta': { lat: -7.7956, lng: 110.3695 },
+        'makassar': { lat: -5.1477, lng: 119.4327 },
+        'palu': { lat: -0.9003, lng: 119.8708 },
+        'balikpapan': { lat: -1.2379, lng: 116.8529 },
+        'medan': { lat: 3.5952, lng: 98.6722 },
+        'denpasar': { lat: -8.6705, lng: 115.2126 },
+        'palembang': { lat: -2.9761, lng: 104.7754 },
+        'manado': { lat: 1.4748, lng: 124.8421 },
+    };
+
+    // Track currently selected city name for map centering
+    let selectedCityName = '';
+
     // Clear selections on fresh load of landing page
     if (window.location.pathname === "/user" || window.location.pathname === "/") {
         localStorage.removeItem("pickup_address");
@@ -44,6 +66,7 @@ document.addEventListener("DOMContentLoaded", () => {
         localStorage.removeItem("pickup_long");
         localStorage.removeItem("pickup_cart");
         localStorage.removeItem("pickup_fee");
+        localStorage.removeItem("pickup_delivery_method");
         localStorage.removeItem("nearest_warehouse_name");
         localStorage.removeItem("nearest_warehouse_address");
         localStorage.removeItem("nearest_warehouse_distance");
@@ -91,6 +114,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 e.target.options[e.target.selectedIndex]?.text || "";
             localStorage.setItem("pickup_city_id", cityId);
             localStorage.setItem("pickup_city_name", cityName);
+            selectedCityName = cityName;
 
             // Kolom kota dibawah langsung sesuai dengan kota yang dipilih
             const userCityInput = document.getElementById("user-city-input");
@@ -105,6 +129,98 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
+    // ── DYNAMIC PRODUCT CARD RENDERING ──
+    function renderProductCards(accus) {
+        const batteryList = document.getElementById("user-battery-list");
+        if (!batteryList) return;
+
+        if (!accus || accus.length === 0) {
+            batteryList.innerHTML = `
+                <div style="text-align:center; padding: 40px 20px; color: #64748b;">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:48px;height:48px;margin:0 auto 12px;display:block;opacity:0.4;">
+                        <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+                    </svg>
+                    <strong>Tidak ada aki tersedia untuk kota ini.</strong>
+                    <p style="font-size:13px;">Silakan pilih kota lain atau hubungi kami untuk informasi lebih lanjut.</p>
+                </div>`;
+            return;
+        }
+
+        const formatRupiah = (number) => "Rp " + Number(number).toLocaleString("id-ID");
+
+        batteryList.innerHTML = accus.map(accu => {
+            const beratKg = accu.berat_kering || 0;
+            const tagLabel = beratKg > 5 ? "AKI MOBIL" : "AKI MOTOR";
+            const beratInfo = beratKg > 0 ? ` (${beratKg} kg)` : '';
+
+            return `
+                <div class="user-battery-item" data-product-card data-product-name="${accu.name}" data-product-brand="${accu.brand}" data-product-price="${accu.price}" data-accu-id="${accu.id}">
+                    <div class="user-battery-item__info">
+                        <span class="user-battery-item__tag">${tagLabel}</span>
+                        <h3>${accu.brand} ${accu.name}${beratInfo}</h3>
+                        <p>Kondisi diverifikasi saat penyerahan di gudang.</p>
+                    </div>
+                    <div class="user-battery-item__price">
+                        <span class="user-price-label">Estimasi Harga:</span>
+                        <strong data-product-price-label>${accu.price > 0 ? formatRupiah(accu.price) : 'Harga belum tersedia'}</strong>
+                    </div>
+                    <div class="user-battery-item__actions">
+                        <div class="user-quantity">
+                            <button type="button" data-quantity-minus aria-label="Kurangi jumlah">−</button>
+                            <input type="number" value="1" min="1" max="99" data-quantity aria-label="Jumlah ${accu.name}">
+                            <button type="button" data-quantity-plus aria-label="Tambah jumlah">+</button>
+                        </div>
+                        <button type="button" class="user-add-button" data-add-to-cart>+ Tambahkan ke Keranjang</button>
+                    </div>
+                </div>`;
+        }).join("");
+
+        // Re-bind events on dynamically created cards
+        bindProductCardEvents();
+    }
+
+    function bindProductCardEvents() {
+        document.querySelectorAll("[data-product-card]").forEach((card) => {
+            const quantityInput = card.querySelector("[data-quantity]");
+            const minusButton = card.querySelector("[data-quantity-minus]");
+            const plusButton = card.querySelector("[data-quantity-plus]");
+            const addButton = card.querySelector("[data-add-to-cart]");
+
+            const setQuantity = (value) => {
+                if (quantityInput)
+                    quantityInput.value = Math.min(99, Math.max(1, Number(value) || 1));
+            };
+
+            minusButton?.addEventListener("click", () =>
+                setQuantity(Number(quantityInput?.value) - 1),
+            );
+            plusButton?.addEventListener("click", () =>
+                setQuantity(Number(quantityInput?.value) + 1),
+            );
+
+            addButton?.addEventListener("click", () => {
+                const name = card.dataset.productName || "Aki";
+                const brand = card.dataset.productBrand || "Indoprima";
+                const price = Number(card.dataset.productPrice) || 0;
+                const id = Number(card.getAttribute("data-accu-id")) || 1;
+                const quantity = Math.min(
+                    99,
+                    Math.max(1, Number(quantityInput?.value) || 1),
+                );
+                window.userCart.set(name, { id, name, brand, price, quantity });
+                if (typeof window.renderUserCart === 'function') {
+                    window.renderUserCart();
+                }
+
+                const originalText = addButton.textContent;
+                addButton.textContent = "✓ Ditambahkan";
+                window.setTimeout(() => {
+                    addButton.textContent = originalText;
+                }, 1200);
+            });
+        });
+    }
+
     async function loadCityPrices(cityId) {
         if (!cityId) return;
         const res = await fetchPublicApi(`/cities/${cityId}/accus`);
@@ -112,36 +228,18 @@ document.addEventListener("DOMContentLoaded", () => {
 
         const accus = res.data.accus;
 
-        // 1. Update product cards in the DOM first
-        const productCards = document.querySelectorAll("[data-product-card]");
-        productCards.forEach((card) => {
-            const productName = card.getAttribute("data-product-name")?.toLowerCase();
-            const productBrand = card.getAttribute("data-product-brand")?.toLowerCase();
+        // 1. Render product cards dynamically from API data
+        renderProductCards(accus);
 
-            const match = accus.find((a) =>
-                (a.name && productName && a.name.toLowerCase().includes(productName)) ||
-                (a.brand && productBrand && a.brand.toLowerCase().includes(productBrand))
-            );
-
-            const priceLabel = card.querySelector("[data-product-price-label]");
-            if (match && match.price) {
-                card.setAttribute("data-product-price", match.price);
-                card.setAttribute("data-accu-id", match.id);
-                if (priceLabel) priceLabel.textContent = rupiah(match.price);
-            } else {
-                if (priceLabel) priceLabel.textContent = "Harga belum tersedia";
-            }
-        });
-
-        // 2. Update the items in userCart using the updated card prices
+        // 2. Update cart items with new prices for this city
         if (window.userCart && window.userCart.size > 0) {
             window.userCart.forEach((item, key) => {
-                const matchingCard = document.querySelector(`[data-product-card][data-product-name="${item.name}"]`);
-                if (matchingCard) {
-                    const newPrice = Number(matchingCard.getAttribute("data-product-price"));
-                    if (newPrice) {
-                        item.price = newPrice;
-                    }
+                const matchingAccu = accus.find(a => a.id === item.id || a.name === item.name);
+                if (matchingAccu && matchingAccu.price) {
+                    item.price = matchingAccu.price;
+                } else {
+                    // Item not available in this city - keep old price but flag
+                    // Don't remove - user might switch back
                 }
             });
             if (typeof window.renderUserCart === 'function') {
@@ -245,8 +343,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
             // Delivery method
             const deliverySummary = flowSummary.querySelectorAll(".user-flow-summary__item")[1]?.querySelector("strong");
-            const fee = parseInt(localStorage.getItem("pickup_fee") || "0");
-            const deliveryMethod = fee > 0 ? "Dijemput Kurir" : "Antar ke Gudang";
+            const savedDeliveryMethod = localStorage.getItem("pickup_delivery_method") || 'warehouse';
+            const deliveryMethod = savedDeliveryMethod === 'courier' ? "Dijemput Kurir" : "Antar ke Gudang";
             if (deliverySummary) {
                 deliverySummary.textContent = deliveryMethod;
             }
@@ -318,7 +416,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 id: parseInt(item.id) || 1,
                 quantity: parseInt(item.quantity) || 1
             }));
-            const deliveryMethodVal = localStorage.getItem("pickup_fee") ? "courier" : "pickup";
+            const deliveryMethodVal = localStorage.getItem("pickup_delivery_method") || 'warehouse';
 
             formDataToSubmit = {
                 name: nameVal,
@@ -450,13 +548,17 @@ document.addEventListener("DOMContentLoaded", () => {
                     const totalCost = receipt.price_owed || subtotal;
                     const deliveryCost = totalCost - subtotal;
 
+                    // Use delivery_method from database, not inferred from cost
+                    const orderDeliveryMethod = o.delivery_method || 'warehouse';
+                    const isCourier = orderDeliveryMethod === 'courier';
+
                     if (blockPenyerahan) {
                         const dds = blockPenyerahan.querySelectorAll("dd");
                         if (dds[0])
-                            dds[0].textContent = deliveryCost > 0 ? "Dijemput Kurir Indoprima" : "Antar ke Gudang";
+                            dds[0].textContent = isCourier ? "Dijemput Kurir Indoprima" : "Antar ke Gudang";
                         if (dds[1])
                             dds[1].textContent = o.city ? o.city.name : "-";
-                        if (dds[2]) dds[2].textContent = deliveryCost > 0 ? rupiah(deliveryCost) : "Gratis";
+                        if (dds[2]) dds[2].textContent = (isCourier && deliveryCost > 0) ? rupiah(deliveryCost) : "Gratis";
                         if (dds[3])
                              dds[3].textContent = o.pickup_address_note || "-";
                     }
@@ -561,11 +663,45 @@ document.addEventListener("DOMContentLoaded", () => {
         return R * c;
     }
 
+    // Get coordinates for the currently selected city
+    function getSelectedCityCoords() {
+        const cityName = selectedCityName || localStorage.getItem("pickup_city_name") || localStorage.getItem("pickup_city") || '';
+        const key = cityName.toLowerCase().trim();
+        
+        // First try stored city coordinates from warehouses
+        if (cityCoordinates[key]) {
+            return cityCoordinates[key];
+        }
+        
+        // Then try fallback coordinates
+        if (fallbackCityCoords[key]) {
+            return fallbackCityCoords[key];
+        }
+        
+        // Default to Surabaya
+        return { lat: -7.2575, lng: 112.7521 };
+    }
+
     // Fetch warehouses to use in distance calculation
     async function loadWarehouses() {
         const res = await fetchPublicApi("/storages");
         if (res.data) {
             warehousesList = res.data;
+            
+            // Build city coordinates from warehouse locations
+            warehousesList.forEach(w => {
+                const cityName = (w.name || '').toLowerCase();
+                // Extract city name from warehouse name (e.g. "Gudang Surabaya Rungkut" -> "surabaya")
+                const cityWords = cityName.split(/\s+/);
+                cityWords.forEach(word => {
+                    if (word.length > 3 && word !== 'gudang') {
+                        if (!cityCoordinates[word]) {
+                            cityCoordinates[word] = { lat: parseFloat(w.lat), lng: parseFloat(w.long) };
+                        }
+                    }
+                });
+            });
+            
             if (userLat && userLng) {
                 findAndDisplayNearestWarehouse();
             }
@@ -634,11 +770,24 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
-    // Monitor delivery method change to recalculate fee
+    // Monitor delivery method change to save to localStorage and recalculate fee
     document.querySelectorAll('input[name="delivery_method"]').forEach(radio => {
         radio.addEventListener("change", () => {
+            // Save delivery method to localStorage explicitly
+            const selectedMethod = document.querySelector('input[name="delivery_method"]:checked')?.value || 'warehouse';
+            localStorage.setItem("pickup_delivery_method", selectedMethod);
+            
             if (userLat && userLng) {
                 findAndDisplayNearestWarehouse();
+            } else {
+                // Even without coordinates, update fee display
+                const pickupLabel = document.getElementById("user-pickup-fee-label") || document.querySelector("[data-cart-pickup]");
+                if (selectedMethod === 'courier') {
+                    if (pickupLabel) pickupLabel.textContent = 'Dihitung setelah pilih lokasi';
+                } else {
+                    localStorage.removeItem("pickup_fee");
+                    if (pickupLabel) pickupLabel.textContent = 'Gratis';
+                }
             }
         });
     });
@@ -654,8 +803,34 @@ document.addEventListener("DOMContentLoaded", () => {
         if (userSelectedLng) userSelectedLng.textContent = userLng.toFixed(5);
     }
 
+    // Geocode address using Nominatim (OpenStreetMap)
+    async function geocodeAddress() {
+        const address = userAddressInput ? userAddressInput.value.trim() : '';
+        const city = userCityInput ? userCityInput.value.trim() : (selectedCityName || '');
+        
+        if (!address && !city) return null;
+        
+        const searchQuery = [address, city, 'Indonesia'].filter(Boolean).join(', ');
+        
+        try {
+            const response = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(searchQuery)}&limit=1&countrycodes=id`);
+            const results = await response.json();
+            
+            if (results && results.length > 0) {
+                return {
+                    lat: parseFloat(results[0].lat),
+                    lng: parseFloat(results[0].lon)
+                };
+            }
+        } catch (err) {
+            console.warn('Geocoding failed:', err);
+        }
+        
+        return null;
+    }
+
     // Open User Map Picker
-    btnOpenUserMap?.addEventListener("click", () => {
+    btnOpenUserMap?.addEventListener("click", async () => {
         if (modalUserMap) modalUserMap.style.display = "flex";
         
         // Load Leaflet dynamically if not loaded
@@ -669,32 +844,50 @@ document.addEventListener("DOMContentLoaded", () => {
             script.src = "https://unpkg.com/leaflet@1.9.4/dist/leaflet.js";
             document.head.appendChild(script);
 
-            script.onload = () => {
-                initPickerMap();
+            script.onload = async () => {
+                await initPickerMap();
             };
         } else {
-            initPickerMap();
+            await initPickerMap();
         }
     });
 
-    function initPickerMap() {
-        const defaultLat = userLat || -7.2575;
-        const defaultLng = userLng || 112.7521;
+    async function initPickerMap() {
+        // Priority: 1) user's previously saved coords, 2) geocoded address, 3) city coords, 4) default
+        let mapLat, mapLng;
+        
+        if (userLat && userLng) {
+            // User already has saved coordinates
+            mapLat = userLat;
+            mapLng = userLng;
+        } else {
+            // Try to geocode the address first
+            const geocoded = await geocodeAddress();
+            if (geocoded) {
+                mapLat = geocoded.lat;
+                mapLng = geocoded.lng;
+            } else {
+                // Fall back to city coordinates
+                const cityCoords = getSelectedCityCoords();
+                mapLat = cityCoords.lat;
+                mapLng = cityCoords.lng;
+            }
+        }
 
         if (!userMap) {
-            userMap = L.map("user-map-picker").setView([defaultLat, defaultLng], 12);
+            userMap = L.map("user-map-picker").setView([mapLat, mapLng], 16);
             L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
                 attribution: "© OpenStreetMap contributors"
             }).addTo(userMap);
 
-            userMarker = L.marker([defaultLat, defaultLng], { draggable: true }).addTo(userMap);
+            userMarker = L.marker([mapLat, mapLng], { draggable: true }).addTo(userMap);
 
             userMap.on("click", (e) => {
                 userMarker.setLatLng(e.latlng);
             });
         } else {
-            userMap.setView([defaultLat, defaultLng], 12);
-            userMarker.setLatLng([defaultLat, defaultLng]);
+            userMap.setView([mapLat, mapLng], 16);
+            userMarker.setLatLng([mapLat, mapLng]);
             setTimeout(() => {
                 userMap.invalidateSize();
             }, 200);
@@ -760,6 +953,10 @@ document.addEventListener("DOMContentLoaded", () => {
         localStorage.setItem("pickup_city", city);
         localStorage.setItem("pickup_zip", zip);
         localStorage.setItem("pickup_cart", JSON.stringify(Array.from(window.userCart.values())));
+        
+        // Save delivery method from the radio button
+        const selectedDelivery = document.querySelector('input[name="delivery_method"]:checked')?.value || 'warehouse';
+        localStorage.setItem("pickup_delivery_method", selectedDelivery);
 
         // Redirect to identity details
         window.location.href = "/user/identitas";

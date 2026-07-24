@@ -120,86 +120,8 @@
                                     </div>
                                 </div>
 
-                                <div class="user-battery-list">
-                                    <div class="user-battery-item" data-product-card data-product-name="GS Astra NS40" data-product-brand="GS Astra" data-product-price="750000">
-                                        <div class="user-battery-item__info">
-                                            <span class="user-battery-item__tag">AKI MOBIL</span>
-                                            <h3>GS Astra NS40 (Aki Mobil 12V 32Ah)</h3>
-                                            <p>Kondisi diverifikasi saat penyerahan di gudang.</p>
-                                        </div>
-                                        <div class="user-battery-item__price">
-                                            <span class="user-price-label">Estimasi Harga:</span>
-                                            <strong data-product-price-label>Rp 750.000</strong>
-                                        </div>
-                                        <div class="user-battery-item__actions">
-                                            <div class="user-quantity">
-                                                <button type="button" data-quantity-minus aria-label="Kurangi jumlah">−</button>
-                                                <input type="number" value="1" min="1" max="99" data-quantity aria-label="Jumlah GS Astra NS40">
-                                                <button type="button" data-quantity-plus aria-label="Tambah jumlah">+</button>
-                                            </div>
-                                            <button type="button" class="user-add-button" data-add-to-cart>+ Tambahkan ke Keranjang</button>
-                                        </div>
-                                    </div>
-
-                                    <div class="user-battery-item" data-product-card data-product-name="Yuasa YBX" data-product-brand="Yuasa" data-product-price="850000">
-                                        <div class="user-battery-item__info">
-                                            <span class="user-battery-item__tag">AKI MOBIL</span>
-                                            <h3>Yuasa YBX (Aki Mobil 12V 45Ah)</h3>
-                                            <p>Kondisi diverifikasi saat penyerahan di gudang.</p>
-                                        </div>
-                                        <div class="user-battery-item__price">
-                                            <span class="user-price-label">Estimasi Harga:</span>
-                                            <strong data-product-price-label>Rp 850.000</strong>
-                                        </div>
-                                        <div class="user-battery-item__actions">
-                                            <div class="user-quantity">
-                                                <button type="button" data-quantity-minus aria-label="Kurangi jumlah">−</button>
-                                                <input type="number" value="1" min="1" max="99" data-quantity aria-label="Jumlah Yuasa YBX">
-                                                <button type="button" data-quantity-plus aria-label="Tambah jumlah">+</button>
-                                            </div>
-                                            <button type="button" class="user-add-button" data-add-to-cart>+ Tambahkan ke Keranjang</button>
-                                        </div>
-                                    </div>
-
-                                    <div class="user-battery-item" data-product-card data-product-name="Incoe MF" data-product-brand="Incoe" data-product-price="250000">
-                                        <div class="user-battery-item__info">
-                                            <span class="user-battery-item__tag">AKI MOTOR</span>
-                                            <h3>Incoe MF (Aki Motor 12V 7Ah)</h3>
-                                            <p>Kondisi diverifikasi saat penyerahan di gudang.</p>
-                                        </div>
-                                        <div class="user-battery-item__price">
-                                            <span class="user-price-label">Estimasi Harga:</span>
-                                            <strong data-product-price-label>Rp 250.000</strong>
-                                        </div>
-                                        <div class="user-battery-item__actions">
-                                            <div class="user-quantity">
-                                                <button type="button" data-quantity-minus aria-label="Kurangi jumlah">−</button>
-                                                <input type="number" value="1" min="1" max="99" data-quantity aria-label="Jumlah Incoe MF">
-                                                <button type="button" data-quantity-plus aria-label="Tambah jumlah">+</button>
-                                            </div>
-                                            <button type="button" class="user-add-button" data-add-to-cart>+ Tambahkan ke Keranjang</button>
-                                        </div>
-                                    </div>
-
-                                    <div class="user-battery-item" data-product-card data-product-name="Delkor 55D23L" data-product-brand="Delkor" data-product-price="950000">
-                                        <div class="user-battery-item__info">
-                                            <span class="user-battery-item__tag">AKI MOBIL</span>
-                                            <h3>Delkor 55D23L (Aki Mobil 12V 60Ah)</h3>
-                                            <p>Kondisi diverifikasi saat penyerahan di gudang.</p>
-                                        </div>
-                                        <div class="user-battery-item__price">
-                                            <span class="user-price-label">Estimasi Harga:</span>
-                                            <strong data-product-price-label>Rp 950.000</strong>
-                                        </div>
-                                        <div class="user-battery-item__actions">
-                                            <div class="user-quantity">
-                                                <button type="button" data-quantity-minus aria-label="Kurangi jumlah">−</button>
-                                                <input type="number" value="1" min="1" max="99" data-quantity aria-label="Jumlah Delkor 55D23L">
-                                                <button type="button" data-quantity-plus aria-label="Tambah jumlah">+</button>
-                                            </div>
-                                            <button type="button" class="user-add-button" data-add-to-cart>+ Tambahkan ke Keranjang</button>
-                                        </div>
-                                    </div>
+                                <div class="user-battery-list" id="user-battery-list">
+                                    <!-- Product cards will be dynamically rendered by JS -->
                                 </div>
                             </div>
                         </div>

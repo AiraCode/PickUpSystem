@@ -27,7 +27,7 @@ class OrderController extends Controller
             'pickup_address_note' => 'nullable|string|max:45',
             'pickup_lat' => 'nullable|numeric',
             'pickup_long' => 'nullable|numeric',
-            'delivery_method' => 'nullable|string|in:courier,pickup',
+            'delivery_method' => 'nullable|string|in:courier,warehouse',
             'items' => 'required|array',
             'items.*.id' => 'required|integer|exists:accus,id',
             'items.*.quantity' => 'required|integer|min:1',
@@ -53,6 +53,8 @@ class OrderController extends Controller
 
             $orderId = (Order::max('id') ?? 0) + 1;
 
+            $deliveryMethod = $validated['delivery_method'] ?? 'warehouse';
+
             $order = Order::create([
                 'id' => $orderId,
                 'cities_id' => $validated['cities_id'],
@@ -61,17 +63,23 @@ class OrderController extends Controller
                 'pickup_lat' => $validated['pickup_lat'] ?? -7.2575,
                 'pickup_long' => $validated['pickup_long'] ?? 112.7521,
                 'status' => 'pending',
+                'delivery_method' => $deliveryMethod,
                 'customers_id' => $customer->id,
             ]);
 
-            // Calculate subtotal
+            // Calculate subtotal using dynamic LME-based pricing
+            $lme = (float) \App\Models\Setting::getValue('lme', 2100);
+            $kurs = (float) \App\Models\Setting::getValue('kurs', 16000);
+            $city = \App\Models\City::find($validated['cities_id']);
+            $cityPercentage = (float) ($city->percentage ?? 80.00);
+            $pricePerKg = ($lme * $kurs * ($cityPercentage / 100)) / 1000.0;
+
             $subtotal = 0;
             $accusPivot = [];
             foreach ($validated['items'] as $item) {
-                $price = DB::table('cities_has_accus')
-                    ->where('cities_id', $validated['cities_id'])
-                    ->where('accus_id', $item['id'])
-                    ->value('price') ?? 0;
+                $accu = \App\Models\Accu::find($item['id']);
+                $beratKering = (float) ($accu->berat_kering ?? 0);
+                $price = (int) round($pricePerKg * $beratKering);
                 $subtotal += $price * $item['quantity'];
                 $accusPivot[$item['id']] = ['amount' => $item['quantity']];
             }
@@ -80,7 +88,6 @@ class OrderController extends Controller
             $pickupFee = 0;
             $lat = $validated['pickup_lat'] ?? -7.2575;
             $lng = $validated['pickup_long'] ?? 112.7521;
-            $deliveryMethod = $validated['delivery_method'] ?? 'pickup';
 
             if ($deliveryMethod === 'courier') {
                 $storages = DB::table('storages')->get();

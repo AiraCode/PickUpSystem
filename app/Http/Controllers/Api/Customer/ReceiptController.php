@@ -22,12 +22,17 @@ class ReceiptController extends Controller
 
         $receiptData = null;
         if ($order->receipt) {
+            // Calculate price dynamically using LME formula
+            $lme = (float) \App\Models\Setting::getValue('lme', 2100);
+            $kurs = (float) \App\Models\Setting::getValue('kurs', 16000);
+            $city = $order->city;
+            $cityPercentage = (float) ($city->percentage ?? 80.00);
+            $pricePerKg = ($lme * $kurs * ($cityPercentage / 100)) / 1000.0;
+
             $formattedAccus = [];
             foreach ($order->receipt->accus as $accu) {
-                $cityPrice = \Illuminate\Support\Facades\DB::table('cities_has_accus')
-                    ->where('cities_id', $order->cities_id)
-                    ->where('accus_id', $accu->id)
-                    ->value('price') ?? 0;
+                $beratKering = (float) ($accu->berat_kering ?? 0);
+                $calculatedPrice = (int) round($pricePerKg * $beratKering);
 
                 $brandName = \Illuminate\Support\Facades\DB::table('brands')->where('id', $accu->brands_id)->value('name') ?? 'Indoprima';
 
@@ -36,8 +41,8 @@ class ReceiptController extends Controller
                     'name' => $accu->name,
                     'brand' => $brandName,
                     'amount' => $accu->pivot->amount,
-                    'price' => $cityPrice,
-                    'subtotal' => $cityPrice * $accu->pivot->amount,
+                    'price' => $calculatedPrice,
+                    'subtotal' => $calculatedPrice * $accu->pivot->amount,
                 ];
             }
 
@@ -60,6 +65,7 @@ class ReceiptController extends Controller
             'data' => [
                 'order_id' => $order->id,
                 'status' => $order->status,
+                'delivery_method' => $order->delivery_method ?? 'warehouse',
                 'created_at' => $order->created_at,
                 'customer' => $order->customer,
                 'city' => $order->city,

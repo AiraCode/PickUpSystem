@@ -199,9 +199,20 @@ const renderUserCart = () => {
         0,
     );
 
+    // Get pickup fee from localStorage for total calculation
+    const pickupFee = parseInt(localStorage.getItem("pickup_fee") || "0");
+    const selectedMethod = document.querySelector('input[name="delivery_method"]:checked')?.value;
+    const effectiveFee = (selectedMethod === "courier") ? pickupFee : 0;
+
     if (cartCount) cartCount.textContent = totalQuantity;
     if (cartSubtotal) cartSubtotal.textContent = userCart.size ? formatRupiah(subtotal) : "—";
-    if (cartTotal) cartTotal.textContent = userCart.size ? formatRupiah(subtotal) : "—";
+    if (cartTotal) cartTotal.textContent = userCart.size ? formatRupiah(subtotal + effectiveFee) : "—";
+
+    // Update pickup fee label
+    const pickupLabel = document.getElementById("user-pickup-fee-label") || document.querySelector("[data-cart-pickup]");
+    if (pickupLabel && selectedMethod === "courier" && effectiveFee > 0) {
+        pickupLabel.textContent = formatRupiah(effectiveFee);
+    }
 
     cartItemsContainer.querySelectorAll("[data-delete-item]").forEach((btn) => {
         btn.addEventListener("click", (e) => {
@@ -214,43 +225,11 @@ const renderUserCart = () => {
     });
 };
 
-document.querySelectorAll("[data-product-card]").forEach((card) => {
-    const quantityInput = card.querySelector("[data-quantity]");
-    const minusButton = card.querySelector("[data-quantity-minus]");
-    const plusButton = card.querySelector("[data-quantity-plus]");
-    const addButton = card.querySelector("[data-add-to-cart]");
+// Expose renderUserCart globally for user-api.js
+window.renderUserCart = renderUserCart;
 
-    const setQuantity = (value) => {
-        if (quantityInput)
-            quantityInput.value = Math.min(99, Math.max(1, Number(value) || 1));
-    };
-
-    minusButton?.addEventListener("click", () =>
-        setQuantity(Number(quantityInput?.value) - 1),
-    );
-    plusButton?.addEventListener("click", () =>
-        setQuantity(Number(quantityInput?.value) + 1),
-    );
-
-    addButton?.addEventListener("click", () => {
-        const name = card.dataset.productName || "Aki";
-        const brand = card.dataset.productBrand || "Indoprima";
-        const price = Number(card.dataset.productPrice) || 0;
-        const id = Number(card.getAttribute("data-accu-id")) || 1;
-        const quantity = Math.min(
-            99,
-            Math.max(1, Number(quantityInput?.value) || 1),
-        );
-        userCart.set(name, { id, name, brand, price, quantity });
-        renderUserCart();
-
-        const originalText = addButton.textContent;
-        addButton.textContent = "✓ Ditambahkan";
-        window.setTimeout(() => {
-            addButton.textContent = originalText;
-        }, 1200);
-    });
-});
+// Product card events are now bound dynamically by user-api.js after API load
+// No static binding needed here since cards are rendered from API
 
 document.querySelectorAll("[data-pickup-method]").forEach((radio) => {
     radio.addEventListener("change", () => {
@@ -268,6 +247,9 @@ document.querySelectorAll("[data-pickup-method]").forEach((radio) => {
                 radio.value === "courier"
                     ? "Dihitung berdasarkan jarak"
                     : "Gratis";
+
+        // Re-render cart to update total with/without pickup fee
+        renderUserCart();
     });
 });
 
@@ -308,3 +290,4 @@ document.querySelectorAll("[data-receipt-status]").forEach((button) => {
 
 updateCityState();
 renderUserCart();
+
