@@ -55,4 +55,27 @@
         </form>
     </div>
 </div>
+
+<!-- Modal Password Akses Rahasia (Easter Egg) -->
+<div id="modal-easter-egg-lock" style="display:none; position:fixed; inset:0; background:rgba(17,19,24,0.92); z-index:999; align-items:center; justify-content:center; backdrop-filter:blur(4px);">
+    <div class="admin-panel" style="width:380px; text-align:center; padding:28px 24px; border:1px solid #374151; box-shadow:0 20px 25px -5px rgba(0,0,0,0.5);">
+        <div style="width:54px; height:54px; background:#eff6ff; color:#2563eb; border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 16px;">
+            <svg viewBox="0 0 24 24" style="width:28px; height:28px; fill:none; stroke:currentColor; stroke-width:2; stroke-linecap:round; stroke-linejoin:round;"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        </div>
+        <h2 style="font-size:18px; font-weight:700; color:#111318; margin-bottom:6px;">Akses Rahasia Staf Admin</h2>
+        <p style="font-size:13px; color:#6d727c; margin-bottom:20px; line-height:1.4;">
+            Halaman ini dilindungi password khusus. Masukkan password rahasia untuk membuka akses pembuatan akun admin.
+        </p>
+        <form id="form-easter-egg-auth">
+            <div style="margin-bottom:16px;">
+                <input type="password" id="easter-egg-password" class="admin-select" style="width:100%; padding:10px 12px; font-size:14px; text-align:center; border-radius:6px; letter-spacing:2px;" placeholder="Masukkan password..." required>
+                <div id="easter-egg-error" style="display:none; color:#ba1b2b; font-size:12px; margin-top:8px; font-weight:600;">Password rahasia salah!</div>
+            </div>
+            <div style="display:flex; gap:10px; justify-content:center;">
+                <a href="/admin/login" class="admin-button admin-button--secondary" style="text-decoration:none; display:inline-flex; align-items:center;">Ke Login</a>
+                <button type="submit" class="admin-button admin-button--primary">Buka Akses</button>
+            </div>
+        </form>
+    </div>
+</div>
 @endsection

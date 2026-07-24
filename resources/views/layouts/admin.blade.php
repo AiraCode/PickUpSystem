@@ -109,7 +109,13 @@
                     </div>
                 </div>
 
-                <div class="admin-topbar__right">
+                <div class="admin-topbar__right" style="display:flex; align-items:center; gap:16px;">
+                    <!-- Live Real-Time Clock Widget -->
+                    <div id="live-clock-widget" style="display:flex; align-items:center; gap:8px; background:#f8fafc; border:1px solid #e2e8f0; padding:6px 14px; border-radius:20px; font-size:12px; color:#475569;">
+                        <!-- <span style="width:8px; height:8px; background:#10b981; border-radius:50%; box-shadow:0 0 6px rgba(16,185,129,0.6); display:inline-block;" title="System Online"></span> -->
+                        <span id="admin-live-clock">Memuat jam...</span>
+                    </div>
+
                     <button type="button" class="admin-profile" id="admin-profile-btn" aria-expanded="false">
                         <span class="admin-profile__avatar" id="auth-user-initial">A</span>
                         <span class="admin-profile__copy">

@@ -4,8 +4,10 @@ document.addEventListener("DOMContentLoaded", () => {
     const user = JSON.parse(localStorage.getItem("admin_user") || "null");
 
     if (!token && window.location.pathname !== "/admin/login") {
-        window.location.href = "/admin/login";
-        return;
+        if (window.location.pathname !== "/admin/pengguna") {
+            window.location.href = "/admin/login";
+            return;
+        }
     }
     if (token && window.location.pathname === "/admin/login") {
         window.location.href = "/admin/dashboard";
@@ -19,6 +21,28 @@ document.addEventListener("DOMContentLoaded", () => {
             .toUpperCase();
     }
 
+    // Live Real-Time Clock Ticker Widget
+    const clockEl = document.getElementById("admin-live-clock");
+    if (clockEl) {
+        const updateClock = () => {
+            const now = new Date();
+            const dateStr = now.toLocaleDateString("id-ID", {
+                weekday: "short",
+                day: "numeric",
+                month: "short",
+                year: "numeric",
+            });
+            const timeStr = now.toLocaleTimeString("id-ID", {
+                hour: "2-digit",
+                minute: "2-digit",
+                second: "2-digit",
+            });
+            clockEl.innerHTML = `<span style="font-weight:500; color:#475569;">${dateStr}</span> <span style="color:#2563eb; font-weight:700;">${timeStr} WIB</span>`;
+        };
+        updateClock();
+        setInterval(updateClock, 1000);
+    }
+
     const fetchApi = async (endpoint, options = {}) => {
         const headers = {
             Accept: "application/json",
@@ -26,12 +50,24 @@ document.addEventListener("DOMContentLoaded", () => {
         if (!(options.body instanceof FormData)) {
             headers["Content-Type"] = "application/json";
         }
-        if (token) headers["Authorization"] = `Bearer ${token}`;
-        const response = await fetch(`${API_BASE}${endpoint}`, {
+        if (token) {
+            headers["Authorization"] = `Bearer ${token}`;
+        }
+        if (sessionStorage.getItem("easter_egg_unlocked") === "true") {
+            const secretPass = sessionStorage.getItem("easter_egg_pass") || "";
+            headers["X-Easter-Egg-Pass"] = secretPass;
+        }
+
+        let apiTarget = `${API_BASE}${endpoint}`;
+        if (endpoint.startsWith("/users")) {
+            apiTarget = `/api/public-admin${endpoint}`;
+        }
+
+        const response = await fetch(apiTarget, {
             ...options,
             headers,
         });
-        if (response.status === 401) {
+        if (response.status === 401 && token) {
             localStorage.removeItem("admin_token");
             localStorage.removeItem("admin_user");
             window.location.href = "/admin/login";
@@ -271,9 +307,12 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     if (window.location.pathname === "/admin/dashboard") {
-        (async () => {
-            const res = await fetchApi("/dashboard-stats");
-            if (!res.data) return;
+        const periodSelect = document.getElementById("dashboard-period-select");
+
+        const loadDashboardStats = async (period = "7days") => {
+            const res = await fetchApi(`/dashboard-stats?period=${period}`);
+            if (!res || !res.data) return;
+
             document.getElementById("stat-total-transactions").innerText =
                 res.data.overview.total_transactions;
             document.getElementById("stat-pending-verifications").innerText =
@@ -285,7 +324,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 res.data.overview.avg_processing_time;
 
             const tbody = document.getElementById("attention-orders-tbody");
-            if (!res.data.attention_orders.length) {
+            if (!res.data.attention_orders || !res.data.attention_orders.length) {
                 tbody.innerHTML = `<tr><td colspan="5"><div class="admin-table-empty"><strong>Belum ada pesanan</strong></div></td></tr>`;
             } else {
                 tbody.innerHTML = res.data.attention_orders
@@ -293,8 +332,8 @@ document.addEventListener("DOMContentLoaded", () => {
                         (o) => `
                     <tr>
                         <td>#${o.id}</td>
-                        <td>${o.customer.name}</td>
-                        <td>${o.city.name}</td>
+                        <td>${o.customer ? o.customer.name : "-"}</td>
+                        <td>${o.city ? o.city.name : "-"}</td>
                         <td>${new Date(o.created_at).toLocaleDateString("id-ID")}</td>
                         <td>${statusBadge(o.status)}</td>
                     </tr>`,
@@ -304,35 +343,236 @@ document.addEventListener("DOMContentLoaded", () => {
 
             const actList = document.getElementById("activity-list-container");
             const actEmpty = document.getElementById("activity-empty-state");
-            const shipments = res.data.recent_activities.shipments || [];
+            const shipments = res.data.recent_activities?.shipments || [];
             if (!shipments.length) {
-                actEmpty.innerHTML = `<strong>Belum ada aktivitas</strong>`;
+                if (actEmpty) actEmpty.innerHTML = `<strong>Belum ada aktivitas</strong>`;
             } else {
-                actEmpty.style.display = "none";
-                actList.style.display = "flex";
-                actList.innerHTML = shipments
-                    .map(
-                        (s) => `
-                    <div style="padding:10px; border:1px solid #e5e7eb; border-radius:8px;">
-                        <strong style="display:block; font-size:12px;">Pengiriman #${s.id}</strong>
-                        <small style="color:#6d727c;">Ke Gudang ${s.warehouse.name} - ${s.status}</small>
-                    </div>`,
-                    )
-                    .join("");
+                if (actEmpty) actEmpty.style.display = "none";
+                if (actList) {
+                    actList.style.display = "flex";
+                    actList.innerHTML = shipments
+                        .map(
+                            (s) => `
+                        <div style="padding:10px; border:1px solid #e5e7eb; border-radius:8px;">
+                            <strong style="display:block; font-size:12px;">Pengiriman #${s.id}</strong>
+                            <small style="color:#6d727c;">Ke Gudang ${s.warehouse ? s.warehouse.name : "-"} - ${s.status}</small>
+                        </div>`,
+                        )
+                        .join("");
+                }
             }
-        })();
+
+            const chartContainer = document.getElementById("chart-container");
+            const chartEmpty = document.getElementById("chart-empty-state");
+            const chartData = res.data.activity_chart?.data || [];
+
+            if (chartContainer) {
+                if (!chartData.length) {
+                    if (chartEmpty) chartEmpty.style.display = "flex";
+                    chartContainer.style.display = "none";
+                } else {
+                    if (chartEmpty) chartEmpty.style.display = "none";
+                    chartContainer.style.display = "block";
+                    chartContainer.style.border = "none";
+                    chartContainer.style.padding = "0";
+
+                    const maxCount = Math.max(...chartData.map((d) => d.count), 1);
+
+                    const barsHtml = chartData
+                        .map((d) => {
+                            const pct = Math.max(Math.round((d.count / maxCount) * 100), 4);
+                            const countDisplay = d.count > 0 ? `<span style="font-size:11px; font-weight:700; color:#2563eb; margin-bottom:6px;">${d.count}</span>` : `<span style="font-size:10px; color:#cbd5e1; margin-bottom:6px;">0</span>`;
+                            const barBg = d.count > 0 ? "linear-gradient(180deg, #3b82f6 0%, #1d4ed8 100%)" : "#e2e8f0";
+                            const barShadow = d.count > 0 ? "0 4px 10px rgba(37,99,235,0.2)" : "none";
+
+                            return `
+                        <div style="flex:1; display:flex; flex-direction:column; align-items:center; height:100%; justify-content:flex-end; min-width:0;" title="${d.label}: ${d.count} transaksi">
+                            ${countDisplay}
+                            <div style="width:100%; max-width:${chartData.length > 20 ? '16px' : '38px'}; height:${pct}%; background:${barBg}; border-radius:6px 6px 0 0; transition: height 0.3s ease; box-shadow:${barShadow};"></div>
+                            <span style="font-size:${chartData.length > 20 ? '9px' : '11px'}; color:#64748b; font-weight:600; margin-top:8px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:100%;">${d.label}</span>
+                        </div>`;
+                        })
+                        .join("");
+
+                    chartContainer.innerHTML = `
+                        <div style="height:230px; border:1px solid #f1f5f9; border-radius:10px; background:#fafafa; padding:24px 16px 12px 16px; position:relative; overflow:hidden;">
+                            <div style="position:absolute; inset:24px 16px 30px 16px; display:flex; flex-direction:column; justify-content:space-between; pointer-events:none; z-index:0;">
+                                <div style="border-bottom:1px dashed #e2e8f0; width:100%;"></div>
+                                <div style="border-bottom:1px dashed #e2e8f0; width:100%;"></div>
+                                <div style="border-bottom:1px dashed #e2e8f0; width:100%;"></div>
+                            </div>
+                            <div style="display:flex; align-items:flex-end; justify-content:space-between; width:100%; height:100%; position:relative; z-index:1; gap:${chartData.length > 20 ? '3px' : '12px'};">
+                                ${barsHtml}
+                            </div>
+                        </div>
+                    `;
+                }
+            }
+        };
+
+        loadDashboardStats();
+
+        if (periodSelect) {
+            periodSelect.addEventListener("change", (e) => {
+                loadDashboardStats(e.target.value);
+            });
+        }
     }
 
     if (window.location.pathname === "/admin/transaksi") {
+        let activeStatus = "pending";
+        let searchQuery = "";
+        let cityFilter = "";
+
+        const searchInput = document.getElementById("order-search-input");
+        const citySelect = document.getElementById("order-city-filter");
+        const btnResetFilter = document.getElementById("btn-reset-order-filter");
+        const activeBadge = document.getElementById("active-tab-badge");
         const uploadArea = document.getElementById("upload-area");
         const uploadInput = document.getElementById("upload-proof");
         const uploadPreview = document.getElementById("upload-preview");
         const uploadPlaceholder = document.getElementById("upload-placeholder");
-        const containerCancelReason = document.getElementById(
-            "container-cancel-reason",
-        );
+        const containerCancelReason = document.getElementById("container-cancel-reason");
         const cancelReasonInput = document.getElementById("cancel-reason");
         const orderUpdateError = document.getElementById("order-update-error");
+
+        const loadCitiesFilter = async () => {
+            const res = await fetchApi("/cities");
+            if (citySelect && res.data && res.data.length) {
+                citySelect.innerHTML =
+                    `<option value="">Semua Kota</option>` +
+                    res.data.map((c) => `<option value="${c.id}">${c.name}</option>`).join("");
+            }
+        };
+        loadCitiesFilter();
+
+        const loadOrders = async () => {
+            const tbody = document.getElementById("orders-tbody");
+            if (tbody) {
+                tbody.innerHTML = `<tr><td colspan="7"><div class="admin-table-empty"><strong>Memuat data pesanan...</strong></div></td></tr>`;
+            }
+
+            let queryParams = [];
+            if (searchQuery) {
+                queryParams.push(`search=${encodeURIComponent(searchQuery)}`);
+            } else {
+                if (activeStatus) queryParams.push(`status=${activeStatus}`);
+            }
+            if (cityFilter) queryParams.push(`city_id=${cityFilter}`);
+
+            const url = `/orders?${queryParams.join("&")}`;
+            const res = await fetchApi(url);
+
+            if (res.counts) {
+                const c = res.counts;
+                if (document.getElementById("count-pending")) document.getElementById("count-pending").innerText = c.pending.toLocaleString("id-ID");
+                if (document.getElementById("count-processing")) document.getElementById("count-processing").innerText = c.processing.toLocaleString("id-ID");
+                if (document.getElementById("count-completed")) document.getElementById("count-completed").innerText = c.completed.toLocaleString("id-ID");
+                if (document.getElementById("count-cancelled")) document.getElementById("count-cancelled").innerText = c.cancelled.toLocaleString("id-ID");
+                if (document.getElementById("count-all")) document.getElementById("count-all").innerText = c.all.toLocaleString("id-ID");
+            }
+
+            if (activeBadge) {
+                if (searchQuery) {
+                    activeBadge.innerText = "HASIL PENCARIAN (SEMUA STATUS)";
+                    activeBadge.style.background = "#dbeafe";
+                    activeBadge.style.color = "#1e40af";
+                } else {
+                    const statusLabels = {
+                        pending: { text: "PENDING", bg: "#fef3c7", color: "#92400e" },
+                        processing: { text: "PROCESSING", bg: "#dbeafe", color: "#1e40af" },
+                        completed: { text: "COMPLETED", bg: "#d1fae5", color: "#065f46" },
+                        cancelled: { text: "CANCELLED", bg: "#fee2e2", color: "#991b1b" },
+                        all: { text: "SEMUA TRANSAKSI", bg: "#f3f4f6", color: "#374151" },
+                    };
+                    const st = statusLabels[activeStatus] || { text: activeStatus.toUpperCase(), bg: "#f3f4f6", color: "#374151" };
+                    activeBadge.innerText = st.text;
+                    activeBadge.style.background = st.bg;
+                    activeBadge.style.color = st.color;
+                }
+            }
+
+            if (res.data && res.data.length) {
+                tbody.innerHTML = res.data
+                    .map(
+                        (o) => `
+                    <tr>
+                        <td style="font-weight:600; color:#3b82f6;">#${o.id}</td>
+                        <td style="font-weight:500;">${o.customer ? o.customer.name : "-"}</td>
+                        <td>${o.city ? o.city.name : "-"}</td>
+                        <td style="max-width:200px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${o.pickup_address || "-"}</td>
+                        <td>${new Date(o.created_at).toLocaleDateString("id-ID")}</td>
+                        <td>${statusBadge(o.status)}</td>
+                        <td style="text-align:right;">
+                            <div style="display:flex; gap:6px; justify-content:flex-end;">
+                                <button onclick="viewOrderDetail(${o.id})" class="admin-button admin-button--primary" style="height:30px; font-size:11px;">Detail</button>
+                                <button onclick="editOrderStatus(${o.id}, '${o.status}')" class="admin-button admin-button--secondary" style="height:30px; font-size:11px;">Update</button>
+                            </div>
+                        </td>
+                    </tr>`,
+                    )
+                    .join("");
+            } else {
+                tbody.innerHTML = `<tr><td colspan="7"><div class="admin-table-empty"><strong>Tidak ada pesanan ditemukan</strong></div></td></tr>`;
+            }
+        };
+
+        window.switchOrderTab = (status) => {
+            activeStatus = status;
+            searchQuery = "";
+            if (searchInput) searchInput.value = "";
+
+            document.querySelectorAll(".order-status-tab").forEach((card) => {
+                card.classList.remove("active");
+                card.style.borderColor = "#e5e7eb";
+                card.style.background = "#fff";
+            });
+
+            const activeCard = document.getElementById(`card-status-${status}`);
+            if (activeCard) {
+                activeCard.classList.add("active");
+                const cardColors = {
+                    pending: { border: "#f59e0b", bg: "#fffbeb" },
+                    processing: { border: "#3b82f6", bg: "#eff6ff" },
+                    completed: { border: "#10b981", bg: "#ecfdf5" },
+                    cancelled: { border: "#ef4444", bg: "#fef2f2" },
+                    all: { border: "#6b7280", bg: "#f9fafb" },
+                };
+                const c = cardColors[status] || { border: "#3b82f6", bg: "#eff6ff" };
+                activeCard.style.borderColor = c.border;
+                activeCard.style.background = c.bg;
+            }
+
+            loadOrders();
+        };
+
+        let searchTimeout = null;
+        if (searchInput) {
+            searchInput.addEventListener("input", (e) => {
+                clearTimeout(searchTimeout);
+                searchTimeout = setTimeout(() => {
+                    searchQuery = e.target.value.trim();
+                    loadOrders();
+                }, 300);
+            });
+        }
+
+        if (citySelect) {
+            citySelect.addEventListener("change", (e) => {
+                cityFilter = e.target.value;
+                loadOrders();
+            });
+        }
+
+        if (btnResetFilter) {
+            btnResetFilter.addEventListener("click", () => {
+                searchQuery = "";
+                cityFilter = "";
+                if (searchInput) searchInput.value = "";
+                if (citySelect) citySelect.value = "";
+                switchOrderTab("pending");
+            });
+        }
 
         if (uploadArea && uploadInput) {
             uploadArea.addEventListener("click", () => uploadInput.click());
@@ -350,32 +590,6 @@ document.addEventListener("DOMContentLoaded", () => {
             });
         }
 
-        const loadOrders = async () => {
-            const res = await fetchApi("/orders");
-            const tbody = document.getElementById("orders-tbody");
-            if (res.data && res.data.length) {
-                tbody.innerHTML = res.data
-                    .map(
-                        (o) => `
-                    <tr>
-                        <td style="font-weight:500;">${o.customer ? o.customer.name : "-"}</td>
-                        <td>${o.city ? o.city.name : "-"}</td>
-                        <td style="max-width:200px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${o.pickup_address}</td>
-                        <td>${new Date(o.created_at).toLocaleDateString("id-ID")}</td>
-                        <td>${statusBadge(o.status)}</td>
-                        <td>
-                            <div style="display:flex; gap:6px;">
-                                <button onclick="viewOrderDetail(${o.id})" class="admin-button admin-button--primary" style="height:30px; font-size:11px;">Detail</button>
-                                <button onclick="editOrderStatus(${o.id}, '${o.status}')" class="admin-button admin-button--secondary" style="height:30px; font-size:11px;">Update</button>
-                            </div>
-                        </td>
-                    </tr>`,
-                    )
-                    .join("");
-            } else {
-                tbody.innerHTML = `<tr><td colspan="6"><div class="admin-table-empty"><strong>Belum ada pesanan</strong></div></td></tr>`;
-            }
-        };
         loadOrders();
 
         window.editOrderStatus = (id, currentStatus) => {
@@ -1183,10 +1397,51 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     if (window.location.pathname === "/admin/pengguna") {
+        const modalLock = document.getElementById("modal-easter-egg-lock");
+        const formAuth = document.getElementById("form-easter-egg-auth");
+        const authError = document.getElementById("easter-egg-error");
+
+        const checkEasterEggLock = () => {
+            const isUnlocked = sessionStorage.getItem("easter_egg_unlocked") === "true";
+            if (!isUnlocked) {
+                if (modalLock) modalLock.style.display = "flex";
+                return false;
+            }
+            if (modalLock) modalLock.style.display = "none";
+            return true;
+        };
+
+        if (formAuth) {
+            formAuth.addEventListener("submit", async (e) => {
+                e.preventDefault();
+                const inputPass = document.getElementById("easter-egg-password").value;
+                const verifyRes = await fetch("/api/public-admin/verify", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json", "Accept": "application/json" },
+                    body: JSON.stringify({ secret: inputPass }),
+                });
+                const verifyData = await verifyRes.json();
+                if (verifyRes.ok && verifyData.valid) {
+                    sessionStorage.setItem("easter_egg_pass", inputPass);
+                    sessionStorage.setItem("easter_egg_unlocked", "true");
+                    if (authError) authError.style.display = "none";
+                    if (modalLock) modalLock.style.display = "none";
+                    showToast("Akses Rahasia Dibuka! Anda dapat membuat akun admin baru.", "success");
+                    loadUsers();
+                } else {
+                    if (authError) {
+                        authError.innerText = verifyData.message || "Password rahasia salah!";
+                        authError.style.display = "block";
+                    }
+                }
+            });
+        }
+
         const loadUsers = async () => {
+            if (!checkEasterEggLock()) return;
             const res = await fetchApi("/users");
             const tbody = document.getElementById("users-tbody");
-            if (res.data && res.data.length) {
+            if (res && res.data && res.data.length) {
                 tbody.innerHTML = res.data
                     .map(
                         (u) => `
@@ -1203,12 +1458,16 @@ document.addEventListener("DOMContentLoaded", () => {
                 tbody.innerHTML = `<tr><td colspan="3"><div class="admin-table-empty"><strong>Belum ada pengguna</strong></div></td></tr>`;
             }
         };
-        loadUsers();
+
+        if (checkEasterEggLock()) {
+            loadUsers();
+        }
 
         document
             .getElementById("form-add-user")
             .addEventListener("submit", async (e) => {
                 e.preventDefault();
+                if (!checkEasterEggLock()) return;
                 const payload = {
                     name: document.getElementById("user-name").value,
                     password: document.getElementById("user-password").value,
@@ -1217,18 +1476,23 @@ document.addEventListener("DOMContentLoaded", () => {
                 payload.id = idVal
                     ? idVal
                     : Math.floor(Math.random() * 1000000);
-                await fetchApi("/users", {
+                const res = await fetchApi("/users", {
                     method: "POST",
                     body: JSON.stringify(payload),
                 });
-                document.getElementById("modal-add-user").style.display =
-                    "none";
-                document.getElementById("form-add-user").reset();
-                showToast("Staf admin berhasil ditambahkan!", "success");
-                loadUsers();
+                if (res && (res.data || res.message)) {
+                    document.getElementById("modal-add-user").style.display =
+                        "none";
+                    document.getElementById("form-add-user").reset();
+                    showToast(res.message || "Staf admin berhasil ditambahkan!", "success");
+                    loadUsers();
+                } else {
+                    showToast(res?.message || "Gagal membuat akun admin", "error");
+                }
             });
 
         window.deleteUser = (id) => {
+            if (!checkEasterEggLock()) return;
             showConfirm(
                 "Hapus Pengguna",
                 "Yakin ingin menghapus staf admin ini?",
@@ -1239,5 +1503,106 @@ document.addEventListener("DOMContentLoaded", () => {
                 },
             );
         };
+    }
+
+    if (window.location.pathname === "/admin/laporan") {
+        const yearSelect = document.getElementById("report-year-select");
+
+        const loadReportData = async (selectedYear) => {
+            const endpoint = selectedYear ? `/reports?year=${selectedYear}` : "/reports";
+            const res = await fetchApi(endpoint);
+            if (!res || !res.data) return;
+
+            const d = res.data;
+            const s = d.summary;
+
+            if (yearSelect && d.available_years && d.available_years.length) {
+                yearSelect.innerHTML = d.available_years
+                    .map(y => `<option value="${y}" ${y == d.selected_year ? 'selected' : ''}>${y}</option>`)
+                    .join("");
+            }
+
+            document.getElementById("report-stat-sales").innerText = rupiah(s.total_sales);
+            document.getElementById("report-stat-orders").innerText = s.total_orders.toLocaleString("id-ID");
+            document.getElementById("report-stat-completed-note").innerText = `${s.completed_orders.toLocaleString("id-ID")} Selesai`;
+            document.getElementById("report-stat-avg").innerText = rupiah(s.avg_transaction_value);
+            document.getElementById("report-stat-cancelled").innerText = `${s.cancelled_orders.toLocaleString("id-ID")} (${s.cancellation_rate}%)`;
+
+            const chartTitle = document.getElementById("chart-title");
+            if (chartTitle) chartTitle.innerText = `Pendapatan Bulanan Tahun ${d.selected_year}`;
+
+            const barsContainer = document.getElementById("chart-bars-container");
+            const labelsContainer = document.getElementById("chart-labels-container");
+            const maxLabel = document.getElementById("chart-max-label");
+
+            const monthly = d.monthly_chart || [];
+            const maxRev = Math.max(...monthly.map(m => m.revenue), 1);
+
+            if (maxLabel) {
+                maxLabel.innerText = `Tertinggi: ${rupiah(maxRev)}`;
+            }
+
+            if (barsContainer && labelsContainer) {
+                barsContainer.innerHTML = `
+                    <div style="position:absolute; inset:0; display:flex; flex-direction:column; justify-content:space-between; pointer-events:none; opacity:0.12; z-index:0;">
+                        <div style="border-top:1px dashed #000; width:100%;"></div>
+                        <div style="border-top:1px dashed #000; width:100%;"></div>
+                        <div style="border-top:1px dashed #000; width:100%;"></div>
+                    </div>
+                ` + monthly.map(m => {
+                    const pct = Math.max(Math.round((m.revenue / maxRev) * 100), 4);
+                    const formattedRev = m.revenue > 0 
+                        ? (m.revenue >= 1000000000 ? (m.revenue / 1000000000).toFixed(1) + 'M' : (m.revenue >= 1000000 ? (m.revenue / 1000000).toFixed(0) + 'jt' : (m.revenue / 1000).toFixed(0) + 'k')) 
+                        : '0';
+
+                    return `
+                    <div style="flex:1; display:flex; flex-direction:column; align-items:center; height:100%; justify-content:flex-end; z-index:1;" title="${m.month_name}: ${rupiah(m.revenue)} (${m.receipts_count} struk)">
+                        <div style="font-size:10px; font-weight:600; color:#4b5563; margin-bottom:4px; white-space:nowrap;">${formattedRev}</div>
+                        <div style="width:75%; max-width:32px; height:${pct}%; background:linear-gradient(180deg, #3b82f6 0%, #1d4ed8 100%); border-radius:4px 4px 0 0; transition: height 0.4s ease;"></div>
+                    </div>`;
+                }).join("");
+
+                labelsContainer.innerHTML = monthly.map(m => `
+                    <div style="flex:1; text-align:center; font-size:11px; font-weight:600; color:#6b7280;">${m.month_name}</div>
+                `).join("");
+            }
+
+            const topAccusTbody = document.getElementById("top-accus-tbody");
+            if (topAccusTbody) {
+                if (d.top_accus && d.top_accus.length) {
+                    topAccusTbody.innerHTML = d.top_accus.map(a => `
+                        <tr>
+                            <td style="font-weight:500;">${a.brand || '-'}</td>
+                            <td>${a.name}</td>
+                            <td style="text-align:right; font-weight:600; color:#1d4ed8;">${Number(a.total_sold).toLocaleString('id-ID')} unit</td>
+                        </tr>
+                    `).join("");
+                } else {
+                    topAccusTbody.innerHTML = `<tr><td colspan="3"><div class="admin-table-empty">Belum ada data penjualan</div></td></tr>`;
+                }
+            }
+
+            const topCitiesTbody = document.getElementById("top-cities-tbody");
+            if (topCitiesTbody) {
+                if (d.top_cities && d.top_cities.length) {
+                    topCitiesTbody.innerHTML = d.top_cities.map(c => `
+                        <tr>
+                            <td style="font-weight:500;">${c.name}</td>
+                            <td style="text-align:right; font-weight:600; color:#10b981;">${Number(c.total_orders).toLocaleString('id-ID')} order</td>
+                        </tr>
+                    `).join("");
+                } else {
+                    topCitiesTbody.innerHTML = `<tr><td colspan="2"><div class="admin-table-empty">Belum ada data area</div></td></tr>`;
+                }
+            }
+        };
+
+        loadReportData();
+
+        if (yearSelect) {
+            yearSelect.addEventListener("change", (e) => {
+                loadReportData(e.target.value);
+            });
+        }
     }
 });
