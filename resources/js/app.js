@@ -155,6 +155,7 @@ const updateCityState = () => {
 citySelect?.addEventListener("change", updateCityState);
 
 const userCart = new Map();
+window.userCart = userCart;
 const cartItemsContainer = document.querySelector("[data-cart-items]");
 const cartEmpty = document.querySelector("[data-cart-empty]");
 const cartCount = document.querySelector("[data-cart-count]");
@@ -235,11 +236,12 @@ document.querySelectorAll("[data-product-card]").forEach((card) => {
         const name = card.dataset.productName || "Aki";
         const brand = card.dataset.productBrand || "Indoprima";
         const price = Number(card.dataset.productPrice) || 0;
+        const id = Number(card.getAttribute("data-accu-id")) || 1;
         const quantity = Math.min(
             99,
             Math.max(1, Number(quantityInput?.value) || 1),
         );
-        userCart.set(name, { name, brand, price, quantity });
+        userCart.set(name, { id, name, brand, price, quantity });
         renderUserCart();
 
         const originalText = addButton.textContent;
@@ -269,20 +271,12 @@ document.querySelectorAll("[data-pickup-method]").forEach((radio) => {
     });
 });
 
-const identityForm = document.querySelector("[data-identity-form]");
-const identityModal = document.querySelector("[data-identity-modal]");
-
-identityForm?.addEventListener("submit", (event) => {
-    event.preventDefault();
-    if (identityModal) {
-        identityModal.hidden = false;
-        document.body.classList.add("overflow-hidden");
-    }
-});
+// Submission handled entirely by user-api.js with validation logic
 
 document.querySelectorAll("[data-modal-close]").forEach((closeButton) => {
     closeButton.addEventListener("click", () => {
-        if (identityModal) identityModal.hidden = true;
+        const modal = document.querySelector("[data-identity-modal]");
+        if (modal) modal.hidden = true;
         document.body.classList.remove("overflow-hidden");
     });
 });
