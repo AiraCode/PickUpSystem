@@ -423,9 +423,28 @@ document.addEventListener("DOMContentLoaded", () => {
         let activeStatus = "pending";
         let searchQuery = "";
         let cityFilter = "";
+        let bankFilter = "";
+        let dateStartFilter = "";
+        let dateEndFilter = "";
+        let sortOrder = "desc";
+        let currentDetailOrder = null;
+        let orderMap = null;
+        let orderMarker = null;
 
         const searchInput = document.getElementById("order-search-input");
-        const citySelect = document.getElementById("order-city-filter");
+        const btnOpenFilterModal = document.getElementById("btn-open-filter-modal");
+        const modalShopeeFilter = document.getElementById("modal-shopee-filter");
+        const formShopeeFilter = document.getElementById("form-shopee-filter");
+        const filterCitySelect = document.getElementById("filter-city-select");
+        const filterBankSelect = document.getElementById("filter-bank-select");
+        const filterDateStart = document.getElementById("filter-date-start");
+        const filterDateEnd = document.getElementById("filter-date-end");
+        const filterSortSelect = document.getElementById("filter-sort-select");
+        const btnResetShopeeFilter = document.getElementById("btn-reset-shopee-filter");
+        const filterActiveCount = document.getElementById("filter-active-count");
+        const activeFiltersBar = document.getElementById("active-filters-bar");
+        const activeFilterTags = document.getElementById("active-filter-tags");
+
         const btnResetFilter = document.getElementById("btn-reset-order-filter");
         const activeBadge = document.getElementById("active-tab-badge");
         const uploadArea = document.getElementById("upload-area");
@@ -436,15 +455,69 @@ document.addEventListener("DOMContentLoaded", () => {
         const cancelReasonInput = document.getElementById("cancel-reason");
         const orderUpdateError = document.getElementById("order-update-error");
 
-        const loadCitiesFilter = async () => {
-            const res = await fetchApi("/cities");
-            if (citySelect && res.data && res.data.length) {
-                citySelect.innerHTML =
-                    `<option value="">Semua Kota</option>` +
-                    res.data.map((c) => `<option value="${c.id}">${c.name}</option>`).join("");
+        const loadFilterOptions = async () => {
+            const [citiesRes, banksRes] = await Promise.all([
+                fetchApi("/cities"),
+                fetchApi("/banks")
+            ]);
+            if (filterCitySelect && citiesRes.data) {
+                filterCitySelect.innerHTML = `<option value="">Semua Kota</option>` +
+                    citiesRes.data.map((c) => `<option value="${c.id}">${c.name}</option>`).join("");
+            }
+            if (filterBankSelect && banksRes.data) {
+                filterBankSelect.innerHTML = `<option value="">Semua Bank</option>` +
+                    banksRes.data.map((b) => `<option value="${b.id}">${b.name}</option>`).join("");
             }
         };
-        loadCitiesFilter();
+        loadFilterOptions();
+
+        const updateActiveFilterDisplay = () => {
+            let activeCount = 0;
+            let tags = [];
+
+            if (cityFilter && filterCitySelect) {
+                activeCount++;
+                const selectedText = filterCitySelect.options[filterCitySelect.selectedIndex]?.text || "Kota";
+                tags.push(`Kota: ${selectedText}`);
+            }
+            if (bankFilter && filterBankSelect) {
+                activeCount++;
+                const selectedText = filterBankSelect.options[filterBankSelect.selectedIndex]?.text || "Bank";
+                tags.push(`Bank: ${selectedText}`);
+            }
+            if (dateStartFilter) {
+                activeCount++;
+                tags.push(`Mulai: ${dateStartFilter}`);
+            }
+            if (dateEndFilter) {
+                activeCount++;
+                tags.push(`Sampai: ${dateEndFilter}`);
+            }
+            if (sortOrder === "asc") {
+                activeCount++;
+                tags.push(`Urutan: Terlama`);
+            }
+
+            if (filterActiveCount) {
+                if (activeCount > 0) {
+                    filterActiveCount.innerText = activeCount;
+                    filterActiveCount.style.display = "inline-block";
+                } else {
+                    filterActiveCount.style.display = "none";
+                }
+            }
+
+            if (activeFiltersBar && activeFilterTags) {
+                if (tags.length > 0) {
+                    activeFiltersBar.style.display = "flex";
+                    activeFilterTags.innerHTML = tags.map((t) => `
+                        <span style="background:#e0e7ff; color:#3730a3; padding:2px 8px; border-radius:12px; font-weight:600; font-size:11px;">${t}</span>
+                    `).join("");
+                } else {
+                    activeFiltersBar.style.display = "none";
+                }
+            }
+        };
 
         const loadOrders = async () => {
             const tbody = document.getElementById("orders-tbody");
@@ -459,6 +532,10 @@ document.addEventListener("DOMContentLoaded", () => {
                 if (activeStatus) queryParams.push(`status=${activeStatus}`);
             }
             if (cityFilter) queryParams.push(`city_id=${cityFilter}`);
+            if (bankFilter) queryParams.push(`bank_id=${bankFilter}`);
+            if (dateStartFilter) queryParams.push(`date_start=${dateStartFilter}`);
+            if (dateEndFilter) queryParams.push(`date_end=${dateEndFilter}`);
+            if (sortOrder) queryParams.push(`sort=${sortOrder}`);
 
             const url = `/orders?${queryParams.join("&")}`;
             const res = await fetchApi(url);
@@ -557,19 +634,53 @@ document.addEventListener("DOMContentLoaded", () => {
             });
         }
 
-        if (citySelect) {
-            citySelect.addEventListener("change", (e) => {
-                cityFilter = e.target.value;
+        if (btnOpenFilterModal && modalShopeeFilter) {
+            btnOpenFilterModal.addEventListener("click", () => {
+                modalShopeeFilter.style.display = "flex";
+            });
+        }
+
+        if (formShopeeFilter) {
+            formShopeeFilter.addEventListener("submit", (e) => {
+                e.preventDefault();
+                cityFilter = filterCitySelect ? filterCitySelect.value : "";
+                bankFilter = filterBankSelect ? filterBankSelect.value : "";
+                dateStartFilter = filterDateStart ? filterDateStart.value : "";
+                dateEndFilter = filterDateEnd ? filterDateEnd.value : "";
+                sortOrder = filterSortSelect ? filterSortSelect.value : "desc";
+                if (modalShopeeFilter) modalShopeeFilter.style.display = "none";
+                updateActiveFilterDisplay();
                 loadOrders();
+            });
+        }
+
+        const resetAllFilters = () => {
+            searchQuery = "";
+            cityFilter = "";
+            bankFilter = "";
+            dateStartFilter = "";
+            dateEndFilter = "";
+            sortOrder = "desc";
+            if (searchInput) searchInput.value = "";
+            if (filterCitySelect) filterCitySelect.value = "";
+            if (filterBankSelect) filterBankSelect.value = "";
+            if (filterDateStart) filterDateStart.value = "";
+            if (filterDateEnd) filterDateEnd.value = "";
+            if (filterSortSelect) filterSortSelect.value = "desc";
+            updateActiveFilterDisplay();
+        };
+
+        if (btnResetShopeeFilter) {
+            btnResetShopeeFilter.addEventListener("click", () => {
+                resetAllFilters();
+                if (modalShopeeFilter) modalShopeeFilter.style.display = "none";
+                switchOrderTab("pending");
             });
         }
 
         if (btnResetFilter) {
             btnResetFilter.addEventListener("click", () => {
-                searchQuery = "";
-                cityFilter = "";
-                if (searchInput) searchInput.value = "";
-                if (citySelect) citySelect.value = "";
+                resetAllFilters();
                 switchOrderTab("pending");
             });
         }
@@ -642,6 +753,8 @@ document.addEventListener("DOMContentLoaded", () => {
             const res = await fetchApi(`/orders/${id}`);
             if (!res.data) return;
             const o = res.data;
+            currentDetailOrder = o;
+
             const c = o.customer || {};
             const bankName = c.bank && c.bank.name ? c.bank.name : "-";
             document.getElementById("detail-customer-name").innerText =
@@ -679,6 +792,53 @@ document.addEventListener("DOMContentLoaded", () => {
             document.getElementById("modal-detail-order").style.display =
                 "flex";
         };
+
+        const btnOpenMap = document.getElementById("btn-open-order-map");
+        if (btnOpenMap) {
+            btnOpenMap.addEventListener("click", () => {
+                if (!currentDetailOrder) return;
+                const o = currentDetailOrder;
+                const c = o.customer || {};
+                
+                const lat = parseFloat(o.pickup_lat || c.lat || -7.250445);
+                const lng = parseFloat(o.pickup_long || c.long || 112.768845);
+                const cityName = o.city ? o.city.name : "Kota Layanan";
+                const custName = c.name || "Customer";
+                const address = o.pickup_address || c.address || "Alamat Penjemputan";
+
+                if (document.getElementById("map-modal-subtitle")) {
+                    document.getElementById("map-modal-subtitle").innerText = `Pelanggan: ${custName} • ${cityName}`;
+                }
+                if (document.getElementById("map-modal-coords")) {
+                    document.getElementById("map-modal-coords").innerText = `${lat.toFixed(6)}, ${lng.toFixed(6)}`;
+                }
+                if (document.getElementById("map-modal-city-badge")) {
+                    document.getElementById("map-modal-city-badge").innerText = cityName;
+                }
+
+                document.getElementById("modal-order-map").style.display = "flex";
+
+                setTimeout(() => {
+                    if (!orderMap) {
+                        orderMap = L.map("order-map-view").setView([lat, lng], 15);
+                        L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+                            attribution: "&copy; OpenStreetMap contributors",
+                        }).addTo(orderMap);
+                        orderMarker = L.marker([lat, lng]).addTo(orderMap);
+                    } else {
+                        orderMap.setView([lat, lng], 15);
+                        orderMarker.setLatLng([lat, lng]);
+                    }
+                    orderMarker.bindPopup(`
+                        <div style="font-size:12px; font-family:sans-serif;">
+                            <strong style="color:#2563eb; display:block; margin-bottom:4px;">📍 ${custName}</strong>
+                            <p style="margin:0; color:#374151;">${address}</p>
+                        </div>
+                    `).openPopup();
+                    orderMap.invalidateSize();
+                }, 200);
+            });
+        }
 
         const formUpdate = document.getElementById("form-update-order");
         if (formUpdate) {

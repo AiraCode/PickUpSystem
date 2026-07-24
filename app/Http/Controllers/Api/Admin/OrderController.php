@@ -12,15 +12,37 @@ class OrderController extends Controller
 {
     public function index(Request $request): JsonResponse
     {
+        // Base filter query for calculating counts according to active filters (excluding status & text search)
+        $filterCountsQuery = Order::query();
+
+        if ($request->filled('city_id')) {
+            $filterCountsQuery->where('cities_id', $request->input('city_id'));
+        }
+
+        if ($request->filled('bank_id')) {
+            $bankId = $request->input('bank_id');
+            $filterCountsQuery->whereHas('customer', function ($cq) use ($bankId) {
+                $cq->where('banks_id', $bankId);
+            });
+        }
+
+        if ($request->filled('date_start')) {
+            $filterCountsQuery->whereDate('created_at', '>=', $request->input('date_start'));
+        }
+
+        if ($request->filled('date_end')) {
+            $filterCountsQuery->whereDate('created_at', '<=', $request->input('date_end'));
+        }
+
         $statusCounts = [
-            'pending' => Order::where('status', 'pending')->count(),
-            'processing' => Order::where('status', 'processing')->count(),
-            'completed' => Order::where('status', 'completed')->count(),
-            'cancelled' => Order::where('status', 'cancelled')->count(),
-            'all' => Order::count(),
+            'pending' => (clone $filterCountsQuery)->where('status', 'pending')->count(),
+            'processing' => (clone $filterCountsQuery)->where('status', 'processing')->count(),
+            'completed' => (clone $filterCountsQuery)->where('status', 'completed')->count(),
+            'cancelled' => (clone $filterCountsQuery)->where('status', 'cancelled')->count(),
+            'all' => (clone $filterCountsQuery)->count(),
         ];
 
-        $query = Order::with(['city', 'customer']);
+        $query = Order::with(['city', 'customer.bank']);
 
         $search = $request->input('search');
         $status = $request->input('status');
@@ -56,8 +78,26 @@ class OrderController extends Controller
             $query->where('cities_id', $request->input('city_id'));
         }
 
-        $limit = ($status === 'all' || !empty($search)) ? 100 : 200;
-        $orders = $query->orderBy('created_at', 'desc')->take($limit)->get();
+        if ($request->filled('bank_id')) {
+            $bankId = $request->input('bank_id');
+            $query->whereHas('customer', function ($cq) use ($bankId) {
+                $cq->where('banks_id', $bankId);
+            });
+        }
+
+        if ($request->filled('date_start')) {
+            $query->whereDate('created_at', '>=', $request->input('date_start'));
+        }
+
+        if ($request->filled('date_end')) {
+            $query->whereDate('created_at', '<=', $request->input('date_end'));
+        }
+
+        $sort = $request->input('sort', 'desc');
+        $sortDir = strtolower($sort) === 'asc' ? 'asc' : 'desc';
+
+        $limit = ($status === 'all' || !empty($search) || $request->filled('bank_id') || $request->filled('date_start')) ? 150 : 200;
+        $orders = $query->orderBy('created_at', $sortDir)->take($limit)->get();
 
         return response()->json([
             'message' => 'Daftar order berhasil diambil',

@@ -61,7 +61,7 @@
         <small style="color:#6b7280; font-size:11px;">Pesanan dibatalkan</small>
     </article>
 
-    <!-- All Card (Resiko Lag) -->
+    <!-- All Card -->
     <article id="card-status-all" class="admin-panel admin-stat-card order-status-tab" onclick="switchOrderTab('all')" style="cursor:pointer; border:2px solid #e5e7eb; transition:all 0.2s;">
         <div class="admin-stat-card__head" style="margin-bottom:6px;">
             <span class="admin-stat-card__icon" style="background:#f3f4f6; color:#4b5563; padding:6px; border-radius:6px;">
@@ -83,26 +83,34 @@
             </span>
         </div>
 
-        <!-- Search Bar & Filters -->
+        <!-- Search Bar & Multi-Criteria Shopee-Style Filter Controls -->
         <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
             <!-- Search Input (Global search across ALL statuses) -->
-            <div style="position:relative; width:280px;">
+            <div style="position:relative; width:260px;">
                 <input type="text" id="order-search-input" class="admin-select" style="width:100%; padding:7px 32px 7px 12px; font-size:12px; border-radius:6px; background:#fff;" placeholder="Cari nama, ID, kota, hp, alamat...">
                 <span style="position:absolute; right:10px; top:50%; transform:translateY(-50%); color:#9ca3af; pointer-events:none;">
                     <svg viewBox="0 0 24 24" style="width:14px; height:14px; fill:none; stroke:currentColor; stroke-width:2;"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
                 </span>
             </div>
 
-            <!-- City Filter -->
-            <select id="order-city-filter" class="admin-select" style="padding:7px 10px; font-size:12px; border-radius:6px; background:#fff; min-width:130px;">
-                <option value="">Semua Kota</option>
-            </select>
+            <!-- Shopee-Style Advanced Filter Button -->
+            <button id="btn-open-filter-modal" class="admin-button admin-button--secondary" style="height:32px; font-size:12px; padding:0 12px; display:inline-flex; align-items:center; gap:6px; background:#fff; border:1px solid #d1d5db; color:#374151; font-weight:600;">
+                <svg viewBox="0 0 24 24" style="width:15px; height:15px; fill:none; stroke:#2563eb; stroke-width:2;"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>
+                <span>Filter Lanjutan</span>
+                <span id="filter-active-count" style="display:none; background:#2563eb; color:#fff; font-size:10px; padding:1px 6px; border-radius:10px; font-weight:700;">0</span>
+            </button>
 
             <!-- Reset Filter Button -->
             <button id="btn-reset-order-filter" class="admin-button admin-button--secondary" style="height:32px; font-size:11px; padding:0 10px;" title="Reset Filter">
                 Reset
             </button>
         </div>
+    </div>
+
+    <!-- Active Filter Badges Container -->
+    <div id="active-filters-bar" style="display:none; padding:8px 16px; background:#f8fafc; border-bottom:1px solid #e5e7eb; gap:8px; align-items:center; flex-wrap:wrap; font-size:12px;">
+        <span style="font-weight:600; color:#64748b;">Filter Aktif:</span>
+        <div id="active-filter-tags" style="display:flex; gap:6px; flex-wrap:wrap;"></div>
     </div>
 
     <div class="admin-table-wrap">
@@ -124,6 +132,63 @@
         </table>
     </div>
 </article>
+
+<!-- Modal Filter Lanjutan (Shopee Style) -->
+<div id="modal-shopee-filter" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,.45); z-index:120; align-items:center; justify-content:center;">
+    <div class="admin-panel" style="width:480px;">
+        <div class="admin-panel__head" style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #e5e7eb; padding-bottom:12px; margin-bottom:16px;">
+            <div style="display:flex; align-items:center; gap:8px;">
+                <svg viewBox="0 0 24 24" style="width:18px; height:18px; fill:none; stroke:#2563eb; stroke-width:2;"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>
+                <h2 style="font-size:16px; margin:0;">Filter Transaksi Lanjutan</h2>
+            </div>
+            <button type="button" class="admin-button admin-button--secondary" style="height:28px; font-size:11px; padding:0 8px;" onclick="document.getElementById('modal-shopee-filter').style.display='none'">✕</button>
+        </div>
+        
+        <form id="form-shopee-filter">
+            <div style="display:flex; flex-direction:column; gap:14px; margin-bottom:20px;">
+                <!-- Filter Kota -->
+                <div>
+                    <label style="display:block; font-size:12px; font-weight:700; color:#374151; margin-bottom:6px;">📍 Kota Layanan</label>
+                    <select id="filter-city-select" class="admin-select" style="width:100%; padding:8px 10px; border-radius:6px; font-size:12px; background:#fff;">
+                        <option value="">Semua Kota</option>
+                    </select>
+                </div>
+
+                <!-- Filter Bank Pelanggan -->
+                <div>
+                    <label style="display:block; font-size:12px; font-weight:700; color:#374151; margin-bottom:6px;">🏦 Bank Pelanggan</label>
+                    <select id="filter-bank-select" class="admin-select" style="width:100%; padding:8px 10px; border-radius:6px; font-size:12px; background:#fff;">
+                        <option value="">Semua Bank</option>
+                    </select>
+                </div>
+
+                <!-- Filter Rentang Tanggal -->
+                <div>
+                    <label style="display:block; font-size:12px; font-weight:700; color:#374151; margin-bottom:6px;">📅 Rentang Tanggal Pesanan</label>
+                    <div style="display:flex; gap:10px; align-items:center;">
+                        <input type="date" id="filter-date-start" class="admin-select" style="flex:1; padding:7px 10px; font-size:12px; border-radius:6px; background:#fff;">
+                        <span style="font-size:12px; color:#6b7280;">s/d</span>
+                        <input type="date" id="filter-date-end" class="admin-select" style="flex:1; padding:7px 10px; font-size:12px; border-radius:6px; background:#fff;">
+                    </div>
+                </div>
+
+                <!-- Urutan Sort -->
+                <div>
+                    <label style="display:block; font-size:12px; font-weight:700; color:#374151; margin-bottom:6px;">🔀 Urutkan Berdasarkan Waktu</label>
+                    <select id="filter-sort-select" class="admin-select" style="width:100%; padding:8px 10px; border-radius:6px; font-size:12px; background:#fff;">
+                        <option value="desc">Terbaru ke Terlama (Default)</option>
+                        <option value="asc">Terlama ke Terbaru</option>
+                    </select>
+                </div>
+            </div>
+
+            <div style="display:flex; gap:10px; justify-content:flex-end; border-top:1px solid #e5e7eb; padding-top:14px;">
+                <button type="button" id="btn-reset-shopee-filter" class="admin-button admin-button--secondary">Reset Filter</button>
+                <button type="submit" class="admin-button admin-button--primary" style="background:#2563eb;">Terapkan Filter</button>
+            </div>
+        </form>
+    </div>
+</div>
 
 <!-- Modal Update Status -->
 <div id="modal-update-order" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,.45); z-index:100; align-items:center; justify-content:center;">
@@ -193,15 +258,15 @@
 
 <!-- Modal Detail Order -->
 <div id="modal-detail-order" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,.45); z-index:100; align-items:center; justify-content:center;">
-    <div class="admin-panel" style="width:520px; max-height:90vh; overflow-y:auto;">
+    <div class="admin-panel" style="width:540px; max-height:90vh; overflow-y:auto;">
         <div class="admin-panel__head"><h2>Detail Transaksi</h2></div>
         <div style="padding-bottom:20px;">
             <div style="margin-bottom:18px; border-bottom:1px solid #e5e7eb; padding-bottom:14px;">
                 <h3 style="font-size:14px; margin-bottom:12px; color:#111318;">Informasi Pelanggan</h3>
                 <table style="width:100%; font-size:13px; border-collapse:collapse;">
-                    <tr><td style="width:40%; color:#6d727c; padding:6px 0;">Nama Lengkap</td><td id="detail-customer-name" style="font-weight:500;"></td></tr>
+                    <tr><td style="width:35%; color:#6d727c; padding:6px 0;">Nama Lengkap</td><td id="detail-customer-name" style="font-weight:500;"></td></tr>
                     <tr><td style="color:#6d727c; padding:6px 0;">Nomor HP</td><td id="detail-customer-phone" style="font-weight:500;"></td></tr>
-                    <tr><td style="color:#6d727c; padding:6px 0;">Alamat</td><td id="detail-customer-address" style="font-weight:500;"></td></tr>
+                    <tr><td style="color:#6d727c; padding:6px 0;">Alamat Lengkap</td><td id="detail-customer-address" style="font-weight:500;"></td></tr>
                     <tr><td style="color:#6d727c; padding:6px 0;">No. KTP</td><td id="detail-customer-ktp" style="font-weight:500;"></td></tr>
                     <tr><td style="color:#6d727c; padding:6px 0;">Bank & Rekening</td><td id="detail-customer-bank" style="font-weight:500;"></td></tr>
                 </table>
@@ -209,10 +274,23 @@
             <div>
                 <h3 style="font-size:14px; margin-bottom:12px; color:#111318;">Informasi Pesanan</h3>
                 <table style="width:100%; font-size:13px; border-collapse:collapse;">
-                    <tr><td style="width:40%; color:#6d727c; padding:6px 0;">Kota Layanan</td><td id="detail-order-city" style="font-weight:500;"></td></tr>
+                    <tr><td style="width:35%; color:#6d727c; padding:6px 0;">Kota Layanan</td><td id="detail-order-city" style="font-weight:500;"></td></tr>
                     <tr><td style="color:#6d727c; padding:6px 0;">Status</td><td id="detail-order-status" style="font-weight:500;"></td></tr>
                     <tr><td style="color:#6d727c; padding:6px 0;">Waktu Pesan</td><td id="detail-order-time" style="font-weight:500;"></td></tr>
-                    <tr><td style="color:#6d727c; padding:6px 0;">Alamat Penjemputan</td><td id="detail-order-pickup-address" style="font-weight:500;"></td></tr>
+                    <tr>
+                        <td style="color:#6d727c; padding:6px 0; vertical-align:top;">Alamat Penjemputan</td>
+                        <td>
+                            <div style="display:flex; flex-direction:column; gap:6px;">
+                                <span id="detail-order-pickup-address" style="font-weight:500;"></span>
+                                <div>
+                                    <button type="button" id="btn-open-order-map" class="admin-button admin-button--primary" style="height:28px; padding:0 12px; font-size:11px; display:inline-flex; align-items:center; gap:5px; background:#2563eb;">
+                                        <svg viewBox="0 0 24 24" style="width:13px; height:13px; fill:none; stroke:currentColor; stroke-width:2;"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                                        Lihat Alamat di Map
+                                    </button>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
                     <tr><td style="color:#6d727c; padding:6px 0;" id="detail-order-note-label">Catatan Alamat</td><td id="detail-order-pickup-note" style="font-weight:500;"></td></tr>
                 </table>
             </div>
@@ -220,6 +298,24 @@
         <div style="display:flex; justify-content:flex-end; padding-top:10px; border-top:1px solid #e5e7eb;">
             <button type="button" class="admin-button admin-button--primary" onclick="document.getElementById('modal-detail-order').style.display='none'">Tutup</button>
         </div>
+    </div>
+</div>
+
+<!-- Modal Interactive Map Penjemputan (Leaflet OpenStreetMap) -->
+<div id="modal-order-map" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,.55); z-index:150; align-items:center; justify-content:center;">
+    <div class="admin-panel" style="width:620px; max-width:95vw;">
+        <div class="admin-panel__head" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+            <div>
+                <h2>📍 Lokasi Penjemputan Barang</h2>
+                <p id="map-modal-subtitle" style="font-size:12px; color:#6d727c; margin:2px 0 0;"></p>
+            </div>
+            <button type="button" class="admin-button admin-button--secondary" style="height:28px; font-size:11px;" onclick="document.getElementById('modal-order-map').style.display='none'">Tutup Map</button>
+        </div>
+        <div style="margin-bottom:10px; font-size:12px; color:#374151; background:#f8fafc; padding:8px 12px; border-radius:6px; border:1px solid #e2e8f0; display:flex; justify-content:space-between; align-items:center;">
+            <span><strong>Koordinat GPS:</strong> <span id="map-modal-coords" style="font-family:monospace; color:#2563eb; font-weight:700;">-</span></span>
+            <span id="map-modal-city-badge" style="padding:2px 8px; border-radius:12px; background:#dbeafe; color:#1e40af; font-weight:600; font-size:11px;">-</span>
+        </div>
+        <div id="order-map-view" style="width:100%; height:350px; border-radius:8px; border:1px solid #e5e7eb; position:relative;"></div>
     </div>
 </div>
 @endsection
