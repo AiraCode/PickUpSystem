@@ -2,7 +2,6 @@
 
 use App\Http\Controllers\Api\AuthController;
 
-// Admin API Controllers
 use App\Http\Controllers\Api\Admin\AccuController as AdminAccuController;
 use App\Http\Controllers\Api\Admin\BankController as AdminBankController;
 use App\Http\Controllers\Api\Admin\CityAccuPriceController;
@@ -16,8 +15,6 @@ use App\Http\Controllers\Api\Admin\ShipmentController;
 use App\Http\Controllers\Api\Admin\TransferController;
 use App\Http\Controllers\Api\Admin\UserController;
 use App\Http\Controllers\Api\Admin\WarehouseController;
-
-// Customer API Controllers
 use App\Http\Controllers\Api\Customer\AccuController as CustomerAccuController;
 use App\Http\Controllers\Api\Customer\BankController as CustomerBankController;
 use App\Http\Controllers\Api\Customer\CityController as CustomerCityController;
@@ -27,12 +24,6 @@ use App\Http\Controllers\Api\Customer\StorageController as CustomerStorageContro
 
 use Illuminate\Support\Facades\Route;
 
-/*
-|--------------------------------------------------------------------------
-| CUSTOMER API ROUTES (Public - Tanpa Login)
-| Prefix: /api/customer/
-|--------------------------------------------------------------------------
-*/
 
 Route::prefix('customer')->group(function () {
     Route::get('cities', [CustomerCityController::class, 'index']);
@@ -84,12 +75,6 @@ Route::prefix('public-admin')->group(function () {
     });
 });
 
-/*
-|--------------------------------------------------------------------------
-| ADMIN API ROUTES (Protected - Perlu Login Sanctum)
-| Prefix: /api/admin/
-|--------------------------------------------------------------------------
-*/
 Route::post('/login', [AuthController::class, 'login']);
 
 Route::middleware('auth:sanctum')->group(function () {

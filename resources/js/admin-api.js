@@ -21,7 +21,6 @@ document.addEventListener("DOMContentLoaded", () => {
             .toUpperCase();
     }
 
-    // Live Real-Time Clock Ticker Widget
     const clockEl = document.getElementById("admin-live-clock");
     if (clockEl) {
         const updateClock = () => {
@@ -144,7 +143,6 @@ document.addEventListener("DOMContentLoaded", () => {
         return `<span style="padding:4px 10px; border-radius:20px; font-size:11px; font-weight:600; background:${c.bg}; color:${c.color}; text-transform:uppercase;">${status}</span>`;
     };
 
-    // Logout Modal Konfirmasi dengan Password
     const btnLogout = document.getElementById("btn-logout");
     const modalLogout = document.getElementById("modal-logout-confirm");
     const formLogout = document.getElementById("form-logout-confirm");
@@ -324,7 +322,10 @@ document.addEventListener("DOMContentLoaded", () => {
                 res.data.overview.avg_processing_time;
 
             const tbody = document.getElementById("attention-orders-tbody");
-            if (!res.data.attention_orders || !res.data.attention_orders.length) {
+            if (
+                !res.data.attention_orders ||
+                !res.data.attention_orders.length
+            ) {
                 tbody.innerHTML = `<tr><td colspan="5"><div class="admin-table-empty"><strong>Belum ada pesanan</strong></div></td></tr>`;
             } else {
                 tbody.innerHTML = res.data.attention_orders
@@ -345,7 +346,8 @@ document.addEventListener("DOMContentLoaded", () => {
             const actEmpty = document.getElementById("activity-empty-state");
             const shipments = res.data.recent_activities?.shipments || [];
             if (!shipments.length) {
-                if (actEmpty) actEmpty.innerHTML = `<strong>Belum ada aktivitas</strong>`;
+                if (actEmpty)
+                    actEmpty.innerHTML = `<strong>Belum ada aktivitas</strong>`;
             } else {
                 if (actEmpty) actEmpty.style.display = "none";
                 if (actList) {
@@ -376,20 +378,35 @@ document.addEventListener("DOMContentLoaded", () => {
                     chartContainer.style.border = "none";
                     chartContainer.style.padding = "0";
 
-                    const maxCount = Math.max(...chartData.map((d) => d.count), 1);
+                    const maxCount = Math.max(
+                        ...chartData.map((d) => d.count),
+                        1,
+                    );
 
                     const barsHtml = chartData
                         .map((d) => {
-                            const pct = Math.max(Math.round((d.count / maxCount) * 100), 4);
-                            const countDisplay = d.count > 0 ? `<span style="font-size:11px; font-weight:700; color:#2563eb; margin-bottom:6px;">${d.count}</span>` : `<span style="font-size:10px; color:#cbd5e1; margin-bottom:6px;">0</span>`;
-                            const barBg = d.count > 0 ? "linear-gradient(180deg, #3b82f6 0%, #1d4ed8 100%)" : "#e2e8f0";
-                            const barShadow = d.count > 0 ? "0 4px 10px rgba(37,99,235,0.2)" : "none";
+                            const pct = Math.max(
+                                Math.round((d.count / maxCount) * 100),
+                                4,
+                            );
+                            const countDisplay =
+                                d.count > 0
+                                    ? `<span style="font-size:11px; font-weight:700; color:#2563eb; margin-bottom:6px;">${d.count}</span>`
+                                    : `<span style="font-size:10px; color:#cbd5e1; margin-bottom:6px;">0</span>`;
+                            const barBg =
+                                d.count > 0
+                                    ? "linear-gradient(180deg, #3b82f6 0%, #1d4ed8 100%)"
+                                    : "#e2e8f0";
+                            const barShadow =
+                                d.count > 0
+                                    ? "0 4px 10px rgba(37,99,235,0.2)"
+                                    : "none";
 
                             return `
                         <div style="flex:1; display:flex; flex-direction:column; align-items:center; height:100%; justify-content:flex-end; min-width:0;" title="${d.label}: ${d.count} transaksi">
                             ${countDisplay}
-                            <div style="width:100%; max-width:${chartData.length > 20 ? '16px' : '38px'}; height:${pct}%; background:${barBg}; border-radius:6px 6px 0 0; transition: height 0.3s ease; box-shadow:${barShadow};"></div>
-                            <span style="font-size:${chartData.length > 20 ? '9px' : '11px'}; color:#64748b; font-weight:600; margin-top:8px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:100%;">${d.label}</span>
+                            <div style="width:100%; max-width:${chartData.length > 20 ? "16px" : "38px"}; height:${pct}%; background:${barBg}; border-radius:6px 6px 0 0; transition: height 0.3s ease; box-shadow:${barShadow};"></div>
+                            <span style="font-size:${chartData.length > 20 ? "9px" : "11px"}; color:#64748b; font-weight:600; margin-top:8px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:100%;">${d.label}</span>
                         </div>`;
                         })
                         .join("");
@@ -401,7 +418,7 @@ document.addEventListener("DOMContentLoaded", () => {
                                 <div style="border-bottom:1px dashed #e2e8f0; width:100%;"></div>
                                 <div style="border-bottom:1px dashed #e2e8f0; width:100%;"></div>
                             </div>
-                            <div style="display:flex; align-items:flex-end; justify-content:space-between; width:100%; height:100%; position:relative; z-index:1; gap:${chartData.length > 20 ? '3px' : '12px'};">
+                            <div style="display:flex; align-items:flex-end; justify-content:space-between; width:100%; height:100%; position:relative; z-index:1; gap:${chartData.length > 20 ? "3px" : "12px"};">
                                 ${barsHtml}
                             </div>
                         </div>
@@ -432,41 +449,63 @@ document.addEventListener("DOMContentLoaded", () => {
         let orderMarker = null;
 
         const searchInput = document.getElementById("order-search-input");
-        const btnOpenFilterModal = document.getElementById("btn-open-filter-modal");
-        const modalShopeeFilter = document.getElementById("modal-shopee-filter");
+        const btnOpenFilterModal = document.getElementById(
+            "btn-open-filter-modal",
+        );
+        const modalShopeeFilter = document.getElementById(
+            "modal-shopee-filter",
+        );
         const formShopeeFilter = document.getElementById("form-shopee-filter");
         const filterCitySelect = document.getElementById("filter-city-select");
         const filterBankSelect = document.getElementById("filter-bank-select");
         const filterDateStart = document.getElementById("filter-date-start");
         const filterDateEnd = document.getElementById("filter-date-end");
         const filterSortSelect = document.getElementById("filter-sort-select");
-        const btnResetShopeeFilter = document.getElementById("btn-reset-shopee-filter");
-        const filterActiveCount = document.getElementById("filter-active-count");
+        const btnResetShopeeFilter = document.getElementById(
+            "btn-reset-shopee-filter",
+        );
+        const filterActiveCount = document.getElementById(
+            "filter-active-count",
+        );
         const activeFiltersBar = document.getElementById("active-filters-bar");
         const activeFilterTags = document.getElementById("active-filter-tags");
 
-        const btnResetFilter = document.getElementById("btn-reset-order-filter");
+        const btnResetFilter = document.getElementById(
+            "btn-reset-order-filter",
+        );
         const activeBadge = document.getElementById("active-tab-badge");
         const uploadArea = document.getElementById("upload-area");
         const uploadInput = document.getElementById("upload-proof");
         const uploadPreview = document.getElementById("upload-preview");
         const uploadPlaceholder = document.getElementById("upload-placeholder");
-        const containerCancelReason = document.getElementById("container-cancel-reason");
+        const containerCancelReason = document.getElementById(
+            "container-cancel-reason",
+        );
         const cancelReasonInput = document.getElementById("cancel-reason");
         const orderUpdateError = document.getElementById("order-update-error");
 
         const loadFilterOptions = async () => {
             const [citiesRes, banksRes] = await Promise.all([
                 fetchApi("/cities"),
-                fetchApi("/banks")
+                fetchApi("/banks"),
             ]);
             if (filterCitySelect && citiesRes.data) {
-                filterCitySelect.innerHTML = `<option value="">Semua Kota</option>` +
-                    citiesRes.data.map((c) => `<option value="${c.id}">${c.name}</option>`).join("");
+                filterCitySelect.innerHTML =
+                    `<option value="">Semua Kota</option>` +
+                    citiesRes.data
+                        .map(
+                            (c) => `<option value="${c.id}">${c.name}</option>`,
+                        )
+                        .join("");
             }
             if (filterBankSelect && banksRes.data) {
-                filterBankSelect.innerHTML = `<option value="">Semua Bank</option>` +
-                    banksRes.data.map((b) => `<option value="${b.id}">${b.name}</option>`).join("");
+                filterBankSelect.innerHTML =
+                    `<option value="">Semua Bank</option>` +
+                    banksRes.data
+                        .map(
+                            (b) => `<option value="${b.id}">${b.name}</option>`,
+                        )
+                        .join("");
             }
         };
         loadFilterOptions();
@@ -477,12 +516,16 @@ document.addEventListener("DOMContentLoaded", () => {
 
             if (cityFilter && filterCitySelect) {
                 activeCount++;
-                const selectedText = filterCitySelect.options[filterCitySelect.selectedIndex]?.text || "Kota";
+                const selectedText =
+                    filterCitySelect.options[filterCitySelect.selectedIndex]
+                        ?.text || "Kota";
                 tags.push(`Kota: ${selectedText}`);
             }
             if (bankFilter && filterBankSelect) {
                 activeCount++;
-                const selectedText = filterBankSelect.options[filterBankSelect.selectedIndex]?.text || "Bank";
+                const selectedText =
+                    filterBankSelect.options[filterBankSelect.selectedIndex]
+                        ?.text || "Bank";
                 tags.push(`Bank: ${selectedText}`);
             }
             if (dateStartFilter) {
@@ -510,9 +553,13 @@ document.addEventListener("DOMContentLoaded", () => {
             if (activeFiltersBar && activeFilterTags) {
                 if (tags.length > 0) {
                     activeFiltersBar.style.display = "flex";
-                    activeFilterTags.innerHTML = tags.map((t) => `
+                    activeFilterTags.innerHTML = tags
+                        .map(
+                            (t) => `
                         <span style="background:#e0e7ff; color:#3730a3; padding:2px 8px; border-radius:12px; font-weight:600; font-size:11px;">${t}</span>
-                    `).join("");
+                    `,
+                        )
+                        .join("");
                 } else {
                     activeFiltersBar.style.display = "none";
                 }
@@ -533,7 +580,8 @@ document.addEventListener("DOMContentLoaded", () => {
             }
             if (cityFilter) queryParams.push(`city_id=${cityFilter}`);
             if (bankFilter) queryParams.push(`bank_id=${bankFilter}`);
-            if (dateStartFilter) queryParams.push(`date_start=${dateStartFilter}`);
+            if (dateStartFilter)
+                queryParams.push(`date_start=${dateStartFilter}`);
             if (dateEndFilter) queryParams.push(`date_end=${dateEndFilter}`);
             if (sortOrder) queryParams.push(`sort=${sortOrder}`);
 
@@ -542,11 +590,21 @@ document.addEventListener("DOMContentLoaded", () => {
 
             if (res.counts) {
                 const c = res.counts;
-                if (document.getElementById("count-pending")) document.getElementById("count-pending").innerText = c.pending.toLocaleString("id-ID");
-                if (document.getElementById("count-processing")) document.getElementById("count-processing").innerText = c.processing.toLocaleString("id-ID");
-                if (document.getElementById("count-completed")) document.getElementById("count-completed").innerText = c.completed.toLocaleString("id-ID");
-                if (document.getElementById("count-cancelled")) document.getElementById("count-cancelled").innerText = c.cancelled.toLocaleString("id-ID");
-                if (document.getElementById("count-all")) document.getElementById("count-all").innerText = c.all.toLocaleString("id-ID");
+                if (document.getElementById("count-pending"))
+                    document.getElementById("count-pending").innerText =
+                        c.pending.toLocaleString("id-ID");
+                if (document.getElementById("count-processing"))
+                    document.getElementById("count-processing").innerText =
+                        c.processing.toLocaleString("id-ID");
+                if (document.getElementById("count-completed"))
+                    document.getElementById("count-completed").innerText =
+                        c.completed.toLocaleString("id-ID");
+                if (document.getElementById("count-cancelled"))
+                    document.getElementById("count-cancelled").innerText =
+                        c.cancelled.toLocaleString("id-ID");
+                if (document.getElementById("count-all"))
+                    document.getElementById("count-all").innerText =
+                        c.all.toLocaleString("id-ID");
             }
 
             if (activeBadge) {
@@ -556,13 +614,37 @@ document.addEventListener("DOMContentLoaded", () => {
                     activeBadge.style.color = "#1e40af";
                 } else {
                     const statusLabels = {
-                        pending: { text: "PENDING", bg: "#fef3c7", color: "#92400e" },
-                        processing: { text: "PROCESSING", bg: "#dbeafe", color: "#1e40af" },
-                        completed: { text: "COMPLETED", bg: "#d1fae5", color: "#065f46" },
-                        cancelled: { text: "CANCELLED", bg: "#fee2e2", color: "#991b1b" },
-                        all: { text: "SEMUA TRANSAKSI", bg: "#f3f4f6", color: "#374151" },
+                        pending: {
+                            text: "PENDING",
+                            bg: "#fef3c7",
+                            color: "#92400e",
+                        },
+                        processing: {
+                            text: "PROCESSING",
+                            bg: "#dbeafe",
+                            color: "#1e40af",
+                        },
+                        completed: {
+                            text: "COMPLETED",
+                            bg: "#d1fae5",
+                            color: "#065f46",
+                        },
+                        cancelled: {
+                            text: "CANCELLED",
+                            bg: "#fee2e2",
+                            color: "#991b1b",
+                        },
+                        all: {
+                            text: "SEMUA TRANSAKSI",
+                            bg: "#f3f4f6",
+                            color: "#374151",
+                        },
                     };
-                    const st = statusLabels[activeStatus] || { text: activeStatus.toUpperCase(), bg: "#f3f4f6", color: "#374151" };
+                    const st = statusLabels[activeStatus] || {
+                        text: activeStatus.toUpperCase(),
+                        bg: "#f3f4f6",
+                        color: "#374151",
+                    };
                     activeBadge.innerText = st.text;
                     activeBadge.style.background = st.bg;
                     activeBadge.style.color = st.color;
@@ -615,7 +697,10 @@ document.addEventListener("DOMContentLoaded", () => {
                     cancelled: { border: "#ef4444", bg: "#fef2f2" },
                     all: { border: "#6b7280", bg: "#f9fafb" },
                 };
-                const c = cardColors[status] || { border: "#3b82f6", bg: "#eff6ff" };
+                const c = cardColors[status] || {
+                    border: "#3b82f6",
+                    bg: "#eff6ff",
+                };
                 activeCard.style.borderColor = c.border;
                 activeCard.style.background = c.bg;
             }
@@ -691,7 +776,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 if (file) {
                     if (file.size > 10 * 1024 * 1024) {
                         if (orderUpdateError) {
-                            orderUpdateError.innerText = "Ukuran foto terlalu besar (Maksimal 10MB)!";
+                            orderUpdateError.innerText =
+                                "Ukuran foto terlalu besar (Maksimal 10MB)!";
                             orderUpdateError.style.display = "block";
                         }
                         uploadInput.value = "";
@@ -810,42 +896,58 @@ document.addEventListener("DOMContentLoaded", () => {
                 if (!currentDetailOrder) return;
                 const o = currentDetailOrder;
                 const c = o.customer || {};
-                
+
                 const lat = parseFloat(o.pickup_lat || c.lat || -7.250445);
                 const lng = parseFloat(o.pickup_long || c.long || 112.768845);
                 const cityName = o.city ? o.city.name : "Kota Layanan";
                 const custName = c.name || "Customer";
-                const address = o.pickup_address || c.address || "Alamat Penjemputan";
+                const address =
+                    o.pickup_address || c.address || "Alamat Penjemputan";
 
                 if (document.getElementById("map-modal-subtitle")) {
-                    document.getElementById("map-modal-subtitle").innerText = `Pelanggan: ${custName} • ${cityName}`;
+                    document.getElementById("map-modal-subtitle").innerText =
+                        `Pelanggan: ${custName} • ${cityName}`;
                 }
                 if (document.getElementById("map-modal-coords")) {
-                    document.getElementById("map-modal-coords").innerText = `${lat.toFixed(6)}, ${lng.toFixed(6)}`;
+                    document.getElementById("map-modal-coords").innerText =
+                        `${lat.toFixed(6)}, ${lng.toFixed(6)}`;
                 }
                 if (document.getElementById("map-modal-city-badge")) {
-                    document.getElementById("map-modal-city-badge").innerText = cityName;
+                    document.getElementById("map-modal-city-badge").innerText =
+                        cityName;
                 }
 
-                document.getElementById("modal-order-map").style.display = "flex";
+                document.getElementById("modal-order-map").style.display =
+                    "flex";
 
                 setTimeout(() => {
                     if (!orderMap) {
-                        orderMap = L.map("order-map-view").setView([lat, lng], 15);
-                        L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-                            attribution: "&copy; OpenStreetMap contributors",
-                        }).addTo(orderMap);
+                        orderMap = L.map("order-map-view").setView(
+                            [lat, lng],
+                            15,
+                        );
+                        L.tileLayer(
+                            "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+                            {
+                                attribution:
+                                    "&copy; OpenStreetMap contributors",
+                            },
+                        ).addTo(orderMap);
                         orderMarker = L.marker([lat, lng]).addTo(orderMap);
                     } else {
                         orderMap.setView([lat, lng], 15);
                         orderMarker.setLatLng([lat, lng]);
                     }
-                    orderMarker.bindPopup(`
+                    orderMarker
+                        .bindPopup(
+                            `
                         <div style="font-size:12px; font-family:sans-serif;">
                             <strong style="color:#2563eb; display:block; margin-bottom:4px;">📍 ${custName}</strong>
                             <p style="margin:0; color:#374151;">${address}</p>
                         </div>
-                    `).openPopup();
+                    `,
+                        )
+                        .openPopup();
                     orderMap.invalidateSize();
                 }, 200);
             });
@@ -873,7 +975,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 const statusVal = selected.value;
                 const payload = { status: statusVal };
 
-                // Validation for Cancelled
                 if (statusVal === "cancelled") {
                     const reason = cancelReasonInput
                         ? cancelReasonInput.value.trim()
@@ -974,7 +1075,7 @@ document.addEventListener("DOMContentLoaded", () => {
                         (a) => `
                     <tr>
                         <td>
-                            <img src="${a.img_url || '/img/default-accu.png'}" alt="${a.name}" style="width:36px; height:36px; object-fit:cover; border-radius:6px; border:1px solid #e5e7eb; background:#f9fafb;" onerror="this.src='/img/default-accu.png'">
+                            <img src="${a.img_url || "/img/default-accu.png"}" alt="${a.name}" style="width:36px; height:36px; object-fit:cover; border-radius:6px; border:1px solid #e5e7eb; background:#f9fafb;" onerror="this.src='/img/default-accu.png'">
                         </td>
                         <td style="font-weight:500;">${a.brand}</td>
                         <td>${a.name}</td>
@@ -1021,7 +1122,7 @@ document.addEventListener("DOMContentLoaded", () => {
                         (a) => `
                     <tr>
                         <td>
-                            <img src="${a.img_url || '/img/default-accu.png'}" alt="${a.name}" style="width:32px; height:32px; object-fit:cover; border-radius:6px; border:1px solid #e5e7eb; background:#f9fafb;" onerror="this.src='/img/default-accu.png'">
+                            <img src="${a.img_url || "/img/default-accu.png"}" alt="${a.name}" style="width:32px; height:32px; object-fit:cover; border-radius:6px; border:1px solid #e5e7eb; background:#f9fafb;" onerror="this.src='/img/default-accu.png'">
                         </td>
                         <td style="font-weight:500;">${a.brand}</td>
                         <td>${a.name}</td>
@@ -1092,7 +1193,9 @@ document.addEventListener("DOMContentLoaded", () => {
             loadTrashedAccus();
             const imgInput = document.getElementById("accu-img");
             const imgPreview = document.getElementById("accu-img-preview");
-            const imgPreviewContainer = document.getElementById("accu-img-preview-container");
+            const imgPreviewContainer = document.getElementById(
+                "accu-img-preview-container",
+            );
             if (imgInput) imgInput.value = "";
             if (imgPreview) imgPreview.src = "";
             if (imgPreviewContainer) imgPreviewContainer.style.display = "none";
@@ -1263,7 +1366,10 @@ document.addEventListener("DOMContentLoaded", () => {
                     document.getElementById("modal-add-city").style.display =
                         "none";
                     document.getElementById("form-add-city").reset();
-                    showToast(res.message || "Kota berhasil ditambahkan!", "success");
+                    showToast(
+                        res.message || "Kota berhasil ditambahkan!",
+                        "success",
+                    );
                     loadCities();
                     loadTrashedCities();
                 } else {
@@ -1279,7 +1385,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
         const accuImgInput = document.getElementById("accu-img");
         const accuImgPreview = document.getElementById("accu-img-preview");
-        const accuImgPreviewContainer = document.getElementById("accu-img-preview-container");
+        const accuImgPreviewContainer = document.getElementById(
+            "accu-img-preview-container",
+        );
         if (accuImgInput && accuImgPreview) {
             accuImgInput.addEventListener("change", () => {
                 const file = accuImgInput.files[0];
@@ -1287,12 +1395,14 @@ document.addEventListener("DOMContentLoaded", () => {
                     const reader = new FileReader();
                     reader.onload = (e) => {
                         accuImgPreview.src = e.target.result;
-                        if (accuImgPreviewContainer) accuImgPreviewContainer.style.display = "block";
+                        if (accuImgPreviewContainer)
+                            accuImgPreviewContainer.style.display = "block";
                     };
                     reader.readAsDataURL(file);
                 } else {
                     accuImgPreview.src = "";
-                    if (accuImgPreviewContainer) accuImgPreviewContainer.style.display = "none";
+                    if (accuImgPreviewContainer)
+                        accuImgPreviewContainer.style.display = "none";
                 }
             });
         }
@@ -1322,7 +1432,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 const formData = new FormData();
                 formData.append("brand", brandVal);
                 formData.append("name", accuNameVal);
-                
+
                 const imgInput = document.getElementById("accu-img");
                 if (imgInput && imgInput.files && imgInput.files[0]) {
                     formData.append("img", imgInput.files[0]);
@@ -1336,10 +1446,14 @@ document.addEventListener("DOMContentLoaded", () => {
                     document.getElementById("modal-add-accu").style.display =
                         "none";
                     document.getElementById("form-add-accu").reset();
-                    if (accuImgPreviewContainer) accuImgPreviewContainer.style.display = "none";
+                    if (accuImgPreviewContainer)
+                        accuImgPreviewContainer.style.display = "none";
                     if (accuBrandOtherWrap)
                         accuBrandOtherWrap.style.display = "none";
-                    showToast(res.message || "Aki baru berhasil disimpan!", "success");
+                    showToast(
+                        res.message || "Aki baru berhasil disimpan!",
+                        "success",
+                    );
                     loadAccus();
                     loadTrashedAccus();
                 } else {
@@ -1508,7 +1622,10 @@ document.addEventListener("DOMContentLoaded", () => {
                         addMap.removeLayer(addMarker);
                         addMarker = null;
                     }
-                    showToast(res.message || "Gudang berhasil ditambahkan!", "success");
+                    showToast(
+                        res.message || "Gudang berhasil ditambahkan!",
+                        "success",
+                    );
                     loadStorages();
                     loadTrashedStorages();
                 } else {
@@ -1532,7 +1649,9 @@ document.addEventListener("DOMContentLoaded", () => {
                 "flex";
         };
 
-        const formDeleteStorage = document.getElementById("form-delete-storage");
+        const formDeleteStorage = document.getElementById(
+            "form-delete-storage",
+        );
         if (formDeleteStorage) {
             formDeleteStorage.addEventListener("submit", async (e) => {
                 e.preventDefault();
@@ -1552,14 +1671,16 @@ document.addEventListener("DOMContentLoaded", () => {
                     !res.errors &&
                     (!res.status || res.status < 400)
                 ) {
-                    document.getElementById("modal-delete-storage").style.display =
-                        "none";
+                    document.getElementById(
+                        "modal-delete-storage",
+                    ).style.display = "none";
                     showToast(res.message, "success");
                     loadStorages();
                     loadTrashedStorages();
                 } else {
                     showToast(
-                        res.message || "Password admin salah / Gagal menghapus gudang",
+                        res.message ||
+                            "Password admin salah / Gagal menghapus gudang",
                         "error",
                     );
                 }
@@ -1573,7 +1694,8 @@ document.addEventListener("DOMContentLoaded", () => {
         const authError = document.getElementById("easter-egg-error");
 
         const checkEasterEggLock = () => {
-            const isUnlocked = sessionStorage.getItem("easter_egg_unlocked") === "true";
+            const isUnlocked =
+                sessionStorage.getItem("easter_egg_unlocked") === "true";
             if (!isUnlocked) {
                 if (modalLock) modalLock.style.display = "flex";
                 return false;
@@ -1585,10 +1707,15 @@ document.addEventListener("DOMContentLoaded", () => {
         if (formAuth) {
             formAuth.addEventListener("submit", async (e) => {
                 e.preventDefault();
-                const inputPass = document.getElementById("easter-egg-password").value;
+                const inputPass = document.getElementById(
+                    "easter-egg-password",
+                ).value;
                 const verifyRes = await fetch("/api/public-admin/verify", {
                     method: "POST",
-                    headers: { "Content-Type": "application/json", "Accept": "application/json" },
+                    headers: {
+                        "Content-Type": "application/json",
+                        Accept: "application/json",
+                    },
                     body: JSON.stringify({ secret: inputPass }),
                 });
                 const verifyData = await verifyRes.json();
@@ -1597,11 +1724,15 @@ document.addEventListener("DOMContentLoaded", () => {
                     sessionStorage.setItem("easter_egg_unlocked", "true");
                     if (authError) authError.style.display = "none";
                     if (modalLock) modalLock.style.display = "none";
-                    showToast("Akses Rahasia Dibuka! Anda dapat membuat akun admin baru.", "success");
+                    showToast(
+                        "Akses Rahasia Dibuka! Anda dapat membuat akun admin baru.",
+                        "success",
+                    );
                     loadUsers();
                 } else {
                     if (authError) {
-                        authError.innerText = verifyData.message || "Password rahasia salah!";
+                        authError.innerText =
+                            verifyData.message || "Password rahasia salah!";
                         authError.style.display = "block";
                     }
                 }
@@ -1655,10 +1786,16 @@ document.addEventListener("DOMContentLoaded", () => {
                     document.getElementById("modal-add-user").style.display =
                         "none";
                     document.getElementById("form-add-user").reset();
-                    showToast(res.message || "Staf admin berhasil ditambahkan!", "success");
+                    showToast(
+                        res.message || "Staf admin berhasil ditambahkan!",
+                        "success",
+                    );
                     loadUsers();
                 } else {
-                    showToast(res?.message || "Gagal membuat akun admin", "error");
+                    showToast(
+                        res?.message || "Gagal membuat akun admin",
+                        "error",
+                    );
                 }
             });
 
@@ -1680,7 +1817,9 @@ document.addEventListener("DOMContentLoaded", () => {
         const yearSelect = document.getElementById("report-year-select");
 
         const loadReportData = async (selectedYear) => {
-            const endpoint = selectedYear ? `/reports?year=${selectedYear}` : "/reports";
+            const endpoint = selectedYear
+                ? `/reports?year=${selectedYear}`
+                : "/reports";
             const res = await fetchApi(endpoint);
             if (!res || !res.data) return;
 
@@ -1689,65 +1828,102 @@ document.addEventListener("DOMContentLoaded", () => {
 
             if (yearSelect && d.available_years && d.available_years.length) {
                 yearSelect.innerHTML = d.available_years
-                    .map(y => `<option value="${y}" ${y == d.selected_year ? 'selected' : ''}>${y}</option>`)
+                    .map(
+                        (y) =>
+                            `<option value="${y}" ${y == d.selected_year ? "selected" : ""}>${y}</option>`,
+                    )
                     .join("");
             }
 
-            document.getElementById("report-stat-sales").innerText = rupiah(s.total_sales);
-            document.getElementById("report-stat-orders").innerText = s.total_orders.toLocaleString("id-ID");
-            document.getElementById("report-stat-completed-note").innerText = `${s.completed_orders.toLocaleString("id-ID")} Selesai`;
-            document.getElementById("report-stat-avg").innerText = rupiah(s.avg_transaction_value);
-            document.getElementById("report-stat-cancelled").innerText = `${s.cancelled_orders.toLocaleString("id-ID")} (${s.cancellation_rate}%)`;
+            document.getElementById("report-stat-sales").innerText = rupiah(
+                s.total_sales,
+            );
+            document.getElementById("report-stat-orders").innerText =
+                s.total_orders.toLocaleString("id-ID");
+            document.getElementById("report-stat-completed-note").innerText =
+                `${s.completed_orders.toLocaleString("id-ID")} Selesai`;
+            document.getElementById("report-stat-avg").innerText = rupiah(
+                s.avg_transaction_value,
+            );
+            document.getElementById("report-stat-cancelled").innerText =
+                `${s.cancelled_orders.toLocaleString("id-ID")} (${s.cancellation_rate}%)`;
 
             const chartTitle = document.getElementById("chart-title");
-            if (chartTitle) chartTitle.innerText = `Pendapatan Bulanan Tahun ${d.selected_year}`;
+            if (chartTitle)
+                chartTitle.innerText = `Pendapatan Bulanan Tahun ${d.selected_year}`;
 
-            const barsContainer = document.getElementById("chart-bars-container");
-            const labelsContainer = document.getElementById("chart-labels-container");
+            const barsContainer = document.getElementById(
+                "chart-bars-container",
+            );
+            const labelsContainer = document.getElementById(
+                "chart-labels-container",
+            );
             const maxLabel = document.getElementById("chart-max-label");
 
             const monthly = d.monthly_chart || [];
-            const maxRev = Math.max(...monthly.map(m => m.revenue), 1);
+            const maxRev = Math.max(...monthly.map((m) => m.revenue), 1);
 
             if (maxLabel) {
                 maxLabel.innerText = `Tertinggi: ${rupiah(maxRev)}`;
             }
 
             if (barsContainer && labelsContainer) {
-                barsContainer.innerHTML = `
+                barsContainer.innerHTML =
+                    `
                     <div style="position:absolute; inset:0; display:flex; flex-direction:column; justify-content:space-between; pointer-events:none; opacity:0.12; z-index:0;">
                         <div style="border-top:1px dashed #000; width:100%;"></div>
                         <div style="border-top:1px dashed #000; width:100%;"></div>
                         <div style="border-top:1px dashed #000; width:100%;"></div>
                     </div>
-                ` + monthly.map(m => {
-                    const pct = Math.max(Math.round((m.revenue / maxRev) * 100), 4);
-                    const formattedRev = m.revenue > 0 
-                        ? (m.revenue >= 1000000000 ? (m.revenue / 1000000000).toFixed(1) + 'M' : (m.revenue >= 1000000 ? (m.revenue / 1000000).toFixed(0) + 'jt' : (m.revenue / 1000).toFixed(0) + 'k')) 
-                        : '0';
+                ` +
+                    monthly
+                        .map((m) => {
+                            const pct = Math.max(
+                                Math.round((m.revenue / maxRev) * 100),
+                                4,
+                            );
+                            const formattedRev =
+                                m.revenue > 0
+                                    ? m.revenue >= 1000000000
+                                        ? (m.revenue / 1000000000).toFixed(1) +
+                                          "M"
+                                        : m.revenue >= 1000000
+                                          ? (m.revenue / 1000000).toFixed(0) +
+                                            "jt"
+                                          : (m.revenue / 1000).toFixed(0) + "k"
+                                    : "0";
 
-                    return `
+                            return `
                     <div style="flex:1; display:flex; flex-direction:column; align-items:center; height:100%; justify-content:flex-end; z-index:1;" title="${m.month_name}: ${rupiah(m.revenue)} (${m.receipts_count} struk)">
                         <div style="font-size:10px; font-weight:600; color:#4b5563; margin-bottom:4px; white-space:nowrap;">${formattedRev}</div>
                         <div style="width:75%; max-width:32px; height:${pct}%; background:linear-gradient(180deg, #3b82f6 0%, #1d4ed8 100%); border-radius:4px 4px 0 0; transition: height 0.4s ease;"></div>
                     </div>`;
-                }).join("");
+                        })
+                        .join("");
 
-                labelsContainer.innerHTML = monthly.map(m => `
+                labelsContainer.innerHTML = monthly
+                    .map(
+                        (m) => `
                     <div style="flex:1; text-align:center; font-size:11px; font-weight:600; color:#6b7280;">${m.month_name}</div>
-                `).join("");
+                `,
+                    )
+                    .join("");
             }
 
             const topAccusTbody = document.getElementById("top-accus-tbody");
             if (topAccusTbody) {
                 if (d.top_accus && d.top_accus.length) {
-                    topAccusTbody.innerHTML = d.top_accus.map(a => `
+                    topAccusTbody.innerHTML = d.top_accus
+                        .map(
+                            (a) => `
                         <tr>
-                            <td style="font-weight:500;">${a.brand || '-'}</td>
+                            <td style="font-weight:500;">${a.brand || "-"}</td>
                             <td>${a.name}</td>
-                            <td style="text-align:right; font-weight:600; color:#1d4ed8;">${Number(a.total_sold).toLocaleString('id-ID')} unit</td>
+                            <td style="text-align:right; font-weight:600; color:#1d4ed8;">${Number(a.total_sold).toLocaleString("id-ID")} unit</td>
                         </tr>
-                    `).join("");
+                    `,
+                        )
+                        .join("");
                 } else {
                     topAccusTbody.innerHTML = `<tr><td colspan="3"><div class="admin-table-empty">Belum ada data penjualan</div></td></tr>`;
                 }
@@ -1756,12 +1932,16 @@ document.addEventListener("DOMContentLoaded", () => {
             const topCitiesTbody = document.getElementById("top-cities-tbody");
             if (topCitiesTbody) {
                 if (d.top_cities && d.top_cities.length) {
-                    topCitiesTbody.innerHTML = d.top_cities.map(c => `
+                    topCitiesTbody.innerHTML = d.top_cities
+                        .map(
+                            (c) => `
                         <tr>
                             <td style="font-weight:500;">${c.name}</td>
-                            <td style="text-align:right; font-weight:600; color:#10b981;">${Number(c.total_orders).toLocaleString('id-ID')} order</td>
+                            <td style="text-align:right; font-weight:600; color:#10b981;">${Number(c.total_orders).toLocaleString("id-ID")} order</td>
                         </tr>
-                    `).join("");
+                    `,
+                        )
+                        .join("");
                 } else {
                     topCitiesTbody.innerHTML = `<tr><td colspan="2"><div class="admin-table-empty">Belum ada data area</div></td></tr>`;
                 }
