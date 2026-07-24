@@ -1,3 +1,7 @@
+import.meta.glob([
+    '../img/**',
+]);
+
 const sidebar = document.querySelector('#admin-sidebar');
 const sidebarOverlay = document.querySelector('[data-sidebar-overlay]');
 const sidebarOpen = document.querySelector('[data-sidebar-open]');
