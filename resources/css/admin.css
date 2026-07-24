@@ -17,8 +17,16 @@ html {
     scroll-behavior: smooth;
 }
 
+@keyframes adminBgGradientLight {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
 body.admin-shell {
-    background: var(--canvas);
+    background: linear-gradient(-45deg, #f8fafc, #e0e7ff, #ede9fe, #fce7f3, #f8fafc);
+    background-size: 400% 400%;
+    animation: adminBgGradientLight 20s ease infinite;
     color: var(--ink);
     font-family:
         "Inter",
@@ -1494,6 +1502,12 @@ select:focus-visible {
     height: 18px;
 }
 
+@keyframes adminBgGradientDark {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
 html.admin-dark-mode,
 html.admin-dark-mode body.admin-shell,
 body.admin-dark-mode {
@@ -1502,7 +1516,9 @@ body.admin-dark-mode {
     --line: #334155;
     --canvas: #0f172a;
     --surface: #1e293b;
-    background: #0f172a !important;
+    background: linear-gradient(-45deg, #0f172a, #1e3a8a, #4c1d95, #7f1d1d, #0f172a) !important;
+    background-size: 400% 400% !important;
+    animation: adminBgGradientDark 25s ease infinite !important;
     color: #f1f5f9 !important;
 }
 

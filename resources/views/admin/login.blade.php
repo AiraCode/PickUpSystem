@@ -22,12 +22,16 @@
                 padding: 0;
             }
 
+            @keyframes loginBgGradient {
+                0% { background-position: 0% 50%; }
+                50% { background-position: 100% 50%; }
+                100% { background-position: 0% 50%; }
+            }
+
             body {
-                background-color: #0f172a;
-                background-image: 
-                    radial-gradient(at 0% 0%, rgba(34, 80, 252, 0.25) 0px, transparent 50%),
-                    radial-gradient(at 100% 100%, rgba(186, 27, 43, 0.2) 0px, transparent 50%),
-                    radial-gradient(at 50% 50%, rgba(15, 23, 42, 0.95) 0px, transparent 100%);
+                background: linear-gradient(-45deg, #0f172a, #1e3a8a, #4c1d95, #7f1d1d, #0f172a);
+                background-size: 400% 400%;
+                animation: loginBgGradient 25s ease infinite;
                 display: flex;
                 align-items: center;
                 justify-content: center;
