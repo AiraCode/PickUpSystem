@@ -13,8 +13,7 @@
 
 <!-- Simple KPI Dashboard & Status Filter Tabs (Horizontal Grid Layout) -->
 <div style="display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 16px; margin-bottom: 20px;">
-    <!-- Pending Card (Default Active) -->
-    <article id="card-status-pending" class="admin-panel admin-stat-card order-status-tab active" onclick="switchOrderTab('pending')" style="cursor:pointer; border:2px solid #f59e0b; background:#fffbeb; transition:all 0.2s;">
+    <article id="card-status-pending" class="admin-panel admin-stat-card order-status-tab active" onclick="switchOrderTab('pending')" style="cursor:pointer; border:2px solid #f59e0b; transition:all 0.2s;">
         <div class="admin-stat-card__head" style="margin-bottom:6px;">
             <span class="admin-stat-card__icon" style="background:#fef3c7; color:#d97706; padding:6px; border-radius:6px;">
                 <svg viewBox="0 0 24 24" style="width:20px; height:20px; fill:none; stroke:currentColor; stroke-width:2;"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
@@ -25,7 +24,6 @@
         <small style="color:#d97706; font-size:11px;">Menunggu verifikasi</small>
     </article>
 
-    <!-- Processing Card -->
     <article id="card-status-processing" class="admin-panel admin-stat-card order-status-tab" onclick="switchOrderTab('processing')" style="cursor:pointer; border:2px solid #e5e7eb; transition:all 0.2s;">
         <div class="admin-stat-card__head" style="margin-bottom:6px;">
             <span class="admin-stat-card__icon" style="background:#dbeafe; color:#2563eb; padding:6px; border-radius:6px;">
@@ -37,7 +35,6 @@
         <small style="color:#6b7280; font-size:11px;">Sedang dijemput</small>
     </article>
 
-    <!-- Completed Card -->
     <article id="card-status-completed" class="admin-panel admin-stat-card order-status-tab" onclick="switchOrderTab('completed')" style="cursor:pointer; border:2px solid #e5e7eb; transition:all 0.2s;">
         <div class="admin-stat-card__head" style="margin-bottom:6px;">
             <span class="admin-stat-card__icon" style="background:#d1fae5; color:#059669; padding:6px; border-radius:6px;">
@@ -49,7 +46,6 @@
         <small style="color:#6b7280; font-size:11px;">Transaksi selesai</small>
     </article>
 
-    <!-- Cancelled Card -->
     <article id="card-status-cancelled" class="admin-panel admin-stat-card order-status-tab" onclick="switchOrderTab('cancelled')" style="cursor:pointer; border:2px solid #e5e7eb; transition:all 0.2s;">
         <div class="admin-stat-card__head" style="margin-bottom:6px;">
             <span class="admin-stat-card__icon" style="background:#fee2e2; color:#dc2626; padding:6px; border-radius:6px;">
@@ -61,7 +57,6 @@
         <small style="color:#6b7280; font-size:11px;">Pesanan dibatalkan</small>
     </article>
 
-    <!-- All Card -->
     <article id="card-status-all" class="admin-panel admin-stat-card order-status-tab" onclick="switchOrderTab('all')" style="cursor:pointer; border:2px solid #e5e7eb; transition:all 0.2s;">
         <div class="admin-stat-card__head" style="margin-bottom:6px;">
             <span class="admin-stat-card__icon" style="background:#f3f4f6; color:#4b5563; padding:6px; border-radius:6px;">
