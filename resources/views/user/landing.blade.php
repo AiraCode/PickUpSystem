@@ -14,7 +14,6 @@
                 </div>
                 <div class="user-hero__content user-container">
                     <div class="user-hero__copy">
-                        <span class="user-badge"><i aria-hidden="true"></i>Membeli aki bekas di seluruh Indonesia</span>
                         <h1>Jual Aki Bekas Anda dengan <em>Harga Terbaik</em></h1>
                         <p>Indoprima Group membeli aki mobil dan aki motor bekas dengan proses cepat, transparan, dan
                             pembayaran langsung ke rekening Anda.</p>
