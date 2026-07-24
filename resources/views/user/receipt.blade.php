@@ -1,7 +1,7 @@
-﻿@extends('user.layouts.app')
+@extends('user.layouts.app')
 
 @section('content')
-    @include('user.partials.header', ['headerClass' => 'user-header--solid'])
+    @include('user.partials.header', ['headerClass' => 'user-header--solid user-header--simple', 'hideNav' => true])
 
     <main class="user-flow-page user-receipt-page">
         <section class="user-flow-hero user-flow-hero--receipt">

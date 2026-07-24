@@ -1,4 +1,4 @@
-﻿:root {
+:root {
     --user-red: #ba1b2b;
     --user-blue: #2250fc;
     --user-ink: #111318;
@@ -163,6 +163,9 @@ body.user-shell textarea:focus-visible {
     gap: clamp(18px, 2.2vw, 35px);
     margin-left: auto;
     margin-right: clamp(18px, 3.5vw, 56px);
+}
+.user-nav__language {
+    display: none;
 }
 .user-nav a {
     color: currentColor;
@@ -1198,6 +1201,50 @@ body.user-shell textarea:focus-visible {
 .user-flow-hero__inner {
     padding-top: 24px;
 }
+
+.user-flow-hero {
+    position: relative;
+    overflow: hidden;
+    min-height: 360px;
+    display: flex;
+    align-items: center;
+    color: var(--user-white);
+}
+
+.user-flow-hero__bg {
+    position: absolute;
+    inset: 0;
+    background-image: url("https://images.unsplash.com/photo-1676337167629-d896b3ed5724?q=80&w=1170&auto=format&fit=crop");
+    background-size: cover;
+    background-position: center;
+    z-index: 0;
+}
+
+.user-flow-hero__overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(34, 80, 252, 0.82);
+    z-index: 1;
+}
+
+.user-flow-hero__inner {
+    position: relative;
+    z-index: 2;
+    padding-top: 120px;
+    padding-bottom: 70px;
+}
+
+.user-flow-hero .user-kicker,
+.user-flow-hero h1,
+.user-flow-hero p {
+    color: var(--user-white);
+}
+
+.user-flow-hero p {
+    max-width: 620px;
+    color: rgba(255, 255, 255, 0.85);
+}
+
 .user-back-link {
     color: rgba(255, 255, 255, 0.76);
     display: inline-flex;
@@ -1868,25 +1915,155 @@ body.user-shell textarea:focus-visible {
     max-width: 980px;
 }
 
-@media (max-width: 1120px) {
+/* ===========================================================
+   LAPTOP (1025px - 1120px)
+=========================================================== */
+@media (min-width: 1025px) and (max-width: 1120px) {
+    .user-header__inner {
+        padding: 0 22px;
+    }
+
     .user-nav {
         gap: 18px;
         margin-right: 22px;
     }
+
     .user-nav a {
         font-size: 11px;
     }
-    .user-header__inner {
-        padding-left: 22px;
-        padding-right: 22px;
-    }
+
     .user-catalog-layout,
     .user-form-layout {
         grid-template-columns: minmax(0, 1fr) 310px;
     }
 }
 
-@media (max-width: 940px) {
+/* ===========================================================
+   TABLET (721px - 1024px)
+=========================================================== */
+@media (min-width: 721px) and (max-width: 1024px) {
+    .user-container {
+        max-width: 100%;
+        padding-left: 56px;
+        padding-right: 56px;
+    }
+
+    .user-header__inner {
+        height: 74px;
+        padding-left: 22px;
+        padding-right: 22px;
+    }
+
+    .user-menu-toggle {
+        display: none;
+    }
+
+    .user-nav {
+        display: flex;
+        gap: 18px;
+        margin-right: 24px;
+        position: static;
+        background: transparent;
+        border: 0;
+        box-shadow: none;
+        padding: 0;
+    }
+
+    .user-nav a {
+        font-size: 11px;
+        padding: 0;
+    }
+
+    .user-nav a::after {
+        display: block;
+    }
+
+    .user-language {
+        display: flex;
+    }
+
+    /* ---------- HERO ---------- */
+
+    .user-flow-hero {
+        min-height: 470px;
+    }
+
+    .user-flow-hero__inner {
+        padding-top: 110px;
+        padding-bottom: 70px;
+    }
+
+    .user-progress {
+        max-width: 520px;
+        margin: 28px 0;
+    }
+
+    .user-progress__step {
+        min-width: 70px;
+    }
+
+    .user-progress__line {
+        margin: 0 12px;
+    }
+
+    .user-flow-hero h1 {
+        max-width: 520px;
+        font-size: 52px;
+        line-height: 1.08;
+    }
+
+    .user-flow-hero p {
+        max-width: 500px;
+    }
+
+    .user-kicker {
+        display: inline-block;
+        margin-bottom: 10px;
+    }
+
+    .user-progress {
+        width: 100%;
+        max-width: 500px;
+    }
+
+    /* ---------- FORM ---------- */
+
+    .user-form-section {
+        padding-top: 56px;
+    }
+
+    .user-form-layout {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) 280px;
+        gap: 28px;
+        align-items: stretch;
+    }
+
+    .user-form-card,
+    .user-flow-summary {
+        padding: 22px;
+    }
+
+    .user-flow-summary {
+        position: sticky;
+        min-width:280px;
+        top: 95px;
+        align-self: start;
+    }
+
+    .user-form-actions {
+        grid-column: 1 / 2;
+    }
+
+    .user-product-grid {
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    }
+}
+
+/* ===========================================================
+   MOBILE (<=720px)
+=========================================================== */
+@media (max-width: 720px) {
     .user-menu-toggle {
         display: inline-flex;
         margin-left: auto;
@@ -1903,11 +2080,12 @@ body.user-shell textarea:focus-visible {
         flex-direction: column;
         gap: 0;
         left: 20px;
-        margin: 0;
-        padding: 8px;
-        position: absolute;
         right: 20px;
         top: 72px;
+        position: absolute;
+        padding: 8px;
+        margin: 0;
+        z-index: 60;
     }
 
     .user-nav.is-open {
@@ -1915,55 +2093,36 @@ body.user-shell textarea:focus-visible {
     }
 
     .user-nav a {
+        color: var(--user-ink);
         padding: 11px 10px;
+        font-size: 14px;
     }
 
     .user-nav a::after {
         display: none;
     }
 
-    .user-header__actions {
-        gap: 10px;
+    .user-nav__language {
+        border-top: 1px solid var(--user-line);
+        display: flex;
+        margin-top: 4px;
+        padding: 8px 10px 4px;
     }
 
-    .user-language {
+    .user-nav__language .user-language {
+        color: var(--user-ink);
+        display: inline-flex;
+        padding: 0;
+    }
+
+    .user-header__actions > .user-language {
         display: none;
     }
 
-    .user-catalog-layout {
-        grid-template-columns: minmax(0, 1fr);
+    .user-header--simple .user-header__actions > .user-language {
+        display: inline-flex;
     }
 
-    .user-form-layout {
-        display: flex;
-        flex-direction: column;
-        gap: 24px;
-    }
-
-    .user-identity-form {
-        order: 1;
-    }
-
-    .user-flow-summary {
-        order: 2;
-        position: static;
-    }
-
-    .user-form-actions {
-        order: 3;
-        justify-content: stretch;
-    }
-
-    .user-form-actions .user-button {
-        flex: 1;
-    }
-
-    .user-checkout-card {
-        position: static;
-    }
-}
-
-@media (max-width: 720px) {
     .user-upload-field--desktop-full {
         grid-column: auto;
     }
@@ -1972,139 +2131,204 @@ body.user-shell textarea:focus-visible {
         padding-left: 18px;
         padding-right: 18px;
     }
+
     .user-header__inner {
         height: 72px;
         padding-left: 18px;
         padding-right: 18px;
     }
+
     .user-brand__mark {
-        height: 36px;
         width: 36px;
+        height: 36px;
     }
+
     .user-brand__copy strong {
         font-size: 12px;
     }
+
     .user-brand__copy small {
         font-size: 8px;
     }
+
     .user-header__cta {
         font-size: 10px;
         padding: 11px 12px;
     }
+
     .user-hero,
     .user-hero__content {
         min-height: 700px;
     }
+
     .user-hero__content {
         padding: 118px 18px 65px;
     }
+
     .user-hero h1 {
         font-size: clamp(38px, 12vw, 58px);
         margin-top: 23px;
     }
+
     .user-hero__copy > p {
         font-size: 13px;
     }
+
     .user-section {
         padding: 76px 0;
     }
+
     .user-section-heading--split,
     .user-faq__inner {
-        align-items: start;
         display: flex;
         flex-direction: column;
+        align-items: flex-start;
         gap: 29px;
     }
+
     .user-process-grid,
     .user-product-grid {
-        grid-template-columns: minmax(0, 1fr);
+        grid-template-columns: 1fr;
         margin-top: 38px;
     }
+
     .user-process-card {
         min-height: 210px;
     }
+
     .user-catalog-toolbar {
-        align-items: start;
         flex-direction: column;
+        align-items: flex-start;
     }
+
     .user-catalog-toolbar__status {
         padding-bottom: 0;
+    }
+
+    .user-catalog-layout,
+    .user-form-layout {
+        grid-template-columns: 1fr;
+    }
+
+    .user-checkout-card,
+    .user-flow-summary {
+        position: static;
+    }
+
+    .user-flow-summary {
+        order: -1;
+        width: 100%;
+    }
+
+    .user-checkout-card {
+        order: 2;
+        width: 100%;
+    }
+
+    .user-form-actions {
+        order: 3;
+    }
+
+    .user-form-card--privacy {
+        order: 2;
     }
 
     .user-footer {
         padding: 55px 18px 0;
     }
+
     .user-footer__main {
         display: flex;
         flex-direction: column;
         gap: 38px;
         padding-bottom: 43px;
     }
+
     .user-footer__bottom {
-        align-items: start;
+        display: flex;
         flex-direction: column;
+        align-items: flex-start;
         gap: 10px;
     }
+
     .user-flow-hero {
         padding: 36px 0 49px;
     }
+
     .user-flow-hero__inner {
         padding-top: 13px;
     }
+
     .user-progress {
         margin: 38px 0 36px;
     }
+
     .user-progress__line {
         margin: 0 5px;
     }
+
     .user-form-section,
     .user-receipt-section {
         padding: 48px 0 76px;
     }
+
     .user-form-card {
         padding: 20px;
     }
+
     .user-form-grid {
-        grid-template-columns: minmax(0, 1fr);
+        grid-template-columns: 1fr;
     }
+
     .user-form-grid .user-floating-field--full {
         grid-column: auto;
     }
+
     .user-form-actions,
     .user-receipt-actions {
         justify-content: stretch;
     }
+
     .user-form-actions .user-button,
     .user-receipt-actions .user-button {
         flex: 1;
     }
+
     .user-receipt-toolbar {
-        align-items: start;
+        display: flex;
         flex-direction: column;
+        align-items: flex-start;
         gap: 15px;
     }
+
     .user-receipt {
         padding: 22px;
     }
+
     .user-receipt__top,
     .user-receipt__heading,
     .user-payment-proof__head {
-        align-items: start;
+        display: flex;
         flex-direction: column;
+        align-items: flex-start;
         gap: 15px;
     }
+
     .user-receipt__meta {
         text-align: left;
     }
+
     .user-receipt__grid,
     .user-payment-proof__grid {
+        grid-template-columns: 1fr;
         gap: 27px;
-        grid-template-columns: minmax(0, 1fr);
     }
+
     .user-receipt__summary {
         max-width: none;
     }
 }
+
 @media print {
     .user-header,
     .user-flow-hero,

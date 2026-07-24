@@ -1,24 +1,51 @@
-﻿@extends('user.layouts.app')
+@extends('user.layouts.app')
 
 @section('content')
-    @include('user.partials.header', ['headerClass' => 'user-header--solid'])
+    @include('user.partials.header', ['headerClass' => 'user-header--solid user-header--simple', 'hideNav' => true])
 
     <main class="user-flow-page">
         <section class="user-flow-hero">
+
+            <div class="user-flow-hero__bg"></div>
+            <div class="user-flow-hero__overlay"></div>
+
             <div class="user-container user-flow-hero__inner">
-                <a href="/user" class="user-back-link"><span aria-hidden="true">←</span> Kembali ke daftar harga</a>
+
                 <div class="user-progress">
-                    <div class="user-progress__step is-complete"><span>01</span><small>Pilih aki</small></div>
+                    <div class="user-progress__step is-complete">
+                        <span>01</span>
+                        <small>Pilih aki</small>
+                    </div>
+
                     <span class="user-progress__line is-complete"></span>
-                    <div class="user-progress__step is-current"><span>02</span><small>Identitas</small></div>
+
+                    <div class="user-progress__step is-current">
+                        <span>02</span>
+                        <small>Identitas</small>
+                    </div>
+
                     <span class="user-progress__line"></span>
-                    <div class="user-progress__step"><span>03</span><small>Receipt</small></div>
+
+                    <div class="user-progress__step">
+                        <span>03</span>
+                        <small>Receipt</small>
+                    </div>
                 </div>
+
                 <span class="user-kicker">LANGKAH 02 DARI 03</span>
-                <h1>Lengkapi identitas<br><em>penjual.</em></h1>
-                <p>Informasi ini diperlukan untuk proses verifikasi dan pembayaran. Data pribadi Anda diproses secara
-                    terbatas sesuai kebutuhan transaksi.</p>
+
+                <h1>
+                    Lengkapi identitas<br>
+                    <em>penjual.</em>
+                </h1>
+
+                <p>
+                    Informasi ini diperlukan untuk proses verifikasi dan pembayaran.
+                    Data pribadi Anda diproses secara terbatas sesuai kebutuhan transaksi.
+                </p>
+
             </div>
+
         </section>
 
         <section class="user-form-section">
@@ -122,4 +149,6 @@
             </div>
         </div>
     </div>
+
+    @include('user.partials.footer')
 @endsection
