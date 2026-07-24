@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\StoreCityRequest;
+use App\Models\Accu;
 use App\Models\City;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -36,7 +37,14 @@ class CityController extends Controller
 
         $data['name'] = $name;
         $data['id'] = (City::withTrashed()->max('id') ?? 0) + 1;
+        $data['percentage'] = $request->input('percentage', 80.00);
         $city = City::create($data);
+
+        // Attach all existing Accus to the new city
+        $accuIds = Accu::pluck('id')->toArray();
+        if (!empty($accuIds)) {
+            $city->accus()->syncWithoutDetaching($accuIds);
+        }
 
         return response()->json([
             'message' => 'Kota berhasil ditambahkan',
@@ -81,7 +89,20 @@ class CityController extends Controller
 
         $validated = $request->validate([
             'name' => 'sometimes|required|string|max:45',
+            'percentage' => 'sometimes|required|numeric|min:0|max:100',
         ]);
+
+        $oldPercentage = $city->percentage;
+        $newPercentage = isset($validated['percentage']) ? (float)$validated['percentage'] : null;
+
+        if ($newPercentage !== null && (float)$oldPercentage !== $newPercentage) {
+            \App\Models\PriceHistory::create([
+                'type' => 'percentage',
+                'label' => 'Persentase ' . $city->name,
+                'old_value' => $oldPercentage,
+                'new_value' => $newPercentage,
+            ]);
+        }
 
         $city->update($validated);
 
@@ -90,6 +111,7 @@ class CityController extends Controller
             'data' => $city,
         ]);
     }
+
     public function destroy(int $id): JsonResponse
     {
         $city = City::findOrFail($id);

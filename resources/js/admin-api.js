@@ -1092,6 +1092,103 @@ document.addEventListener("DOMContentLoaded", () => {
         let activeCityId = null;
         let activeCityName = "";
 
+        const loadSettings = async () => {
+            const res = await fetchApi("/settings");
+            if (res && res.data) {
+                const lmeEl = document.getElementById("setting-lme");
+                const kursEl = document.getElementById("setting-kurs");
+                if (lmeEl) lmeEl.value = res.data.lme;
+                if (kursEl) kursEl.value = res.data.kurs;
+            }
+        };
+
+        const loadPriceHistory = async () => {
+            const res = await fetchApi("/price-histories");
+            const tbody = document.getElementById("price-history-tbody");
+            if (!tbody) return;
+            const history = res.data || [];
+            if (history.length) {
+                tbody.innerHTML = history
+                    .map(
+                        (h) => {
+                            const date = new Date(h.created_at).toLocaleString("id-ID", {
+                                day: "2-digit",
+                                month: "2-digit",
+                                year: "numeric",
+                                hour: "2-digit",
+                                minute: "2-digit",
+                                second: "2-digit"
+                            });
+                            let valSuffix = "";
+                            if (h.type === "lme") valSuffix = " USD/Ton";
+                            if (h.type === "kurs") valSuffix = " IDR/USD";
+                            if (h.type === "percentage") valSuffix = "%";
+
+                            const oldValStr = h.old_value !== null ? parseFloat(h.old_value).toLocaleString("id-ID") + valSuffix : "-";
+                            const newValStr = parseFloat(h.new_value).toLocaleString("id-ID") + valSuffix;
+
+                            return `
+                            <tr>
+                                <td>${date} WIB</td>
+                                <td style="font-weight:600; color:#1e293b;">${h.label}</td>
+                                <td style="color:#64748b;">${oldValStr}</td>
+                                <td style="font-weight:700; color:#2563eb;">${newValStr}</td>
+                            </tr>`;
+                        }
+                    )
+                    .join("");
+            } else {
+                tbody.innerHTML = `<tr><td colspan="4"><div class="admin-table-empty">Belum ada riwayat perubahan parameter</div></td></tr>`;
+            }
+        };
+
+        const formSettings = document.getElementById("form-global-settings");
+        if (formSettings) {
+            formSettings.addEventListener("submit", async (e) => {
+                e.preventDefault();
+                const lme = parseFloat(document.getElementById("setting-lme").value);
+                const kurs = parseFloat(document.getElementById("setting-kurs").value);
+
+                const res = await fetchApi("/settings", {
+                    method: "PUT",
+                    body: JSON.stringify({ lme, kurs }),
+                });
+
+                if (res && res.data) {
+                    showToast("LME & Kurs berhasil diperbarui!", "success");
+                    loadPriceHistory();
+                    if (activeCityId) {
+                        viewCityAccus(activeCityId, activeCityName);
+                    }
+                } else {
+                    showToast(res.message || "Gagal menyimpan LME & Kurs", "error");
+                }
+            });
+        }
+
+        const formCityDetailPct = document.getElementById("form-city-detail-percentage");
+        if (formCityDetailPct) {
+            formCityDetailPct.addEventListener("submit", async (e) => {
+                e.preventDefault();
+                if (!activeCityId) return;
+
+                const newPct = parseFloat(document.getElementById("city-detail-percentage-input").value);
+                const res = await fetchApi(`/cities/${activeCityId}`, {
+                    method: "PUT",
+                    body: JSON.stringify({ percentage: newPct }),
+                });
+
+                if (res && (res.data || res.message)) {
+                    showToast("Persentase kota berhasil diperbarui!", "success");
+                    loadCities();
+                    loadPriceHistory();
+                    viewCityAccus(activeCityId, activeCityName);
+                } else {
+                    showToast(res.message || "Gagal memperbarui persentase kota", "error");
+                }
+            });
+        }
+
         const loadCities = async () => {
             const res = await fetchApi("/cities");
             cachedCities = res.data || [];
@@ -1102,9 +1199,10 @@ document.addEventListener("DOMContentLoaded", () => {
                         (c) => `
                     <tr>
                         <td style="font-weight:500;">${c.name}</td>
-                        <td>
-                            <div style="display:flex; gap:6px;">
-                                <button onclick="viewCityAccus(${c.id}, '${c.name}')" class="admin-button admin-button--primary" style="height:30px; font-size:11px;">Detail</button>
+                        <td><span style="background:#e0e7ff; color:#3730a3; padding:2px 8px; border-radius:12px; font-weight:600; font-size:11px;">${c.percentage || 80}%</span></td>
+                        <td style="text-align:right;">
+                            <div style="display:flex; gap:6px; justify-content:flex-end;">
+                                <button onclick="viewCityAccus(${c.id}, '${c.name}')" class="admin-button admin-button--primary" style="height:30px; font-size:11px;">Detail Kota</button>
                                 <button onclick="deleteCity(${c.id})" class="admin-button admin-button--secondary" style="height:30px; font-size:11px; color:#ba1b2b;">Hapus</button>
                             </div>
                         </td>
@@ -1112,13 +1210,8 @@ document.addEventListener("DOMContentLoaded", () => {
                     )
                     .join("");
             } else {
-                tbody.innerHTML = `<tr><td colspan="2"><div class="admin-table-empty"><strong>Belum ada kota</strong></div></td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="3"><div class="admin-table-empty"><strong>Belum ada kota</strong></div></td></tr>`;
             }
-            const sel = document.getElementById("set-price-city");
-            if (sel)
-                sel.innerHTML = cachedCities
-                    .map((c) => `<option value="${c.id}">${c.name}</option>`)
-                    .join("");
         };
 
         const loadAccus = async () => {
@@ -1130,12 +1223,10 @@ document.addEventListener("DOMContentLoaded", () => {
                     .map(
                         (a) => `
                     <tr>
-                        <td>
-                            <img src="${a.img_url || "/img/default-accu.png"}" alt="${a.name}" style="width:36px; height:36px; object-fit:cover; border-radius:6px; border:1px solid #e5e7eb; background:#f9fafb;" onerror="this.src='/img/default-accu.png'">
-                        </td>
                         <td style="font-weight:500;">${a.brand}</td>
                         <td>${a.name}</td>
-                        <td>
+                        <td><span style="font-weight:600; color:#2563eb;">${a.berat_kering} kg</span></td>
+                        <td style="text-align:right;">
                             <button onclick="deleteAccu(${a.id})" class="admin-button admin-button--secondary" style="height:30px; font-size:11px; color:#ba1b2b;">Hapus</button>
                         </td>
                     </tr>`,
@@ -1144,18 +1235,12 @@ document.addEventListener("DOMContentLoaded", () => {
             } else {
                 tbody.innerHTML = `<tr><td colspan="4"><div class="admin-table-empty"><strong>Belum ada aki</strong></div></td></tr>`;
             }
-            const sel = document.getElementById("set-price-accu");
-            if (sel)
-                sel.innerHTML = cachedAccus
-                    .map(
-                        (a) =>
-                            `<option value="${a.id}">${a.brand} - ${a.name}</option>`,
-                    )
-                    .join("");
         };
 
+        loadSettings();
         loadCities();
         loadAccus();
+        loadPriceHistory();
 
         window.viewCityAccus = async (cityId, cityName) => {
             activeCityId = cityId;
@@ -1165,35 +1250,32 @@ document.addEventListener("DOMContentLoaded", () => {
                 "city-price-modal-title",
             );
             if (modalTitle)
-                modalTitle.innerText = `Daftar Harga Aki: ${cityName}`;
+                modalTitle.innerText = `Daftar Harga Aki: Kota ${cityName}`;
 
             document.getElementById("modal-view-city-prices").style.display =
                 "flex";
 
             const res = await fetchApi(`/cities/${cityId}/accus`);
+            if (res.data && res.data.city) {
+                const pctInp = document.getElementById("city-detail-percentage-input");
+                if (pctInp) pctInp.value = res.data.city.percentage || 80;
+            }
+
             const tbody = document.getElementById("modal-city-accus-tbody");
             if (res.data && res.data.accus && res.data.accus.length) {
                 tbody.innerHTML = res.data.accus
                     .map(
                         (a) => `
                     <tr>
-                        <td>
-                            <img src="${a.img_url || "/img/default-accu.png"}" alt="${a.name}" style="width:32px; height:32px; object-fit:cover; border-radius:6px; border:1px solid #e5e7eb; background:#f9fafb;" onerror="this.src='/img/default-accu.png'">
-                        </td>
                         <td style="font-weight:500;">${a.brand}</td>
                         <td>${a.name}</td>
-                        <td style="font-weight:600; color:#10b981;">${rupiah(a.price)}</td>
-                        <td>
-                            <div style="display:flex; gap:6px; justify-content:flex-end;">
-                                <button onclick="editCityAccuPrice(${cityId}, ${a.id}, ${a.price})" class="admin-button admin-button--primary" style="height:28px; font-size:11px;">Edit</button>
-                                <button onclick="deleteCityAccu(${cityId}, ${a.id})" class="admin-button admin-button--secondary" style="height:28px; font-size:11px; color:#ba1b2b;">Hapus</button>
-                            </div>
-                        </td>
+                        <td>${a.berat_kering} kg</td>
+                        <td style="font-weight:700; color:#10b981; text-align:right;">${rupiah(a.price)}</td>
                     </tr>`,
                     )
                     .join("");
             } else {
-                tbody.innerHTML = `<tr><td colspan="5"><div class="admin-table-empty"><strong>Belum ada harga diset untuk kota ${cityName}</strong></div></td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="4"><div class="admin-table-empty"><strong>Belum ada data aki untuk kota ${cityName}</strong></div></td></tr>`;
             }
         };
 
@@ -1206,38 +1288,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 .join(" ");
         };
 
-        window.openAddPriceForCurrentCity = () => {
-            const citySel = document.getElementById("set-price-city");
-            const accuSel = document.getElementById("set-price-accu");
-            if (citySel) {
-                if (activeCityId) citySel.value = activeCityId;
-                citySel.disabled = false;
-            }
-            if (accuSel) accuSel.disabled = false;
-            document.getElementById("set-price-modal-head").innerText =
-                "Tambah Harga Aki";
-            document.getElementById("modal-set-price").style.display = "flex";
-        };
-
-        window.editCityAccuPrice = (cityId, accuId, currentPrice) => {
-            const citySel = document.getElementById("set-price-city");
-            const accuSel = document.getElementById("set-price-accu");
-            const priceVal = document.getElementById("set-price-value");
-            if (citySel) {
-                citySel.value = cityId;
-                citySel.disabled = true;
-            }
-            if (accuSel) {
-                accuSel.value = accuId;
-                accuSel.disabled = true;
-            }
-            if (priceVal) priceVal.value = currentPrice;
-
-            document.getElementById("set-price-modal-head").innerText =
-                "Edit Harga Aki";
-            document.getElementById("modal-set-price").style.display = "flex";
-        };
-
         window.openAddCityModal = () => {
             loadCities();
             loadTrashedCities();
@@ -1247,14 +1297,6 @@ document.addEventListener("DOMContentLoaded", () => {
         window.openAddAccuModal = () => {
             loadAccus();
             loadTrashedAccus();
-            const imgInput = document.getElementById("accu-img");
-            const imgPreview = document.getElementById("accu-img-preview");
-            const imgPreviewContainer = document.getElementById(
-                "accu-img-preview-container",
-            );
-            if (imgInput) imgInput.value = "";
-            if (imgPreview) imgPreview.src = "";
-            if (imgPreviewContainer) imgPreviewContainer.style.display = "none";
             document.getElementById("modal-add-accu").style.display = "flex";
         };
 
@@ -1279,21 +1321,6 @@ document.addEventListener("DOMContentLoaded", () => {
                     await fetchApi(`/accus/${id}`, { method: "DELETE" });
                     showToast("Aki berhasil dihapus", "success");
                     loadAccus();
-                    loadTrashedAccus();
-                },
-            );
-        };
-
-        window.deleteCityAccu = (cityId, accuId) => {
-            showConfirm(
-                "Hapus Harga",
-                "Yakin ingin menghapus harga aki ini dari kota?",
-                async () => {
-                    await fetchApi(`/cities/${cityId}/accus/${accuId}`, {
-                        method: "DELETE",
-                    });
-                    showToast("Harga aki berhasil dihapus", "success");
-                    viewCityAccus(activeCityId, activeCityName);
                     loadTrashedAccus();
                 },
             );
@@ -1398,6 +1425,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 if (!rawName) return;
                 const formattedName = toTitleCase(rawName);
                 document.getElementById("city-name").value = formattedName;
+                const pctVal = parseFloat(document.getElementById("city-percentage").value) || 80.0;
 
                 const isDuplicate = cachedCities.some(
                     (c) =>
@@ -1416,6 +1444,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     method: "POST",
                     body: JSON.stringify({
                         name: formattedName,
+                        percentage: pctVal,
                     }),
                 });
                 if (res && (res.data || res.message)) {
@@ -1439,30 +1468,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
             });
 
-        const accuImgInput = document.getElementById("accu-img");
-        const accuImgPreview = document.getElementById("accu-img-preview");
-        const accuImgPreviewContainer = document.getElementById(
-            "accu-img-preview-container",
-        );
-        if (accuImgInput && accuImgPreview) {
-            accuImgInput.addEventListener("change", () => {
-                const file = accuImgInput.files[0];
-                if (file) {
-                    const reader = new FileReader();
-                    reader.onload = (e) => {
-                        accuImgPreview.src = e.target.result;
-                        if (accuImgPreviewContainer)
-                            accuImgPreviewContainer.style.display = "block";
-                    };
-                    reader.readAsDataURL(file);
-                } else {
-                    accuImgPreview.src = "";
-                    if (accuImgPreviewContainer)
-                        accuImgPreviewContainer.style.display = "none";
-                }
-            });
-        }
-
         document
             .getElementById("form-add-accu")
             .addEventListener("submit", async (e) => {
@@ -1484,26 +1489,24 @@ document.addEventListener("DOMContentLoaded", () => {
                 const accuNameVal = document
                     .getElementById("accu-name")
                     .value.trim();
+                const beratKeringVal = parseFloat(
+                    document.getElementById("accu-berat-kering").value,
+                );
 
-                const formData = new FormData();
-                formData.append("brand", brandVal);
-                formData.append("name", accuNameVal);
-
-                const imgInput = document.getElementById("accu-img");
-                if (imgInput && imgInput.files && imgInput.files[0]) {
-                    formData.append("img", imgInput.files[0]);
-                }
+                const payload = {
+                    brand: brandVal,
+                    name: accuNameVal,
+                    berat_kering: beratKeringVal,
+                };
 
                 const res = await fetchApi("/accus", {
                     method: "POST",
-                    body: formData,
+                    body: JSON.stringify(payload),
                 });
                 if (res && (res.data || res.message)) {
                     document.getElementById("modal-add-accu").style.display =
                         "none";
                     document.getElementById("form-add-accu").reset();
-                    if (accuImgPreviewContainer)
-                        accuImgPreviewContainer.style.display = "none";
                     if (accuBrandOtherWrap)
                         accuBrandOtherWrap.style.display = "none";
                     showToast(
@@ -1514,32 +1517,6 @@ document.addEventListener("DOMContentLoaded", () => {
                     loadTrashedAccus();
                 } else {
                     showToast(res.message || "Gagal menyimpan aki", "error");
-                }
-            });
-
-        document
-            .getElementById("form-set-price")
-            .addEventListener("submit", async (e) => {
-                e.preventDefault();
-                const cityId = document.getElementById("set-price-city").value;
-                await fetchApi(`/cities/${cityId}/accus`, {
-                    method: "POST",
-                    body: JSON.stringify({
-                        accus_id:
-                            document.getElementById("set-price-accu").value,
-                        price: document.getElementById("set-price-value").value,
-                    }),
-                });
-                document.getElementById("modal-set-price").style.display =
-                    "none";
-                document.getElementById("form-set-price").reset();
-                const citySelReset = document.getElementById("set-price-city");
-                const accuSelReset = document.getElementById("set-price-accu");
-                if (citySelReset) citySelReset.disabled = false;
-                if (accuSelReset) accuSelReset.disabled = false;
-                showToast("Harga aki berhasil disimpan!", "success");
-                if (activeCityId && activeCityId == cityId) {
-                    viewCityAccus(activeCityId, activeCityName);
                 }
             });
     }
@@ -1951,7 +1928,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
                             return `
                     <div style="flex:1; display:flex; flex-direction:column; align-items:center; height:100%; justify-content:flex-end; z-index:1;" title="${m.month_name}: ${rupiah(m.revenue)} (${m.receipts_count} struk)">
-                        <div style="font-size:10px; font-weight:600; color:${chartTextColor}; margin-bottom:4px; white-space:nowrap;">${formattedRev}</div>
+                        <div style="font-size:10px; font-weight:600; color:var(--muted); margin-bottom:4px; white-space:nowrap;">${formattedRev}</div>
                         <div style="width:75%; max-width:32px; height:${pct}%; background:linear-gradient(180deg, #3b82f6 0%, #1d4ed8 100%); border-radius:4px 4px 0 0; transition: height 0.4s ease;"></div>
                     </div>`;
                         })

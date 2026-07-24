@@ -7,8 +7,8 @@ use App\Http\Requests\Admin\StoreAccuRequest;
 use App\Http\Requests\Admin\UpdateAccuRequest;
 use App\Models\Accu;
 use App\Models\Brand;
+use App\Models\City;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Facades\Storage;
 
 class AccuController extends Controller
 {
@@ -36,7 +36,13 @@ class AccuController extends Controller
 
         if ($trashed) {
             $trashed->restore();
+            $trashed->update(['berat_kering' => $validated['berat_kering']]);
             $trashed->load('brandRelation');
+
+            // Ensure attached to all cities
+            $cityIds = City::pluck('id')->toArray();
+            $trashed->cities()->syncWithoutDetaching($cityIds);
+
             return response()->json([
                 'message' => 'Aki berhasil dipulihkan dari data terhapus',
                 'data' => $trashed,
@@ -47,19 +53,20 @@ class AccuController extends Controller
             'id' => (Accu::withTrashed()->max('id') ?? 0) + 1,
             'brands_id' => $brand->id,
             'name' => $validated['name'],
+            'berat_kering' => $validated['berat_kering'],
         ];
-        
-        if ($request->hasFile('img')) {
-            $data['img'] = $request->file('img')->store('accus', 'public');
-        } else {
-            $data['img'] = 'img/default-accu.png';
-        }
 
         $accu = Accu::create($data);
         $accu->load('brandRelation');
 
+        // Automatically attach to ALL existing cities
+        $cityIds = City::pluck('id')->toArray();
+        if (!empty($cityIds)) {
+            $accu->cities()->syncWithoutDetaching($cityIds);
+        }
+
         return response()->json([
-            'message' => 'Accu berhasil ditambahkan',
+            'message' => 'Accu berhasil ditambahkan dan diterapkan ke semua kota',
             'data' => $accu,
         ], 201);
     }
@@ -109,12 +116,8 @@ class AccuController extends Controller
         if (!empty($validated['name'])) {
             $data['name'] = $validated['name'];
         }
-
-        if ($request->hasFile('img')) {
-            if ($accu->img && $accu->img !== 'default/accu-default.png' && Storage::disk('public')->exists($accu->img)) {
-                Storage::disk('public')->delete($accu->img);
-            }
-            $data['img'] = $request->file('img')->store('accus', 'public');
+        if (isset($validated['berat_kering'])) {
+            $data['berat_kering'] = $validated['berat_kering'];
         }
 
         $accu->update($data);
@@ -129,11 +132,6 @@ class AccuController extends Controller
     public function destroy(int $id): JsonResponse
     {
         $accu = Accu::findOrFail($id);
-        
-        if ($accu->img && $accu->img !== 'default/accu-default.png' && Storage::disk('public')->exists($accu->img)) {
-            Storage::disk('public')->delete($accu->img);
-        }
-
         $accu->delete();
 
         return response()->json([

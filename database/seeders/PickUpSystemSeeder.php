@@ -31,20 +31,21 @@ class PickUpSystemSeeder extends Seeder
 
         // 1. Kota (9 Area Service)
         $citiesData = [
-            ['id' => 1, 'name' => 'Jakarta', 'lat' => -6.2088, 'long' => 106.8456],
-            ['id' => 2, 'name' => 'Surabaya', 'lat' => -7.2575, 'long' => 112.7521],
-            ['id' => 3, 'name' => 'Bandung', 'lat' => -6.9175, 'long' => 107.6191],
-            ['id' => 4, 'name' => 'Semarang', 'lat' => -6.9667, 'long' => 110.4167],
-            ['id' => 5, 'name' => 'Medan', 'lat' => 3.5952, 'long' => 98.6722],
-            ['id' => 6, 'name' => 'Makassar', 'lat' => -5.1477, 'long' => 119.4327],
-            ['id' => 7, 'name' => 'Bali', 'lat' => -8.6705, 'long' => 115.2126],
-            ['id' => 8, 'name' => 'Malang', 'lat' => -7.9666, 'long' => 112.6326],
-            ['id' => 9, 'name' => 'Yogyakarta', 'lat' => -7.7956, 'long' => 110.3695],
+            ['id' => 1, 'name' => 'Jakarta', 'lat' => -6.2088, 'long' => 106.8456, 'percentage' => 82.5],
+            ['id' => 2, 'name' => 'Surabaya', 'lat' => -7.2575, 'long' => 112.7521, 'percentage' => 85.0],
+            ['id' => 3, 'name' => 'Bandung', 'lat' => -6.9175, 'long' => 107.6191, 'percentage' => 87.5],
+            ['id' => 4, 'name' => 'Semarang', 'lat' => -6.9667, 'long' => 110.4167, 'percentage' => 90.0],
+            ['id' => 5, 'name' => 'Medan', 'lat' => 3.5952, 'long' => 98.6722, 'percentage' => 80.0],
+            ['id' => 6, 'name' => 'Makassar', 'lat' => -5.1477, 'long' => 119.4327, 'percentage' => 82.5],
+            ['id' => 7, 'name' => 'Bali', 'lat' => -8.6705, 'long' => 115.2126, 'percentage' => 85.0],
+            ['id' => 8, 'name' => 'Malang', 'lat' => -7.9666, 'long' => 112.6326, 'percentage' => 87.5],
+            ['id' => 9, 'name' => 'Yogyakarta', 'lat' => -7.7956, 'long' => 110.3695, 'percentage' => 90.0],
         ];
         foreach ($citiesData as $c) {
             DB::table('cities')->insert([
                 'id' => $c['id'],
                 'name' => $c['name'],
+                'percentage' => $c['percentage'],
                 'created_at' => $now,
                 'updated_at' => $now,
             ]);
@@ -61,48 +62,46 @@ class PickUpSystemSeeder extends Seeder
             ]);
         }
 
-        // 3. Accus (12 Tipe Aki)
+        // 0. Settings
+        DB::table('settings')->truncate();
+        DB::table('settings')->insert([
+            ['key' => 'lme', 'value' => '2100', 'created_at' => $now, 'updated_at' => $now],
+            ['key' => 'kurs', 'value' => '16000', 'created_at' => $now, 'updated_at' => $now],
+        ]);
+
+        // 3. Accus (12 Tipe Aki dengan berat_kering dalam kg)
         $accusData = [
-            ['id' => 1, 'name' => 'NS40Z', 'brands_id' => 1, 'img' => 'img/default-accu.png'],
-            ['id' => 2, 'name' => 'NS60', 'brands_id' => 2, 'img' => 'img/default-accu.png'],
-            ['id' => 3, 'name' => 'N50Z', 'brands_id' => 3, 'img' => 'img/default-accu.png'],
-            ['id' => 4, 'name' => 'NS70', 'brands_id' => 1, 'img' => 'img/default-accu.png'],
-            ['id' => 5, 'name' => 'N70Z', 'brands_id' => 4, 'img' => 'img/default-accu.png'],
-            ['id' => 6, 'name' => 'DIN 55559', 'brands_id' => 5, 'img' => 'img/default-accu.png'],
-            ['id' => 7, 'name' => 'YTX9-BS', 'brands_id' => 6, 'img' => 'img/default-accu.png'],
-            ['id' => 8, 'name' => 'GTZ5S', 'brands_id' => 7, 'img' => 'img/default-accu.png'],
-            ['id' => 9, 'name' => 'MF 55D23L', 'brands_id' => 8, 'img' => 'img/default-accu.png'],
-            ['id' => 10, 'name' => 'NS40ZL', 'brands_id' => 1, 'img' => 'img/default-accu.png'],
-            ['id' => 11, 'name' => 'N100', 'brands_id' => 2, 'img' => 'img/default-accu.png'],
-            ['id' => 12, 'name' => 'N150', 'brands_id' => 3, 'img' => 'img/default-accu.png'],
+            ['id' => 1, 'name' => 'NS40Z', 'brands_id' => 1, 'berat_kering' => 5.20],
+            ['id' => 2, 'name' => 'NS60', 'brands_id' => 2, 'berat_kering' => 6.10],
+            ['id' => 3, 'name' => 'N50Z', 'brands_id' => 3, 'berat_kering' => 7.00],
+            ['id' => 4, 'name' => 'NS70', 'brands_id' => 1, 'berat_kering' => 8.20],
+            ['id' => 5, 'name' => 'N70Z', 'brands_id' => 4, 'berat_kering' => 9.50],
+            ['id' => 6, 'name' => 'DIN 55559', 'brands_id' => 5, 'berat_kering' => 11.80],
+            ['id' => 7, 'name' => 'YTX9-BS', 'brands_id' => 6, 'berat_kering' => 4.50],
+            ['id' => 8, 'name' => 'GTZ5S', 'brands_id' => 7, 'berat_kering' => 3.80],
+            ['id' => 9, 'name' => 'MF 55D23L', 'brands_id' => 8, 'berat_kering' => 10.20],
+            ['id' => 10, 'name' => 'NS40ZL', 'brands_id' => 1, 'berat_kering' => 5.40],
+            ['id' => 11, 'name' => 'N100', 'brands_id' => 2, 'berat_kering' => 15.50],
+            ['id' => 12, 'name' => 'N150', 'brands_id' => 3, 'berat_kering' => 22.00],
         ];
         foreach ($accusData as $a) {
             DB::table('accus')->insert([
                 'id' => $a['id'],
                 'name' => $a['name'],
                 'brands_id' => $a['brands_id'],
-                'img' => $a['img'],
+                'berat_kering' => $a['berat_kering'],
                 'created_at' => $now,
                 'updated_at' => $now,
             ]);
         }
 
-        // 4. Harga Aki per Kota (cities_has_accus)
-        $basePrices = [
-            1 => 140000, 2 => 165000, 3 => 180000, 4 => 210000,
-            5 => 240000, 6 => 310000, 7 => 120000, 8 => 95000,
-            9 => 275000, 10 => 145000, 11 => 420000, 12 => 580000
-        ];
-
+        // 4. Hubungan Aki per Kota (cities_has_accus)
         $cityAccuRows = [];
         foreach ($citiesData as $c) {
             foreach ($accusData as $a) {
-                $multiplier = 1.0 + (($c['id'] % 4) * 0.03);
-                $finalPrice = round(($basePrices[$a['id']] * $multiplier) / 5000) * 5000;
                 $cityAccuRows[] = [
                     'cities_id' => $c['id'],
                     'accus_id' => $a['id'],
-                    'price' => $finalPrice,
                     'created_at' => $now,
                     'updated_at' => $now,
                 ];
@@ -251,13 +250,15 @@ class PickUpSystemSeeder extends Seeder
             }
             $accuItem1 = $accusData[$accuKeys[0]];
             $qty1 = rand(1, 3);
-            $price1 = $basePrices[$accuItem1['id']];
+            $pricePerKg = (2100 * 16000 * 80.0) / 1000.0;
+            $price1 = (int) round($pricePerKg * $accuItem1['berat_kering']);
             $totalAmount = $price1 * $qty1;
 
             if (isset($accuKeys[1])) {
                 $accuItem2 = $accusData[$accuKeys[1]];
                 $qty2 = rand(1, 2);
-                $totalAmount += $basePrices[$accuItem2['id']] * $qty2;
+                $price2 = (int) round($pricePerKg * $accuItem2['berat_kering']);
+                $totalAmount += $price2 * $qty2;
             } else {
                 $accuItem2 = null;
             }

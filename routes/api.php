@@ -11,6 +11,7 @@ use App\Http\Controllers\Api\Admin\DashboardStatsController;
 use App\Http\Controllers\Api\Admin\OrderController as AdminOrderController;
 use App\Http\Controllers\Api\Admin\ReceiptController as AdminReceiptController;
 use App\Http\Controllers\Api\Admin\ReportController;
+use App\Http\Controllers\Api\Admin\SettingController;
 use App\Http\Controllers\Api\Admin\ShipmentController;
 use App\Http\Controllers\Api\Admin\TransferController;
 use App\Http\Controllers\Api\Admin\UserController;
@@ -82,6 +83,10 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('/admin/profile', [AuthController::class, 'updateProfile']);
 
     Route::prefix('admin')->group(function () {
+        Route::get('settings', [SettingController::class, 'index']);
+        Route::put('settings', [SettingController::class, 'update']);
+        Route::get('price-histories', [SettingController::class, 'history']);
+
         Route::get('dashboard-stats', [DashboardStatsController::class, 'index']);
         Route::get('reports', [ReportController::class, 'index']);
         Route::apiResource('users', UserController::class);

@@ -16,7 +16,9 @@ class StoreAccuRequest extends FormRequest
         return [
             'brand' => 'required|string|max:45',
             'name' => 'required|string|max:45',
-            'img' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'berat_kering' => 'required|numeric|min:0',
+            'percentages' => 'nullable|array',
+            'percentages.*' => 'nullable|numeric|min:0|max:100',
         ];
     }
 }

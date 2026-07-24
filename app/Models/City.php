@@ -13,13 +13,13 @@ class City extends Model
 
     public $incrementing = false;
 
-    protected $fillable = ['id', 'name'];
+    protected $fillable = ['id', 'name', 'percentage'];
 
     public function accus(): BelongsToMany
     {
         return $this->belongsToMany(Accu::class, 'cities_has_accus', 'cities_id', 'accus_id')
             ->wherePivotNull('deleted_at')
-            ->withPivot('price', 'deleted_at')
+            ->withPivot('deleted_at')
             ->withTimestamps();
     }
 

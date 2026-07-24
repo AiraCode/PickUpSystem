@@ -12,9 +12,9 @@ class Accu extends Model
     use SoftDeletes;
     public $incrementing = false;
 
-    protected $fillable = ['id', 'brands_id', 'name', 'img'];
+    protected $fillable = ['id', 'brands_id', 'name', 'berat_kering'];
 
-    protected $appends = ['img_url', 'brand'];
+    protected $appends = ['brand'];
 
     public function brandRelation(): BelongsTo
     {
@@ -33,24 +33,9 @@ class Accu extends Model
         return '-';
     }
 
-    public function getImgUrlAttribute(): string
-    {
-        if ($this->img) {
-            if (str_starts_with($this->img, 'http://') || str_starts_with($this->img, 'https://')) {
-                return $this->img;
-            }
-            if (str_starts_with($this->img, 'img/')) {
-                return asset($this->img);
-            }
-            return asset('storage/' . $this->img);
-        }
-        return asset('img/default-accu.png');
-    }
-
     public function cities(): BelongsToMany
     {
         return $this->belongsToMany(City::class, 'cities_has_accus', 'accus_id', 'cities_id')
-            ->withPivot('price')
             ->withTimestamps();
     }
 

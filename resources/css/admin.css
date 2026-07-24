@@ -62,24 +62,26 @@ select:focus-visible {
 
 .admin-sidebar {
     position: fixed;
-    top: 0;
-    left: 0;
+    top: 16px;
+    left: 16px;
 
-    width: 272px;
-    height: 100vh;
+    width: 260px;
+    height: calc(100vh - 32px);
 
     display: flex;
     flex-direction: column;
 
-    background: var(--surface);
-    border-right: 1px solid var(--line);
+    background: rgba(255, 255, 255, 0.45);
+    backdrop-filter: blur(28px) saturate(220%);
+    -webkit-backdrop-filter: blur(28px) saturate(220%);
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    border-radius: 24px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
 
-    padding: 24px 16px 18px;
+    padding: 24px 14px 18px;
 
     z-index: 100;
-    transition:
-        width 0.3s ease,
-        padding 0.3s ease;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .admin-sidebar__head {
@@ -225,14 +227,16 @@ select:focus-visible {
 
 .admin-nav__link {
     align-items: center;
-    border-radius: 10px;
+    border-radius: 12px;
     color: #676c75;
     display: flex;
     font-size: 13px;
     font-weight: 600;
     gap: 12px;
     min-height: 44px;
-    padding: 0 12px;
+    padding: 0 16px;
+    position: relative;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .admin-nav__link svg {
@@ -244,16 +248,22 @@ select:focus-visible {
     stroke-linejoin: round;
     stroke-width: 1.7;
     width: 19px;
+    transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .admin-nav__link:hover {
-    background: #f3f5ff;
+    background: rgba(34, 80, 252, 0.06);
     color: var(--brand-blue);
+    transform: scale(1.03) translateX(4px);
+}
+
+.admin-nav__link:hover svg {
+    transform: scale(1.1);
 }
 
 .admin-nav__link.is-active {
     background: var(--brand-blue);
-    box-shadow: 0 7px 16px rgba(34, 80, 252, 0.16);
+    box-shadow: 0 8px 20px rgba(34, 80, 252, 0.2);
     color: #fff;
 }
 
@@ -318,7 +328,7 @@ select:focus-visible {
 }
 
 .admin-sidebar.collapsed~.admin-main {
-    margin-left: 80px;
+    margin-left: 112px;
 }
 
 .admin-sidebar.collapsed .admin-brand__copy,
@@ -412,27 +422,33 @@ select:focus-visible {
 }
 
 .admin-main {
-    margin-left: 272px;
+    margin-left: 292px;
     display: flex;
     flex: 1;
     flex-direction: column;
     min-width: 0;
     padding-bottom: 90px;
 
-    transition: margin-left 0.3s ease;
+    transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .admin-topbar {
     align-items: center;
-    background: rgba(255, 255, 255, 0.96);
-    border-bottom: 1px solid var(--line);
+    background: rgba(255, 255, 255, 0.55);
+    backdrop-filter: blur(28px) saturate(210%);
+    -webkit-backdrop-filter: blur(28px) saturate(210%);
+    border: 1px solid rgba(255, 255, 255, 0.4);
     display: flex;
-    height: 78px;
+    height: 72px;
     justify-content: space-between;
-    padding: 0 40px;
+    padding: 0 24px;
     position: sticky;
-    top: 0;
+    top: 16px;
     z-index: 20;
+    margin: 16px 24px 0;
+    border-radius: 16px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.03);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .admin-topbar__left,
@@ -1258,9 +1274,17 @@ select:focus-visible {
 
 @media (max-width: 980px) {
     .admin-sidebar {
-        box-shadow: 12px 0 30px rgba(17, 19, 24, 0.12);
-        position: fixed;
-        transform: translateX(-102%);
+        top: 0 !important;
+        left: 0 !important;
+        height: 100vh !important;
+        width: 272px !important;
+        border-radius: 0 !important;
+        border: none !important;
+        border-right: 1px solid var(--line) !important;
+        box-shadow: 12px 0 30px rgba(17, 19, 24, 0.12) !important;
+        position: fixed !important;
+        transform: translateX(-102%) !important;
+        transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
     }
 
     .admin-sidebar.is-open {
@@ -1293,7 +1317,7 @@ select:focus-visible {
     }
 
     .admin-main {
-        margin-left: 0;
+        margin-left: 0 !important;
     }
 
     .admin-footer {
@@ -1483,8 +1507,11 @@ body.admin-dark-mode {
 }
 
 html.admin-dark-mode .admin-sidebar {
-    background: #1e293b;
-    border-right-color: #334155;
+    background: rgba(15, 23, 42, 0.55);
+    backdrop-filter: blur(28px) saturate(220%);
+    -webkit-backdrop-filter: blur(28px) saturate(220%);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
 }
 
 html.admin-dark-mode .admin-brand__copy strong {
@@ -1500,14 +1527,14 @@ html.admin-dark-mode .admin-nav__link {
 }
 
 html.admin-dark-mode .admin-nav__link:hover {
-    background: rgba(34, 80, 252, 0.2);
+    background: rgba(34, 80, 252, 0.15);
     color: #38bdf8;
 }
 
 html.admin-dark-mode .admin-nav__link.is-active {
     background: var(--brand-blue);
     color: #ffffff;
-    box-shadow: 0 7px 16px rgba(34, 80, 252, 0.3);
+    box-shadow: 0 8px 20px rgba(34, 80, 252, 0.35);
 }
 
 html.admin-dark-mode .admin-sidebar__foot {
@@ -1535,8 +1562,9 @@ html.admin-dark-mode .admin-theme-toggle-foot:hover {
 }
 
 html.admin-dark-mode .admin-topbar {
-    background: rgba(30, 41, 59, 0.95);
-    border-bottom-color: #334155;
+    background: rgba(30, 41, 59, 0.55);
+    border-color: rgba(255, 255, 255, 0.08);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
 }
 
 html.admin-dark-mode .admin-breadcrumb {
@@ -1723,4 +1751,46 @@ html.admin-dark-mode .leaflet-tile {
 
 html.admin-dark-mode .leaflet-container {
     background: #0f172a;
+}
+
+/* Hide Hamburger Garis 3 and Close/Open buttons as requested */
+.sidebar-toggle,
+.sidebar-open,
+.sidebar-close {
+    display: none !important;
+}
+
+/* Tooltip macOS Style for collapsed nav links */
+.admin-sidebar.collapsed .admin-nav__link::after {
+    content: attr(data-tooltip);
+    position: absolute;
+    left: 76px;
+    top: 50%;
+    transform: translateY(-50%) translateX(10px);
+    background: rgba(17, 24, 39, 0.85);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    color: #fff;
+    padding: 6px 12px;
+    border-radius: 8px;
+    font-size: 11px;
+    font-weight: 600;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.admin-sidebar.collapsed .admin-nav__link:hover::after {
+    opacity: 1;
+    transform: translateY(-50%) translateX(0);
+}
+
+/* Dark mode tooltip adjustment */
+html.admin-dark-mode .admin-sidebar.collapsed .admin-nav__link::after {
+    background: rgba(15, 23, 42, 0.95);
+    color: #f1f5f9;
+    border: 1px solid rgba(255, 255, 255, 0.15);
 }
