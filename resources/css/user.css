@@ -450,14 +450,17 @@ body.user-shell textarea:focus-visible {
     justify-content: space-between;
     max-width: none;
 }
+
 .user-kicker {
     color: var(--user-blue);
     display: block;
     font-size: 10px;
     font-weight: 800;
     letter-spacing: 0.17em;
-    margin-bottom: 11px;
+    margin: 0 0 2px;
+    line-height: 1;
 }
+
 .user-section-heading h2,
 .user-faq h2 {
     font-size: clamp(34px, 4.3vw, 62px);
@@ -909,14 +912,21 @@ body.user-shell textarea:focus-visible {
     margin-top: 17px;
     padding-top: 15px;
 }
+
 .user-checkout-totals > div {
-    align-items: center;
-    color: var(--user-muted);
     display: flex;
-    font-size: 11px;
     justify-content: space-between;
-    margin-top: 8px;
+    align-items: flex-start;
+
+    gap: 16px;
 }
+
+.user-checkout-totals > div strong {
+    text-align: right;
+    margin-left: auto;
+    max-width: 180px;
+}
+
 .user-checkout-totals > div:first-child {
     margin-top: 0;
 }
@@ -1089,7 +1099,7 @@ body.user-shell textarea:focus-visible {
     color: var(--user-ink);
     font-size: 10px;
     font-weight: 800;
-    letter-spacing: .1em;
+    letter-spacing: 0.1em;
 }
 
 .user-footer__social a {
@@ -1287,17 +1297,30 @@ body.user-shell textarea:focus-visible {
     border-radius: 14px;
     padding: 27px;
 }
+
 .user-form-card__head {
     align-items: center;
     display: flex;
     gap: 13px;
-    margin-bottom: 26px;
+    margin-bottom: 18px;
 }
+
+.user-form-card__head > div:last-child,
+.user-flow-summary > .user-kicker {
+    line-height: 1;
+}
+
 .user-form-card__head h2 {
     font-size: 23px;
     font-weight: 800;
     letter-spacing: -0.04em;
 }
+
+.user-flow-summary > h2 {
+    margin: 0;
+    line-height: 1.05;
+}
+
 .user-form-grid {
     display: grid;
     gap: 16px;
@@ -1324,6 +1347,11 @@ body.user-shell textarea:focus-visible {
     padding: 12px 14px;
     position: relative;
 }
+
+.user-upload-field--desktop-full {
+    grid-column: 1 / -1;
+}
+
 .user-upload-field:hover {
     border-color: var(--user-blue);
 }
@@ -1857,12 +1885,14 @@ body.user-shell textarea:focus-visible {
         grid-template-columns: minmax(0, 1fr) 310px;
     }
 }
+
 @media (max-width: 940px) {
     .user-menu-toggle {
         display: inline-flex;
         margin-left: auto;
         margin-right: 12px;
     }
+
     .user-nav {
         background: var(--user-white);
         border: 1px solid var(--user-line);
@@ -1879,85 +1909,65 @@ body.user-shell textarea:focus-visible {
         right: 20px;
         top: 72px;
     }
+
     .user-nav.is-open {
         display: flex;
     }
+
     .user-nav a {
         padding: 11px 10px;
     }
+
     .user-nav a::after {
         display: none;
     }
+
     .user-header__actions {
         gap: 10px;
     }
+
     .user-language {
         display: none;
     }
-    .user-catalog-layout,
-    .user-form-layout {
+
+    .user-catalog-layout {
         grid-template-columns: minmax(0, 1fr);
     }
-    .user-checkout-card,
-    .user-flow-summary {
-        position: static;
-    }
-    .user-checkout-card,
-    .user-form-layout .user-flow-summary {
-        order: -1;
-    }
-}
-@media (max-width: 940px) {
-    .user-menu-toggle {
-        display: inline-flex;
-        margin-left: auto;
-        margin-right: 12px;
-    }
-    .user-nav {
-        background: var(--user-white);
-        border: 1px solid var(--user-line);
-        border-radius: 10px;
-        box-shadow: 0 14px 30px rgba(17, 19, 24, 0.12);
-        color: var(--user-ink);
-        display: none;
+
+    .user-form-layout {
+        display: flex;
         flex-direction: column;
-        gap: 0;
-        left: 20px;
-        margin: 0;
-        padding: 8px;
-        position: absolute;
-        right: 20px;
-        top: 72px;
+        gap: 24px;
     }
-    .user-nav.is-open {
-        display: flex;
+
+    .user-identity-form {
+        order: 1;
     }
-    .user-nav a {
-        padding: 11px 10px;
-    }
-    .user-nav a::after {
-        display: none;
-    }
-    .user-header__actions {
-        gap: 10px;
-    }
-    .user-language {
-        display: none;
-    }
-    .user-catalog-layout,
-    .user-form-layout {
-        grid-template-columns: minmax(0, 1fr);
-    }
-    .user-checkout-card,
+
     .user-flow-summary {
-        position: static;
-    }
-    .user-checkout-card,
-    .user-form-layout .user-flow-summary {
         order: 2;
+        position: static;
+    }
+
+    .user-form-actions {
+        order: 3;
+        justify-content: stretch;
+    }
+
+    .user-form-actions .user-button {
+        flex: 1;
+    }
+
+    .user-checkout-card {
+        position: static;
     }
 }
+
 @media (max-width: 720px) {
+    .user-upload-field--desktop-full {
+        grid-column: auto;
+    }
+
     .user-container {
         padding-left: 18px;
         padding-right: 18px;
