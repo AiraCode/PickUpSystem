@@ -15,7 +15,6 @@
 
         <div class="admin-dashboard__left">
 
-            {{-- 3 STAT CARDS PRECISELY ALIGNED WITH LEFT SECTION --}}
             <div style="display:grid; grid-template-columns:repeat(3, minmax(0, 1fr)); gap:16px;">
                 <article class="admin-stat-card">
                     <div class="admin-stat-card__head">
