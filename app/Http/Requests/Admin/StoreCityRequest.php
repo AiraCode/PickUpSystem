@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Admin;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class StoreCityRequest extends FormRequest
 {
@@ -14,7 +15,12 @@ class StoreCityRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => 'required|string|max:45|unique:cities,name',
+            'name' => [
+                'required',
+                'string',
+                'max:45',
+                Rule::unique('cities', 'name')->whereNull('deleted_at'),
+            ],
         ];
     }
 

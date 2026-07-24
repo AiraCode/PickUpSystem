@@ -35,7 +35,7 @@ class CityAccuPriceController extends Controller
         $city = City::findOrFail($cityId);
 
         $city->accus()->syncWithoutDetaching([
-            $request->accus_id => ['price' => $request->price],
+            $request->accus_id => ['price' => $request->price, 'deleted_at' => null],
         ]);
 
         $city->load('accus');
@@ -87,10 +87,12 @@ class CityAccuPriceController extends Controller
     public function destroy(int $cityId, int $accuId): JsonResponse
     {
         $city = City::findOrFail($cityId);
-        $city->accus()->detach($accuId);
+        $city->accus()->updateExistingPivot($accuId, [
+            'deleted_at' => now(),
+        ]);
 
         return response()->json([
-            'message' => 'Harga accu berhasil dihapus dari kota ini',
+            'message' => 'Harga accu berhasil dihapus (soft delete) dari kota ini',
         ]);
     }
 }

@@ -59,8 +59,14 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('dashboard-stats', [DashboardStatsController::class, 'index']);
         Route::apiResource('users', UserController::class);
 
+        Route::get('cities/trashed', [AdminCityController::class, 'trashed']);
+        Route::post('cities/{id}/restore', [AdminCityController::class, 'restore']);
         Route::apiResource('cities', AdminCityController::class);
+
+        Route::get('accus/trashed', [AdminAccuController::class, 'trashed']);
+        Route::post('accus/{id}/restore', [AdminAccuController::class, 'restore']);
         Route::apiResource('accus', AdminAccuController::class);
+
         Route::get('cities/{cityId}/accus', [CityAccuPriceController::class, 'index']);
         Route::post('cities/{cityId}/accus', [CityAccuPriceController::class, 'store']);
         Route::put('cities/{cityId}/accus/{accuId}', [CityAccuPriceController::class, 'update']);
@@ -73,6 +79,9 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::apiResource('orders', AdminOrderController::class)->only(['index', 'show']);
         Route::put('orders/{id}/status', [AdminOrderController::class, 'updateStatus']);
         Route::apiResource('transfers', TransferController::class)->only(['index', 'show', 'update']);
+
+        Route::get('storages/trashed', [WarehouseController::class, 'trashed']);
+        Route::post('storages/{id}/restore', [WarehouseController::class, 'restore']);
         Route::apiResource('storages', WarehouseController::class);
         Route::apiResource('shipments', ShipmentController::class);
     });

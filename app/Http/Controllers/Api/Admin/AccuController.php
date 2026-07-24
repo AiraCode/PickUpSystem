@@ -29,8 +29,22 @@ class AccuController extends Controller
         $brandName = $request->input('brand');
         $brand = Brand::firstOrCreate(['name' => $brandName]);
 
+        $trashed = Accu::onlyTrashed()
+            ->where('brands_id', $brand->id)
+            ->where('name', $validated['name'])
+            ->first();
+
+        if ($trashed) {
+            $trashed->restore();
+            $trashed->load('brandRelation');
+            return response()->json([
+                'message' => 'Aki berhasil dipulihkan dari data terhapus',
+                'data' => $trashed,
+            ], 200);
+        }
+
         $data = [
-            'id' => (Accu::max('id') ?? 0) + 1,
+            'id' => (Accu::withTrashed()->max('id') ?? 0) + 1,
             'brands_id' => $brand->id,
             'name' => $validated['name'],
         ];
@@ -48,6 +62,28 @@ class AccuController extends Controller
             'message' => 'Accu berhasil ditambahkan',
             'data' => $accu,
         ], 201);
+    }
+
+    public function trashed(): JsonResponse
+    {
+        $accus = Accu::onlyTrashed()->with('brandRelation')->get();
+
+        return response()->json([
+            'message' => 'Daftar accu terhapus berhasil diambil',
+            'data' => $accus,
+        ]);
+    }
+
+    public function restore(int $id): JsonResponse
+    {
+        $accu = Accu::onlyTrashed()->findOrFail($id);
+        $accu->restore();
+        $accu->load('brandRelation');
+
+        return response()->json([
+            'message' => 'Accu berhasil dipulihkan',
+            'data' => $accu,
+        ]);
     }
 
     public function show(int $id): JsonResponse

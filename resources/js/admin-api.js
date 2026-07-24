@@ -726,6 +726,88 @@ document.addEventListener("DOMContentLoaded", () => {
             );
         };
 
+        const loadTrashedCities = async () => {
+            const res = await fetchApi("/cities/trashed");
+            const listEl = document.getElementById("trashed-cities-list");
+            if (listEl) {
+                if (res.data && res.data.length) {
+                    listEl.innerHTML = res.data
+                        .map(
+                            (c) =>
+                                `<div style="display:flex; justify-content:space-between; align-items:center; padding:4px 0; border-bottom:1px solid #f3f4f6;">
+                                    <span>${c.name}</span>
+                                    <button type="button" onclick="restoreCity(${c.id})" class="admin-button admin-button--primary" style="height:24px; padding:0 8px; font-size:10px;">Pulihkan</button>
+                                </div>`,
+                        )
+                        .join("");
+                } else {
+                    listEl.innerHTML = `<span style="color:#9ca3af;">Tidak ada kota terhapus</span>`;
+                }
+            }
+        };
+
+        const loadTrashedAccus = async () => {
+            const res = await fetchApi("/accus/trashed");
+            const listEl = document.getElementById("trashed-accus-list");
+            if (listEl) {
+                if (res.data && res.data.length) {
+                    listEl.innerHTML = res.data
+                        .map(
+                            (a) =>
+                                `<div style="display:flex; justify-content:space-between; align-items:center; padding:4px 0; border-bottom:1px solid #f3f4f6;">
+                                    <span>${a.brand} - ${a.name}</span>
+                                    <button type="button" onclick="restoreAccu(${a.id})" class="admin-button admin-button--primary" style="height:24px; padding:0 8px; font-size:10px;">Pulihkan</button>
+                                </div>`,
+                        )
+                        .join("");
+                } else {
+                    listEl.innerHTML = `<span style="color:#9ca3af;">Tidak ada aki terhapus</span>`;
+                }
+            }
+        };
+
+        window.restoreCity = async (id) => {
+            const res = await fetchApi(`/cities/${id}/restore`, {
+                method: "POST",
+            });
+            showToast(res.message || "Kota berhasil dipulihkan", "success");
+            loadCities();
+            loadTrashedCities();
+        };
+
+        window.restoreAccu = async (id) => {
+            const res = await fetchApi(`/accus/${id}/restore`, {
+                method: "POST",
+            });
+            showToast(res.message || "Aki berhasil dipulihkan", "success");
+            loadAccus();
+            loadTrashedAccus();
+        };
+
+        loadTrashedCities();
+        loadTrashedAccus();
+
+        const accuBrandSel = document.getElementById("accu-brand");
+        const accuBrandOtherWrap = document.getElementById(
+            "accu-brand-other-wrap",
+        );
+        const accuBrandOtherInput = document.getElementById("accu-brand-other");
+        if (accuBrandSel) {
+            accuBrandSel.addEventListener("change", () => {
+                if (accuBrandSel.value === "Lainnya") {
+                    if (accuBrandOtherWrap)
+                        accuBrandOtherWrap.style.display = "block";
+                    if (accuBrandOtherInput)
+                        accuBrandOtherInput.required = true;
+                } else {
+                    if (accuBrandOtherWrap)
+                        accuBrandOtherWrap.style.display = "none";
+                    if (accuBrandOtherInput)
+                        accuBrandOtherInput.required = false;
+                }
+            });
+        }
+
         const cityNameInput = document.getElementById("city-name");
         if (cityNameInput) {
             cityNameInput.addEventListener("blur", () => {
@@ -763,12 +845,13 @@ document.addEventListener("DOMContentLoaded", () => {
                         name: formattedName,
                     }),
                 });
-                if (res && res.data) {
+                if (res && (res.data || res.message)) {
                     document.getElementById("modal-add-city").style.display =
                         "none";
                     document.getElementById("form-add-city").reset();
-                    showToast("Kota berhasil ditambahkan!", "success");
+                    showToast(res.message || "Kota berhasil ditambahkan!", "success");
                     loadCities();
+                    loadTrashedCities();
                 } else {
                     showToast(
                         res.message ||
@@ -784,18 +867,43 @@ document.addEventListener("DOMContentLoaded", () => {
             .getElementById("form-add-accu")
             .addEventListener("submit", async (e) => {
                 e.preventDefault();
-                await fetchApi("/accus", {
+                let brandVal = document.getElementById("accu-brand").value;
+                if (brandVal === "Lainnya") {
+                    const customBrand = document
+                        .getElementById("accu-brand-other")
+                        .value.trim();
+                    if (!customBrand) {
+                        showToast(
+                            "Masukkan nama brand baru terlebih dahulu",
+                            "warning",
+                        );
+                        return;
+                    }
+                    brandVal = customBrand;
+                }
+                const accuNameVal = document
+                    .getElementById("accu-name")
+                    .value.trim();
+
+                const res = await fetchApi("/accus", {
                     method: "POST",
                     body: JSON.stringify({
-                        brand: document.getElementById("accu-brand").value,
-                        name: document.getElementById("accu-name").value,
+                        brand: brandVal,
+                        name: accuNameVal,
                     }),
                 });
-                document.getElementById("modal-add-accu").style.display =
-                    "none";
-                document.getElementById("form-add-accu").reset();
-                showToast("Aki baru berhasil ditambahkan!", "success");
-                loadAccus();
+                if (res && (res.data || res.message)) {
+                    document.getElementById("modal-add-accu").style.display =
+                        "none";
+                    document.getElementById("form-add-accu").reset();
+                    if (accuBrandOtherWrap)
+                        accuBrandOtherWrap.style.display = "none";
+                    showToast(res.message || "Aki baru berhasil disimpan!", "success");
+                    loadAccus();
+                    loadTrashedAccus();
+                } else {
+                    showToast(res.message || "Gagal menyimpan aki", "error");
+                }
             });
 
         document
@@ -894,7 +1002,37 @@ document.addEventListener("DOMContentLoaded", () => {
                 tbody.innerHTML = `<tr><td colspan="3"><div class="admin-table-empty"><strong>Belum ada gudang</strong></div></td></tr>`;
             }
         };
+        const loadTrashedStorages = async () => {
+            const res = await fetchApi("/storages/trashed");
+            const listEl = document.getElementById("trashed-storages-list");
+            if (listEl) {
+                if (res.data && res.data.length) {
+                    listEl.innerHTML = res.data
+                        .map(
+                            (s) =>
+                                `<div style="display:flex; justify-content:space-between; align-items:center; padding:4px 0; border-bottom:1px solid #f3f4f6;">
+                                    <span>${s.name} (${s.address || "-"})</span>
+                                    <button type="button" onclick="restoreStorage(${s.id})" class="admin-button admin-button--primary" style="height:24px; padding:0 8px; font-size:10px;">Pulihkan</button>
+                                </div>`,
+                        )
+                        .join("");
+                } else {
+                    listEl.innerHTML = `<span style="color:#9ca3af;">Tidak ada gudang terhapus</span>`;
+                }
+            }
+        };
+
+        window.restoreStorage = async (id) => {
+            const res = await fetchApi(`/storages/${id}/restore`, {
+                method: "POST",
+            });
+            showToast(res.message || "Gudang berhasil dipulihkan", "success");
+            loadStorages();
+            loadTrashedStorages();
+        };
+
         loadStorages();
+        loadTrashedStorages();
 
         document
             .getElementById("form-add-storage")
@@ -909,7 +1047,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     );
                     return;
                 }
-                await fetchApi("/storages", {
+                const res = await fetchApi("/storages", {
                     method: "POST",
                     body: JSON.stringify({
                         name: document.getElementById("storage-name").value,
@@ -919,39 +1057,64 @@ document.addEventListener("DOMContentLoaded", () => {
                         long: lng,
                     }),
                 });
-                document.getElementById("modal-add-storage").style.display =
-                    "none";
-                document.getElementById("form-add-storage").reset();
-                document.getElementById("map-coords").innerText =
-                    "Belum ada titik dipilih";
-                if (addMarker) {
-                    addMap.removeLayer(addMarker);
-                    addMarker = null;
+                if (res && (res.data || res.message)) {
+                    document.getElementById("modal-add-storage").style.display =
+                        "none";
+                    document.getElementById("form-add-storage").reset();
+                    document.getElementById("map-coords").innerText =
+                        "Belum ada titik dipilih";
+                    if (addMarker) {
+                        addMap.removeLayer(addMarker);
+                        addMarker = null;
+                    }
+                    showToast(res.message || "Gudang berhasil ditambahkan!", "success");
+                    loadStorages();
+                    loadTrashedStorages();
+                } else {
+                    showToast(res.message || "Gagal menyimpan gudang", "error");
                 }
-                showToast("Gudang berhasil ditambahkan!", "success");
-                loadStorages();
             });
 
         window.deleteStorage = (id) => {
-            showConfirm(
-                "Hapus Gudang",
-                "Yakin ingin menghapus gudang ini?",
-                async () => {
-                    const res = await fetchApi(`/storages/${id}`, {
-                        method: "DELETE",
-                    });
-                    if (res && res.message && !res.errors) {
-                        showToast(res.message, "success");
-                        loadStorages();
-                    } else {
-                        showToast(
-                            res.message || "Gagal menghapus gudang",
-                            "error",
-                        );
-                    }
-                },
-            );
+            document.getElementById("delete-storage-id").value = id;
+            document.getElementById("delete-storage-password").value = "";
+            document.getElementById("modal-delete-storage").style.display =
+                "flex";
         };
+
+        const formDeleteStorage = document.getElementById("form-delete-storage");
+        if (formDeleteStorage) {
+            formDeleteStorage.addEventListener("submit", async (e) => {
+                e.preventDefault();
+                const id = document.getElementById("delete-storage-id").value;
+                const password = document.getElementById(
+                    "delete-storage-password",
+                ).value;
+
+                const res = await fetchApi(`/storages/${id}`, {
+                    method: "DELETE",
+                    body: JSON.stringify({ password }),
+                });
+
+                if (
+                    res &&
+                    res.message &&
+                    !res.errors &&
+                    (!res.status || res.status < 400)
+                ) {
+                    document.getElementById("modal-delete-storage").style.display =
+                        "none";
+                    showToast(res.message, "success");
+                    loadStorages();
+                    loadTrashedStorages();
+                } else {
+                    showToast(
+                        res.message || "Password admin salah / Gagal menghapus gudang",
+                        "error",
+                    );
+                }
+            });
+        }
     }
 
     if (window.location.pathname === "/admin/pengguna") {

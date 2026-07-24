@@ -120,6 +120,12 @@
                     <input type="text" id="city-name" class="admin-select"
                         style="width:100%; padding:8px 10px; border-radius:6px;" placeholder="Contoh: Surabaya" required>
                 </div>
+                <div id="trashed-cities-container" style="margin-bottom:16px; border-top:1px solid #e5e7eb; padding-top:12px;">
+                    <label style="display:block; font-size:12px; font-weight:600; color:#6d727c; margin-bottom:6px;">Riwayat Kota Terhapus (Klik untuk pulihkan)</label>
+                    <div id="trashed-cities-list" style="max-height:100px; overflow-y:auto; font-size:12px;">
+                        <span style="color:#9ca3af;">Memuat...</span>
+                    </div>
+                </div>
                 <div style="display:flex; gap:10px; justify-content:flex-end;">
                     <button type="button" class="admin-button admin-button--secondary"
                         onclick="document.getElementById('modal-add-city').style.display='none'">Batal</button>
@@ -153,6 +159,10 @@
                         <option value="Rocket">Rocket</option>
                         <option value="Lainnya">Lainnya</option>
                     </select>
+                    <div id="accu-brand-other-wrap" style="display:none; margin-top:10px;">
+                        <label style="display:block; font-size:12px; font-weight:600; margin-bottom:6px; color:#4a4f59;">Masukkan Nama Brand Baru</label>
+                        <input type="text" id="accu-brand-other" class="admin-select" style="width:100%; padding:8px 10px; border-radius:6px;" placeholder="Contoh: Panasonic, Motobatt">
+                    </div>
                 </div>
                 <div style="margin-bottom:16px;">
                     <label style="display:block; font-size:12px; font-weight:600; margin-bottom:6px; color:#4a4f59;">Nama /
@@ -160,6 +170,12 @@
                     <input type="text" id="accu-name" class="admin-select"
                         style="width:100%; padding:8px 10px; border-radius:6px;" placeholder="Contoh: NS40, NS60, N50Z"
                         required>
+                </div>
+                <div id="trashed-accus-container" style="margin-bottom:16px; border-top:1px solid #e5e7eb; padding-top:12px;">
+                    <label style="display:block; font-size:12px; font-weight:600; color:#6d727c; margin-bottom:6px;">Riwayat Aki Terhapus (Klik untuk pulihkan)</label>
+                    <div id="trashed-accus-list" style="max-height:100px; overflow-y:auto; font-size:12px;">
+                        <span style="color:#9ca3af;">Memuat...</span>
+                    </div>
                 </div>
                 <div style="display:flex; gap:10px; justify-content:flex-end;">
                     <button type="button" class="admin-button admin-button--secondary"
