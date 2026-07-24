@@ -56,10 +56,22 @@ class WarehouseController extends Controller
     public function destroy(int $id): JsonResponse
     {
         $warehouse = Warehouse::findOrFail($id);
-        $warehouse->delete();
 
-        return response()->json([
-            'message' => 'Gudang berhasil dihapus',
-        ]);
+        if ($warehouse->shipments()->exists()) {
+            return response()->json([
+                'message' => 'Gudang tidak dapat dihapus karena masih terhubung dengan data pengiriman (shipment).',
+            ], 422);
+        }
+
+        try {
+            $warehouse->delete();
+            return response()->json([
+                'message' => 'Gudang berhasil dihapus',
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Gagal menghapus gudang.',
+            ], 422);
+        }
     }
 }

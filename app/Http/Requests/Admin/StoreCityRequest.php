@@ -14,7 +14,14 @@ class StoreCityRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => 'required|string|max:45',
+            'name' => 'required|string|max:45|unique:cities,name',
+        ];
+    }
+
+    public function messages(): array
+    {
+        return [
+            'name.unique' => 'Nama kota sudah terdaftar.',
         ];
     }
 }

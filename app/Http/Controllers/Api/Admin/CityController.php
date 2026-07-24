@@ -23,6 +23,7 @@ class CityController extends Controller
     public function store(StoreCityRequest $request): JsonResponse
     {
         $data = $request->validated();
+        $data['name'] = ucwords(strtolower(trim($data['name'])));
         $data['id'] = (City::max('id') ?? 0) + 1;
         $city = City::create($data);
 

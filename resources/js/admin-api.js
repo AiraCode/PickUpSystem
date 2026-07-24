@@ -44,7 +44,6 @@ document.addEventListener("DOMContentLoaded", () => {
             maximumFractionDigits: 0,
         }).format(n);
 
-    // Custom Toast Notification Helper
     window.showToast = (message, type = "success") => {
         const toast = document.getElementById("admin-toast");
         const msg = document.getElementById("admin-toast-message");
@@ -73,7 +72,6 @@ document.addEventListener("DOMContentLoaded", () => {
         }, 3200);
     };
 
-    // Custom Confirmation Dialog Helper
     window.showConfirm = (title, message, onOk) => {
         const modal = document.getElementById("modal-custom-confirm");
         if (!modal) {
@@ -162,7 +160,6 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    // Edit Profile Modal Logic
     const btnEditProfile = document.getElementById("btn-edit-profile");
     const modalEditProfile = document.getElementById("modal-edit-profile");
     const formEditProfile = document.getElementById("form-edit-profile");
@@ -229,7 +226,6 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    // ── LOGIN ──
     const loginForm = document.getElementById("login-form");
     if (loginForm) {
         loginForm.addEventListener("submit", async (e) => {
@@ -272,7 +268,6 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    // ── DASHBOARD ──
     if (window.location.pathname === "/admin/dashboard") {
         (async () => {
             const res = await fetchApi("/dashboard-stats");
@@ -326,7 +321,6 @@ document.addEventListener("DOMContentLoaded", () => {
         })();
     }
 
-    // ── TRANSAKSI MASUK ──
     if (window.location.pathname === "/admin/transaksi") {
         const uploadArea = document.getElementById("upload-area");
         const uploadInput = document.getElementById("upload-proof");
@@ -454,8 +448,18 @@ document.addEventListener("DOMContentLoaded", () => {
             ).toLocaleString("id-ID");
             document.getElementById("detail-order-pickup-address").innerText =
                 o.pickup_address || "-";
-            document.getElementById("detail-order-pickup-note").innerText =
-                o.pickup_address_note || "-";
+            const noteLabelEl = document.getElementById(
+                "detail-order-note-label",
+            );
+            if (o.status === "cancelled") {
+                if (noteLabelEl) noteLabelEl.innerText = "Alasan Pembatalan";
+                document.getElementById("detail-order-pickup-note").innerText =
+                    o.cancel_reason || "-";
+            } else {
+                if (noteLabelEl) noteLabelEl.innerText = "Catatan Alamat";
+                document.getElementById("detail-order-pickup-note").innerText =
+                    o.pickup_address_note || "-";
+            }
             document.getElementById("modal-detail-order").style.display =
                 "flex";
         };
@@ -498,7 +502,6 @@ document.addEventListener("DOMContentLoaded", () => {
                     payload.cancel_reason = reason;
                 }
 
-                // Validation for Completed
                 if (statusVal === "completed") {
                     const hasFile =
                         uploadInput &&
@@ -539,7 +542,6 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
-    // ── HARGA AKI ──
     if (window.location.pathname === "/admin/harga") {
         let cachedCities = [];
         let cachedAccus = [];
@@ -645,11 +647,23 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         };
 
+        const toTitleCase = (str) => {
+            if (!str) return "";
+            return str
+                .toLowerCase()
+                .split(" ")
+                .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+                .join(" ");
+        };
+
         window.openAddPriceForCurrentCity = () => {
-            if (activeCityId) {
-                const citySel = document.getElementById("set-price-city");
-                if (citySel) citySel.value = activeCityId;
+            const citySel = document.getElementById("set-price-city");
+            const accuSel = document.getElementById("set-price-accu");
+            if (citySel) {
+                if (activeCityId) citySel.value = activeCityId;
+                citySel.disabled = false;
             }
+            if (accuSel) accuSel.disabled = false;
             document.getElementById("set-price-modal-head").innerText =
                 "Tambah Harga Aki";
             document.getElementById("modal-set-price").style.display = "flex";
@@ -659,8 +673,14 @@ document.addEventListener("DOMContentLoaded", () => {
             const citySel = document.getElementById("set-price-city");
             const accuSel = document.getElementById("set-price-accu");
             const priceVal = document.getElementById("set-price-value");
-            if (citySel) citySel.value = cityId;
-            if (accuSel) accuSel.value = accuId;
+            if (citySel) {
+                citySel.value = cityId;
+                citySel.disabled = true;
+            }
+            if (accuSel) {
+                accuSel.value = accuId;
+                accuSel.disabled = true;
+            }
             if (priceVal) priceVal.value = currentPrice;
 
             document.getElementById("set-price-modal-head").innerText =
@@ -706,21 +726,58 @@ document.addEventListener("DOMContentLoaded", () => {
             );
         };
 
+        const cityNameInput = document.getElementById("city-name");
+        if (cityNameInput) {
+            cityNameInput.addEventListener("blur", () => {
+                cityNameInput.value = toTitleCase(cityNameInput.value);
+            });
+        }
+
         document
             .getElementById("form-add-city")
             .addEventListener("submit", async (e) => {
                 e.preventDefault();
-                await fetchApi("/cities", {
+                const rawName = document
+                    .getElementById("city-name")
+                    .value.trim();
+                if (!rawName) return;
+                const formattedName = toTitleCase(rawName);
+                document.getElementById("city-name").value = formattedName;
+
+                const isDuplicate = cachedCities.some(
+                    (c) =>
+                        c.name.trim().toLowerCase() ===
+                        formattedName.toLowerCase(),
+                );
+                if (isDuplicate) {
+                    showToast(
+                        `Nama kota "${formattedName}" sudah ada!`,
+                        "warning",
+                    );
+                    return;
+                }
+
+                const res = await fetchApi("/cities", {
                     method: "POST",
                     body: JSON.stringify({
-                        name: document.getElementById("city-name").value,
+                        name: formattedName,
                     }),
                 });
-                document.getElementById("modal-add-city").style.display =
-                    "none";
-                document.getElementById("form-add-city").reset();
-                showToast("Kota berhasil ditambahkan!", "success");
-                loadCities();
+                if (res && res.data) {
+                    document.getElementById("modal-add-city").style.display =
+                        "none";
+                    document.getElementById("form-add-city").reset();
+                    showToast("Kota berhasil ditambahkan!", "success");
+                    loadCities();
+                } else {
+                    showToast(
+                        res.message ||
+                            (res.errors && res.errors.name
+                                ? res.errors.name[0]
+                                : "Gagal menambahkan kota"),
+                        "error",
+                    );
+                }
             });
 
         document
@@ -757,6 +814,10 @@ document.addEventListener("DOMContentLoaded", () => {
                 document.getElementById("modal-set-price").style.display =
                     "none";
                 document.getElementById("form-set-price").reset();
+                const citySelReset = document.getElementById("set-price-city");
+                const accuSelReset = document.getElementById("set-price-accu");
+                if (citySelReset) citySelReset.disabled = false;
+                if (accuSelReset) accuSelReset.disabled = false;
                 showToast("Harga aki berhasil disimpan!", "success");
                 if (activeCityId && activeCityId == cityId) {
                     viewCityAccus(activeCityId, activeCityName);
@@ -764,7 +825,6 @@ document.addEventListener("DOMContentLoaded", () => {
             });
     }
 
-    // ── GUDANG & LOKASI ──
     if (window.location.pathname === "/admin/gudang") {
         let addMarker = null;
 
@@ -877,15 +937,23 @@ document.addEventListener("DOMContentLoaded", () => {
                 "Hapus Gudang",
                 "Yakin ingin menghapus gudang ini?",
                 async () => {
-                    await fetchApi(`/storages/${id}`, { method: "DELETE" });
-                    showToast("Gudang berhasil dihapus", "success");
-                    loadStorages();
+                    const res = await fetchApi(`/storages/${id}`, {
+                        method: "DELETE",
+                    });
+                    if (res && res.message && !res.errors) {
+                        showToast(res.message, "success");
+                        loadStorages();
+                    } else {
+                        showToast(
+                            res.message || "Gagal menghapus gudang",
+                            "error",
+                        );
+                    }
                 },
             );
         };
     }
 
-    // ── PENGGUNA ──
     if (window.location.pathname === "/admin/pengguna") {
         const loadUsers = async () => {
             const res = await fetchApi("/users");

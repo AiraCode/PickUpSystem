@@ -18,6 +18,7 @@ class Order extends Model
         'pickup_lat',
         'pickup_long',
         'status',
+        'cancel_reason',
         'customers_id',
     ];
 

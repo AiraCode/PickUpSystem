@@ -36,7 +36,7 @@ class OrderController extends Controller
         $updateData = ['status' => $request->status];
         
         if ($request->status === 'cancelled' && $request->filled('cancel_reason')) {
-            $updateData['pickup_address_note'] = 'Batal: ' . $request->cancel_reason;
+            $updateData['cancel_reason'] = $request->cancel_reason;
         }
 
         $order->update($updateData);

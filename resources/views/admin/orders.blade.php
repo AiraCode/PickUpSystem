@@ -120,7 +120,7 @@
                     <tr><td style="color:#6d727c; padding:6px 0;">Status</td><td id="detail-order-status" style="font-weight:500;"></td></tr>
                     <tr><td style="color:#6d727c; padding:6px 0;">Waktu Pesan</td><td id="detail-order-time" style="font-weight:500;"></td></tr>
                     <tr><td style="color:#6d727c; padding:6px 0;">Alamat Penjemputan</td><td id="detail-order-pickup-address" style="font-weight:500;"></td></tr>
-                    <tr><td style="color:#6d727c; padding:6px 0;">Catatan Alamat</td><td id="detail-order-pickup-note" style="font-weight:500;"></td></tr>
+                    <tr><td style="color:#6d727c; padding:6px 0;" id="detail-order-note-label">Catatan Alamat</td><td id="detail-order-pickup-note" style="font-weight:500;"></td></tr>
                 </table>
             </div>
         </div>
