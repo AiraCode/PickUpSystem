@@ -1718,7 +1718,9 @@ html.admin-dark-mode #modal-edit-profile .admin-panel,
 html.admin-dark-mode #modal-logout-confirm .admin-panel,
 html.admin-dark-mode #modal-shopee-filter .admin-panel,
 html.admin-dark-mode #modal-detail-order .admin-panel,
-html.admin-dark-mode #modal-order-map .admin-panel {
+html.admin-dark-mode #modal-order-map .admin-panel,
+html.admin-dark-mode #modal-view-city-prices .admin-panel
+{
     background: #1e293b;
     border: 1px solid #334155;
     color: #f1f5f9;
@@ -1729,8 +1731,25 @@ html.admin-dark-mode #modal-edit-profile h2,
 html.admin-dark-mode #modal-logout-confirm h2,
 html.admin-dark-mode #modal-shopee-filter h2,
 html.admin-dark-mode #modal-detail-order h3,
-html.admin-dark-mode #modal-order-map h2 {
+html.admin-dark-mode #modal-order-map h2,
+html.admin-dark-mode #modal-view-city-prices h2 {
     color: #f8fafc !important;
+}
+
+html.admin-dark-mode #modal-view-city-prices form{
+    background: #0f172a !important;
+}
+html.admin-dark-mode #modal-view-city-prices label{
+    color: #94a3b8 !important;
+}
+
+html.admin-dark-mode .admin-chart-shell {
+    background: #0f172a !important;
+    border-color: #334155 !important;
+}
+
+html.admin-dark-mode .admin-chart-grid-line {
+    border-bottom-color: #334155 !important;
 }
 
 html.admin-dark-mode #modal-custom-confirm p,

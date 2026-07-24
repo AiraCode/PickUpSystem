@@ -443,11 +443,11 @@ document.addEventListener("DOMContentLoaded", () => {
                         .join("");
 
                     chartContainer.innerHTML = `
-                        <div style="height:230px; border:1px solid #f1f5f9; border-radius:10px; background:#fafafa; padding:24px 16px 12px 16px; position:relative; overflow:hidden;">
+                        <div class="admin-chart-shell" style="height:230px; border:1px solid #f1f5f9; border-radius:10px; background:#fafafa; padding:24px 16px 12px 16px; position:relative; overflow:hidden;">
                             <div style="position:absolute; inset:24px 16px 30px 16px; display:flex; flex-direction:column; justify-content:space-between; pointer-events:none; z-index:0;">
-                                <div style="border-bottom:1px dashed #e2e8f0; width:100%;"></div>
-                                <div style="border-bottom:1px dashed #e2e8f0; width:100%;"></div>
-                                <div style="border-bottom:1px dashed #e2e8f0; width:100%;"></div>
+                                <div class="admin-chart-grid-line" style="border-bottom:1px dashed #e2e8f0; width:100%;"></div>
+                                <div class="admin-chart-grid-line" style="border-bottom:1px dashed #e2e8f0; width:100%;"></div>
+                                <div class="admin-chart-grid-line" style="border-bottom:1px dashed #e2e8f0; width:100%;"></div>
                             </div>
                             <div style="display:flex; align-items:flex-end; justify-content:space-between; width:100%; height:100%; position:relative; z-index:1; gap:${chartData.length > 20 ? "3px" : "12px"};">
                                 ${barsHtml}
