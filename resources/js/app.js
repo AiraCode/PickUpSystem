@@ -126,25 +126,45 @@ document
     });
 
 const citySelect = document.querySelector("[data-city-select]");
-const cityStatus = document.querySelector("[data-city-status]");
+const cityWarning = document.querySelector("[data-city-warning]");
+const batteryContainer = document.querySelector("[data-battery-container]");
+const batteryDisabledPlaceholder = document.querySelector("[data-battery-disabled-placeholder]");
+const storeCityName = document.querySelector("[data-store-city]");
 
-citySelect?.addEventListener("change", () => {
-    const city =
-        citySelect.options[citySelect.selectedIndex]?.text ||
-        "wilayah terpilih";
-    if (cityStatus)
-        cityStatus.textContent =
-            "Data harga " +
-            city +
-            " mengikuti data yang terhubung pada sistem.";
-});
+const updateCityState = () => {
+    if (!citySelect) return;
+    const selectedVal = citySelect.value;
+    const cityText = citySelect.options[citySelect.selectedIndex]?.text;
+
+    if (!selectedVal) {
+        if (batteryContainer) batteryContainer.style.display = "none";
+        if (batteryDisabledPlaceholder) batteryDisabledPlaceholder.style.display = "block";
+        if (cityWarning) {
+            cityWarning.innerHTML = "<strong>*Daftar harga aki berdasarkan wilayah yang dipilih.</strong>";
+        }
+    } else {
+        if (batteryDisabledPlaceholder) batteryDisabledPlaceholder.style.display = "none";
+        if (batteryContainer) batteryContainer.style.display = "block";
+        if (storeCityName) storeCityName.textContent = cityText.toUpperCase();
+        if (cityWarning) {
+            cityWarning.innerHTML = "<strong>*Daftar harga aki berdasarkan wilayah " + cityText + " yang dipilih.</strong>";
+        }
+    }
+};
+
+citySelect?.addEventListener("change", updateCityState);
 
 const userCart = new Map();
+window.userCart = userCart;
 const cartItemsContainer = document.querySelector("[data-cart-items]");
 const cartEmpty = document.querySelector("[data-cart-empty]");
 const cartCount = document.querySelector("[data-cart-count]");
 const cartSubtotal = document.querySelector("[data-cart-subtotal]");
 const cartTotal = document.querySelector("[data-cart-total]");
+
+const formatRupiah = (number) => {
+    return "Rp " + Number(number).toLocaleString("id-ID");
+};
 
 const renderUserCart = () => {
     if (!cartItemsContainer || !cartEmpty) return;
@@ -156,28 +176,42 @@ const renderUserCart = () => {
             .map(
                 (item) =>
                     '<div class="user-cart-line">' +
-                    '<span class="user-cart-line__copy"><strong>' +
-                    item.name +
-                    "</strong><small>" +
-                    item.brand +
-                    " · harga belum tersedia</small></span>" +
-                    '<span class="user-cart-line__qty">' +
-                    item.quantity +
-                    " unit</span>" +
-                    "</div>",
+                    '<div class="user-cart-line__copy">' +
+                    '<strong>' + item.name + '</strong>' +
+                    '<small>' + item.quantity + ' unit × ' + formatRupiah(item.price) + '</small>' +
+                    '</div>' +
+                    '<div class="user-cart-line__right">' +
+                    '<strong class="user-cart-line__price">' + formatRupiah(item.price * item.quantity) + '</strong>' +
+                    '<button type="button" class="user-cart-delete-btn" data-delete-item="' + item.name + '">Hapus</button>' +
+                    '</div>' +
+                    '</div>',
             )
             .join("");
     }
 
-    const quantity = Array.from(userCart.values()).reduce(
+    const totalQuantity = Array.from(userCart.values()).reduce(
         (total, item) => total + item.quantity,
         0,
     );
-    if (cartCount) cartCount.textContent = quantity;
-    if (cartSubtotal)
-        cartSubtotal.textContent = userCart.size ? "Menunggu data harga" : "—";
-    if (cartTotal)
-        cartTotal.textContent = userCart.size ? "Menunggu data harga" : "—";
+
+    const subtotal = Array.from(userCart.values()).reduce(
+        (total, item) => total + item.price * item.quantity,
+        0,
+    );
+
+    if (cartCount) cartCount.textContent = totalQuantity;
+    if (cartSubtotal) cartSubtotal.textContent = userCart.size ? formatRupiah(subtotal) : "—";
+    if (cartTotal) cartTotal.textContent = userCart.size ? formatRupiah(subtotal) : "—";
+
+    cartItemsContainer.querySelectorAll("[data-delete-item]").forEach((btn) => {
+        btn.addEventListener("click", (e) => {
+            const key = e.currentTarget.dataset.deleteItem;
+            if (key && userCart.has(key)) {
+                userCart.delete(key);
+                renderUserCart();
+            }
+        });
+    });
 };
 
 document.querySelectorAll("[data-product-card]").forEach((card) => {
@@ -201,17 +235,20 @@ document.querySelectorAll("[data-product-card]").forEach((card) => {
     addButton?.addEventListener("click", () => {
         const name = card.dataset.productName || "Aki";
         const brand = card.dataset.productBrand || "Indoprima";
+        const price = Number(card.dataset.productPrice) || 0;
+        const id = Number(card.getAttribute("data-accu-id")) || 1;
         const quantity = Math.min(
             99,
             Math.max(1, Number(quantityInput?.value) || 1),
         );
-        userCart.set(name, { name, brand, quantity });
+        userCart.set(name, { id, name, brand, price, quantity });
         renderUserCart();
+
         const originalText = addButton.textContent;
-        addButton.textContent = "Ditambahkan";
+        addButton.textContent = "✓ Ditambahkan";
         window.setTimeout(() => {
             addButton.textContent = originalText;
-        }, 1000);
+        }, 1200);
     });
 });
 
@@ -234,20 +271,12 @@ document.querySelectorAll("[data-pickup-method]").forEach((radio) => {
     });
 });
 
-const identityForm = document.querySelector("[data-identity-form]");
-const identityModal = document.querySelector("[data-identity-modal]");
-
-identityForm?.addEventListener("submit", (event) => {
-    event.preventDefault();
-    if (identityModal) {
-        identityModal.hidden = false;
-        document.body.classList.add("overflow-hidden");
-    }
-});
+// Submission handled entirely by user-api.js with validation logic
 
 document.querySelectorAll("[data-modal-close]").forEach((closeButton) => {
     closeButton.addEventListener("click", () => {
-        if (identityModal) identityModal.hidden = true;
+        const modal = document.querySelector("[data-identity-modal]");
+        if (modal) modal.hidden = true;
         document.body.classList.remove("overflow-hidden");
     });
 });
@@ -277,4 +306,5 @@ document.querySelectorAll("[data-receipt-status]").forEach((button) => {
     });
 });
 
+updateCityState();
 renderUserCart();
