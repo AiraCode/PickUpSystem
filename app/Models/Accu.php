@@ -33,12 +33,18 @@ class Accu extends Model
         return '-';
     }
 
-    public function getImgUrlAttribute()
+    public function getImgUrlAttribute(): string
     {
         if ($this->img) {
+            if (str_starts_with($this->img, 'http://') || str_starts_with($this->img, 'https://')) {
+                return $this->img;
+            }
+            if (str_starts_with($this->img, 'img/')) {
+                return asset($this->img);
+            }
             return asset('storage/' . $this->img);
         }
-        return null;
+        return asset('img/default-accu.png');
     }
 
     public function cities(): BelongsToMany

@@ -21,9 +21,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const fetchApi = async (endpoint, options = {}) => {
         const headers = {
-            "Content-Type": "application/json",
             Accept: "application/json",
         };
+        if (!(options.body instanceof FormData)) {
+            headers["Content-Type"] = "application/json";
+        }
         if (token) headers["Authorization"] = `Bearer ${token}`;
         const response = await fetch(`${API_BASE}${endpoint}`, {
             ...options,
@@ -586,6 +588,9 @@ document.addEventListener("DOMContentLoaded", () => {
                     .map(
                         (a) => `
                     <tr>
+                        <td>
+                            <img src="${a.img_url || '/img/default-accu.png'}" alt="${a.name}" style="width:36px; height:36px; object-fit:cover; border-radius:6px; border:1px solid #e5e7eb; background:#f9fafb;" onerror="this.src='/img/default-accu.png'">
+                        </td>
                         <td style="font-weight:500;">${a.brand}</td>
                         <td>${a.name}</td>
                         <td>
@@ -595,7 +600,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     )
                     .join("");
             } else {
-                tbody.innerHTML = `<tr><td colspan="3"><div class="admin-table-empty"><strong>Belum ada aki</strong></div></td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="4"><div class="admin-table-empty"><strong>Belum ada aki</strong></div></td></tr>`;
             }
             const sel = document.getElementById("set-price-accu");
             if (sel)
@@ -630,6 +635,9 @@ document.addEventListener("DOMContentLoaded", () => {
                     .map(
                         (a) => `
                     <tr>
+                        <td>
+                            <img src="${a.img_url || '/img/default-accu.png'}" alt="${a.name}" style="width:32px; height:32px; object-fit:cover; border-radius:6px; border:1px solid #e5e7eb; background:#f9fafb;" onerror="this.src='/img/default-accu.png'">
+                        </td>
                         <td style="font-weight:500;">${a.brand}</td>
                         <td>${a.name}</td>
                         <td style="font-weight:600; color:#10b981;">${rupiah(a.price)}</td>
@@ -643,7 +651,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     )
                     .join("");
             } else {
-                tbody.innerHTML = `<tr><td colspan="4"><div class="admin-table-empty"><strong>Belum ada harga diset untuk kota ${cityName}</strong></div></td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="5"><div class="admin-table-empty"><strong>Belum ada harga diset untuk kota ${cityName}</strong></div></td></tr>`;
             }
         };
 
@@ -697,6 +705,12 @@ document.addEventListener("DOMContentLoaded", () => {
         window.openAddAccuModal = () => {
             loadAccus();
             loadTrashedAccus();
+            const imgInput = document.getElementById("accu-img");
+            const imgPreview = document.getElementById("accu-img-preview");
+            const imgPreviewContainer = document.getElementById("accu-img-preview-container");
+            if (imgInput) imgInput.value = "";
+            if (imgPreview) imgPreview.src = "";
+            if (imgPreviewContainer) imgPreviewContainer.style.display = "none";
             document.getElementById("modal-add-accu").style.display = "flex";
         };
 
@@ -878,6 +892,26 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
             });
 
+        const accuImgInput = document.getElementById("accu-img");
+        const accuImgPreview = document.getElementById("accu-img-preview");
+        const accuImgPreviewContainer = document.getElementById("accu-img-preview-container");
+        if (accuImgInput && accuImgPreview) {
+            accuImgInput.addEventListener("change", () => {
+                const file = accuImgInput.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                        accuImgPreview.src = e.target.result;
+                        if (accuImgPreviewContainer) accuImgPreviewContainer.style.display = "block";
+                    };
+                    reader.readAsDataURL(file);
+                } else {
+                    accuImgPreview.src = "";
+                    if (accuImgPreviewContainer) accuImgPreviewContainer.style.display = "none";
+                }
+            });
+        }
+
         document
             .getElementById("form-add-accu")
             .addEventListener("submit", async (e) => {
@@ -900,17 +934,24 @@ document.addEventListener("DOMContentLoaded", () => {
                     .getElementById("accu-name")
                     .value.trim();
 
+                const formData = new FormData();
+                formData.append("brand", brandVal);
+                formData.append("name", accuNameVal);
+                
+                const imgInput = document.getElementById("accu-img");
+                if (imgInput && imgInput.files && imgInput.files[0]) {
+                    formData.append("img", imgInput.files[0]);
+                }
+
                 const res = await fetchApi("/accus", {
                     method: "POST",
-                    body: JSON.stringify({
-                        brand: brandVal,
-                        name: accuNameVal,
-                    }),
+                    body: formData,
                 });
                 if (res && (res.data || res.message)) {
                     document.getElementById("modal-add-accu").style.display =
                         "none";
                     document.getElementById("form-add-accu").reset();
+                    if (accuImgPreviewContainer) accuImgPreviewContainer.style.display = "none";
                     if (accuBrandOtherWrap)
                         accuBrandOtherWrap.style.display = "none";
                     showToast(res.message || "Aki baru berhasil disimpan!", "success");

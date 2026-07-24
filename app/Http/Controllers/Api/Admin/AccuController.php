@@ -52,7 +52,7 @@ class AccuController extends Controller
         if ($request->hasFile('img')) {
             $data['img'] = $request->file('img')->store('accus', 'public');
         } else {
-            $data['img'] = 'default/accu-default.png';
+            $data['img'] = 'img/default-accu.png';
         }
 
         $accu = Accu::create($data);

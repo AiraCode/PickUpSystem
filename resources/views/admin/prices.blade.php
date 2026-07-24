@@ -16,8 +16,7 @@
             <div>
                 <h2>Area Layanan (Kota)</h2>
             </div>
-            <button class="admin-button admin-button--primary"
-                onclick="openAddCityModal()">Tambah Kota</button>
+            <button class="admin-button admin-button--primary" onclick="openAddCityModal()">Tambah Kota</button>
         </div>
         <div class="admin-table-wrap">
             <table class="admin-table">
@@ -43,13 +42,13 @@
             <div>
                 <h2>Daftar Jenis Aki</h2>
             </div>
-            <button class="admin-button admin-button--primary"
-                onclick="openAddAccuModal()">Tambah Aki</button>
+            <button class="admin-button admin-button--primary" onclick="openAddAccuModal()">Tambah Aki</button>
         </div>
         <div class="admin-table-wrap">
             <table class="admin-table">
                 <thead>
                     <tr>
+                        <th style="width:70px;">Gambar</th>
                         <th>Brand</th>
                         <th>Nama Aki</th>
                         <th>Aksi</th>
@@ -57,7 +56,7 @@
                 </thead>
                 <tbody id="accus-tbody">
                     <tr>
-                        <td colspan="3">
+                        <td colspan="4">
                             <div class="admin-table-empty"><strong>Memuat data...</strong></div>
                         </td>
                     </tr>
@@ -84,15 +83,16 @@
                 <table class="admin-table" style="width:100%;">
                     <thead>
                         <tr>
-                            <th style="width:22%;">Brand</th>
+                            <th style="width:60px;">Gambar</th>
+                            <th style="width:20%;">Brand</th>
                             <th style="width:25%;">Nama Aki</th>
                             <th style="width:25%;">Harga (Rp)</th>
-                            <th style="width:28%; text-align:right;">Aksi</th>
+                            <th style="width:25%; text-align:right;">Aksi</th>
                         </tr>
                     </thead>
                     <tbody id="modal-city-accus-tbody">
                         <tr>
-                            <td colspan="4">
+                            <td colspan="5">
                                 <div class="admin-table-empty"><strong>Memuat data harga...</strong></div>
                             </td>
                         </tr>
@@ -120,8 +120,10 @@
                     <input type="text" id="city-name" class="admin-select"
                         style="width:100%; padding:8px 10px; border-radius:6px;" placeholder="Contoh: Surabaya" required>
                 </div>
-                <div id="trashed-cities-container" style="margin-bottom:16px; border-top:1px solid #e5e7eb; padding-top:12px;">
-                    <label style="display:block; font-size:12px; font-weight:600; color:#6d727c; margin-bottom:6px;">Riwayat Kota Terhapus (Klik untuk pulihkan)</label>
+                <div id="trashed-cities-container"
+                    style="margin-bottom:16px; border-top:1px solid #e5e7eb; padding-top:12px;">
+                    <label style="display:block; font-size:12px; font-weight:600; color:#6d727c; margin-bottom:6px;">Riwayat
+                        Kota Terhapus (Klik untuk pulihkan)</label>
                     <div id="trashed-cities-list" style="max-height:100px; overflow-y:auto; font-size:12px;">
                         <span style="color:#9ca3af;">Memuat...</span>
                     </div>
@@ -160,8 +162,12 @@
                         <option value="Lainnya">Lainnya</option>
                     </select>
                     <div id="accu-brand-other-wrap" style="display:none; margin-top:10px;">
-                        <label style="display:block; font-size:12px; font-weight:600; margin-bottom:6px; color:#4a4f59;">Masukkan Nama Brand Baru</label>
-                        <input type="text" id="accu-brand-other" class="admin-select" style="width:100%; padding:8px 10px; border-radius:6px;" placeholder="Contoh: Panasonic, Motobatt">
+                        <label
+                            style="display:block; font-size:12px; font-weight:600; margin-bottom:6px; color:#4a4f59;">Masukkan
+                            Nama Brand Baru</label>
+                        <input type="text" id="accu-brand-other" class="admin-select"
+                            style="width:100%; padding:8px 10px; border-radius:6px;"
+                            placeholder="Contoh: Panasonic, Motobatt">
                     </div>
                 </div>
                 <div style="margin-bottom:16px;">
@@ -171,8 +177,20 @@
                         style="width:100%; padding:8px 10px; border-radius:6px;" placeholder="Contoh: NS40, NS60, N50Z"
                         required>
                 </div>
-                <div id="trashed-accus-container" style="margin-bottom:16px; border-top:1px solid #e5e7eb; padding-top:12px;">
-                    <label style="display:block; font-size:12px; font-weight:600; color:#6d727c; margin-bottom:6px;">Riwayat Aki Terhapus (Klik untuk pulihkan)</label>
+                <div style="margin-bottom:16px;">
+                    <label style="display:block; font-size:12px; font-weight:600; margin-bottom:6px; color:#4a4f59;">Upload
+                        Gambar Aki <span style="font-weight:normal; color:#6d727c;">(Opsional)</span></label>
+                    <input type="file" id="accu-img" accept="image/*" class="admin-select"
+                        style="width:100%; padding:6px 10px; border-radius:6px; background:#fff;">
+                    <div id="accu-img-preview-container" style="display:none; margin-top:8px;">
+                        <img id="accu-img-preview" src="" alt="Preview Gambar"
+                            style="max-height:80px; border-radius:6px; border:1px solid #e5e7eb; object-fit:cover;">
+                    </div>
+                </div>
+                <div id="trashed-accus-container"
+                    style="margin-bottom:16px; border-top:1px solid #e5e7eb; padding-top:12px;">
+                    <label style="display:block; font-size:12px; font-weight:600; color:#6d727c; margin-bottom:6px;">Riwayat
+                        Aki Terhapus (Klik untuk pulihkan)</label>
                     <div id="trashed-accus-list" style="max-height:100px; overflow-y:auto; font-size:12px;">
                         <span style="color:#9ca3af;">Memuat...</span>
                     </div>
