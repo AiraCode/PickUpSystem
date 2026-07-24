@@ -1,5 +1,6 @@
 import.meta.glob([
     '../img/**',
+    '/resources/img/**',
 ]);
 
 const sidebar = document.querySelector('#admin-sidebar');
