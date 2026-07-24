@@ -60,11 +60,54 @@ userMenuToggle?.addEventListener('click', () => {
     userMenu?.classList.toggle('is-open', !isOpen);
 });
 
-document.querySelectorAll('[data-user-nav-link]').forEach((link) => {
-    link.addEventListener('click', () => {
-        userMenuToggle?.setAttribute('aria-expanded', 'false');
-        userMenu?.classList.remove('is-open');
-    });
+const handleUserNavClick = (event) => {
+    const link = event.currentTarget;
+    const href = link.getAttribute('href');
+    if (!href) return;
+
+    const hashIndex = href.indexOf('#');
+    const targetHash = hashIndex !== -1 ? href.substring(hashIndex + 1) : '';
+    const targetPath = hashIndex !== -1 ? href.substring(0, hashIndex) : href;
+
+    const currentPath = window.location.pathname.replace(/\/$/, '');
+    const isLandingPage = currentPath === '/user' || currentPath === '' || currentPath.endsWith('/user');
+
+    if (isLandingPage) {
+        let targetElement = null;
+
+        if (targetHash) {
+            targetElement = document.getElementById(targetHash);
+        } else if (targetPath === '/user' || targetPath === '#' || href === '/user') {
+            targetElement = document.getElementById('top') || document.body;
+        }
+
+        if (targetElement) {
+            event.preventDefault();
+
+            userMenuToggle?.setAttribute('aria-expanded', 'false');
+            userMenu?.classList.remove('is-open');
+
+            const header = document.querySelector('[data-user-header]');
+            const headerOffset = header ? header.offsetHeight : 80;
+            const elementPosition = targetElement.getBoundingClientRect().top + window.scrollY;
+            const offsetPosition = targetHash ? Math.max(0, elementPosition - headerOffset) : 0;
+
+            window.scrollTo({
+                top: offsetPosition,
+                behavior: 'smooth'
+            });
+
+            if (targetHash) {
+                history.pushState(null, '', '#' + targetHash);
+            } else {
+                history.pushState(null, '', window.location.pathname);
+            }
+        }
+    }
+};
+
+document.querySelectorAll('[data-user-nav-link], a[href^="#"]').forEach((link) => {
+    link.addEventListener('click', handleUserNavClick);
 });
 
 const citySelect = document.querySelector('[data-city-select]');
