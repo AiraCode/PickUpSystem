@@ -685,16 +685,27 @@ document.addEventListener("DOMContentLoaded", () => {
             });
         }
 
-        if (uploadArea && uploadInput) {
-            uploadArea.addEventListener("click", () => uploadInput.click());
-            uploadInput.addEventListener("change", () => {
-                const file = uploadInput.files[0];
+        if (uploadInput) {
+            uploadInput.addEventListener("change", (e) => {
+                const file = e.target.files && e.target.files[0];
                 if (file) {
+                    if (file.size > 10 * 1024 * 1024) {
+                        if (orderUpdateError) {
+                            orderUpdateError.innerText = "Ukuran foto terlalu besar (Maksimal 10MB)!";
+                            orderUpdateError.style.display = "block";
+                        }
+                        uploadInput.value = "";
+                        return;
+                    }
                     const reader = new FileReader();
-                    reader.onload = (e) => {
-                        uploadPreview.src = e.target.result;
-                        uploadPreview.style.display = "block";
-                        uploadPlaceholder.style.display = "none";
+                    reader.onload = (ev) => {
+                        if (uploadPreview) {
+                            uploadPreview.src = ev.target.result;
+                            uploadPreview.style.display = "block";
+                        }
+                        if (uploadPlaceholder) {
+                            uploadPlaceholder.style.display = "none";
+                        }
                     };
                     reader.readAsDataURL(file);
                 }

@@ -238,13 +238,13 @@
 
             <div style="margin-bottom:18px;">
                 <label id="proof-label" style="display:block; font-size:12px; font-weight:600; margin-bottom:6px; color:#4a4f59;">Bukti Pembayaran / Penyerahan</label>
-                <div id="upload-area" style="border:2px dashed #d1d5db; border-radius:8px; padding:20px; text-align:center; cursor:pointer; transition:border-color .15s;">
-                    <input type="file" id="upload-proof" accept="image/*" style="display:none;">
-                    <div id="upload-placeholder">
+                <div id="upload-area" style="position:relative; border:2px dashed #d1d5db; border-radius:8px; padding:20px; text-align:center; cursor:pointer; overflow:hidden; transition:border-color .15s;">
+                    <input type="file" id="upload-proof" accept="image/*" style="position:absolute; inset:0; width:100%; height:100%; opacity:0; cursor:pointer; z-index:10;">
+                    <div id="upload-placeholder" style="pointer-events:none;">
                         <svg viewBox="0 0 24 24" style="width:32px; height:32px; fill:none; stroke:#9ca3af; stroke-width:1.5; margin:0 auto 8px;"><path d="M12 16V4m0 0L8 8m4-4 4 4"/><path d="M20 16v2a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-2"/></svg>
                         <p style="font-size:12px; color:#6d727c; margin:0;">Klik untuk upload foto atau seret file ke sini</p>
                     </div>
-                    <img id="upload-preview" style="display:none; max-width:100%; max-height:150px; border-radius:6px; margin:0 auto;">
+                    <img id="upload-preview" style="display:none; max-width:100%; max-height:150px; border-radius:6px; margin:0 auto; position:relative; z-index:5; pointer-events:none;">
                 </div>
             </div>
             <div id="order-update-error" style="display:none; background:#fee2e2; color:#991b1b; padding:10px 14px; border-radius:6px; font-size:12px; font-weight:600; margin-bottom:16px;"></div>
