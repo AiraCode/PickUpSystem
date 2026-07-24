@@ -9,6 +9,11 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     @vite(['resources/css/app.css', 'resources/js/app.js', 'resources/js/admin-api.js'])
+    <script>
+        if (localStorage.getItem('admin_theme') === 'dark') {
+            document.documentElement.classList.add('admin-dark-mode');
+        }
+    </script>
 </head>
 
 <body class="admin-shell">
@@ -83,8 +88,20 @@
             </nav>
 
             <div class="admin-sidebar__foot">
-                <span>© 2026 Indoprima Group</span>
-                <span>v1.0.0</span>
+                <button type="button" class="admin-theme-toggle-foot" id="admin-theme-toggle" aria-label="Toggle Dark Mode">
+                    <svg class="admin-theme-icon--sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"/>
+                        <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
+                    </svg>
+                    <svg class="admin-theme-icon--moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+                    </svg>
+                    <span id="admin-theme-text">Mode Gelap</span>
+                </button>
+                <div class="admin-sidebar__foot-copy">
+                    <span>© 2026 Indoprima Group</span>
+                    <span>v1.0.0</span>
+                </div>
             </div>
         </aside>
 
@@ -251,6 +268,34 @@
 
     toggle.addEventListener('click', () => {
         updateSidebar(!sidebar.classList.contains('collapsed'));
+    });
+
+    const themeToggleBtn = document.getElementById('admin-theme-toggle');
+    const themeText = document.getElementById('admin-theme-text');
+
+    function applyAdminTheme(isDark) {
+        document.documentElement.classList.toggle('admin-dark-mode', isDark);
+        if (document.body) {
+            document.body.classList.toggle('admin-dark-mode', isDark);
+        }
+        localStorage.setItem('admin_theme', isDark ? 'dark' : 'light');
+        if (themeText) {
+            themeText.textContent = isDark ? 'Mode Terang' : 'Mode Gelap';
+        }
+        if (typeof window.switchOrderTab === 'function' && typeof activeStatus !== 'undefined') {
+            window.switchOrderTab(activeStatus);
+        }
+        if (typeof window.loadReportAnalytic === 'function') {
+            window.loadReportAnalytic();
+        }
+    }
+
+    const initialIsDark = localStorage.getItem('admin_theme') === 'dark';
+    applyAdminTheme(initialIsDark);
+
+    themeToggleBtn?.addEventListener('click', () => {
+        const isCurrentDark = document.documentElement.classList.contains('admin-dark-mode');
+        applyAdminTheme(!isCurrentDark);
     });
 </script>
 

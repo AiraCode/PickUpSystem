@@ -133,13 +133,35 @@ document.addEventListener("DOMContentLoaded", () => {
     };
 
     const statusBadge = (status) => {
-        const colors = {
-            pending: { bg: "#fef3c7", color: "#92400e" },
-            processing: { bg: "#dbeafe", color: "#1e40af" },
-            completed: { bg: "#d1fae5", color: "#065f46" },
-            cancelled: { bg: "#fee2e2", color: "#991b1b" },
-        };
-        const c = colors[status] || { bg: "#f3f4f6", color: "#374151" };
+        const isDark =
+            document.documentElement.classList.contains("admin-dark-mode");
+        const colors = isDark
+            ? {
+                  pending: { bg: "rgba(245, 158, 11, 0.25)", color: "#fbbf24" },
+                  processing: {
+                      bg: "rgba(59, 130, 246, 0.25)",
+                      color: "#60a5fa",
+                  },
+                  completed: {
+                      bg: "rgba(16, 185, 129, 0.25)",
+                      color: "#34d399",
+                  },
+                  cancelled: {
+                      bg: "rgba(239, 68, 68, 0.25)",
+                      color: "#f87171",
+                  },
+              }
+            : {
+                  pending: { bg: "#fef3c7", color: "#92400e" },
+                  processing: { bg: "#dbeafe", color: "#1e40af" },
+                  completed: { bg: "#d1fae5", color: "#065f46" },
+                  cancelled: { bg: "#fee2e2", color: "#991b1b" },
+              };
+        const c =
+            colors[status] ||
+            (isDark
+                ? { bg: "rgba(148, 163, 184, 0.25)", color: "#cbd5e1" }
+                : { bg: "#f3f4f6", color: "#374151" });
         return `<span style="padding:4px 10px; border-radius:20px; font-size:11px; font-weight:600; background:${c.bg}; color:${c.color}; text-transform:uppercase;">${status}</span>`;
     };
 
@@ -608,10 +630,16 @@ document.addEventListener("DOMContentLoaded", () => {
             }
 
             if (activeBadge) {
+                const isDark =
+                    document.documentElement.classList.contains(
+                        "admin-dark-mode",
+                    );
                 if (searchQuery) {
                     activeBadge.innerText = "HASIL PENCARIAN (SEMUA STATUS)";
-                    activeBadge.style.background = "#dbeafe";
-                    activeBadge.style.color = "#1e40af";
+                    activeBadge.style.background = isDark
+                        ? "rgba(59, 130, 246, 0.25)"
+                        : "#dbeafe";
+                    activeBadge.style.color = isDark ? "#60a5fa" : "#1e40af";
                 } else {
                     const statusLabels = {
                         pending: {
@@ -681,22 +709,48 @@ document.addEventListener("DOMContentLoaded", () => {
             searchQuery = "";
             if (searchInput) searchInput.value = "";
 
+            const isDark =
+                document.documentElement.classList.contains("admin-dark-mode");
+
             document.querySelectorAll(".order-status-tab").forEach((card) => {
                 card.classList.remove("active");
-                card.style.borderColor = "#e5e7eb";
-                card.style.background = "#fff";
+                card.style.borderColor = isDark ? "#334155" : "#e5e7eb";
+                card.style.background = isDark ? "#1e293b" : "#ffffff";
             });
 
             const activeCard = document.getElementById(`card-status-${status}`);
             if (activeCard) {
                 activeCard.classList.add("active");
-                const cardColors = {
-                    pending: { border: "#f59e0b", bg: "#fffbeb" },
-                    processing: { border: "#3b82f6", bg: "#eff6ff" },
-                    completed: { border: "#10b981", bg: "#ecfdf5" },
-                    cancelled: { border: "#ef4444", bg: "#fef2f2" },
-                    all: { border: "#6b7280", bg: "#f9fafb" },
-                };
+                const cardColors = isDark
+                    ? {
+                          pending: {
+                              border: "#f59e0b",
+                              bg: "rgba(245, 158, 11, 0.18)",
+                          },
+                          processing: {
+                              border: "#3b82f6",
+                              bg: "rgba(59, 130, 246, 0.18)",
+                          },
+                          completed: {
+                              border: "#10b981",
+                              bg: "rgba(16, 185, 129, 0.18)",
+                          },
+                          cancelled: {
+                              border: "#ef4444",
+                              bg: "rgba(239, 68, 68, 0.18)",
+                          },
+                          all: {
+                              border: "#94a3b8",
+                              bg: "rgba(148, 163, 184, 0.18)",
+                          },
+                      }
+                    : {
+                          pending: { border: "#f59e0b", bg: "#fffbeb" },
+                          processing: { border: "#3b82f6", bg: "#eff6ff" },
+                          completed: { border: "#10b981", bg: "#ecfdf5" },
+                          cancelled: { border: "#ef4444", bg: "#fef2f2" },
+                          all: { border: "#6b7280", bg: "#f9fafb" },
+                      };
                 const c = cardColors[status] || {
                     border: "#3b82f6",
                     bg: "#eff6ff",
@@ -1028,6 +1082,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
             });
         }
+
+        switchOrderTab("pending");
     }
 
     if (window.location.pathname === "/admin/harga") {
@@ -1895,7 +1951,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
                             return `
                     <div style="flex:1; display:flex; flex-direction:column; align-items:center; height:100%; justify-content:flex-end; z-index:1;" title="${m.month_name}: ${rupiah(m.revenue)} (${m.receipts_count} struk)">
-                        <div style="font-size:10px; font-weight:600; color:#4b5563; margin-bottom:4px; white-space:nowrap;">${formattedRev}</div>
+                        <div style="font-size:10px; font-weight:600; color:${chartTextColor}; margin-bottom:4px; white-space:nowrap;">${formattedRev}</div>
                         <div style="width:75%; max-width:32px; height:${pct}%; background:linear-gradient(180deg, #3b82f6 0%, #1d4ed8 100%); border-radius:4px 4px 0 0; transition: height 0.4s ease;"></div>
                     </div>`;
                         })

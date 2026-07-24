@@ -69,9 +69,7 @@
         </div>
     </article>
 
-    <!-- Top Selling Accus & Top Cities Grid (Side-by-side Kanan Kiri Layout) -->
     <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px;">
-        <!-- Top Accus (Kiri) -->
         <article class="admin-panel" style="margin:0;">
             <div class="admin-panel__head">
                 <div>
@@ -80,7 +78,7 @@
                 </div>
             </div>
             <div class="admin-table-wrap">
-                <table class="admin-table">
+                <table class="admin-table admin-table--compact">
                     <thead>
                         <tr>
                             <th>Brand</th>
@@ -95,7 +93,6 @@
             </div>
         </article>
 
-        <!-- Top Cities (Kanan) -->
         <article class="admin-panel" style="margin:0;">
             <div class="admin-panel__head">
                 <div>
@@ -104,7 +101,7 @@
                 </div>
             </div>
             <div class="admin-table-wrap">
-                <table class="admin-table">
+                <table class="admin-table admin-table--compact">
                     <thead>
                         <tr>
                             <th>Kota</th>
