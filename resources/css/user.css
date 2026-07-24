@@ -726,8 +726,9 @@ body.user-shell textarea:focus-visible {
 .user-disabled-box p {
     color: #7f1d1d;
     font-size: 14px;
-    margin-top: 8px;
+    margin: 8px auto 0;
     max-width: 420px;
+    text-align: center;
 }
 
 .user-store-header {
