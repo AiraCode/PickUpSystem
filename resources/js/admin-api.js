@@ -42,6 +42,15 @@ document.addEventListener("DOMContentLoaded", () => {
         setInterval(updateClock, 1000);
     }
 
+    window.addEventListener("keydown", (e) => {
+        if (e.key === "Escape" || e.key === "Esc") {
+            const modals = document.querySelectorAll('div[id^="modal-"], div[id*="modal"]');
+            modals.forEach((modal) => {
+                modal.style.display = "none";
+            });
+        }
+    });
+
     const fetchApi = async (endpoint, options = {}) => {
         const headers = {
             Accept: "application/json",
