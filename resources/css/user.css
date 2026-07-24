@@ -48,10 +48,11 @@ body.user-shell textarea:focus-visible {
     outline: 3px solid rgba(34, 80, 252, 0.2);
     outline-offset: 2px;
 }
+
 .user-container {
     margin: 0 auto;
-    max-width: 1260px;
-    padding: 0 28px;
+    max-width: 1180px;
+    padding: 0 40px;
     width: 100%;
 }
 
@@ -298,18 +299,24 @@ body.user-shell textarea:focus-visible {
     top: 50%;
     transform: translate(-50%, -50%);
 }
+
 .user-hero__content {
     display: flex;
-    flex-direction: column;
+    align-items: center;
     justify-content: center;
+
     min-height: 760px;
-    padding: 138px 28px 66px;
+
     position: relative;
     z-index: 3;
 }
+
 .user-hero__copy {
-    max-width: 690px;
+    max-width: 900px;
+    margin: 0 auto;
+    text-align: center;
 }
+
 .user-badge {
     align-items: center;
     border: 1px solid rgba(255, 255, 255, 0.3);
@@ -327,14 +334,16 @@ body.user-shell textarea:focus-visible {
     height: 8px;
     width: 8px;
 }
+
 .user-hero h1 {
     font-size: clamp(42px, 6.5vw, 90px);
     font-weight: 800;
     letter-spacing: -0.065em;
-    line-height: 0.98;
-    margin: 30px 0 24px;
-    max-width: 840px;
+    line-height: 1.05;
+    margin: 24px auto 24px;
+    max-width: 900px;
 }
+
 .user-hero h1 em,
 .user-section-heading h2 em,
 .user-flow-hero h1 em,
@@ -342,18 +351,24 @@ body.user-shell textarea:focus-visible {
     color: var(--user-red);
     font-style: normal;
 }
+
 .user-hero__copy > p {
     color: rgba(255, 255, 255, 0.82);
     font-size: 16px;
     line-height: 1.7;
-    max-width: 640px;
+
+    max-width: 680px;
+    margin: 0 auto;
+    text-align: center;
 }
+
 .user-hero__actions {
     display: flex;
-    flex-wrap: wrap;
+    justify-content: center;
     gap: 11px;
     margin-top: 34px;
 }
+
 .user-button {
     align-items: center;
     border-radius: 9px;
@@ -2005,6 +2020,7 @@ body.user-shell textarea:focus-visible {
     .user-catalog-toolbar__status {
         padding-bottom: 0;
     }
+
     .user-footer {
         padding: 55px 18px 0;
     }

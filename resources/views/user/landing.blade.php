@@ -14,13 +14,15 @@
                 </div>
                 <div class="user-hero__content user-container">
                     <div class="user-hero__copy">
-                        <h1>Jual Aki Bekas Anda dengan <em>Harga Terbaik</em></h1>
+                        <h1>
+                            Jual Aki Bekas Anda<br>
+                            dengan <em>Harga Terbaik</em>
+                        </h1>
                         <p>Indoprima Group membeli aki mobil dan aki motor bekas dengan proses cepat, transparan, dan
                             pembayaran langsung ke rekening Anda.</p>
                         <div class="user-hero__actions">
                             <a href="#daftar-harga" class="user-button user-button--primary">Jual Sekarang <span
                                     aria-hidden="true">→</span></a>
-                            <a href="#daftar-harga" class="user-button user-button--ghost">Lihat Daftar Harga</a>
                         </div>
                     </div>
                 </div>
@@ -152,8 +154,8 @@
                                         <div class="user-quantity">
                                             <button type="button" data-quantity-minus
                                                 aria-label="Kurangi jumlah Yuasa YBX">−</button>
-                                            <input type="number" value="1" min="1" max="99" data-quantity
-                                                aria-label="Jumlah Yuasa YBX">
+                                            <input type="number" value="1" min="1" max="99"
+                                                data-quantity aria-label="Jumlah Yuasa YBX">
                                             <button type="button" data-quantity-plus
                                                 aria-label="Tambah jumlah Yuasa YBX">+</button>
                                         </div>
@@ -182,8 +184,8 @@
                                         <div class="user-quantity">
                                             <button type="button" data-quantity-minus
                                                 aria-label="Kurangi jumlah Incoe MF">−</button>
-                                            <input type="number" value="1" min="1" max="99" data-quantity
-                                                aria-label="Jumlah Incoe MF">
+                                            <input type="number" value="1" min="1" max="99"
+                                                data-quantity aria-label="Jumlah Incoe MF">
                                             <button type="button" data-quantity-plus
                                                 aria-label="Tambah jumlah Incoe MF">+</button>
                                         </div>
@@ -212,8 +214,8 @@
                                         <div class="user-quantity">
                                             <button type="button" data-quantity-minus
                                                 aria-label="Kurangi jumlah Delkor 55D23L">−</button>
-                                            <input type="number" value="1" min="1" max="99" data-quantity
-                                                aria-label="Jumlah Delkor 55D23L">
+                                            <input type="number" value="1" min="1" max="99"
+                                                data-quantity aria-label="Jumlah Delkor 55D23L">
                                             <button type="button" data-quantity-plus
                                                 aria-label="Tambah jumlah Delkor 55D23L">+</button>
                                         </div>
@@ -246,7 +248,8 @@
                             <div class="user-delivery" data-delivery-method>
                                 <span class="user-checkout-label">METODE PENYERAHAN AKI</span>
                                 <label class="user-radio-card is-selected">
-                                    <input type="radio" name="delivery_method" value="warehouse" checked data-pickup-method>
+                                    <input type="radio" name="delivery_method" value="warehouse" checked
+                                        data-pickup-method>
                                     <span class="user-radio-card__indicator"></span>
                                     <span><strong>Antar ke gudang Indoprima</strong><small>Rekomendasi gudang terdekat ·
                                             biaya layanan gratis.</small></span>
@@ -269,8 +272,9 @@
 
                             <div class="user-address">
                                 <div class="user-checkout-label">ALAMAT PENJUAL</div>
-                                <label class="user-floating-field"><textarea rows="3"
-                                        placeholder=" "></textarea><span>Alamat lengkap</span></label>
+                                <label class="user-floating-field">
+                                    <textarea rows="3" placeholder=" "></textarea><span>Alamat lengkap</span>
+                                </label>
                                 <div class="user-address__row">
                                     <label class="user-floating-field"><input type="text"
                                             placeholder=" "><span>Kota</span></label>
@@ -280,7 +284,8 @@
                                 <p>Alamat digunakan untuk menentukan gudang terdekat serta estimasi biaya penjemputan.</p>
                             </div>
 
-                            <a href="/user/identitas" class="user-button user-button--primary user-button--full">Lanjut Isi
+                            <a href="/user/identitas" class="user-button user-button--primary user-button--full">Lanjut
+                                Isi
                                 Identitas <span aria-hidden="true">→</span></a>
                         </aside>
                     </div>
