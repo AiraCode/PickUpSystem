@@ -19,60 +19,60 @@
         </div>
     </div>
 
-    <!-- Summary KPI Cards -->
-    <div class="admin-dashboard-grid" style="grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); margin-bottom: 20px;">
-        <article class="admin-panel admin-stat-card">
+    <!-- Summary KPI Cards (Horizontal 4-Column Grid) -->
+    <div style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; margin-bottom: 24px;">
+        <article class="admin-panel admin-stat-card" style="margin:0;">
             <span class="admin-stat-card__eyebrow">TOTAL PENDAPATAN</span>
-            <div class="admin-stat-card__value" id="report-stat-sales">Rp 0</div>
-            <p class="admin-stat-card__note">Total pendapatan diterima</p>
+            <div class="admin-stat-card__value" id="report-stat-sales" style="font-size:22px; font-weight:700; color:#111318; margin:6px 0 4px;">Rp 0</div>
+            <p class="admin-stat-card__note" style="margin:0; font-size:11px; color:#6d727c;">Total pendapatan diterima</p>
         </article>
-        <article class="admin-panel admin-stat-card">
+
+        <article class="admin-panel admin-stat-card" style="margin:0;">
             <span class="admin-stat-card__eyebrow">TOTAL TRANSAKSI</span>
-            <div class="admin-stat-card__value" id="report-stat-orders">0</div>
-            <p class="admin-stat-card__note" id="report-stat-completed-note">0 Selesai</p>
+            <div class="admin-stat-card__value" id="report-stat-orders" style="font-size:22px; font-weight:700; color:#111318; margin:6px 0 4px;">0</div>
+            <p class="admin-stat-card__note" id="report-stat-completed-note" style="margin:0; font-size:11px; color:#6d727c;">0 Selesai</p>
         </article>
-        <article class="admin-panel admin-stat-card">
+
+        <article class="admin-panel admin-stat-card" style="margin:0;">
             <span class="admin-stat-card__eyebrow">RATA-RATA TRANSAKSI</span>
-            <div class="admin-stat-card__value" id="report-stat-avg">Rp 0</div>
-            <p class="admin-stat-card__note">Nilai rata-rata per order</p>
+            <div class="admin-stat-card__value" id="report-stat-avg" style="font-size:22px; font-weight:700; color:#111318; margin:6px 0 4px;">Rp 0</div>
+            <p class="admin-stat-card__note" style="margin:0; font-size:11px; color:#6d727c;">Nilai rata-rata per order</p>
         </article>
-        <article class="admin-panel admin-stat-card">
+
+        <article class="admin-panel admin-stat-card" style="margin:0;">
             <span class="admin-stat-card__eyebrow">PESANAN DIBATALKAN</span>
-            <div class="admin-stat-card__value" id="report-stat-cancelled" style="color:#ba1b2b;">0 (0%)</div>
-            <p class="admin-stat-card__note">Tingkat pembatalan order</p>
+            <div class="admin-stat-card__value" id="report-stat-cancelled" style="font-size:22px; font-weight:700; color:#ba1b2b; margin:6px 0 4px;">0 (0%)</div>
+            <p class="admin-stat-card__note" style="margin:0; font-size:11px; color:#6d727c;">Tingkat pembatalan order</p>
         </article>
     </div>
 
-    <!-- Chart & Statistics Breakdown -->
-    <div class="admin-dashboard-grid admin-dashboard-grid--main">
-        <!-- Monthly Revenue Chart -->
-        <article class="admin-panel admin-chart-panel" style="grid-column: span 2;">
-            <div class="admin-panel__head" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
-                <div>
-                    <span class="admin-panel__eyebrow">GRAFIK REVENUE</span>
-                    <h2 id="chart-title">Pendapatan Bulanan Tahun 2026</h2>
-                </div>
-                <span id="chart-max-label" style="font-size:12px; color:#6d727c; font-weight:500;"></span>
+    <!-- Monthly Revenue Chart -->
+    <article class="admin-panel admin-chart-panel" style="margin-bottom: 24px;">
+        <div class="admin-panel__head" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
+            <div>
+                <span class="admin-panel__eyebrow">GRAFIK REVENUE</span>
+                <h2 id="chart-title">Pendapatan Bulanan Tahun 2026</h2>
             </div>
-            
-            <div id="chart-bars-container" style="height: 260px; display: flex; align-items: flex-end; justify-content: space-between; gap: 8px; padding: 20px 10px 10px; border-bottom: 1px solid #e5e7eb; position: relative;">
-                <div style="position:absolute; inset:0; display:flex; flex-direction:column; justify-content:space-between; pointer-events:none; opacity:0.15; z-index:0;">
-                    <div style="border-top:1px dashed #000; width:100%;"></div>
-                    <div style="border-top:1px dashed #000; width:100%;"></div>
-                    <div style="border-top:1px dashed #000; width:100%;"></div>
-                </div>
-                <!-- Dynamic bars will be rendered here by admin-api.js -->
+            <span id="chart-max-label" style="font-size:12px; color:#6d727c; font-weight:500;"></span>
+        </div>
+        
+        <div id="chart-bars-container" style="height: 250px; display: flex; align-items: flex-end; justify-content: space-between; gap: 8px; padding: 20px 10px 10px; border-bottom: 1px solid #e5e7eb; position: relative;">
+            <div style="position:absolute; inset:0; display:flex; flex-direction:column; justify-content:space-between; pointer-events:none; opacity:0.15; z-index:0;">
+                <div style="border-top:1px dashed #000; width:100%;"></div>
+                <div style="border-top:1px dashed #000; width:100%;"></div>
+                <div style="border-top:1px dashed #000; width:100%;"></div>
             </div>
-            <div id="chart-labels-container" style="display: flex; justify-content: space-between; gap: 8px; padding: 8px 10px 0;">
-                <!-- Month labels will be rendered here -->
-            </div>
-        </article>
-    </div>
+            <!-- Dynamic bars will be rendered here by admin-api.js -->
+        </div>
+        <div id="chart-labels-container" style="display: flex; justify-content: space-between; gap: 8px; padding: 8px 10px 0;">
+            <!-- Month labels will be rendered here -->
+        </div>
+    </article>
 
-    <!-- Top Selling Accus & Top Cities Grid -->
-    <div class="admin-dashboard-grid" style="grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); margin-top: 20px;">
-        <!-- Top Accus -->
-        <article class="admin-panel">
+    <!-- Top Selling Accus & Top Cities Grid (Side-by-side Kanan Kiri Layout) -->
+    <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px;">
+        <!-- Top Accus (Kiri) -->
+        <article class="admin-panel" style="margin:0;">
             <div class="admin-panel__head">
                 <div>
                     <span class="admin-panel__eyebrow">PRODUK TERLARIS</span>
@@ -95,8 +95,8 @@
             </div>
         </article>
 
-        <!-- Top Cities -->
-        <article class="admin-panel">
+        <!-- Top Cities (Kanan) -->
+        <article class="admin-panel" style="margin:0;">
             <div class="admin-panel__head">
                 <div>
                     <span class="admin-panel__eyebrow">AREA TERBANYAK</span>
