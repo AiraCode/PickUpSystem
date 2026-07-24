@@ -19,7 +19,7 @@ class CityAccuPriceController extends Controller
 
         $accusList = $city->accus->map(function ($accu) use ($lme, $kurs, $cityPercentage) {
             $beratKering = (float) ($accu->berat_kering ?? 0);
-            $pricePerKg = ($lme * $kurs * $cityPercentage) / 1000.0;
+            $pricePerKg = ($lme * $kurs * ($cityPercentage / 100)) / 1000.0;
             $calculatedPrice = (int) round($pricePerKg * $beratKering);
 
             return [
