@@ -11,8 +11,7 @@
         </div>
     </div>
 
-    <!-- Panel Global LME & Kurs -->
-    <article class="admin-panel" style="margin-bottom: 24px;">
+        <article class="admin-panel" style="margin-bottom: 24px;">
         <div class="admin-panel__head">
             <div>
                 <h2>Pengaturan Global LME &amp; Kurs</h2>
@@ -117,8 +116,7 @@
         </div>
     </article>
 
-    <!-- Modal Pop-Up Detail Kota (Input Persentase di Atas & Tabel Perhitungan Harga) -->
-    <div id="modal-view-city-prices"
+        <div id="modal-view-city-prices"
         style="display:none; position:fixed; inset:0; background:rgba(0,0,0,.45); z-index:100; align-items:center; justify-content:center;">
         <div class="admin-panel" style="width:780px; max-width:92vw; max-height:90vh; overflow-y:auto; overflow-x:hidden;">
             <div class="admin-panel__head">
@@ -128,8 +126,7 @@
                 </div>
             </div>
 
-            <!-- Input Persentase Kota di bagian Atas Pop-Up -->
-            <form id="form-city-detail-percentage" style="display:flex; align-items:center; gap:12px; background:#f8fafc; border:1px solid #e2e8f0; padding:12px 16px; border-radius:8px; margin-top:10px;">
+                        <form id="form-city-detail-percentage" style="display:flex; align-items:center; gap:12px; background:#f8fafc; border:1px solid #e2e8f0; padding:12px 16px; border-radius:8px; margin-top:10px;">
                 <label style="font-size:13px; font-weight:700; color:#374151; white-space:nowrap;">Persentase Kota (%):</label>
                 <input type="number" step="0.1" min="0" max="100" id="city-detail-percentage-input" class="admin-select" style="width:110px; padding:6px 10px; border-radius:6px; font-weight:700; color:#2563eb;" required>
                 <button type="submit" class="admin-button admin-button--primary" style="height:34px; font-size:12px; white-space:nowrap;">Simpan Persentase</button>
@@ -161,8 +158,7 @@
         </div>
     </div>
 
-    <!-- Modal Tambah Kota -->
-    <div id="modal-add-city"
+        <div id="modal-add-city"
         style="display:none; position:fixed; inset:0; background:rgba(0,0,0,.45); z-index:100; align-items:center; justify-content:center;">
         <div class="admin-panel" style="width:420px;">
             <div class="admin-panel__head">
@@ -191,8 +187,7 @@
         </div>
     </div>
 
-    <!-- Modal Tambah Aki (Aki Otomatis Masuk ke Semua Kota) -->
-    <div id="modal-add-accu"
+        <div id="modal-add-accu"
         style="display:none; position:fixed; inset:0; background:rgba(0,0,0,.45); z-index:100; align-items:center; justify-content:center;">
         <div class="admin-panel" style="width:440px; max-width:92vw;">
             <div class="admin-panel__head">

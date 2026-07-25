@@ -50,8 +50,7 @@
                 </article>
             </div>
 
-            {{-- PERFORMA --}}
-            <article class="admin-panel admin-chart-panel">
+                        <article class="admin-panel admin-chart-panel">
                 <div class="admin-panel__head">
                     <div>
                         <span class="admin-panel__eyebrow">PERFORMA</span>
@@ -81,8 +80,7 @@
                 </div>
             </article>
 
-            {{-- OPERASIONAL --}}
-            <article class="admin-panel admin-table-panel">
+                        <article class="admin-panel admin-table-panel">
                 <div class="admin-panel__head">
                     <div>
                         <span class="admin-panel__eyebrow">OPERASIONAL</span>
@@ -123,8 +121,7 @@
 
         <aside class="admin-dashboard__right" style="flex-direction:column; gap:24px;">
 
-            {{-- 4TH STAT CARD PRECISELY ALIGNED WITH RIGHT SECTION --}}
-            <article class="admin-stat-card" style="margin:0;">
+                        <article class="admin-stat-card" style="margin:0;">
                 <div class="admin-stat-card__head">
                     <span class="admin-stat-card__icon admin-stat-card__icon--red">
                         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20a8 8 0 1 0 0-16 8 8 0 0 0 0 16Z" /><path d="M12 8v4l2.6 1.7" /></svg>
@@ -135,8 +132,7 @@
                 <small>Dari request hingga selesai</small>
             </article>
 
-            {{-- PEMBARUAN --}}
-            <article class="admin-panel admin-activity-panel" style="flex:1;">
+                        <article class="admin-panel admin-activity-panel" style="flex:1;">
                 <div class="admin-panel__head">
                     <div>
                         <span class="admin-panel__eyebrow">PEMBARUAN</span>
@@ -163,3 +159,4 @@
 
     </section>
 @endsection
+

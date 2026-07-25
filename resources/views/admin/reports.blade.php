@@ -19,8 +19,7 @@
         </div>
     </div>
 
-    <!-- Summary KPI Cards (Horizontal 4-Column Grid) -->
-    <div style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; margin-bottom: 24px;">
+        <div style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; margin-bottom: 24px;">
         <article class="admin-panel admin-stat-card" style="margin:0;">
             <span class="admin-stat-card__eyebrow">TOTAL PENDAPATAN</span>
             <div class="admin-stat-card__value" id="report-stat-sales" style="font-size:22px; font-weight:700; color:#111318; margin:6px 0 4px;">Rp 0</div>
@@ -46,8 +45,7 @@
         </article>
     </div>
 
-    <!-- Monthly Revenue Chart -->
-    <article class="admin-panel admin-chart-panel" style="margin-bottom: 24px;">
+        <article class="admin-panel admin-chart-panel" style="margin-bottom: 24px;">
         <div class="admin-panel__head" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
             <div>
                 <span class="admin-panel__eyebrow">GRAFIK REVENUE</span>
@@ -62,11 +60,9 @@
                 <div style="border-top:1px dashed #000; width:100%;"></div>
                 <div style="border-top:1px dashed #000; width:100%;"></div>
             </div>
-            <!-- Dynamic bars will be rendered here by admin-api.js -->
-        </div>
+                    </div>
         <div id="chart-labels-container" style="display: flex; justify-content: space-between; gap: 8px; padding: 8px 10px 0;">
-            <!-- Month labels will be rendered here -->
-        </div>
+                    </div>
     </article>
 
     <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px;">
@@ -116,3 +112,4 @@
         </article>
     </div>
 @endsection
+

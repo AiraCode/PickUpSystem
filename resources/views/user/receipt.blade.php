@@ -67,9 +67,9 @@
                                 <div><dt>Gudang / kurir</dt><dd>—</dd></div>
                                 <div><dt>Biaya penjemputan</dt><dd>—</dd></div>
                                 <div>
-                                    <dt style="display:flex; justify-content:space-between; align-items:center;">
+                                    <dt style="display:inline-flex; align-items:center; gap:10px;">
                                         Catatan    
-                                        <button type="button" id="btn-edit-note" style="background:none; border:none; color:#2563eb; cursor:pointer; font-size:11px; font-weight:600; padding:0; text-decoration:underline;">Edit</button>
+                                        <button type="button" id="btn-edit-note" style="background:#eff6ff; border:1px solid #bfdbfe; color:#1d4ed8; cursor:pointer; font-size:12px; font-weight:600; padding:2px 10px; border-radius:12px; text-decoration:none;">Edit</button>
                                     </dt>
                                     <dd id="receipt-note-display">—</dd>
                                     <div id="receipt-note-edit-container" style="display:none; margin-top:6px;">
@@ -107,6 +107,11 @@
                     </section>
 
                     <div class="user-receipt__note"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5" /><path d="M12 10v5M12 7.5h.01" /></svg><p>KTP/SIM dan gambar identitas tidak ditampilkan pada receipt ini untuk menjaga privasi penjual.</p></div>
+
+                    <div id="receipt-cancel-reason" style="display:none; background: #fee2e2; border: 1px solid #ef4444; color: #b91c1c; padding: 15px; border-radius: 8px; margin-top: 20px;">
+                        <strong>Pesanan Dibatalkan</strong>
+                        <p style="margin-top: 5px; font-size: 13px;" id="cancel-reason-text"></p>
+                    </div>
                 </article>
 
                 <div class="user-receipt-actions">
@@ -119,4 +124,5 @@
 
     @include('user.partials.footer')
 @endsection
+
 

@@ -56,7 +56,6 @@
     </div>
 </div>
 
-<!-- Modal Password Akses Rahasia (Easter Egg) -->
 <div id="modal-easter-egg-lock" style="display:none; position:fixed; inset:0; background:rgba(17,19,24,0.92); z-index:999; align-items:center; justify-content:center; backdrop-filter:blur(4px);">
     <div class="admin-panel" style="width:380px; text-align:center; padding:28px 24px; border:1px solid #374151; box-shadow:0 20px 25px -5px rgba(0,0,0,0.5);">
         <div style="width:54px; height:54px; background:#eff6ff; color:#2563eb; border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 16px;">
@@ -79,3 +78,4 @@
     </div>
 </div>
 @endsection
+

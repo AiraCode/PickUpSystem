@@ -641,9 +641,6 @@ select:focus-visible {
     stroke: var(--brand-blue);
 }
 
-/* ===============================
-   DASHBOARD LAYOUT
-=================================*/
 
 .admin-dashboard {
     display: grid;
@@ -1244,8 +1241,7 @@ select:focus-visible {
 
 .admin-footer__links {
     margin-top: 8px;
-    /* atur sesuai kebutuhan */
-}
+    }
 
 .admin-footer__links a {
     margin-right: 20px;
@@ -1772,14 +1768,12 @@ html.admin-dark-mode .leaflet-container {
     background: #0f172a;
 }
 
-/* Hide Hamburger Garis 3 and Close/Open buttons as requested */
 .sidebar-toggle,
 .sidebar-open,
 .sidebar-close {
     display: none !important;
 }
 
-/* Tooltip macOS Style for collapsed nav links */
 .admin-sidebar.collapsed .admin-nav__link::after {
     content: attr(data-tooltip);
     position: absolute;
@@ -1807,7 +1801,6 @@ html.admin-dark-mode .leaflet-container {
     transform: translateY(-50%) translateX(0);
 }
 
-/* Dark mode tooltip adjustment */
 html.admin-dark-mode .admin-sidebar.collapsed .admin-nav__link::after {
     background: rgba(15, 23, 42, 0.95);
     color: #f1f5f9;

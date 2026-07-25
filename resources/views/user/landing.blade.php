@@ -80,8 +80,8 @@
                         <p>Harga mengikuti wilayah dan kondisi aki. Pilih kota untuk menampilkan data yang terhubung pada sistem.</p>
                     </div>
 
-                    <div class="user-catalog-toolbar" style="display: flex; gap: 16px; align-items: flex-end; flex-wrap: wrap;">
-                        <label class="user-field user-field--city" for="user-city" style="flex: 1; min-width: 200px;">
+                    <div class="user-catalog-toolbar">
+                        <label class="user-field user-field--city" for="user-city">
                             <span>PILIH KOTA PENYERAHAN</span>
                             <select id="user-city" data-city-select>
                                 <option value="" disabled selected>-- Pilih Kota Penyerahan --</option>
@@ -95,11 +95,11 @@
                                 <option value="Balikpapan">Balikpapan</option>
                             </select>
                         </label>
-                        <label class="user-field user-field--search" for="accu-search-input" style="flex: 1; min-width: 200px;">
+                        <label class="user-field user-field--search" for="accu-search-input">
                             <span>CARI NAMA AKI</span>
                             <input type="text" id="accu-search-input" placeholder="Cari GS Astra, Yuasa, dll..." style="padding: 10px 14px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 13px; width: 100%; height: 44px; box-sizing: border-box;">
                         </label>
-                        <div class="user-catalog-notice" id="user-city-warning" data-city-warning style="flex-basis: 100%;">
+                        <div class="user-catalog-notice" id="user-city-warning" data-city-warning>
                             <strong>*Daftar harga aki berdasarkan wilayah yang dipilih.</strong>
                         </div>
                     </div>
@@ -121,12 +121,11 @@
                                 </div>
 
                                 <div class="user-battery-list" id="user-battery-list">
-                                    <!-- Product cards will be dynamically rendered by JS -->
-                                </div>
+                                                                    </div>
                             </div>
                         </div>
 
-                        <aside class="user-checkout-card" aria-label="Ringkasan penjualan">
+                        <aside class="user-checkout-card" aria-label="Ringkasan penjualan" id="user-checkout-section">
                             <div class="user-checkout-card__head">
                                 <div>
                                     <span class="user-kicker">RINGKASAN</span>
@@ -167,7 +166,7 @@
                             <div class="user-address">
                                 <div class="user-checkout-label">ALAMAT PENJUAL</div>
                                 <p style="font-size:13px; color:#475569; margin-bottom:10px;">Gunakan peta untuk menentukan lokasi presisi penjemputan.</p>
-                                <div style="display:none;">
+                                <div id="user-address-fields" style="display:none;">
                                     <label class="user-floating-field">
                                         <textarea rows="3" placeholder=" " id="user-address-input" name="address"></textarea><span>Alamat lengkap</span>
                                     </label>
@@ -183,6 +182,7 @@
                                     <svg viewBox="0 0 24 24" style="width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 2;"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
                                     <span>Pilih Lokasi Tepat di Peta (Wajib)</span>
                                 </button>
+                                <div id="user-latlong-text" style="display:none; font-size: 11px; color: #475569; margin-top: 8px;"></div>
                                 <div id="user-coords-badge" style="display:none; font-size: 11px; color: #1e40af; background: rgba(37,99,235,0.06); padding: 10px; border-radius: 8px; margin-top: 8px; border: 1px solid rgba(37,99,235,0.15); line-height: 1.4; text-align: left;">
                                     <strong style="display:block; margin-bottom: 2px;">📍 Gudang Penerimaan Terdekat:</strong>
                                     <span id="nearest-warehouse-detail">Mencari...</span>
@@ -222,7 +222,6 @@
 
         @include('user.partials.footer')
     </div>
-<!-- Modal Map Picker User -->
 <div id="modal-user-map" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,.55); z-index:9999; align-items:center; justify-content:center; padding: 20px;">
     <div style="background:#fff; border-radius:12px; width:520px; max-width:100%; box-shadow: 0 10px 25px rgba(0,0,0,0.2); overflow:hidden; border: 1px solid #e2e8f0;">
         <div style="padding: 16px 20px; border-bottom:1px solid #e2e8f0; display:flex; justify-content:space-between; align-items:center; background:#f8fafc;">
@@ -234,7 +233,7 @@
             <button type="button" id="btn-map-search" class="user-button user-button--primary" style="padding:8px 16px; border-radius:6px;">Cari</button>
         </div>
         <div style="padding: 8px 20px; font-size:11px; color:#64748b; background:#f8fafc; border-bottom:1px solid #e2e8f0; line-height: 1.4;">
-            *Apabila pin belum tepat di rumah Anda, mohon bantuannya untuk menggeser pin ke lokasi yang pas ya Kak. 😊<br>
+            *Apabila pin belum tepat di rumah Anda, mohon bantuannya untuk menggeser pin ke lokasi yang pas.<br>
             <span style="color: #94a3b8;">(Alamat yang diketik akan otomatis tersimpan sebagai alamat pengiriman)</span>
         </div>
         <div id="user-map-picker" style="width:100%; height:320px; background:#e5e7eb;"></div>
@@ -244,7 +243,6 @@
         </div>
     </div>
 </div>
-<!-- Custom Alert Popup Modal -->
 <div id="modal-user-alert" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,.55); z-index:10000; align-items:center; justify-content:center; padding: 20px;">
     <div style="background:#fff; border-radius:12px; width:360px; max-width:100%; box-shadow: 0 10px 25px rgba(0,0,0,0.2); overflow:hidden; border: 1px solid #e2e8f0; text-align:center; padding: 24px;">
         <span style="font-size: 40px; display:block; margin-bottom: 12px;">⚠️</span>
@@ -252,5 +250,13 @@
         <p id="user-alert-message" style="font-size:13px; color:#475569; margin:0 0 18px; line-height:1.5;"></p>
         <button type="button" class="user-button user-button--primary" style="background:#2563eb; color:#fff; width:100%; padding: 8px 16px;" onclick="document.getElementById('modal-user-alert').style.display='none'">Tutup</button>
     </div>
-</div>
+    </div>
+
+    <a href="#user-checkout-section" id="floating-checkout-btn" class="user-floating-btn" style="display: none;" title="Lanjutkan ke ringkasan pembelian">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="12" y1="5" x2="12" y2="19"></line>
+            <polyline points="19 12 12 19 5 12"></polyline>
+        </svg>
+    </a>
 @endsection
+

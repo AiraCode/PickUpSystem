@@ -158,7 +158,6 @@
     </div>
 
     @include('user.partials.footer')
-<!-- Custom Alert Popup Modal -->
 <div id="modal-user-alert" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,.55); z-index:10000; align-items:center; justify-content:center; padding: 20px;">
     <div style="background:#fff; border-radius:12px; width:360px; max-width:100%; box-shadow: 0 10px 25px rgba(0,0,0,0.2); overflow:hidden; border: 1px solid #e2e8f0; text-align:center; padding: 24px;">
         <span style="font-size: 40px; display:block; margin-bottom: 12px;">⚠️</span>
@@ -168,3 +167,4 @@
     </div>
 </div>
 @endsection
+

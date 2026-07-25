@@ -69,7 +69,6 @@
     </div>
 </div>
 
-<!-- Modal Konfirmasi Hapus Gudang (Meminta Password Admin) -->
 <div id="modal-delete-storage" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,.45); z-index:100; align-items:center; justify-content:center;">
     <div class="admin-panel" style="width:400px;">
         <div class="admin-panel__head"><h2 style="color:#ba1b2b;">Konfirmasi Hapus Gudang</h2></div>
@@ -98,3 +97,4 @@
     </div>
 </div>
 @endsection
+

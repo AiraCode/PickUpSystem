@@ -2187,8 +2187,8 @@ body.user-shell textarea:focus-visible {
 }
 
 .user-receipt__status--paid {
-    background: rgba(34, 80, 252, 0.1);
-    color: var(--user-blue);
+    background: rgba(22, 163, 74, 0.1);
+    color: #16a34a;
 }
 
 .user-receipt__grid {
@@ -2213,11 +2213,11 @@ body.user-shell textarea:focus-visible {
 
 .user-receipt__block dt {
     color: var(--user-muted);
-    font-size: 11px;
+    font-size: 13px;
 }
 
 .user-receipt__block dd {
-    font-size: 11px;
+    font-size: 14px;
     font-weight: 700;
     margin: 0;
     text-align: right;
@@ -2250,7 +2250,7 @@ body.user-shell textarea:focus-visible {
 
 .user-receipt__table td {
     border-bottom: 1px solid var(--user-line);
-    font-size: 11px;
+    font-size: 14px;
     padding: 15px 0;
 }
 
@@ -2266,11 +2266,11 @@ body.user-shell textarea:focus-visible {
 
 .user-receipt__empty strong {
     color: var(--user-ink);
-    font-size: 11px;
+    font-size: 14px;
 }
 
 .user-receipt__empty span {
-    font-size: 10px;
+    font-size: 13px;
     margin-top: 5px;
 }
 
@@ -2286,7 +2286,7 @@ body.user-shell textarea:focus-visible {
     align-items: center;
     color: var(--user-muted);
     display: flex;
-    font-size: 11px;
+    font-size: 14px;
     justify-content: space-between;
     margin-top: 8px;
 }
@@ -2299,7 +2299,7 @@ body.user-shell textarea:focus-visible {
 .user-receipt__grand-total {
     border-top: 1px solid var(--user-line);
     color: var(--user-ink) !important;
-    font-size: 13px !important;
+    font-size: 16px !important;
     margin-top: 14px !important;
     padding-top: 14px;
 }
@@ -2338,11 +2338,11 @@ body.user-shell textarea:focus-visible {
 
 .user-payment-proof dt {
     color: var(--user-muted);
-    font-size: 11px;
+    font-size: 13px;
 }
 
 .user-payment-proof dd {
-    font-size: 11px;
+    font-size: 14px;
     font-weight: 700;
     margin: 0;
 }
@@ -2782,9 +2782,13 @@ body.user-shell textarea:focus-visible {
         grid-column: auto;
     }
 
-    .user-form-actions,
+    .user-form-actions {
+        justify-content: stretch;
+    }
+
     .user-receipt-actions {
         justify-content: stretch;
+        flex-direction: column-reverse;
     }
 
     .user-form-actions .user-button,
@@ -2801,6 +2805,33 @@ body.user-shell textarea:focus-visible {
 
     .user-receipt {
         padding: 22px;
+    }
+
+    .user-receipt__table {
+        min-width: auto;
+    }
+
+    .user-receipt__table thead {
+        display: none;
+    }
+
+    .user-receipt__table tbody tr {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        gap: 8px 15px;
+        padding: 15px 0;
+        border-bottom: 1px solid var(--user-line);
+    }
+
+    .user-receipt__table td {
+        border-bottom: none;
+        padding: 0;
+        text-align: left !important;
+    }
+
+    .user-receipt__table td:nth-child(2),
+    .user-receipt__table td:nth-child(4) {
+        text-align: right !important;
     }
 
     .user-receipt__top,
@@ -2955,5 +2986,38 @@ body.user-shell textarea:focus-visible {
     to {
         opacity: 1;
         transform: translateY(0);
+    }
+}
+
+.user-floating-btn {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background-color: var(--user-blue);
+    color: var(--user-white);
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 12px rgba(34, 80, 252, 0.4);
+    z-index: 100;
+    transition: opacity 0.3s ease, transform 0.3s ease, background-color 0.2s;
+}
+
+.user-floating-btn:hover {
+    background-color: #1e40af;
+    transform: translateY(-2px);
+}
+
+.user-floating-btn svg {
+    width: 24px;
+    height: 24px;
+}
+
+@media (min-width: 721px) {
+    .user-floating-btn {
+        display: none !important;
     }
 }

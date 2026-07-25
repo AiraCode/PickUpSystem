@@ -198,8 +198,6 @@ const renderUserCart = () => {
         (total, item) => total + item.price * item.quantity,
         0,
     );
-
-    // Get pickup fee from localStorage for total calculation
     const pickupFee = parseInt(localStorage.getItem("pickup_fee") || "0");
     const selectedMethod = document.querySelector('input[name="delivery_method"]:checked')?.value;
     const effectiveFee = (selectedMethod === "courier") ? pickupFee : 0;
@@ -207,8 +205,6 @@ const renderUserCart = () => {
     if (cartCount) cartCount.textContent = totalQuantity;
     if (cartSubtotal) cartSubtotal.textContent = userCart.size ? formatRupiah(subtotal) : "—";
     if (cartTotal) cartTotal.textContent = userCart.size ? formatRupiah(subtotal + effectiveFee) : "—";
-
-    // Update pickup fee label
     const pickupLabel = document.getElementById("user-pickup-fee-label") || document.querySelector("[data-cart-pickup]");
     if (pickupLabel && selectedMethod === "courier" && effectiveFee > 0) {
         pickupLabel.textContent = formatRupiah(effectiveFee);
@@ -223,13 +219,17 @@ const renderUserCart = () => {
             }
         });
     });
+
+    const floatingBtn = document.getElementById("floating-checkout-btn");
+    if (floatingBtn) {
+        if (userCart.size > 0) {
+            floatingBtn.style.display = "flex";
+        } else {
+            floatingBtn.style.display = "none";
+        }
+    }
 };
-
-// Expose renderUserCart globally for user-api.js
 window.renderUserCart = renderUserCart;
-
-// Product card events are now bound dynamically by user-api.js after API load
-// No static binding needed here since cards are rendered from API
 
 document.querySelectorAll("[data-pickup-method]").forEach((radio) => {
     radio.addEventListener("change", () => {
@@ -248,12 +248,10 @@ document.querySelectorAll("[data-pickup-method]").forEach((radio) => {
                     ? "Dihitung berdasarkan jarak"
                     : "Gratis";
 
-        // Re-render cart to update total with/without pickup fee
         renderUserCart();
     });
 });
 
-// Submission handled entirely by user-api.js with validation logic
 
 document.querySelectorAll("[data-modal-close]").forEach((closeButton) => {
     closeButton.addEventListener("click", () => {
@@ -290,4 +288,5 @@ document.querySelectorAll("[data-receipt-status]").forEach((button) => {
 
 updateCityState();
 renderUserCart();
+
 

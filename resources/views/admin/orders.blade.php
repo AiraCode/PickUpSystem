@@ -11,8 +11,7 @@
         </div>
     </div>
 
-    <!-- Simple KPI Dashboard & Status Filter Tabs (Horizontal Grid Layout) -->
-    <div style="display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 16px; margin-bottom: 20px;">
+        <div style="display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 16px; margin-bottom: 20px;">
         <article id="card-status-pending" class="admin-panel admin-stat-card order-status-tab active"
             onclick="switchOrderTab('pending')" style="cursor:pointer; border:2px solid #f59e0b; transition:all 0.2s;">
             <div class="admin-stat-card__head" style="margin-bottom:6px;">
@@ -110,10 +109,8 @@
                 </span>
             </div>
 
-            <!-- Search Bar & Multi-Criteria Shopee-Style Filter Controls -->
-            <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
-                <!-- Search Input (Global search across ALL statuses) -->
-                <div style="position:relative; width:260px;">
+                        <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
+                                <div style="position:relative; width:260px;">
                     <input type="text" id="order-search-input" class="admin-select"
                         style="width:100%; padding:7px 32px 7px 12px; font-size:12px; border-radius:6px; background:#fff;"
                         placeholder="Cari nama, ID, kota, hp, alamat...">
@@ -127,8 +124,7 @@
                     </span>
                 </div>
 
-                <!-- Shopee-Style Advanced Filter Button -->
-                <button id="btn-open-filter-modal" class="admin-button admin-button--secondary"
+                                <button id="btn-open-filter-modal" class="admin-button admin-button--secondary"
                     style="height:32px; font-size:12px; padding:0 12px; display:inline-flex; align-items:center; gap:6px; background:#fff; border:1px solid #d1d5db; color:#374151; font-weight:600;">
                     <svg viewBox="0 0 24 24" style="width:15px; height:15px; fill:none; stroke:#2563eb; stroke-width:2;">
                         <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3" />
@@ -138,16 +134,14 @@
                         style="display:none; background:#2563eb; color:#fff; font-size:10px; padding:1px 6px; border-radius:10px; font-weight:700;">0</span>
                 </button>
 
-                <!-- Reset Filter Button -->
-                <button id="btn-reset-order-filter" class="admin-button admin-button--secondary"
+                                <button id="btn-reset-order-filter" class="admin-button admin-button--secondary"
                     style="height:32px; font-size:11px; padding:0 10px;" title="Reset Filter">
                     Reset
                 </button>
             </div>
         </div>
 
-        <!-- Active Filter Badges Container -->
-        <div id="active-filters-bar"
+                <div id="active-filters-bar"
             style="display:none; padding:8px 16px; background:#f8fafc; border-bottom:1px solid #e5e7eb; gap:8px; align-items:center; flex-wrap:wrap; font-size:12px;">
             <span style="font-weight:600; color:#64748b;">Filter Aktif:</span>
             <div id="active-filter-tags" style="display:flex; gap:6px; flex-wrap:wrap;"></div>
@@ -177,8 +171,7 @@
         </div>
     </article>
 
-    <!-- Modal Filter Lanjutan (Shopee Style) -->
-    <div id="modal-shopee-filter"
+        <div id="modal-shopee-filter"
         style="display:none; position:fixed; inset:0; background:rgba(0,0,0,.45); z-index:120; align-items:center; justify-content:center;">
         <div class="admin-panel" style="width:480px;">
             <div class="admin-panel__head"
@@ -196,8 +189,7 @@
 
             <form id="form-shopee-filter">
                 <div style="display:flex; flex-direction:column; gap:14px; margin-bottom:20px;">
-                    <!-- Filter Kota -->
-                    <div>
+                                        <div>
                         <label style="display:block; font-size:12px; font-weight:700; color:#374151; margin-bottom:6px;">📍
                             Kota Layanan</label>
                         <select id="filter-city-select" class="admin-select"
@@ -206,8 +198,7 @@
                         </select>
                     </div>
 
-                    <!-- Filter Bank Pelanggan -->
-                    <div>
+                                        <div>
                         <label style="display:block; font-size:12px; font-weight:700; color:#374151; margin-bottom:6px;">🏦
                             Bank Pelanggan</label>
                         <select id="filter-bank-select" class="admin-select"
@@ -216,8 +207,7 @@
                         </select>
                     </div>
 
-                    <!-- Filter Rentang Tanggal -->
-                    <div>
+                                        <div>
                         <label style="display:block; font-size:12px; font-weight:700; color:#374151; margin-bottom:6px;">📅
                             Rentang Tanggal Pesanan</label>
                         <div style="display:flex; gap:10px; align-items:center;">
@@ -229,8 +219,7 @@
                         </div>
                     </div>
 
-                    <!-- Urutan Sort -->
-                    <div>
+                                        <div>
                         <label style="display:block; font-size:12px; font-weight:700; color:#374151; margin-bottom:6px;">🔀
                             Urutkan Berdasarkan Waktu</label>
                         <select id="filter-sort-select" class="admin-select"
@@ -252,8 +241,7 @@
         </div>
     </div>
 
-    <!-- Modal Update Status -->
-    <div id="modal-update-order"
+        <div id="modal-update-order"
         style="display:none; position:fixed; inset:0; background:rgba(0,0,0,.45); z-index:100; align-items:center; justify-content:center;">
         <div class="admin-panel" style="width:460px;">
             <div class="admin-panel__head">
@@ -308,8 +296,7 @@
                     </div>
                 </div>
 
-                <!-- Field Alasan Pembatalan -->
-                <div id="container-cancel-reason" style="display:none; margin-bottom:18px;">
+                                <div id="container-cancel-reason" style="display:none; margin-bottom:18px;">
                     <label style="display:block; font-size:12px; font-weight:600; margin-bottom:6px; color:#ba1b2b;">Alasan
                         Pembatalan (Wajib)</label>
                     <input type="text" id="cancel-reason" class="admin-select"
@@ -350,8 +337,7 @@
         </div>
     </div>
 
-    <!-- Modal Detail Order -->
-    <div id="modal-detail-order"
+        <div id="modal-detail-order"
         style="display:none; position:fixed; inset:0; background:rgba(0,0,0,.45); z-index:100; align-items:center; justify-content:center;">
         <div class="admin-panel" style="width:540px; max-height:90vh; overflow-y:auto;">
             <div class="admin-panel__head">
@@ -435,8 +421,7 @@
         </div>
     </div>
 
-    <!-- Modal Interactive Map Penjemputan (Leaflet OpenStreetMap) -->
-    <div id="modal-order-map"
+        <div id="modal-order-map"
         style="display:none; position:fixed; inset:0; background:rgba(0,0,0,.55); z-index:150; align-items:center; justify-content:center;">
         <div class="admin-panel" style="width:620px; max-width:95vw;">
             <div class="admin-panel__head"
@@ -461,86 +446,4 @@
     </div>
 
 
-    {{-- <style>
-        .order-status-tab {
-            position: relative;
-            transition: transform 0.25s cubic-bezier(0.25, 1, 0.5, 1), box-shadow 0.25s, border-color 0.25s !important;
-            transform-origin: bottom center;
-        }
-
-        .order-status-tab::after {
-            content: "";
-            position: absolute;
-            bottom: 6px;
-            left: 50%;
-            transform: translateX(-50%) scale(0);
-            width: 6px;
-            height: 6px;
-            border-radius: 50%;
-            background: currentColor;
-            transition: transform 0.25s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.25s;
-            opacity: 0;
-            pointer-events: none;
-        }
-
-        .order-status-tab.active::after {
-            transform: translateX(-50%) scale(1);
-            opacity: 1;
-        }
-
-        #card-status-pending.active::after {
-            background: #f59e0b !important;
-            box-shadow: 0 0 8px rgba(245, 158, 11, 0.8);
-        }
-
-        #card-status-processing.active::after {
-            background: #2563eb !important;
-            box-shadow: 0 0 8px rgba(37, 99, 235, 0.8);
-        }
-
-        #card-status-completed.active::after {
-            background: #10b981 !important;
-            box-shadow: 0 0 8px rgba(16, 185, 129, 0.8);
-        }
-
-        #card-status-cancelled.active::after {
-            background: #dc2626 !important;
-            box-shadow: 0 0 8px rgba(220, 38, 38, 0.8);
-        }
-
-        #card-status-all.active::after {
-            background: #4b5563 !important;
-            box-shadow: 0 0 8px rgba(75, 85, 99, 0.8);
-        }
-    </style>
-
-    <script>
-        document.addEventListener("DOMContentLoaded", () => {
-            const tabs = document.querySelectorAll(".order-status-tab");
-            tabs.forEach((tab, index) => {
-                tab.addEventListener("mouseenter", () => {
-                    tabs.forEach((t, i) => {
-                        if (i === index) {
-                            t.style.transform = "scale(1.05) translateY(-5px)";
-                            t.style.zIndex = "10";
-                            t.style.boxShadow = "0 10px 20px rgba(0, 0, 0, 0.1)";
-                        } else if (i < index) {
-                            t.style.transform = "translateX(-8px) scale(0.98)";
-                            t.style.zIndex = "1";
-                        } else if (i > index) {
-                            t.style.transform = "translateX(8px) scale(0.98)";
-                            t.style.zIndex = "1";
-                        }
-                    });
-                });
-                tab.addEventListener("mouseleave", () => {
-                    tabs.forEach((t) => {
-                        t.style.transform = "";
-                        t.style.zIndex = "";
-                        t.style.boxShadow = "";
-                    });
-                });
-            });
-        });
-    </script> --}}
-@endsection
+    @endsection

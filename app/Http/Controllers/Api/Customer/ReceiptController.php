@@ -71,6 +71,7 @@ class ReceiptController extends Controller
                 'city' => $order->city,
                 'pickup_address' => $order->pickup_address,
                 'pickup_address_note' => $order->pickup_address_note,
+                'cancel_reason' => $order->cancel_reason,
                 'receipt' => $receiptData,
             ],
         ]);
