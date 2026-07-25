@@ -48,15 +48,28 @@ class OrderController extends Controller
 
         if (!empty($search)) {
             $query->where(function ($q) use ($search) {
-                $q->where('id', 'like', "%{$search}%")
-                    ->orWhere('pickup_address', 'like', "%{$search}%")
-                    ->orWhereHas('customer', function ($cq) use ($search) {
-                        $cq->where('name', 'like', "%{$search}%")
-                            ->orWhere('phone_number', 'like', "%{$search}%");
-                    })
-                    ->orWhereHas('city', function ($ciq) use ($search) {
-                        $ciq->where('name', 'like', "%{$search}%");
-                    });
+                $cleanSearch = ltrim($search, '#');
+                
+                if (is_numeric($cleanSearch)) {
+                    $q->where('id', $cleanSearch);
+                }
+
+                $q->orWhere('id', 'like', "{$cleanSearch}%");
+
+                $q->orWhere('pickup_address', 'like', "{$search}%")
+                  ->orWhere('pickup_address', 'like', "% {$search}%");
+
+                $q->orWhereHas('customer', function ($cq) use ($search, $cleanSearch) {
+                    $cq->where('name', 'like', "{$search}%")
+                       ->orWhere('name', 'like', "% {$search}%")
+                       ->orWhere('phone_number', 'like', "{$cleanSearch}%")
+                       ->orWhere('phone_number', 'like', "% {$cleanSearch}%");
+                });
+
+                $q->orWhereHas('city', function ($ciq) use ($search) {
+                    $ciq->where('name', 'like', "{$search}%")
+                       ->orWhere('name', 'like', "% {$search}%");
+                });
             });
             if (!empty($status) && $status !== 'all') {
                 $query->where('status', $status);
@@ -121,6 +134,38 @@ class OrderController extends Controller
 
         if ($request->status === 'cancelled' && $request->filled('cancel_reason')) {
             $updateData['cancel_reason'] = $request->cancel_reason;
+        }
+
+        if ($request->status === 'completed' && $request->filled('proof_base64')) {
+            $base64 = $request->proof_base64;
+            $extension = explode('/', explode(':', substr($base64, 0, strpos($base64, ';')))[1])[1];
+            $replace = substr($base64, 0, strpos($base64, ',')+1);
+            $image = str_replace($replace, '', $base64);
+            $image = str_replace(' ', '+', $image);
+            $imageName = \Illuminate\Support\Str::random(10).'.'.$extension;
+            \Illuminate\Support\Facades\Storage::disk('public')->put('transfers/'.$imageName, base64_decode($image));
+            $proofPath = 'transfers/'.$imageName;
+
+            $receipt = $order->receipt;
+            if ($receipt) {
+                $receipt->update([
+                    'status' => 'paid',
+                    'date' => now(),
+                ]);
+                
+                \Illuminate\Support\Facades\DB::table('transfers')->updateOrInsert(
+                    ['receipts_id' => $receipt->id],
+                    [
+                        'users_id' => auth()->id() ?? 1,
+                        'amount' => $receipt->price_owed ?? 0,
+                        'transfer_date' => now(),
+                        'status' => 'verified',
+                        'proof_image' => $proofPath,
+                        'created_at' => now(),
+                        'updated_at' => now(),
+                    ]
+                );
+            }
         }
 
         $order->update($updateData);

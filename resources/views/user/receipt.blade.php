@@ -5,8 +5,10 @@
 
     <main class="user-flow-page user-receipt-page">
         <section class="user-flow-hero user-flow-hero--receipt">
+            <div class="user-flow-hero__bg"></div>
+            <div class="user-flow-hero__overlay"></div>
+
             <div class="user-container user-flow-hero__inner">
-                <a href="/user" class="user-back-link"><span aria-hidden="true">←</span> Kembali ke halaman utama</a>
                 <div class="user-progress">
                     <div class="user-progress__step is-complete"><span>01</span><small>Pilih aki</small></div>
                     <span class="user-progress__line is-complete"></span>
@@ -60,7 +62,25 @@
                         </section>
                         <section class="user-receipt__block">
                             <span class="user-receipt__label">DETAIL PENYERAHAN</span>
-                            <dl><div><dt>Metode penyerahan</dt><dd>—</dd></div><div><dt>Gudang / kurir</dt><dd>—</dd></div><div><dt>Biaya penjemputan</dt><dd>—</dd></div><div><dt>Catatan</dt><dd>—</dd></div></dl>
+                            <dl>
+                                <div><dt>Metode penyerahan</dt><dd>—</dd></div>
+                                <div><dt>Gudang / kurir</dt><dd>—</dd></div>
+                                <div><dt>Biaya penjemputan</dt><dd>—</dd></div>
+                                <div>
+                                    <dt style="display:flex; justify-content:space-between; align-items:center;">
+                                        Catatan    
+                                        <button type="button" id="btn-edit-note" style="background:none; border:none; color:#2563eb; cursor:pointer; font-size:11px; font-weight:600; padding:0; text-decoration:underline;">Edit</button>
+                                    </dt>
+                                    <dd id="receipt-note-display">—</dd>
+                                    <div id="receipt-note-edit-container" style="display:none; margin-top:6px;">
+                                        <textarea id="receipt-note-input" rows="2" style="width:100%; border:1px solid #cbd5e1; border-radius:4px; padding:6px 8px; font-size:12px; font-family:inherit; margin-bottom:6px;"></textarea>
+                                        <div style="display:flex; gap:6px; justify-content:flex-end;">
+                                            <button type="button" id="btn-cancel-note" style="padding:4px 8px; font-size:11px; background:#f1f5f9; color:#475569; border:none; border-radius:4px; cursor:pointer;">Batal</button>
+                                            <button type="button" id="btn-save-note" style="padding:4px 8px; font-size:11px; background:#2563eb; color:#fff; border:none; border-radius:4px; cursor:pointer;">Simpan</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </dl>
                         </section>
                     </div>
 

@@ -350,6 +350,7 @@ document.addEventListener("DOMContentLoaded", () => {
             }
 
             // Total price
+            const fee = Number(localStorage.getItem("pickup_fee")) || 0;
             const totalSummary = flowSummary.querySelector(".user-flow-summary__total strong");
             if (totalSummary) {
                 totalSummary.textContent = rupiah(subtotal + fee);
@@ -367,9 +368,23 @@ document.addEventListener("DOMContentLoaded", () => {
             });
         });
 
+        // Show uploaded file name
+        const ktpInputNode = document.querySelector('input[name="identity_document"]');
+        if (ktpInputNode) {
+            ktpInputNode.addEventListener("change", (e) => {
+                const file = e.target.files[0];
+                const nameEl = e.target.closest('.user-upload-field').querySelector("strong");
+                if (file && nameEl) {
+                    nameEl.textContent = file.name;
+                } else if (!file && nameEl) {
+                    nameEl.textContent = "Upload foto KTP atau SIM";
+                }
+            });
+        }
+
         let formDataToSubmit = null;
 
-        identityForm.addEventListener("submit", (e) => {
+        identityForm.addEventListener("submit", async (e) => {
             e.preventDefault();
             const form = e.target;
 
@@ -406,6 +421,28 @@ document.addEventListener("DOMContentLoaded", () => {
                 return;
             }
 
+            // 4. Validate KTP File
+            const ktpInput = form.querySelector('input[name="identity_document"]');
+            const ktpFile = ktpInput ? ktpInput.files[0] : null;
+            if (!ktpFile) {
+                showCustomAlert("Harap upload foto KTP atau SIM Anda.");
+                return;
+            }
+
+            // Optional: read to base64
+            let ktpBase64 = null;
+            try {
+                ktpBase64 = await new Promise((resolve, reject) => {
+                    const reader = new FileReader();
+                    reader.onload = (ev) => resolve(ev.target.result);
+                    reader.onerror = (err) => reject(err);
+                    reader.readAsDataURL(ktpFile);
+                });
+            } catch(err) {
+                showCustomAlert("Gagal membaca file gambar.");
+                return;
+            }
+
             const cityId = localStorage.getItem("pickup_city_id") || 1;
             const addressInput =
                 document.querySelector('textarea[name="address"]') ||
@@ -424,7 +461,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 address:
                     localStorage.getItem("pickup_address") ||
                     nameVal + " - Surabaya",
-                address_note: "Catatan penjemputan",
+                address_note: localStorage.getItem("pickup_address_note") || "",
                 banks_id: bankSelect ? parseInt(bankSelect.value) || 1 : 1,
                 account_name: holderVal,
                 account_number: numberVal,
@@ -432,14 +469,31 @@ document.addEventListener("DOMContentLoaded", () => {
                 pickup_address:
                     localStorage.getItem("pickup_address") ||
                     "Jl. Raya Utama No. 12",
-                pickup_address_note: "Rumah depan masjid",
+                pickup_address_note: localStorage.getItem("pickup_address_note") || "",
                 pickup_lat: parseFloat(localStorage.getItem("pickup_lat")) || -7.2575,
                 pickup_long: parseFloat(localStorage.getItem("pickup_long")) || 112.7521,
                 delivery_method: deliveryMethodVal,
-                items: itemsPayload
+                items: itemsPayload,
+                ktp_base64: ktpBase64
             };
 
             if (modal) {
+                // Populate summary
+                const elNama = document.getElementById("summary-nama");
+                const elWa = document.getElementById("summary-wa");
+                const elBank = document.getElementById("summary-bank");
+                const elAlamat = document.getElementById("summary-alamat");
+                const elCatatan = document.getElementById("summary-catatan");
+                
+                if (elNama) elNama.textContent = nameVal;
+                if (elWa) elWa.textContent = waVal;
+                if (elBank) {
+                    const bankText = bankSelect ? bankSelect.options[bankSelect.selectedIndex]?.text : "";
+                    elBank.textContent = `${bankText} - ${numberVal} (a.n ${holderVal})`;
+                }
+                if (elAlamat) elAlamat.textContent = formDataToSubmit.pickup_address;
+                if (elCatatan) elCatatan.textContent = formDataToSubmit.pickup_address_note || "-";
+
                 modal.hidden = false;
                 document.body.classList.add("overflow-hidden");
             } else {
@@ -507,15 +561,22 @@ document.addEventListener("DOMContentLoaded", () => {
                         ".user-receipt__meta small",
                     );
                     if (metaMeta) metaMeta.textContent = `#ORDER-${o.order_id}`;
-                    if (metaDate)
-                        metaDate.textContent = `Tanggal transaksi: ${new Date(o.created_at).toLocaleDateString("id-ID")}`;
+                    
+                    const orderStatus = receipt.status || "unpaid";
+                    const isPaid = orderStatus === "paid";
+
+                    if (metaDate) {
+                        const transDate = isPaid && receipt.date ? receipt.date : o.created_at;
+                        const dateObj = new Date(transDate);
+                        const dateStr = dateObj.toLocaleDateString("id-ID");
+                        const timeStr = dateObj.toLocaleTimeString("id-ID", { hour: '2-digit', minute: '2-digit' }).replace('.', ':');
+                        metaDate.innerHTML = `Tanggal transaksi: ${dateStr}<br>${timeStr} WIB`;
+                    }
 
                     // Badge
                     const badge = receiptContainer.querySelector(
                         "[data-receipt-badge]",
                     );
-                    const orderStatus = receipt.status || "unpaid";
-                    const isPaid = orderStatus === "paid";
                     if (badge) {
                         badge.textContent = orderStatus.toUpperCase();
                         badge.className = `user-receipt__status user-receipt__status--${isPaid ? "paid" : "unpaid"}`;
@@ -559,8 +620,68 @@ document.addEventListener("DOMContentLoaded", () => {
                         if (dds[1])
                             dds[1].textContent = o.city ? o.city.name : "-";
                         if (dds[2]) dds[2].textContent = (isCourier && deliveryCost > 0) ? rupiah(deliveryCost) : "Gratis";
-                        if (dds[3])
-                             dds[3].textContent = o.pickup_address_note || "-";
+                        
+                        const noteDisplay = document.getElementById("receipt-note-display");
+                        const btnEditNote = document.getElementById("btn-edit-note");
+                        const editContainer = document.getElementById("receipt-note-edit-container");
+                        const noteInput = document.getElementById("receipt-note-input");
+                        const btnCancelNote = document.getElementById("btn-cancel-note");
+                        const btnSaveNote = document.getElementById("btn-save-note");
+                        
+                        if (noteDisplay) {
+                            noteDisplay.textContent = o.pickup_address_note || "-";
+                        }
+                        
+                        if (btnEditNote && editContainer && noteInput && btnCancelNote && btnSaveNote) {
+                            // Ensure listeners are only added once
+                            if (!btnEditNote.hasAttribute("data-bound")) {
+                                btnEditNote.setAttribute("data-bound", "true");
+                                
+                                btnEditNote.addEventListener("click", () => {
+                                    noteInput.value = noteDisplay.textContent === "-" ? "" : noteDisplay.textContent;
+                                    noteDisplay.style.display = "none";
+                                    editContainer.style.display = "block";
+                                    btnEditNote.style.display = "none";
+                                });
+                                
+                                btnCancelNote.addEventListener("click", () => {
+                                    noteDisplay.style.display = "block";
+                                    editContainer.style.display = "none";
+                                    btnEditNote.style.display = "block";
+                                });
+                                
+                                btnSaveNote.addEventListener("click", async () => {
+                                    const newNote = noteInput.value.trim();
+                                    btnSaveNote.disabled = true;
+                                    btnSaveNote.textContent = "...";
+                                    
+                                    try {
+                                        const res = await fetch(`/api/customer/orders/${o.order_id}/note`, {
+                                            method: "PUT",
+                                            headers: { "Content-Type": "application/json", "Accept": "application/json" },
+                                            body: JSON.stringify({ note: newNote })
+                                        });
+                                        if (res.ok) {
+                                            noteDisplay.textContent = newNote || "-";
+                                            // update localStorage just in case
+                                            localStorage.setItem("pickup_address_note", newNote);
+                                        } else {
+                                            alert("Gagal memperbarui catatan.");
+                                        }
+                                    } catch (e) {
+                                        console.error(e);
+                                        alert("Terjadi kesalahan.");
+                                    }
+                                    
+                                    btnSaveNote.disabled = false;
+                                    btnSaveNote.textContent = "Simpan";
+                                    
+                                    noteDisplay.style.display = "block";
+                                    editContainer.style.display = "none";
+                                    btnEditNote.style.display = "block";
+                                });
+                            }
+                        }
                     }
 
                     // Populate Accu Items Table
@@ -609,8 +730,14 @@ document.addEventListener("DOMContentLoaded", () => {
                                 if (dds[0]) dds[0].textContent = new Date(transfer.transfer_date).toLocaleDateString("id-ID");
                                 if (dds[1]) dds[1].textContent = transfer.id || "-";
                                 const img = proofSection.querySelector("img");
+                                const notFoundSpan = proofSection.querySelector(".user-image-not-found");
                                 if (img && transfer.proof_image) {
                                     img.src = `/storage/${transfer.proof_image}`;
+                                    img.parentElement.classList.add("is-loaded");
+                                    if (notFoundSpan) notFoundSpan.style.display = "none";
+                                } else {
+                                    if (img) img.parentElement.classList.remove("is-loaded");
+                                    if (notFoundSpan) notFoundSpan.style.display = "flex";
                                 }
                             }
                         } else {
@@ -639,6 +766,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const userAddressInput = document.getElementById("user-address-input");
     const userCityInput = document.getElementById("user-city-input");
     const userZipInput = document.getElementById("user-zip-input");
+    const userNoteInput = document.getElementById("user-note-input");
     const checkoutSubmitBtn = document.getElementById("checkout-submit-btn");
 
     const nearestWarehouseInfo = document.getElementById("nearest-warehouse-info");
@@ -794,8 +922,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Populate saved inputs from localStorage
     if (userAddressInput) userAddressInput.value = localStorage.getItem("pickup_address") || "";
-    if (userCityInput) userCityInput.value = localStorage.getItem("pickup_city") || "";
+    if (userCityInput) userCityInput.value = localStorage.getItem("pickup_city") || (selectedCityName || "");
     if (userZipInput) userZipInput.value = localStorage.getItem("pickup_zip") || "";
+    if (userNoteInput) userNoteInput.value = localStorage.getItem("pickup_address_note") || "";
+
+    const addressBadge = document.getElementById("user-selected-address");
+    if (addressBadge && localStorage.getItem("pickup_address")) {
+        addressBadge.textContent = localStorage.getItem("pickup_address");
+    }
 
     if (userLat && userLng) {
         if (userCoordsBadge) userCoordsBadge.style.display = "block";
@@ -827,6 +961,33 @@ document.addEventListener("DOMContentLoaded", () => {
         }
         
         return null;
+    }
+
+    async function handleAddressChange() {
+        if (!userAddressInput) return;
+        const address = userAddressInput.value.trim();
+        if (address) {
+            const geocoded = await geocodeAddress();
+            if (geocoded) {
+                userLat = geocoded.lat;
+                userLng = geocoded.lng;
+                localStorage.setItem("pickup_lat", userLat);
+                localStorage.setItem("pickup_long", userLng);
+                findAndDisplayNearestWarehouse();
+                
+                if (typeof userMap !== 'undefined' && userMap && typeof userMarker !== 'undefined' && userMarker) {
+                    userMap.setView([userLat, userLng], 16);
+                    userMarker.setLatLng([userLat, userLng]);
+                }
+            }
+        }
+    }
+
+    if (userAddressInput) {
+        userAddressInput.addEventListener("blur", handleAddressChange);
+    }
+    if (userCityInput) {
+        userCityInput.addEventListener("blur", handleAddressChange);
     }
 
     // Open User Map Picker
@@ -892,21 +1053,108 @@ document.addEventListener("DOMContentLoaded", () => {
                 userMap.invalidateSize();
             }, 200);
         }
+
+        // Add search functionality
+        const mapSearchInput = document.getElementById("map-search-input");
+        const btnMapSearch = document.getElementById("btn-map-search");
+        if (btnMapSearch && mapSearchInput && !btnMapSearch.hasAttribute("data-bound")) {
+            btnMapSearch.setAttribute("data-bound", "true");
+            btnMapSearch.addEventListener("click", async () => {
+                const query = mapSearchInput.value.trim();
+                if (!query) return;
+                const oldText = btnMapSearch.textContent;
+                btnMapSearch.textContent = "...";
+                
+                const performSearch = async (q) => {
+                    const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(q)}&limit=1&countrycodes=id`);
+                    return await res.json();
+                };
+
+                try {
+                    let results = await performSearch(`${query}, ${selectedCityName || 'Surabaya'}`);
+                    
+                    if (!results || results.length === 0) {
+                        results = await performSearch(query);
+                    }
+                    
+                    if (!results || results.length === 0) {
+                        let simplified = query.replace(/(no\.|nomor|blok|kav\.|kavling)\s*[a-z0-9-]+/gi, '').trim();
+                        simplified = simplified.replace(/\s+\d+[a-z]*$/i, '').trim();
+                        if (simplified && simplified !== query) {
+                            results = await performSearch(`${simplified}, ${selectedCityName || 'Surabaya'}`);
+                            if (!results || results.length === 0) {
+                                results = await performSearch(simplified);
+                            }
+                        }
+                    }
+
+                    if (results && results.length > 0) {
+                        const lat = parseFloat(results[0].lat);
+                        const lon = parseFloat(results[0].lon);
+                        if (userMap && userMarker) {
+                            userMap.setView([lat, lon], 16);
+                            userMarker.setLatLng([lat, lon]);
+                        }
+                    } else {
+                        alert("Lokasi tidak ditemukan. Cobalah hapus nomor rumah atau cari nama jalan utamanya saja, lalu geser pin secara manual.");
+                    }
+                } catch(e) { console.error(e); }
+                btnMapSearch.textContent = oldText;
+            });
+            mapSearchInput.addEventListener("keypress", (e) => {
+                if (e.key === "Enter") {
+                    e.preventDefault();
+                    btnMapSearch.click();
+                }
+            });
+        }
     }
 
     // Save coords from picker map
-    btnSaveUserCoords?.addEventListener("click", () => {
+    btnSaveUserCoords?.addEventListener("click", async () => {
         if (userMarker) {
+            btnSaveUserCoords.disabled = true;
+            btnSaveUserCoords.textContent = "Menyimpan...";
+
             const pos = userMarker.getLatLng();
             userLat = pos.lat;
             userLng = pos.lng;
             localStorage.setItem("pickup_lat", userLat);
             localStorage.setItem("pickup_long", userLng);
 
+            try {
+                const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${userLat}&lon=${userLng}&zoom=18&addressdetails=1`);
+                const result = await response.json();
+                if (result && result.display_name) {
+                    const mapSearchInput = document.getElementById("map-search-input");
+                    const userTypedAddress = mapSearchInput ? mapSearchInput.value.trim() : "";
+                    
+                    const addressStr = userTypedAddress || result.display_name;
+                    const cityStr = result.address?.city || result.address?.town || result.address?.village || result.address?.county || "";
+                    const zipStr = result.address?.postcode || "";
+                    
+                    if (userAddressInput) userAddressInput.value = addressStr;
+                    if (userCityInput) userCityInput.value = cityStr;
+                    if (userZipInput) userZipInput.value = zipStr;
+                    
+                    localStorage.setItem("pickup_address", addressStr);
+                    localStorage.setItem("pickup_city", cityStr);
+                    localStorage.setItem("pickup_zip", zipStr);
+                    
+                    const addressBadge = document.getElementById("user-selected-address");
+                    if (addressBadge) addressBadge.textContent = addressStr;
+                }
+            } catch(e) {
+                console.error("Reverse geocode failed", e);
+            }
+
             if (userCoordsBadge) userCoordsBadge.style.display = "block";
 
             if (modalUserMap) modalUserMap.style.display = "none";
             findAndDisplayNearestWarehouse();
+
+            btnSaveUserCoords.disabled = false;
+            btnSaveUserCoords.textContent = "Konfirmasi Lokasi";
         }
     });
 
@@ -926,19 +1174,8 @@ document.addEventListener("DOMContentLoaded", () => {
         const city = userCityInput ? userCityInput.value.trim() : "";
         const zip = userZipInput ? userZipInput.value.trim() : "";
 
-        if (!address) {
-            showCustomAlert("Harap isi alamat lengkap Anda.");
-            if (userAddressInput) userAddressInput.focus();
-            return;
-        }
-        if (!city) {
-            showCustomAlert("Harap isi nama kota.");
-            if (userCityInput) userCityInput.focus();
-            return;
-        }
-        if (!zip) {
-            showCustomAlert("Harap isi kode pos.");
-            if (userZipInput) userZipInput.focus();
+        if (!address || !city) {
+            showCustomAlert("Harap tentukan lokasi Anda melalui peta terlebih dahulu.");
             return;
         }
 
@@ -952,6 +1189,8 @@ document.addEventListener("DOMContentLoaded", () => {
         localStorage.setItem("pickup_address", address);
         localStorage.setItem("pickup_city", city);
         localStorage.setItem("pickup_zip", zip);
+        const note = userNoteInput ? userNoteInput.value.trim() : "";
+        localStorage.setItem("pickup_address_note", note);
         localStorage.setItem("pickup_cart", JSON.stringify(Array.from(window.userCart.values())));
         
         // Save delivery method from the radio button

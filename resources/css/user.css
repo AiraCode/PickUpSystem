@@ -1014,6 +1014,8 @@ body.user-shell textarea:focus-visible {
     padding: 21px;
     position: sticky;
     top: 104px;
+    max-height: calc(100vh - 120px);
+    overflow-y: auto;
 }
 
 .user-checkout-card__head {
@@ -2324,7 +2326,7 @@ body.user-shell textarea:focus-visible {
     align-items: start;
     display: grid;
     gap: 26px;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 1fr;
     margin-top: 19px;
 }
 
@@ -2361,6 +2363,18 @@ body.user-shell textarea:focus-visible {
     object-fit: cover;
     opacity: 0.24;
     width: 100%;
+    transition: opacity 0.3s ease;
+}
+
+.user-payment-proof__image.is-loaded {
+    height: auto;
+    background: transparent;
+}
+
+.user-payment-proof__image.is-loaded img {
+    opacity: 1;
+    object-fit: contain;
+    max-height: 500px;
 }
 
 .user-payment-proof__image .user-image-not-found {

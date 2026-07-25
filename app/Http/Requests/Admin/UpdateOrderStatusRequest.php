@@ -16,7 +16,7 @@ class UpdateOrderStatusRequest extends FormRequest
         return [
             'status' => 'required|string|in:pending,processing,completed,cancelled',
             'cancel_reason' => 'required_if:status,cancelled|nullable|string|max:255',
-            'proof_image' => 'required_if:status,completed|nullable|string',
+            'proof_base64' => 'required_if:status,completed|nullable|string',
         ];
     }
 }

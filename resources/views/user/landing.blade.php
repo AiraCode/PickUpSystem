@@ -166,13 +166,19 @@
 
                             <div class="user-address">
                                 <div class="user-checkout-label">ALAMAT PENJUAL</div>
-                                <label class="user-floating-field">
-                                    <textarea rows="3" placeholder=" " id="user-address-input" name="address"></textarea><span>Alamat lengkap</span>
-                                </label>
-                                <div class="user-address__row">
-                                    <label class="user-floating-field"><input type="text" placeholder=" " id="user-city-input" name="city"><span>Kota</span></label>
-                                    <label class="user-floating-field"><input type="text" placeholder=" " id="user-zip-input" name="zip"><span>Kode pos</span></label>
+                                <p style="font-size:13px; color:#475569; margin-bottom:10px;">Gunakan peta untuk menentukan lokasi presisi penjemputan.</p>
+                                <div style="display:none;">
+                                    <label class="user-floating-field">
+                                        <textarea rows="3" placeholder=" " id="user-address-input" name="address"></textarea><span>Alamat lengkap</span>
+                                    </label>
+                                    <div class="user-address__row">
+                                        <label class="user-floating-field"><input type="text" placeholder=" " id="user-city-input" name="city"><span>Kota</span></label>
+                                        <label class="user-floating-field"><input type="text" placeholder=" " id="user-zip-input" name="zip"><span>Kode pos</span></label>
+                                    </div>
                                 </div>
+                                <label class="user-floating-field" style="margin-top: 10px;">
+                                    <textarea rows="2" placeholder=" " id="user-note-input" name="note"></textarea><span>Tambahkan catatan (cth: pagar cokelat)</span>
+                                </label>
                                 <button type="button" id="btn-open-user-map" class="user-button user-button--secondary user-button--full" style="margin-top: 10px; font-size: 11px; display: inline-flex; align-items: center; justify-content: center; gap: 6px; padding: 8px; border: 1px dashed #2563eb; color: #2563eb; background: rgba(37,99,235,0.03);">
                                     <svg viewBox="0 0 24 24" style="width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 2;"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
                                     <span>Pilih Lokasi Tepat di Peta (Wajib)</span>
@@ -223,8 +229,13 @@
             <h3 style="margin:0; font-size:15px; font-weight:700; color:#1e293b;">📍 Tentukan Lokasi Anda</h3>
             <button type="button" style="border:none; background:none; font-size:18px; cursor:pointer; color:#64748b;" onclick="document.getElementById('modal-user-map').style.display='none'">✕</button>
         </div>
-        <div style="padding: 12px 20px; font-size:12px; color:#475569; background:#eff6ff; border-bottom:1px solid #e2e8f0;">
-            Klik/ketuk pada peta untuk meletakkan pin lokasi Anda yang tepat.
+        <div style="padding: 12px 20px; font-size:12px; background:#fff; border-bottom:1px solid #e2e8f0; display:flex; gap:8px;">
+            <input type="text" id="map-search-input" placeholder="Cari alamat lengkap Anda..." style="flex:1; padding:8px 12px; border:1px solid #cbd5e1; border-radius:6px; font-size:13px;">
+            <button type="button" id="btn-map-search" class="user-button user-button--primary" style="padding:8px 16px; border-radius:6px;">Cari</button>
+        </div>
+        <div style="padding: 8px 20px; font-size:11px; color:#64748b; background:#f8fafc; border-bottom:1px solid #e2e8f0; line-height: 1.4;">
+            *Apabila pin belum tepat di rumah Anda, mohon bantuannya untuk menggeser pin ke lokasi yang pas ya Kak. 😊<br>
+            <span style="color: #94a3b8;">(Alamat yang diketik akan otomatis tersimpan sebagai alamat pengiriman)</span>
         </div>
         <div id="user-map-picker" style="width:100%; height:320px; background:#e5e7eb;"></div>
         <div style="padding: 14px 20px; display:flex; justify-content:flex-end; gap:10px; border-top:1px solid #e2e8f0; background:#f8fafc;">

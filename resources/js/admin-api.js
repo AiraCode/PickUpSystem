@@ -923,8 +923,18 @@ document.addEventListener("DOMContentLoaded", () => {
                 c.phone_number || "-";
             document.getElementById("detail-customer-address").innerText =
                 c.address || "-";
-            document.getElementById("detail-customer-ktp").innerText =
-                c.ktp || "-";
+            const ktpVal = c.ktp || "-";
+            document.getElementById("detail-customer-ktp").innerText = ktpVal;
+            const ktpLinkEl = document.getElementById("detail-customer-ktp-link");
+            if (ktpLinkEl) {
+                if (ktpVal !== "-" && ktpVal.includes("ktp/")) {
+                    ktpLinkEl.href = `/storage/${ktpVal}`;
+                    ktpLinkEl.style.display = "inline-flex";
+                } else {
+                    ktpLinkEl.style.display = "none";
+                    ktpLinkEl.href = "#";
+                }
+            }
             document.getElementById("detail-customer-bank").innerText =
                 `${bankName} - ${c.account_number || "-"} (a.n. ${c.account_name || "-"})`;
             document.getElementById("detail-order-city").innerText = o.city
@@ -1068,7 +1078,23 @@ document.addEventListener("DOMContentLoaded", () => {
                         }
                         return;
                     }
-                    payload.proof_image = "uploaded";
+                    if (hasFile) {
+                        try {
+                            const base64Str = await new Promise((resolve, reject) => {
+                                const reader = new FileReader();
+                                reader.onload = (ev) => resolve(ev.target.result);
+                                reader.onerror = (err) => reject(err);
+                                reader.readAsDataURL(uploadInput.files[0]);
+                            });
+                            payload.proof_base64 = base64Str;
+                        } catch(err) {
+                            if (orderUpdateError) {
+                                orderUpdateError.innerText = "Gagal membaca foto bukti pembayaran.";
+                                orderUpdateError.style.display = "block";
+                            }
+                            return;
+                        }
+                    }
                 }
 
                 const res = await fetchApi(`/orders/${id}/status`, {
@@ -1166,9 +1192,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 if (res && res.data) {
                     showToast("LME & Kurs berhasil diperbarui!", "success");
                     loadPriceHistory();
-                    if (activeCityId) {
-                        viewCityAccus(activeCityId, activeCityName);
-                    }
                 } else {
                     showToast(res.message || "Gagal menyimpan LME & Kurs", "error");
                 }

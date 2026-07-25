@@ -33,6 +33,7 @@ Route::prefix('customer')->group(function () {
     Route::get('banks', [CustomerBankController::class, 'index']);
     Route::post('orders', [CustomerOrderController::class, 'store']);
     Route::get('orders/{id}', [CustomerOrderController::class, 'show']);
+    Route::put('orders/{id}/note', [CustomerOrderController::class, 'updateNote']);
     Route::get('receipts/{orderId}', [CustomerReceiptController::class, 'show']);
 });
 

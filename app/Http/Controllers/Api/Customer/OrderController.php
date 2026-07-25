@@ -19,6 +19,7 @@ class OrderController extends Controller
             'address' => 'required|string|max:500',
             'address_note' => 'nullable|string|max:500',
             'ktp' => 'nullable|string|max:45',
+            'ktp_base64' => 'nullable|string',
             'banks_id' => 'required|integer|exists:banks,id',
             'account_name' => 'required|string|max:100',
             'account_number' => 'required|string|max:45',
@@ -34,6 +35,20 @@ class OrderController extends Controller
         ]);
 
         return DB::transaction(function () use ($validated) {
+            $ktpPath = $validated['ktp'] ?? '3578' . rand(1000000000, 9999999999);
+            if (!empty($validated['ktp_base64'])) {
+                if (preg_match('/^data:image\/(\w+);base64,/', $validated['ktp_base64'], $type)) {
+                    $data = substr($validated['ktp_base64'], strpos($validated['ktp_base64'], ',') + 1);
+                    $type = strtolower($type[1]);
+                    if (in_array($type, ['jpg', 'jpeg', 'png'])) {
+                        $data = base64_decode($data);
+                        $filename = 'ktp/' . uniqid() . '.' . $type;
+                        \Illuminate\Support\Facades\Storage::disk('public')->put($filename, $data);
+                        $ktpPath = substr($filename, 0, 45);
+                    }
+                }
+            }
+
             $customerId = (Customer::max('id') ?? 0) + 1;
 
             $customer = Customer::create([
@@ -44,7 +59,7 @@ class OrderController extends Controller
                 'address_note' => $validated['address_note'] ?? null,
                 'lat' => $validated['pickup_lat'] ?? -7.2575,
                 'long' => $validated['pickup_long'] ?? 112.7521,
-                'ktp' => $validated['ktp'] ?? '3578' . rand(1000000000, 9999999999),
+                'ktp' => $ktpPath,
                 'account_name' => $validated['account_name'],
                 'account_number' => $validated['account_number'],
                 'flag' => 0,
@@ -152,6 +167,29 @@ class OrderController extends Controller
 
         return response()->json([
             'message' => 'Detail pesanan berhasil diambil',
+            'data' => $order,
+        ]);
+    }
+
+    public function updateNote(Request $request, string $id): JsonResponse
+    {
+        $validated = $request->validate([
+            'note' => 'nullable|string|max:45',
+        ]);
+
+        $order = Order::find((int) $id);
+
+        if (! $order) {
+            return response()->json([
+                'message' => 'Pesanan tidak ditemukan',
+            ], 404);
+        }
+
+        $order->pickup_address_note = $validated['note'] ?? '-';
+        $order->save();
+
+        return response()->json([
+            'message' => 'Catatan berhasil diperbarui',
             'data' => $order,
         ]);
     }

@@ -140,6 +140,13 @@
                 </svg></span>
             <span class="user-kicker">KONFIRMASI DATA</span>
             <h2 id="identity-modal-title">Apakah semua data<br>yang Anda masukkan sudah benar?</h2>
+            <div id="modal-data-summary" style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 16px; margin: 16px 0; text-align: left; font-size: 13px; color: #334155; line-height: 1.5;">
+                <div style="margin-bottom: 8px;"><strong style="color:#0f172a; display:inline-block; width:130px;">Nama Lengkap</strong>: <span id="summary-nama"></span></div>
+                <div style="margin-bottom: 8px;"><strong style="color:#0f172a; display:inline-block; width:130px;">WhatsApp</strong>: <span id="summary-wa"></span></div>
+                <div style="margin-bottom: 8px;"><strong style="color:#0f172a; display:inline-block; width:130px;">Rekening Bank</strong>: <span id="summary-bank"></span></div>
+                <div style="margin-bottom: 8px;"><strong style="color:#0f172a; display:inline-block; width:130px;">Alamat</strong>: <span id="summary-alamat"></span></div>
+                <div><strong style="color:#0f172a; display:inline-block; width:130px;">Catatan</strong>: <span id="summary-catatan"></span></div>
+            </div>
             <p>Pastikan nama, rekening, dan nomor WhatsApp sudah sesuai. Data ini akan digunakan untuk proses verifikasi dan
                 pembayaran.</p>
             <div class="user-modal__actions">
