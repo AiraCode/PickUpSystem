@@ -433,18 +433,20 @@
                 <h2>Rincian Harga</h2>
             </div>
             <div style="padding-bottom:20px;">
-                <table style="width:100%; font-size:13px; border-collapse:collapse; margin-bottom:16px;">
-                    <thead>
-                        <tr style="border-bottom:2px solid #e5e7eb;">
-                            <th style="text-align:left; padding:8px 0; color:#6d727c; font-weight:600;">AKI / BRAND</th>
-                            <th style="text-align:center; padding:8px 0; color:#6d727c; font-weight:600;">QTY</th>
-                            <th style="text-align:right; padding:8px 0; color:#6d727c; font-weight:600;">HARGA UNIT</th>
-                            <th style="text-align:right; padding:8px 0; color:#6d727c; font-weight:600;">SUBTOTAL</th>
-                        </tr>
-                    </thead>
-                    <tbody id="detail-summary-items">
-                    </tbody>
-                </table>
+                <div style="overflow-x:auto; width:100%; margin-bottom:16px;">
+                    <table style="width:100%; min-width:400px; font-size:13px; border-collapse:collapse;">
+                        <thead>
+                            <tr style="border-bottom:2px solid #e5e7eb;">
+                                <th style="text-align:left; padding:8px 0; color:#6d727c; font-weight:600;">AKI / BRAND</th>
+                                <th style="text-align:center; padding:8px 0; color:#6d727c; font-weight:600;">QTY</th>
+                                <th style="text-align:right; padding:8px 0; color:#6d727c; font-weight:600;">HARGA UNIT</th>
+                                <th style="text-align:right; padding:8px 0; color:#6d727c; font-weight:600;">SUBTOTAL</th>
+                            </tr>
+                        </thead>
+                        <tbody id="detail-summary-items">
+                        </tbody>
+                    </table>
+                </div>
                 <div style="border-top:1px solid #e5e7eb; padding-top:12px;">
                     <div style="display:flex; justify-content:space-between; margin-bottom:6px; font-size:13px; color:#6d727c;">
                         <span>Subtotal</span>

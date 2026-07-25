@@ -1,9 +1,9 @@
-<footer class="user-footer" id="hubungi-kami">
+ï»¿<footer class="user-footer" id="hubungi-kami">
     <div class="user-footer__main">
         <div class="user-footer__identity">
             <a class="user-brand user-brand--footer" aria-label="Pick Up System user">
                 <img src="{{ Vite::asset('resources/img/indoprima_logo.png') }}" alt="Indoprima Group"
-                    class="admin-brand__logo" style=>
+                    class="admin-brand__logo" style="width: 44px; height: auto;">
 
                 <span class="user-brand__copy">
                     <strong>Indoprima Group</strong>
@@ -26,14 +26,13 @@
 
         <div class="user-footer__column user-footer__column--contact">
             <span class="user-footer__label">HEADQUARTERS</span>
-            <p>Jl. Gardu Induk PLN No. 5<br>Margomulyo, Tandes Lor, Kec. Tandes<br>Surabaya 60187 – Indonesia</p>
+            <p>Jl. Gardu Induk PLN No. 5<br>Margomulyo, Tandes Lor, Kec. Tandes<br>Surabaya 60187 - Indonesia</p>
             <a href="tel:+62312977777">(+62-31) 2977777 (Hunting)</a>
             <a href="mailto:hrd@imligroup.com">hrd@imligroup.com</a>
         </div>
     </div>
     <div class="user-footer__bottom">
-        <span>© 2026 Indoprima Group. All Rights Reserved.</span>
-        <a href="#top">Kembali ke atas <span aria-hidden="true">?</span></a>
+        <span>&copy; 2026 Indoprima Group. All Rights Reserved.</span>
+        <a href="#top">Kembali ke atas <span aria-hidden="true">&uarr;</span></a>
     </div>
 </footer>
-

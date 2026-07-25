@@ -35,7 +35,7 @@
                 <article class="user-receipt" data-receipt>
                     <div class="user-receipt__top">
                         <div class="user-receipt__brand">
-                            <img src="{{ Vite::asset('resources/img/indoprima_logo.png') }}" alt="Indoprima Group" style="height: 32px; width: auto; object-fit: contain;">
+                            <img src="{{ Vite::asset('resources/img/indoprima_logo.png') }}" alt="Indoprima Group" style="height: 55px; width: auto; object-fit: contain;">
                             <div><strong>Indoprima Group</strong><small>Pick Up System</small></div>
                         </div>
                         <div class="user-receipt__meta">

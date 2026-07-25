@@ -14,6 +14,14 @@ document.addEventListener("DOMContentLoaded", () => {
         return;
     }
 
+    const parseSafeDate = (d) => {
+        if (!d) return new Date();
+        let s = String(d);
+        if (!s.includes('T') && s.includes(' ')) s = s.replace(' ', 'T');
+        if (!s.includes('Z') && !s.includes('+')) s += 'Z';
+        return new Date(s);
+    };
+
     if (user && document.getElementById("auth-user-name")) {
         document.getElementById("auth-user-name").innerText = user.name;
         document.getElementById("auth-user-initial").innerText = user.name
@@ -366,7 +374,7 @@ document.addEventListener("DOMContentLoaded", () => {
                         <td>#${o.id}</td>
                         <td>${o.customer ? o.customer.name : "-"}</td>
                         <td>${o.city ? o.city.name : "-"}</td>
-                        <td>${new Date(o.created_at).toLocaleDateString("id-ID")}</td>
+                        <td>${parseSafeDate(o.created_at).toLocaleDateString("id-ID")}</td>
                         <td>${statusBadge(o.status)}</td>
                     </tr>`,
                     )
@@ -698,8 +706,8 @@ document.addEventListener("DOMContentLoaded", () => {
                         <td>${o.city ? o.city.name : "-"}</td>
                         <td style="max-width:200px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${o.pickup_address || "-"}</td>
                         <td>
-                            <div style="font-size:13px; font-weight:500; color:#111827;">${new Date(o.created_at).toLocaleDateString("id-ID")} ${new Date(o.created_at).toLocaleTimeString("id-ID", {hour: '2-digit', minute: '2-digit'})}</div>
-                            <div style="font-size:11px; color:#6b7280; margin-top:2px;">Update: ${new Date(o.updated_at).toLocaleDateString("id-ID")} ${new Date(o.updated_at).toLocaleTimeString("id-ID", {hour: '2-digit', minute: '2-digit'})}</div>
+                            <div style="font-size:13px; font-weight:500; color:#111827;">${parseSafeDate(o.created_at).toLocaleDateString("id-ID")} ${parseSafeDate(o.created_at).toLocaleTimeString("id-ID", {hour: '2-digit', minute: '2-digit'})}</div>
+                            <div style="font-size:11px; color:#6b7280; margin-top:2px;">Update: ${parseSafeDate(o.updated_at).toLocaleDateString("id-ID")} ${parseSafeDate(o.updated_at).toLocaleTimeString("id-ID", {hour: '2-digit', minute: '2-digit'})}</div>
                         </td>
                         <td>${statusBadge(o.status)}</td>
                         <td style="text-align:right;">
@@ -945,13 +953,13 @@ document.addEventListener("DOMContentLoaded", () => {
                 : "-";
             document.getElementById("detail-order-status").innerHTML =
                 statusBadge(o.status);
-            document.getElementById("detail-order-time").innerText = new Date(
+            document.getElementById("detail-order-time").innerText = parseSafeDate(
                 o.created_at,
             ).toLocaleString("id-ID");
             
             const updatedEl = document.getElementById("detail-order-updated");
             if (updatedEl) {
-                updatedEl.innerText = new Date(
+                updatedEl.innerText = parseSafeDate(
                     o.updated_at,
                 ).toLocaleString("id-ID");
             }
@@ -1208,7 +1216,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 tbody.innerHTML = history
                     .map(
                         (h) => {
-                            const date = new Date(h.created_at).toLocaleString("id-ID", {
+                            const date = parseSafeDate(h.created_at).toLocaleString("id-ID", {
                                 day: "2-digit",
                                 month: "2-digit",
                                 year: "numeric",
@@ -1876,7 +1884,7 @@ document.addEventListener("DOMContentLoaded", () => {
                         (u) => `
                     <tr>
                         <td style="font-weight:500;">${u.name}</td>
-                        <td>${new Date(u.created_at).toLocaleDateString("id-ID")}</td>
+                        <td>${parseSafeDate(u.created_at).toLocaleDateString("id-ID")}</td>
                         <td>
                             <button onclick="deleteUser(${u.id})" class="admin-button admin-button--secondary" style="height:30px; font-size:11px; color:#ba1b2b;">Hapus</button>
                         </td>

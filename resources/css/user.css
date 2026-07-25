@@ -398,7 +398,7 @@ body.user-shell textarea:focus-visible {
 
 .user-hero__copy>p {
     color: rgba(255, 255, 255, 0.82);
-    font-size: 16px;
+    font-size: 18px;
     line-height: 1.7;
 
     max-width: 680px;
@@ -1462,10 +1462,23 @@ body.user-shell textarea:focus-visible {
     color: var(--user-ink);
 }
 
+.user-brand--footer img {
+    height: 46px;
+    width: auto;
+}
+
+.user-brand--footer .user-brand__copy strong {
+    font-size: 15px;
+}
+
+.user-brand--footer .user-brand__copy small {
+    font-size: 11px;
+}
+
 .user-footer__identity>p {
     margin-top: 14px;
     color: var(--user-muted);
-    font-size: 13px;
+    font-size: 15px;
     line-height: 1.6;
 }
 
@@ -1479,7 +1492,7 @@ body.user-shell textarea:focus-visible {
 .user-footer__social>span,
 .user-footer__label {
     color: var(--user-ink);
-    font-size: 10px;
+    font-size: 12px;
     font-weight: 800;
     letter-spacing: 0.1em;
 }
@@ -1522,7 +1535,7 @@ body.user-shell textarea:focus-visible {
 .user-footer__column--contact p,
 .user-footer__column--contact a {
     color: var(--user-muted);
-    font-size: 11px;
+    font-size: 13px;
     line-height: 1.7;
 }
 
@@ -1712,7 +1725,7 @@ body.user-shell textarea:focus-visible {
 
 .user-flow-hero p {
     color: rgba(255, 255, 255, 0.78);
-    font-size: 13px;
+    font-size: 15px;
     line-height: 1.7;
     margin-top: 19px;
     max-width: 510px;
@@ -2125,13 +2138,13 @@ body.user-shell textarea:focus-visible {
 }
 
 .user-receipt__brand strong {
-    font-size: 15px;
+    font-size: 19px;
     font-weight: 800;
 }
 
 .user-receipt__brand small {
     color: var(--user-muted);
-    font-size: 9px;
+    font-size: 11px;
     letter-spacing: 0.09em;
     margin-top: 3px;
     text-transform: uppercase;
@@ -2147,7 +2160,7 @@ body.user-shell textarea:focus-visible {
 .user-receipt__meta span,
 .user-receipt__meta small {
     color: var(--user-muted);
-    font-size: 9px;
+    font-size: 12px;
     letter-spacing: 0.1em;
 }
 
@@ -2678,7 +2691,7 @@ body.user-shell textarea:focus-visible {
     }
 
     .user-hero__copy>p {
-        font-size: 13px;
+        font-size: 15px;
     }
 
     .user-section {

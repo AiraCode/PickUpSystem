@@ -17,6 +17,14 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     };
 
+    const parseSafeDate = (d) => {
+        if (!d) return new Date();
+        let s = String(d);
+        if (!s.includes('T') && s.includes(' ')) s = s.replace(' ', 'T');
+        if (!s.includes('Z') && !s.includes('+')) s += 'Z';
+        return new Date(s);
+    };
+
     const rupiah = (n) =>
         new Intl.NumberFormat("id-ID", {
             style: "currency",
@@ -506,16 +514,16 @@ document.addEventListener("DOMContentLoaded", () => {
                     const isPaid = orderStatus === "completed";
 
                     if (metaDate) {
-                        const transDate = isPaid && receipt.date ? receipt.date : o.created_at;
-                        const dateObj = new Date(transDate);
+                        const transDate = o.created_at;
+                        const dateObj = parseSafeDate(transDate);
                         const dateStr = dateObj.toLocaleDateString("id-ID");
                         const timeStr = dateObj.toLocaleTimeString("id-ID", { hour: '2-digit', minute: '2-digit' }).replace('.', ':');
                         
-                        const updateObj = new Date(o.updated_at || o.created_at);
+                        const updateObj = parseSafeDate(o.updated_at || o.created_at);
                         const updateDateStr = updateObj.toLocaleDateString("id-ID");
                         const updateTimeStr = updateObj.toLocaleTimeString("id-ID", { hour: '2-digit', minute: '2-digit' }).replace('.', ':');
 
-                        metaDate.innerHTML = `Tanggal transaksi: ${dateStr} ${timeStr} WIB<br><span style="color:#6d727c; font-size:11px; font-weight:500;">Update: ${updateDateStr} ${updateTimeStr} WIB</span>`;
+                        metaDate.innerHTML = `Tanggal transaksi: ${dateStr} ${timeStr} WIB<br><span style="color:#6d727c; font-weight:500;">Update: ${updateDateStr} ${updateTimeStr} WIB</span>`;
                     }
                     const badge = receiptContainer.querySelector(
                         "[data-receipt-badge]",
@@ -682,7 +690,7 @@ document.addEventListener("DOMContentLoaded", () => {
                                 const transfer = receipt.transfer;
                                 const dds = proofSection.querySelectorAll("dd");
                                 if (dds[0]) {
-                                    const transferDateObj = new Date(transfer.transfer_date);
+                                    const transferDateObj = parseSafeDate(transfer.transfer_date);
                                     dds[0].innerHTML = `${transferDateObj.toLocaleDateString("id-ID")}<br><small style="font-size: 11px; color: #64748b;">${transferDateObj.toLocaleTimeString("id-ID", { hour: '2-digit', minute: '2-digit' }).replace('.', ':')} WIB</small>`;
                                 }
                                 if (dds[1]) dds[1].textContent = transfer.id || "-";

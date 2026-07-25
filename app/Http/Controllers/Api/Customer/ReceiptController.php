@@ -67,6 +67,7 @@ class ReceiptController extends Controller
                 'status' => $order->status,
                 'delivery_method' => $order->delivery_method ?? 'warehouse',
                 'created_at' => $order->created_at,
+                'updated_at' => $order->updated_at,
                 'customer' => $order->customer,
                 'city' => $order->city,
                 'pickup_address' => $order->pickup_address,
