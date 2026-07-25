@@ -697,7 +697,10 @@ document.addEventListener("DOMContentLoaded", () => {
                         <td style="font-weight:500;">${o.customer ? o.customer.name : "-"}</td>
                         <td>${o.city ? o.city.name : "-"}</td>
                         <td style="max-width:200px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${o.pickup_address || "-"}</td>
-                        <td>${new Date(o.created_at).toLocaleDateString("id-ID")}</td>
+                        <td>
+                            <div style="font-size:13px; font-weight:500; color:#111827;">${new Date(o.created_at).toLocaleDateString("id-ID")} ${new Date(o.created_at).toLocaleTimeString("id-ID", {hour: '2-digit', minute: '2-digit'})}</div>
+                            <div style="font-size:11px; color:#6b7280; margin-top:2px;">Update: ${new Date(o.updated_at).toLocaleDateString("id-ID")} ${new Date(o.updated_at).toLocaleTimeString("id-ID", {hour: '2-digit', minute: '2-digit'})}</div>
+                        </td>
                         <td>${statusBadge(o.status)}</td>
                         <td style="text-align:right;">
                             <div style="display:flex; gap:6px; justify-content:flex-end;">
@@ -945,6 +948,13 @@ document.addEventListener("DOMContentLoaded", () => {
             document.getElementById("detail-order-time").innerText = new Date(
                 o.created_at,
             ).toLocaleString("id-ID");
+            
+            const updatedEl = document.getElementById("detail-order-updated");
+            if (updatedEl) {
+                updatedEl.innerText = new Date(
+                    o.updated_at,
+                ).toLocaleString("id-ID");
+            }
             document.getElementById("detail-order-pickup-address").innerText =
                 o.pickup_address || "-";
             const noteLabelEl = document.getElementById(
@@ -1023,6 +1033,58 @@ document.addEventListener("DOMContentLoaded", () => {
                         .openPopup();
                     orderMap.invalidateSize();
                 }, 200);
+            });
+        }
+
+        const btnOpenSummary = document.getElementById("btn-open-order-summary");
+        if (btnOpenSummary) {
+            btnOpenSummary.addEventListener("click", () => {
+                if (!currentDetailOrder) return;
+                
+                const receipt = currentDetailOrder.receipt;
+                const tbody = document.getElementById("detail-summary-items");
+                
+                const formatRp = (n) => new Intl.NumberFormat("id-ID", { style: "currency", currency: "IDR", minimumFractionDigits: 0 }).format(n);
+                
+                if (!receipt) {
+                    tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; padding:20px; color:#6d727c;">Rincian harga belum tersedia / belum di-generate.</td></tr>`;
+                    document.getElementById("detail-summary-subtotal").innerText = "-";
+                    document.getElementById("detail-summary-shipping").innerText = "-";
+                    document.getElementById("detail-summary-discount").innerText = "-";
+                    document.getElementById("detail-summary-total").innerText = "-";
+                } else {
+                    let itemsHtml = "";
+                    const accus = receipt.accus || [];
+                    let subtotal = 0;
+
+                    if (accus.length > 0) {
+                        accus.forEach(item => {
+                            const qty = item.amount || 1;
+                            const price = item.price || 0;
+                            const sub = item.subtotal || 0;
+                            subtotal += sub;
+                            
+                            itemsHtml += `<tr style="border-bottom:1px solid #f1f5f9;">
+                                <td style="padding:10px 0; font-weight:500; color:#111318;">${item.name || "-"} <span style="font-weight:400; color:#6d727c; font-size:12px;">${item.brand || "-"}</span></td>
+                                <td style="text-align:center; padding:10px 0; color:#4a4f59;">${qty} unit</td>
+                                <td style="text-align:right; padding:10px 0; color:#4a4f59;">${formatRp(price)}</td>
+                                <td style="text-align:right; padding:10px 0; font-weight:600; color:#111318;">${formatRp(sub)}</td>
+                            </tr>`;
+                        });
+                    } else {
+                        itemsHtml = `<tr><td colspan="4" style="text-align:center; padding:20px; color:#6d727c;">Tidak ada data item aki.</td></tr>`;
+                    }
+                    tbody.innerHTML = itemsHtml;
+                    
+                    const deliveryCost = (receipt.price_owed || 0) - subtotal;
+
+                    document.getElementById("detail-summary-subtotal").innerText = formatRp(subtotal);
+                    document.getElementById("detail-summary-shipping").innerText = deliveryCost > 0 ? formatRp(deliveryCost) : "Gratis";
+                    document.getElementById("detail-summary-discount").innerText = "-"; // Discount logic can be added if backend supports it
+                    document.getElementById("detail-summary-total").innerText = formatRp(receipt.price_owed || 0);
+                }
+
+                document.getElementById("modal-order-summary").style.display = "flex";
             });
         }
 

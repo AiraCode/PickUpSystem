@@ -510,7 +510,12 @@ document.addEventListener("DOMContentLoaded", () => {
                         const dateObj = new Date(transDate);
                         const dateStr = dateObj.toLocaleDateString("id-ID");
                         const timeStr = dateObj.toLocaleTimeString("id-ID", { hour: '2-digit', minute: '2-digit' }).replace('.', ':');
-                        metaDate.innerHTML = `Tanggal transaksi: ${dateStr}<br>${timeStr} WIB`;
+                        
+                        const updateObj = new Date(o.updated_at || o.created_at);
+                        const updateDateStr = updateObj.toLocaleDateString("id-ID");
+                        const updateTimeStr = updateObj.toLocaleTimeString("id-ID", { hour: '2-digit', minute: '2-digit' }).replace('.', ':');
+
+                        metaDate.innerHTML = `Tanggal transaksi: ${dateStr} ${timeStr} WIB<br><span style="color:#6d727c; font-size:11px; font-weight:500;">Update: ${updateDateStr} ${updateTimeStr} WIB</span>`;
                     }
                     const badge = receiptContainer.querySelector(
                         "[data-receipt-badge]",
@@ -522,9 +527,9 @@ document.addEventListener("DOMContentLoaded", () => {
                         if (orderStatus === "completed") {
                             statusText = "PAID";
                             statusClass = "paid";
-                        } else if (orderStatus === "process") {
-                            statusText = "PROCESS";
-                            statusClass = "process";
+                        } else if (orderStatus === "processing") {
+                            statusText = "PROCESSING";
+                            statusClass = "processing";
                         } else if (orderStatus === "cancelled") {
                             statusText = "CANCELLED";
                             statusClass = "cancelled";

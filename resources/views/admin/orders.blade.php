@@ -388,6 +388,10 @@
                             <td id="detail-order-time" style="font-weight:500;"></td>
                         </tr>
                         <tr>
+                            <td style="color:#6d727c; padding:6px 0;">Terakhir Diperbarui</td>
+                            <td id="detail-order-updated" style="font-weight:500; color:#2563eb;"></td>
+                        </tr>
+                        <tr>
                             <td style="color:#6d727c; padding:6px 0; vertical-align:top;">Alamat Penjemputan</td>
                             <td>
                                 <div style="display:flex; flex-direction:column; gap:6px;">
@@ -414,9 +418,55 @@
                     </table>
                 </div>
             </div>
-            <div style="display:flex; justify-content:flex-end; padding-top:10px; border-top:1px solid #e5e7eb;">
+            <div style="display:flex; justify-content:space-between; padding-top:10px; border-top:1px solid #e5e7eb;">
+                <button type="button" class="admin-button admin-button--secondary" id="btn-open-order-summary">Cek Rincian Harga</button>
                 <button type="button" class="admin-button admin-button--primary"
                     onclick="document.getElementById('modal-detail-order').style.display='none'">Tutup</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="modal-order-summary"
+        style="display:none; position:fixed; inset:0; background:rgba(0,0,0,.45); z-index:160; align-items:center; justify-content:center;">
+        <div class="admin-panel" style="width:600px; max-width:95vw; max-height:90vh; overflow-y:auto;">
+            <div class="admin-panel__head">
+                <h2>Rincian Harga</h2>
+            </div>
+            <div style="padding-bottom:20px;">
+                <table style="width:100%; font-size:13px; border-collapse:collapse; margin-bottom:16px;">
+                    <thead>
+                        <tr style="border-bottom:2px solid #e5e7eb;">
+                            <th style="text-align:left; padding:8px 0; color:#6d727c; font-weight:600;">AKI / BRAND</th>
+                            <th style="text-align:center; padding:8px 0; color:#6d727c; font-weight:600;">QTY</th>
+                            <th style="text-align:right; padding:8px 0; color:#6d727c; font-weight:600;">HARGA UNIT</th>
+                            <th style="text-align:right; padding:8px 0; color:#6d727c; font-weight:600;">SUBTOTAL</th>
+                        </tr>
+                    </thead>
+                    <tbody id="detail-summary-items">
+                    </tbody>
+                </table>
+                <div style="border-top:1px solid #e5e7eb; padding-top:12px;">
+                    <div style="display:flex; justify-content:space-between; margin-bottom:6px; font-size:13px; color:#6d727c;">
+                        <span>Subtotal</span>
+                        <span id="detail-summary-subtotal" style="font-weight:500; color:#111318;">-</span>
+                    </div>
+                    <div style="display:flex; justify-content:space-between; margin-bottom:6px; font-size:13px; color:#6d727c;">
+                        <span>Biaya penjemputan</span>
+                        <span id="detail-summary-shipping" style="font-weight:500; color:#111318;">-</span>
+                    </div>
+                    <div style="display:flex; justify-content:space-between; margin-bottom:12px; font-size:13px; color:#6d727c;">
+                        <span>Potongan</span>
+                        <span id="detail-summary-discount" style="font-weight:500; color:#111318;">-</span>
+                    </div>
+                    <div style="display:flex; justify-content:space-between; padding-top:12px; border-top:1px solid #e5e7eb; font-size:15px; font-weight:700;">
+                        <span>Total penjualan</span>
+                        <span id="detail-summary-total" style="color:#2563eb;">-</span>
+                    </div>
+                </div>
+            </div>
+            <div style="display:flex; justify-content:flex-end; padding-top:10px; border-top:1px solid #e5e7eb;">
+                <button type="button" class="admin-button admin-button--primary"
+                    onclick="document.getElementById('modal-order-summary').style.display='none'">Tutup Rincian</button>
             </div>
         </div>
     </div>

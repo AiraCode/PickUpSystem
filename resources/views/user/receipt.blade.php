@@ -35,10 +35,7 @@
                 <article class="user-receipt" data-receipt>
                     <div class="user-receipt__top">
                         <div class="user-receipt__brand">
-                            <span class="user-brand__mark user-brand__mark--small" role="img" aria-label="Indoprima Group logo not found">
-                                <span class="user-brand__mark-red"></span>
-                                <span class="user-brand__mark-blue"></span>
-                            </span>
+                            <img src="{{ Vite::asset('resources/img/indoprima_logo.png') }}" alt="Indoprima Group" style="height: 32px; width: auto; object-fit: contain;">
                             <div><strong>Indoprima Group</strong><small>Pick Up System</small></div>
                         </div>
                         <div class="user-receipt__meta">
@@ -116,7 +113,7 @@
 
                 <div class="user-receipt-actions">
                     <a href="/user" class="user-button user-button--secondary">Kembali ke halaman utama</a>
-                    <button type="button" class="user-button user-button--primary" onclick="window.print()">Cetak receipt <span aria-hidden="true">↗</span></button>
+                    <button type="button" class="user-button user-button--primary" onclick="window.print()">Cetak receipt</button>
                 </div>
             </div>
         </section>

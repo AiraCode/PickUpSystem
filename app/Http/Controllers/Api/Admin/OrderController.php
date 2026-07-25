@@ -118,11 +118,37 @@ class OrderController extends Controller
 
     public function show(int $id): JsonResponse
     {
-        $order = Order::with(['city', 'customer.bank'])->findOrFail($id);
+        $order = Order::with(['city', 'customer.bank', 'receipt.accus'])->findOrFail($id);
+        
+        $orderData = $order->toArray();
+        if ($order->receipt) {
+            $lme = (float) \App\Models\Setting::getValue('lme', 2100);
+            $kurs = (float) \App\Models\Setting::getValue('kurs', 16000);
+            $cityPercentage = (float) ($order->city->percentage ?? 80.00);
+            $pricePerKg = ($lme * $kurs * ($cityPercentage / 100)) / 1000.0;
+
+            $formattedAccus = [];
+            foreach ($order->receipt->accus as $accu) {
+                $beratKering = (float) ($accu->berat_kering ?? 0);
+                $calculatedPrice = (int) round($pricePerKg * $beratKering);
+                $brandName = \Illuminate\Support\Facades\DB::table('brands')->where('id', $accu->brands_id)->value('name') ?? 'Indoprima';
+
+                $formattedAccus[] = [
+                    'id' => $accu->id,
+                    'name' => $accu->name,
+                    'brand' => $brandName,
+                    'amount' => $accu->pivot->amount,
+                    'price' => $calculatedPrice,
+                    'subtotal' => $calculatedPrice * $accu->pivot->amount,
+                ];
+            }
+
+            $orderData['receipt']['accus'] = $formattedAccus;
+        }
 
         return response()->json([
             'message' => 'Detail order berhasil diambil',
-            'data' => $order,
+            'data' => $orderData,
         ]);
     }
 

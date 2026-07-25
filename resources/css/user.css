@@ -2191,6 +2191,16 @@ body.user-shell textarea:focus-visible {
     color: #16a34a;
 }
 
+.user-receipt__status--processing {
+    background: rgba(245, 158, 11, 0.1);
+    color: #f59e0b;
+}
+
+.user-receipt__status--cancelled {
+    background: rgba(186, 27, 43, 0.1);
+    color: var(--user-red);
+}
+
 .user-receipt__grid {
     border-bottom: 1px solid var(--user-line);
     display: grid;
@@ -2389,7 +2399,7 @@ body.user-shell textarea:focus-visible {
     border-radius: 8px;
     color: var(--user-muted);
     display: flex;
-    font-size: 10px;
+    font-size: 13px;
     gap: 8px;
     line-height: 1.5;
     margin-top: 30px;
