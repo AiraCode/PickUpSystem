@@ -43,7 +43,15 @@ class OCRController extends Controller
             ], 422);
         }
 
-        $name = $this->ocr->extractName($text);
+        try {
+            $name = $this->ocr->extractName($text);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => $e->getMessage(),
+                'name' => null,
+                'raw_text' => $text,
+            ], 422);
+        }
 
         if (!$name) {
             return response()->json([

@@ -70,8 +70,7 @@
                                         <path d="M5 4.5h14v15H5z" />
                                         <path d="M8 15.5 10.8 12l2 2 1.7-2.2 2.5 3.7M8.5 8.5h.01" />
                                     </svg></span>
-                                <span><strong>Upload foto KTP atau SIM</strong><small>PNG/JPEG · maksimal sesuai kebijakan
-                                        sistem</small></span>
+                                <span><strong>Upload foto KTP atau SIM</strong><small>PNG/JPEG</small></span>
                                 <span class="user-upload-field__action">Pilih file</span>
                             </label>
 
@@ -92,8 +91,13 @@
                                     <option>BNI</option>
                                     <option>Bank lainnya</option>
                                 </select><span>Jenis bank</span></label>
-                            <label class="user-floating-field"><input type="text" name="account_number"
-                                    inputmode="numeric" placeholder=" " required><span>Nomor rekening</span></label>
+                            <div>
+                                <label class="user-floating-field" style="margin-bottom:0;">
+                                    <input type="text" name="account_number" inputmode="numeric" placeholder=" " required disabled style="cursor: not-allowed; background: #f1f5f9;">
+                                    <span>Nomor rekening</span>
+                                </label>
+                                <div id="account-hint" style="color: var(--user-red); font-size: 11px; margin-top: 6px; margin-left: 4px;">*pilih bank terlebih dahulu</div>
+                            </div>
                             <label class="user-floating-field user-floating-field--full"><input type="text"
                                     name="account_holder" placeholder=" " style="text-transform: uppercase;" required><span>Nama pemilik
                                     rekening</span></label>

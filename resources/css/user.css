@@ -3062,3 +3062,65 @@ body.user-shell textarea:focus-visible {
         display: none !important;
     }
 }
+
+.user-confirm-overlay {
+    align-items: center;
+    background: rgba(17, 19, 24, 0.4);
+    backdrop-filter: blur(4px);
+    bottom: 0;
+    display: flex;
+    justify-content: center;
+    left: 0;
+    opacity: 0;
+    padding: 20px;
+    position: fixed;
+    right: 0;
+    top: 0;
+    transition: opacity 0.2s ease;
+    z-index: 9999;
+    pointer-events: none;
+}
+
+.user-confirm-overlay.is-visible {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.user-confirm-modal {
+    background: var(--user-white);
+    border-radius: 16px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+    max-width: 400px;
+    padding: 28px;
+    transform: scale(0.95);
+    transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    width: 100%;
+}
+
+.user-confirm-overlay.is-visible .user-confirm-modal {
+    transform: scale(1);
+}
+
+.user-confirm-modal h4 {
+    color: var(--user-ink);
+    font-size: 18px;
+    font-weight: 800;
+    margin: 0 0 12px;
+}
+
+.user-confirm-modal p {
+    color: var(--user-muted);
+    font-size: 14px;
+    line-height: 1.5;
+    margin: 0 0 24px;
+}
+
+.user-confirm-actions {
+    display: flex;
+    gap: 12px;
+    justify-content: flex-end;
+}
+
+.user-confirm-actions .user-button {
+    min-height: 40px;
+}

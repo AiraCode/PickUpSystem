@@ -210,11 +210,46 @@ const renderUserCart = () => {
         pickupLabel.textContent = formatRupiah(effectiveFee);
     }
 
+    window.userConfirm = function (message) {
+        return new Promise((resolve) => {
+            const overlay = document.createElement("div");
+            overlay.className = "user-confirm-overlay";
+            overlay.innerHTML = `
+                <div class="user-confirm-modal">
+                    <h4>Konfirmasi</h4>
+                    <p>${message}</p>
+                    <div class="user-confirm-actions">
+                        <button type="button" class="user-button user-button--secondary" id="user-confirm-cancel">Batal</button>
+                        <button type="button" class="user-button user-button--primary" style="background:var(--user-red);border-color:var(--user-red);" id="user-confirm-ok">Hapus</button>
+                    </div>
+                </div>
+            `;
+
+            document.body.appendChild(overlay);
+            overlay.getBoundingClientRect();
+            overlay.classList.add("is-visible");
+
+            const close = (result) => {
+                overlay.classList.remove("is-visible");
+                setTimeout(() => {
+                    overlay.remove();
+                    resolve(result);
+                }, 200);
+            };
+
+            overlay.querySelector("#user-confirm-cancel").addEventListener("click", () => close(false));
+            overlay.querySelector("#user-confirm-ok").addEventListener("click", () => close(true));
+            overlay.addEventListener("click", (e) => {
+                if (e.target === overlay) close(false);
+            });
+        });
+    };
+
     cartItemsContainer.querySelectorAll("[data-delete-item]").forEach((btn) => {
-        btn.addEventListener("click", (e) => {
+        btn.addEventListener("click", async (e) => {
             const key = e.currentTarget.dataset.deleteItem;
             if (key && userCart.has(key)) {
-                if (confirm("Apakah Anda yakin ingin menghapus aki ini dari pesanan?")) {
+                if (await window.userConfirm("Apakah Anda yakin ingin menghapus aki ini dari pesanan?")) {
                     userCart.delete(key);
                     renderUserCart();
                     if (typeof window.updateProductCardButtons === 'function') {

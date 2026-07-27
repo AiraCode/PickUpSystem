@@ -41,6 +41,15 @@ class OCRSpaceService
     //Ekstraksi nama dari teks KTP/SIM
     public function extractName(string $text): ?string
     {
+        $textUpper = strtoupper($text);
+        
+        $isKtp = preg_match('/(\bKTP\b|\bPROVINSI\b|\bNIK\b|KARTU\s+TANDA\s+PENDUDUK)/i', $textUpper);
+        $isSim = preg_match('/(SURAT\s+IZIN\s+MENGEMUDI|DRIVING\s+LICENSE|\bPOLRI\b|\bKORLANTAS\b)/i', $textUpper);
+        
+        if (!$isKtp && !$isSim) {
+            throw new \Exception("Pastikan Anda mengupload file berupa KTP / SIM.");
+        }
+
         $lines = preg_split('/[\r\n]+/', $text);
 
         foreach ($lines as $i => $line) {
@@ -64,6 +73,12 @@ class OCRSpaceService
 
             //SIM: cari "Nama/Name"
             if (preg_match('/Nama\s*\/\s*Name\s*[:\/]?\s*(.+)/i', $line, $m)) {
+                $name = trim($m[1]);
+                if (strlen($name) > 1) return $this->cleanName($name);
+            }
+
+            //SIM (Format Baru/Smart SIM): Angka 1. lalu Nama
+            if ($isSim && preg_match('/^1[\.\-\:]?\s+([a-zA-Z\s\.]+)/', $line, $m)) {
                 $name = trim($m[1]);
                 if (strlen($name) > 1) return $this->cleanName($name);
             }

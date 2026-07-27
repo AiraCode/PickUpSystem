@@ -251,7 +251,7 @@ document.addEventListener("DOMContentLoaded", () => {
             const res = await fetchPublicApi("/banks");
             if (res.data && res.data.length) {
                 bankSelect.innerHTML =
-                    '<option value="" selected disabled>Pilih Bank</option>' +
+                    '<option value="" selected disabled></option>' +
                     res.data
                         .map(
                             (b) => `<option value="${b.id}">${b.name}</option>`,
@@ -280,6 +280,57 @@ document.addEventListener("DOMContentLoaded", () => {
             });
             holderInput.addEventListener('input', (e) => {
                 e.target.value = e.target.value.replace(/[^a-zA-Z\s]/g, '').toUpperCase();
+            });
+        }
+
+        const accountNumberInput = identityForm.querySelector('input[name="account_number"]');
+        const accountHint = document.getElementById("account-hint");
+        let currentBankRule = null;
+
+        if (bankSelect && accountNumberInput && accountHint) {
+            const bankRules = {
+                "BCA": { min: 10, max: 10, msg: "10 digit" },
+                "Mandiri": { min: 12, max: 17, msg: "antara 12-17 digit" },
+                "BNI": { min: 7, max: 11, msg: "antara 7-11 digit" },
+                "BRI": { min: 13, max: 17, msg: "antara 13-17 digit" },
+                "CIMB Niaga": { min: 10, max: 13, msg: "antara 10-13 digit" }
+            };
+
+            const validateAccountNumber = () => {
+                if (!currentBankRule) return;
+                const val = accountNumberInput.value;
+                if (val.length === 0) {
+                    accountHint.textContent = `*pastikan no rekening ${currentBankRule.msg}`;
+                    accountHint.style.display = "block";
+                    accountNumberInput.setCustomValidity("Wajib diisi");
+                } else if (val.length < currentBankRule.min || val.length > currentBankRule.max) {
+                    accountHint.textContent = `*pastikan no rekening ${currentBankRule.msg}`;
+                    accountHint.style.display = "block";
+                    accountNumberInput.setCustomValidity(`Nomor rekening harus ${currentBankRule.msg}`);
+                } else {
+                    accountHint.style.display = "none";
+                    accountNumberInput.setCustomValidity("");
+                }
+            };
+
+            bankSelect.addEventListener("change", (e) => {
+                const bankName = e.target.options[e.target.selectedIndex].text;
+                
+                // Fallback for banks not in the explicit list
+                currentBankRule = Object.keys(bankRules).find(k => bankName.toLowerCase().includes(k.toLowerCase())) 
+                    ? bankRules[Object.keys(bankRules).find(k => bankName.toLowerCase().includes(k.toLowerCase()))] 
+                    : { min: 5, max: 30, msg: "minimal 5 digit" };
+
+                accountNumberInput.disabled = false;
+                accountNumberInput.style.cursor = "text";
+                accountNumberInput.style.background = "var(--user-white)";
+                
+                validateAccountNumber();
+            });
+
+            accountNumberInput.addEventListener("input", (e) => {
+                e.target.value = e.target.value.replace(/[^0-9]/g, '');
+                validateAccountNumber();
             });
         }
 
