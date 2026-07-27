@@ -330,12 +330,44 @@ document.addEventListener("DOMContentLoaded", () => {
 
             if (res.user) {
                 localStorage.setItem("admin_user", JSON.stringify(res.user));
-                if (document.getElementById("auth-user-name")) {
-                    document.getElementById("auth-user-name").innerText =
-                        res.user.name;
-                    document.getElementById("auth-user-initial").innerText =
-                        res.user.name.charAt(0).toUpperCase();
+                const nameEl = document.getElementById("auth-user-name");
+                const initialEl = document.getElementById("auth-user-initial");
+
+                if (nameEl && initialEl) {
+                    const animOut = [
+                        { opacity: 1, transform: "translateY(0) scale(1)" },
+                        {
+                            opacity: 0,
+                            transform: "translateY(-4px) scale(0.95)",
+                        },
+                    ];
+                    const animIn = [
+                        {
+                            opacity: 0,
+                            transform: "translateY(4px) scale(0.95)",
+                        },
+                        { opacity: 1, transform: "translateY(0) scale(1)" },
+                    ];
+                    const animOpts = {
+                        duration: 200,
+                        easing: "cubic-bezier(0.4, 0, 0.2, 1)",
+                    };
+
+                    const outAnim = nameEl.animate(animOut, animOpts);
+                    initialEl.animate(animOut, animOpts);
+
+                    outAnim.onfinish = () => {
+                        nameEl.innerText = res.user.name;
+                        initialEl.innerText = res.user.name
+                            .charAt(0)
+                            .toUpperCase();
+                        nameEl.animate(animIn, animOpts);
+                        initialEl.animate(animIn, animOpts);
+                    };
+                } else if (nameEl) {
+                    nameEl.innerText = res.user.name;
                 }
+
                 modalEditProfile.style.display = "none";
                 showToast("Profil berhasil diperbarui!", "success");
             } else {
@@ -753,7 +785,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 tbody.innerHTML = res.data
                     .map(
                         (o) => `
-                    <tr>
+                    <tr onclick="viewOrderDetail(${o.id})" style="cursor:pointer;">
                         <td style="font-weight:600; color:#3b82f6;">#${o.id}</td>
                         <td style="font-weight:500;">${o.customer ? o.customer.name : "-"}</td>
                         <td>${o.city ? o.city.name : "-"}</td>
@@ -765,8 +797,7 @@ document.addEventListener("DOMContentLoaded", () => {
                         <td>${statusBadge(o.status)}</td>
                         <td style="text-align:right;">
                             <div style="display:flex; gap:6px; justify-content:flex-end;">
-                                <button onclick="viewOrderDetail(${o.id})" class="admin-button admin-button--primary" style="height:30px; font-size:11px;">Detail</button>
-                                <button onclick="editOrderStatus(${o.id}, '${o.status}')" class="admin-button admin-button--secondary" style="height:30px; font-size:11px;">Update</button>
+                                <button onclick="event.stopPropagation(); editOrderStatus(${o.id}, '${o.status}')" class="admin-button admin-button--secondary" style="height:30px; font-size:11px;">Update</button>
                             </div>
                         </td>
                     </tr>`,
@@ -1462,13 +1493,12 @@ document.addEventListener("DOMContentLoaded", () => {
                 tbody.innerHTML = cities
                     .map(
                         (c) => `
-                    <tr>
+                    <tr onclick="viewCityAccus(${c.id}, '${c.name}')" style="cursor:pointer;">
                         <td style="font-weight:500;">${c.name}</td>
                         <td><span style="background:#e0e7ff; color:#3730a3; padding:2px 8px; border-radius:12px; font-weight:600; font-size:11px;">${c.percentage || 80}%</span></td>
                         <td style="text-align:right;">
                             <div style="display:flex; gap:6px; justify-content:flex-end;">
-                                <button onclick="viewCityAccus(${c.id}, '${c.name}')" class="admin-button admin-button--primary" style="height:30px; font-size:11px;">Detail Kota</button>
-                                <button onclick="deleteCity(${c.id})" class="admin-button admin-button--secondary" style="height:30px; font-size:11px; color:#ba1b2b;">Hapus</button>
+                                <button onclick="event.stopPropagation(); deleteCity(${c.id})" class="admin-button admin-button--secondary" style="height:30px; font-size:11px; color:#ba1b2b;">Hapus</button>
                             </div>
                         </td>
                     </tr>`,
