@@ -2,10 +2,10 @@
 
 namespace Database\Seeders;
 
+use Carbon\Carbon;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
-use Carbon\Carbon;
 
 class PickUpSystemSeeder extends Seeder
 {
@@ -71,18 +71,92 @@ class PickUpSystemSeeder extends Seeder
 
         // 3. Accus (12 Tipe Aki dengan berat_kering dalam kg)
         $accusData = [
-            ['id' => 1, 'name' => 'NS40Z', 'brands_id' => 1, 'berat_kering' => 5.20],
-            ['id' => 2, 'name' => 'NS60', 'brands_id' => 2, 'berat_kering' => 6.10],
-            ['id' => 3, 'name' => 'N50Z', 'brands_id' => 3, 'berat_kering' => 7.00],
-            ['id' => 4, 'name' => 'NS70', 'brands_id' => 1, 'berat_kering' => 8.20],
-            ['id' => 5, 'name' => 'N70Z', 'brands_id' => 4, 'berat_kering' => 9.50],
-            ['id' => 6, 'name' => 'DIN 55559', 'brands_id' => 5, 'berat_kering' => 11.80],
-            ['id' => 7, 'name' => 'YTX9-BS', 'brands_id' => 6, 'berat_kering' => 4.50],
-            ['id' => 8, 'name' => 'GTZ5S', 'brands_id' => 7, 'berat_kering' => 3.80],
-            ['id' => 9, 'name' => 'MF 55D23L', 'brands_id' => 8, 'berat_kering' => 10.20],
-            ['id' => 10, 'name' => 'NS40ZL', 'brands_id' => 1, 'berat_kering' => 5.40],
-            ['id' => 11, 'name' => 'N100', 'brands_id' => 2, 'berat_kering' => 15.50],
-            ['id' => 12, 'name' => 'N150', 'brands_id' => 3, 'berat_kering' => 22.00],
+            ['id' => 1, 'name' => 'N50', 'brands_id' => 1, 'berat_kering' => 11.80],
+            ['id' => 2, 'name' => 'N50Z', 'brands_id' => 1, 'berat_kering' => 13.30],
+            ['id' => 3, 'name' => 'NS60', 'brands_id' => 1, 'berat_kering' => 10.10],
+            ['id' => 4, 'name' => 'NS70', 'brands_id' => 1, 'berat_kering' => 15.90],
+            ['id' => 5, 'name' => 'N70', 'brands_id' => 1, 'berat_kering' => 15.60],
+            ['id' => 6, 'name' => 'N70Z', 'brands_id' => 1, 'berat_kering' => 18.60],
+            ['id' => 7, 'name' => 'N100', 'brands_id' => 1, 'berat_kering' => 23.60],
+            ['id' => 8, 'name' => 'N120', 'brands_id' => 1, 'berat_kering' => 28.60],
+            ['id' => 9, 'name' => 'N150', 'brands_id' => 1, 'berat_kering' => 31.60],
+            ['id' => 10, 'name' => 'N200', 'brands_id' => 1, 'berat_kering' => 45.40],
+            ['id' => 11, 'name' => 'NX100', 'brands_id' => 1, 'berat_kering' => 10.50],
+            ['id' => 12, 'name' => 'NX110', 'brands_id' => 1, 'berat_kering' => 14.80],
+            ['id' => 13, 'name' => 'NX120', 'brands_id' => 1, 'berat_kering' => 20.30],
+            ['id' => 14, 'name' => 'GM-5Z', 'brands_id' => 1, 'berat_kering' => 1.90],
+            ['id' => 15, 'name' => 'GTZ-5S', 'brands_id' => 1, 'berat_kering' => 1.40],
+            ['id' => 16, 'name' => 'GTZ-6', 'brands_id' => 1, 'berat_kering' => 2.20],
+            ['id' => 17, 'name' => 'GTZ-7', 'brands_id' => 1, 'berat_kering' => 2.30],
+            ['id' => 18, 'name' => 'YTX-9', 'brands_id' => 1, 'berat_kering' => 3.10],
+            ['id' => 19, 'name' => '12N10', 'brands_id' => 1, 'berat_kering' => 3.60],
+            ['id' => 20, 'name' => 'NX400-20', 'brands_id' => 1, 'berat_kering' => 54.00],
+            ['id' => 21, 'name' => '55530', 'brands_id' => 1, 'berat_kering' => 13.00],
+            ['id' => 22, 'name' => '55559-MF', 'brands_id' => 1, 'berat_kering' => 11.10],
+            ['id' => 23, 'name' => '58024', 'brands_id' => 1, 'berat_kering' => 15.40],
+            ['id' => 24, 'name' => '58024-SMF', 'brands_id' => 1, 'berat_kering' => 18.00],
+            ['id' => 25, 'name' => '60038', 'brands_id' => 1, 'berat_kering' => 19.80],
+            ['id' => 26, 'name' => '85D23L', 'brands_id' => 1, 'berat_kering' => 17.00],
+            ['id' => 27, 'name' => '34B19L', 'brands_id' => 1, 'berat_kering' => 7.80],
+            ['id' => 28, 'name' => '32B20L', 'brands_id' => 1, 'berat_kering' => 7.50],
+            ['id' => 29, 'name' => '36B20L', 'brands_id' => 1, 'berat_kering' => 9.30],
+            ['id' => 30, 'name' => '46B24R', 'brands_id' => 1, 'berat_kering' => 10.10],
+            ['id' => 31, 'name' => '55B23L', 'brands_id' => 1, 'berat_kering' => 11.00],
+            ['id' => 32, 'name' => '55B24L', 'brands_id' => 1, 'berat_kering' => 10.00],
+            ['id' => 33, 'name' => '65B24L', 'brands_id' => 1, 'berat_kering' => 15.90],
+            ['id' => 34, 'name' => '55D23L', 'brands_id' => 1, 'berat_kering' => 13.10],
+            ['id' => 35, 'name' => '80D26L', 'brands_id' => 1, 'berat_kering' => 14.80],
+            ['id' => 36, 'name' => '95D31L', 'brands_id' => 1, 'berat_kering' => 20.30],
+            ['id' => 37, 'name' => '105D13L-MF', 'brands_id' => 1, 'berat_kering' => 18.00],
+            ['id' => 38, 'name' => '75D31L', 'brands_id' => 1, 'berat_kering' => 18.60],
+            ['id' => 39, 'name' => 'DYNEX 105D31R-BH/105D31L', 'brands_id' => 1, 'berat_kering' => 23.60],
+            ['id' => 40, 'name' => 'GM-3', 'brands_id' => 1, 'berat_kering' => 1.60],
+            ['id' => 41, 'name' => 'GM-7', 'brands_id' => 1, 'berat_kering' => 2.30],
+            ['id' => 42, 'name' => 'GTZ-16', 'brands_id' => 1, 'berat_kering' => 4.00],
+            ['id' => 43, 'name' => 'YTZ-4V', 'brands_id' => 1, 'berat_kering' => 1.80],
+            ['id' => 44, 'name' => 'YTZ-5S', 'brands_id' => 1, 'berat_kering' => 3.10],
+            ['id' => 45, 'name' => 'YTZ-6', 'brands_id' => 1, 'berat_kering' => 3.10],
+            ['id' => 46, 'name' => 'YB-5L', 'brands_id' => 1, 'berat_kering' => 1.80],
+            ['id' => 47, 'name' => 'Y25L', 'brands_id' => 1, 'berat_kering' => 1.10],
+            ['id' => 48, 'name' => '58010', 'brands_id' => 1, 'berat_kering' => 18.00],
+            ['id' => 49, 'name' => '105D26L', 'brands_id' => 1, 'berat_kering' => 18.00],
+            ['id' => 50, 'name' => 'Accu UPS Kecil', 'brands_id' => 1, 'berat_kering' => 2.20],
+            ['id' => 51, 'name' => '6V7', 'brands_id' => 1, 'berat_kering' => 1.00],
+            ['id' => 52, 'name' => 'NS40', 'brands_id' => 1, 'berat_kering' => 7.80],
+            ['id' => 53, 'name' => 'N40Z', 'brands_id' => 1, 'berat_kering' => 9.00],
+            ['id' => 54, 'name' => '38B20L', 'brands_id' => 1, 'berat_kering' => 9.30],
+            ['id' => 55, 'name' => 'YB7-A', 'brands_id' => 1, 'berat_kering' => 2.8],
+            ['id' => 56, 'name' => 'NS40Z', 'brands_id' => 1, 'berat_kering' => 9.30],
+            ['id' => 57, 'name' => 'Battery Scraps', 'brands_id' => 1, 'berat_kering' => 1.00],
+            ['id' => 58, 'name' => '12N9-4B1M', 'brands_id' => 1, 'berat_kering' => 0.00],
+            ['id' => 59, 'name' => '44B19', 'brands_id' => 1, 'berat_kering' => 10.10],
+            ['id' => 60, 'name' => '562-19', 'brands_id' => 1, 'berat_kering' => 0.00],
+            ['id' => 61, 'name' => '355LN2', 'brands_id' => 1, 'berat_kering' => 13.40],
+            ['id' => 62, 'name' => 'N40', 'brands_id' => 1, 'berat_kering' => 7.26],
+            ['id' => 63, 'name' => '370LN3', 'brands_id' => 1, 'berat_kering' => 17.99],
+            ['id' => 64, 'name' => '75D26L/R', 'brands_id' => 1, 'berat_kering' => 16.55],
+            ['id' => 65, 'name' => 'VRLA / AGM 105Ah', 'brands_id' => 1, 'berat_kering' => 29.46],
+            ['id' => 66, 'name' => 'VRLA / AGM 92Ah', 'brands_id' => 1, 'berat_kering' => 25.10],
+            ['id' => 67, 'name' => 'VRLA / AGM 80Ah', 'brands_id' => 1, 'berat_kering' => 22.84],
+            ['id' => 69, 'name' => 'GMZ7-4A', 'brands_id' => 1, 'berat_kering' => 2.04],
+            ['id' => 70, 'name' => 'ITZ-5S-BS', 'brands_id' => 1, 'berat_kering' => 1.44],
+            ['id' => 71, 'name' => '12N5-3B', 'brands_id' => 1, 'berat_kering' => 1.10],
+            ['id' => 72, 'name' => 'IMF5Z-3S', 'brands_id' => 1, 'berat_kering' => 1.88],
+            ['id' => 73, 'name' => 'SMF M55565', 'brands_id' => 1, 'berat_kering' => 10.64],
+            ['id' => 74, 'name' => 'PMF M60044', 'brands_id' => 1, 'berat_kering' => 19.06],
+            ['id' => 75, 'name' => 'SMF M55B24RS', 'brands_id' => 1, 'berat_kering' => 8.46],
+            ['id' => 76, 'name' => 'SMF M80D23L', 'brands_id' => 1, 'berat_kering' => 12.10],
+            ['id' => 77, 'name' => 'SMF M80D26R', 'brands_id' => 1, 'berat_kering' => 12.40],
+            ['id' => 78, 'name' => 'EFB M56L', 'brands_id' => 1, 'berat_kering' => 9.84],
+            ['id' => 79, 'name' => 'EFB M56R', 'brands_id' => 1, 'berat_kering' => 9.58],
+            ['id' => 80, 'name' => 'EFB S120L', 'brands_id' => 1, 'berat_kering' => 17.06],
+            ['id' => 81, 'name' => 'N100ZL-MF', 'brands_id' => 1, 'berat_kering' => 17.82],
+            ['id' => 82, 'name' => 'PMF 56219', 'brands_id' => 1, 'berat_kering' => 12.10],
+            ['id' => 83, 'name' => 'PMF 57220', 'brands_id' => 1, 'berat_kering' => 13.26],
+            ['id' => 84, 'name' => 'PMF 58014', 'brands_id' => 1, 'berat_kering' => 15.82],
+            ['id' => 85, 'name' => 'PMF 68032', 'brands_id' => 1, 'berat_kering' => 39.38],
+            ['id' => 86, 'name' => 'PMF 73011SHD', 'brands_id' => 1, 'berat_kering' => 48.16],
+            ['id' => 87, 'name' => 'SMF 57113', 'brands_id' => 1, 'berat_kering' => 13.48],
         ];
         foreach ($accusData as $a) {
             DB::table('accus')->insert([
@@ -159,7 +233,7 @@ class PickUpSystemSeeder extends Seeder
 
         // 8. Generate 1,250 Dummy Transactions (Spread across 2024, 2025, 2026)
         $totalTransactions = 1250;
-        
+
         $firstNames = ['Agus', 'Budi', 'Candra', 'Dewi', 'Eko', 'Fajar', 'Gita', 'Hendra', 'Irfan', 'Joko', 'Kartika', 'Lestari', 'Mega', 'Novi', 'Oscar', 'Pratama', 'Rian', 'Sari', 'Taufik', 'Utami', 'Vina', 'Wawan', 'Yudi', 'Zainal'];
         $lastNames = ['Santoso', 'Wijaya', 'Pratama', 'Hidayat', 'Kusuma', 'Saputra', 'Laksana', 'Nugroho', 'Wibowo', 'Firmansyah', 'Suryono', 'Utomo', 'Subagyo', 'Gunawan', 'Setiawan'];
         $streets = ['Jl. Sudirman', 'Jl. Ahmad Yani', 'Jl. Diponegoro', 'Jl. Gajah Mada', 'Jl. Pahlawan', 'Jl. Gatot Subroto', 'Jl. Pemuda', 'Jl. Basuki Rahmat', 'Jl. Veteran', 'Jl. Raya Darmo'];
@@ -179,12 +253,12 @@ class PickUpSystemSeeder extends Seeder
             $fn = $firstNames[array_rand($firstNames)];
             $ln = $lastNames[array_rand($lastNames)];
             $custName = "$fn $ln";
-            
+
             $cityObj = $citiesData[array_rand($citiesData)];
             $street = $streets[array_rand($streets)];
             $streetNum = rand(1, 199);
             $pickupAddr = "$street No. $streetNum, {$cityObj['name']}";
-            
+
             // Random Date Generation across 2024 (35%), 2025 (45%), 2026 (20%)
             $yearRoll = rand(1, 100);
             if ($yearRoll <= 35) {
@@ -206,8 +280,8 @@ class PickUpSystemSeeder extends Seeder
 
             $bankId = rand(1, count($banksData));
             $accountNum = rand(1000000000, 9999999999);
-            $ktpNum = '3578' . rand(1000000000, 9999999999);
-            $phone = '08' . rand(111111111, 999999999);
+            $ktpNum = '3578'.rand(1000000000, 9999999999);
+            $phone = '08'.rand(111111111, 999999999);
 
             $customersBatch[] = [
                 'id' => $i,
@@ -218,7 +292,7 @@ class PickUpSystemSeeder extends Seeder
                 'long' => $cityObj['long'] + (rand(-50, 50) / 10000),
                 'ktp' => $ktpNum,
                 'account_name' => $custName,
-                'account_number' => (string)$accountNum,
+                'account_number' => (string) $accountNum,
                 'phone_number' => $phone,
                 'flag' => 1,
                 'banks_id' => $bankId,
@@ -245,7 +319,7 @@ class PickUpSystemSeeder extends Seeder
 
             // Pick 1 to 2 random distinct accus
             $accuKeys = array_rand($accusData, rand(1, 2));
-            if (!is_array($accuKeys)) {
+            if (! is_array($accuKeys)) {
                 $accuKeys = [$accuKeys];
             }
             $accuItem1 = $accusData[$accuKeys[0]];
@@ -321,7 +395,7 @@ class PickUpSystemSeeder extends Seeder
                         'id' => $transferIdCounter++,
                         'receipts_id' => $i,
                         'users_id' => rand(1, count($usersData)),
-                        'amount' => (float)$totalAmount,
+                        'amount' => (float) $totalAmount,
                         'transfer_date' => $receivedDate ?? $updatedAt,
                         'status' => 'COMPLETED',
                         'proof_image' => 'img/default-accu.png',
@@ -337,8 +411,12 @@ class PickUpSystemSeeder extends Seeder
                 DB::table('orders')->insert($ordersBatch);
                 DB::table('receipts')->insert($receiptsBatch);
                 DB::table('accus_has_receipts')->insert($accusHasReceiptsBatch);
-                if (!empty($shipmentsBatch)) DB::table('shipments')->insert($shipmentsBatch);
-                if (!empty($transfersBatch)) DB::table('transfers')->insert($transfersBatch);
+                if (! empty($shipmentsBatch)) {
+                    DB::table('shipments')->insert($shipmentsBatch);
+                }
+                if (! empty($transfersBatch)) {
+                    DB::table('transfers')->insert($transfersBatch);
+                }
 
                 $customersBatch = [];
                 $ordersBatch = [];
@@ -350,13 +428,17 @@ class PickUpSystemSeeder extends Seeder
         }
 
         // Insert remaining rows
-        if (!empty($customersBatch)) {
+        if (! empty($customersBatch)) {
             DB::table('customers')->insert($customersBatch);
             DB::table('orders')->insert($ordersBatch);
             DB::table('receipts')->insert($receiptsBatch);
             DB::table('accus_has_receipts')->insert($accusHasReceiptsBatch);
-            if (!empty($shipmentsBatch)) DB::table('shipments')->insert($shipmentsBatch);
-            if (!empty($transfersBatch)) DB::table('transfers')->insert($transfersBatch);
+            if (! empty($shipmentsBatch)) {
+                DB::table('shipments')->insert($shipmentsBatch);
+            }
+            if (! empty($transfersBatch)) {
+                DB::table('transfers')->insert($transfersBatch);
+            }
         }
     }
 }
