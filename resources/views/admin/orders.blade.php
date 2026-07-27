@@ -342,7 +342,8 @@
         <div class="admin-panel" style="width:540px; max-height:90vh; overflow-y:auto;">
             <div class="admin-panel__head" style="align-items: flex-start;">
                 <h2>Detail Transaksi</h2>
-                <button type="button" class="admin-button admin-button--secondary" style="padding: 6px 12px; height: 34px; white-space: nowrap; flex-shrink: 0;"
+                <button type="button" class="admin-button admin-button--secondary"
+                    style="padding: 6px 12px; height: 34px; white-space: nowrap; flex-shrink: 0;"
                     onclick="document.getElementById('modal-detail-order').style.display='none'">Tutup</button>
             </div>
             <div style="padding-bottom:20px;">
@@ -445,7 +446,8 @@
         <div class="admin-panel" style="width:600px; max-width:95vw; max-height:90vh; overflow-y:auto; color: #fff;">
             <div class="admin-panel__head" style="align-items: flex-start;">
                 <h2 style="color: #fff;">Rincian Harga</h2>
-                <button type="button" class="admin-button admin-button--primary" style="padding: 6px 12px; height: 34px; white-space: nowrap; flex-shrink: 0; background-color: #2563eb; color: #fff; border-color: #2563eb;"
+                <button type="button" class="admin-button admin-button--primary"
+                    style="padding: 6px 12px; height: 34px; white-space: nowrap; flex-shrink: 0; background-color: #2563eb; color: #fff; border-color: #2563eb;"
                     onclick="document.getElementById('modal-order-summary').style.display='none'">Tutup Rincian</button>
             </div>
             <div style="padding-bottom:20px;">
@@ -453,7 +455,7 @@
                     <table style="width:100%; min-width:400px; font-size:13px; border-collapse:collapse; color: #e5e7eb;">
                         <thead>
                             <tr style="border-bottom:2px solid #4b5563;">
-                                <th style="text-align:left; padding:8px 0; color:#9ca3af; font-weight:600;">AKI / BRAND</th>
+                                <th style="text-align:left; padding:8px 0; color:#9ca3af; font-weight:600;">AKI</th>
                                 <th style="text-align:center; padding:8px 0; color:#9ca3af; font-weight:600;">QTY</th>
                                 <th style="text-align:right; padding:8px 0; color:#9ca3af; font-weight:600;">HARGA UNIT</th>
                                 <th style="text-align:right; padding:8px 0; color:#9ca3af; font-weight:600;">SUBTOTAL</th>

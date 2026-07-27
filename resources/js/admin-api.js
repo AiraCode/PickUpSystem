@@ -934,34 +934,39 @@ document.addEventListener("DOMContentLoaded", () => {
             const radios = document.querySelectorAll(
                 'input[name="order_status"]',
             );
-            
+
             let allowedOptions = [currentStatus];
-            if (currentStatus === 'pending') {
-                allowedOptions = ['pending', 'processing', 'completed', 'cancelled'];
-            } else if (currentStatus === 'processing') {
-                allowedOptions = ['processing', 'completed', 'cancelled'];
-            } else if (currentStatus === 'completed') {
-                allowedOptions = ['completed'];
-            } else if (currentStatus === 'cancelled') {
-                allowedOptions = ['cancelled'];
+            if (currentStatus === "pending") {
+                allowedOptions = [
+                    "pending",
+                    "processing",
+                    "completed",
+                    "cancelled",
+                ];
+            } else if (currentStatus === "processing") {
+                allowedOptions = ["processing", "completed", "cancelled"];
+            } else if (currentStatus === "completed") {
+                allowedOptions = ["completed"];
+            } else if (currentStatus === "cancelled") {
+                allowedOptions = ["cancelled"];
             }
 
             radios.forEach((r) => {
                 r.checked = r.value === currentStatus;
                 const card = r.closest("label");
-                
+
                 if (!allowedOptions.includes(r.value)) {
                     r.disabled = true;
-                    card.style.opacity = '0.4';
-                    card.style.cursor = 'not-allowed';
-                    card.style.pointerEvents = 'none';
+                    card.style.opacity = "0.4";
+                    card.style.cursor = "not-allowed";
+                    card.style.pointerEvents = "none";
                 } else {
                     r.disabled = false;
-                    card.style.opacity = '1';
-                    card.style.cursor = 'pointer';
-                    card.style.pointerEvents = 'auto';
+                    card.style.opacity = "1";
+                    card.style.cursor = "pointer";
+                    card.style.pointerEvents = "auto";
                 }
-                
+
                 card.style.borderColor = r.checked ? "#3b82f6" : "#e5e7eb";
             });
 
@@ -1048,9 +1053,17 @@ document.addEventListener("DOMContentLoaded", () => {
             document.getElementById("detail-order-city").innerText = o.city
                 ? o.city.name
                 : "-";
-            const deliveryMethodText = o.delivery_method === 'courier' ? 'Kurir PickUpSystem' : (o.delivery_method === 'warehouse' ? 'Kirim Sendiri (Gudang)' : (o.delivery_method || '-'));
-            const deliveryMethodEl = document.getElementById("detail-order-delivery-method");
-            if (deliveryMethodEl) deliveryMethodEl.innerText = deliveryMethodText;
+            const deliveryMethodText =
+                o.delivery_method === "courier"
+                    ? "Kurir PickUpSystem"
+                    : o.delivery_method === "warehouse"
+                      ? "Kirim Sendiri (Gudang)"
+                      : o.delivery_method || "-";
+            const deliveryMethodEl = document.getElementById(
+                "detail-order-delivery-method",
+            );
+            if (deliveryMethodEl)
+                deliveryMethodEl.innerText = deliveryMethodText;
             document.getElementById("detail-order-status").innerHTML =
                 statusBadge(o.status);
             document.getElementById("detail-order-time").innerText =
@@ -1186,7 +1199,7 @@ document.addEventListener("DOMContentLoaded", () => {
                             subtotal += sub;
 
                             itemsHtml += `<tr style="border-bottom:1px solid #f1f5f9;">
-                                <td style="padding:10px 0; font-weight:500; color:#111318;">${item.name || "-"} <span style="font-weight:400; color:#6d727c; font-size:12px;">${item.brand || "-"}</span></td>
+                                <td style="padding:10px 0; font-weight:500; color:#111318;">${item.name || "-"} 
                                 <td style="text-align:center; padding:10px 0; color:#4a4f59;">${qty} unit</td>
                                 <td style="text-align:right; padding:10px 0; color:#4a4f59;">${formatRp(price)}</td>
                                 <td style="text-align:right; padding:10px 0; font-weight:600; color:#111318;">${formatRp(sub)}</td>
@@ -1479,7 +1492,6 @@ document.addEventListener("DOMContentLoaded", () => {
                     .map(
                         (a) => `
                     <tr>
-                        <td style="font-weight:500;">${a.brand}</td>
                         <td>${a.name}</td>
                         <td><span style="font-weight:600; color:#2563eb;">${a.berat_kering} kg</span></td>
                         <td style="text-align:right;">
@@ -1510,7 +1522,9 @@ document.addEventListener("DOMContentLoaded", () => {
         if (citySearchInput) {
             citySearchInput.addEventListener("input", (e) => {
                 const term = e.target.value.toLowerCase();
-                const filtered = cachedCities.filter(c => c.name.toLowerCase().includes(term));
+                const filtered = cachedCities.filter((c) =>
+                    c.name.toLowerCase().includes(term),
+                );
                 renderCities(filtered);
             });
         }
@@ -1519,9 +1533,10 @@ document.addEventListener("DOMContentLoaded", () => {
         if (accuSearchInput) {
             accuSearchInput.addEventListener("input", (e) => {
                 const term = e.target.value.toLowerCase();
-                const filtered = cachedAccus.filter(a => 
-                    a.brand.toLowerCase().includes(term) || 
-                    a.name.toLowerCase().includes(term)
+                const filtered = cachedAccus.filter(
+                    (a) =>
+                        a.brand.toLowerCase().includes(term) ||
+                        a.name.toLowerCase().includes(term),
                 );
                 renderAccus(filtered);
             });
@@ -1554,7 +1569,6 @@ document.addEventListener("DOMContentLoaded", () => {
                     .map(
                         (a) => `
                     <tr>
-                        <td style="font-weight:500;">${a.brand}</td>
                         <td>${a.name}</td>
                         <td>${a.berat_kering} kg</td>
                         <td style="font-weight:700; color:#10b981; text-align:right;">${rupiah(a.price)}</td>
@@ -1642,7 +1656,7 @@ document.addEventListener("DOMContentLoaded", () => {
                         .map(
                             (a) =>
                                 `<div style="display:flex; justify-content:space-between; align-items:center; padding:4px 0; border-bottom:1px solid #f3f4f6;">
-                                    <span>${a.brand} - ${a.name}</span>
+                                    <span>${a.name}</span>
                                     <button type="button" onclick="restoreAccu(${a.id})" class="admin-button admin-button--primary" style="height:24px; padding:0 8px; font-size:10px;">Pulihkan</button>
                                 </div>`,
                         )
@@ -1919,13 +1933,16 @@ document.addEventListener("DOMContentLoaded", () => {
         loadStorages();
         loadTrashedStorages();
 
-        const storageSearchInput = document.getElementById("storage-search-input");
+        const storageSearchInput = document.getElementById(
+            "storage-search-input",
+        );
         if (storageSearchInput) {
             storageSearchInput.addEventListener("input", (e) => {
                 const term = e.target.value.toLowerCase();
-                const filtered = cachedStorages.filter(s => 
-                    s.name.toLowerCase().includes(term) || 
-                    (s.address && s.address.toLowerCase().includes(term))
+                const filtered = cachedStorages.filter(
+                    (s) =>
+                        s.name.toLowerCase().includes(term) ||
+                        (s.address && s.address.toLowerCase().includes(term)),
                 );
                 renderStorages(filtered);
             });
@@ -2259,7 +2276,6 @@ document.addEventListener("DOMContentLoaded", () => {
                         .map(
                             (a) => `
                         <tr>
-                            <td style="font-weight:500;">${a.brand || "-"}</td>
                             <td>${a.name}</td>
                             <td style="text-align:right; font-weight:600; color:#1d4ed8;">${Number(a.total_sold).toLocaleString("id-ID")} unit</td>
                         </tr>
