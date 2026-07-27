@@ -214,7 +214,7 @@ class OrderController extends Controller
             Http::withoutVerifying()
                 ->withHeaders([
                     'Authorization' => $token,
-                ])->post('https://api.fonnte.com/send', [
+                ])->post('http://localhost:3000/send', [
                     'target' => $validated['phone_number'], // Menggunakan 'phone_number' sesuai aturan validasi
                     'message' => $message,
                 ]);
