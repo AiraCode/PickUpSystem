@@ -28,6 +28,7 @@ body.admin-shell {
         BlinkMacSystemFont,
         "Segoe UI",
         sans-serif;
+    overflow-x: hidden;
 }
 
 button,
@@ -711,7 +712,7 @@ select:focus-visible {
 .admin-content {
     margin: 0 auto;
     max-width: 1550px;
-    padding: 40px 40px 56px;
+    padding: 32px 20px 56px;
     width: 100%;
 }
 
@@ -1035,7 +1036,7 @@ select:focus-visible {
     border-top: 1px solid #f0f1f2;
     color: #555a63;
     font-size: 12px;
-    padding: 18px 22px;
+    padding: 12px 22px;
 }
 
 .admin-table-empty {
@@ -1765,11 +1766,7 @@ html.admin-dark-mode .leaflet-container {
     background: #0f172a;
 }
 
-.sidebar-toggle,
-.sidebar-open,
-.sidebar-close {
-    display: none !important;
-}
+
 
 .admin-sidebar.collapsed .admin-nav__link::after {
     content: attr(data-tooltip);

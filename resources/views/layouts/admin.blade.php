@@ -260,36 +260,49 @@
         let hoverTimeout = null;
         let autoExpanded = false;
 
-        function updateSidebar(collapsed) {
+        function updateSidebar(collapsed, save = true) {
             sidebar.classList.toggle('collapsed', collapsed);
             if (footer) {
                 footer.classList.toggle('expanded', collapsed);
             }
-            localStorage.setItem('sidebarCollapsed', collapsed);
+            if (save) {
+                localStorage.setItem('sidebarCollapsed', collapsed);
+            }
         }
 
         const savedState = localStorage.getItem('sidebarCollapsed') !== 'false';
         updateSidebar(savedState);
 
-        sidebar.addEventListener('mouseenter', () => {
-            if (sidebar.classList.contains('collapsed')) {
-                hoverTimeout = setTimeout(() => {
-                    updateSidebar(false);
-                    autoExpanded = true;
-                }, 1500);
-            }
-        });
+        const sidebarToggleBtn = document.getElementById('sidebarToggle');
+        if (sidebarToggleBtn) {
+            sidebarToggleBtn.addEventListener('click', () => {
+                const isCurrentlyCollapsed = sidebar.classList.contains('collapsed');
+                updateSidebar(!isCurrentlyCollapsed);
+                autoExpanded = false; // reset hover state on manual click
+            });
+        }
 
-        sidebar.addEventListener('mouseleave', () => {
-            if (hoverTimeout) {
-                clearTimeout(hoverTimeout);
-                hoverTimeout = null;
-            }
-            if (autoExpanded) {
-                updateSidebar(true);
-                autoExpanded = false;
-            }
-        });
+        if (window.matchMedia('(hover: hover)').matches) {
+            sidebar.addEventListener('mouseenter', () => {
+                if (sidebar.classList.contains('collapsed')) {
+                    hoverTimeout = setTimeout(() => {
+                        updateSidebar(false, false);
+                        autoExpanded = true;
+                    }, 1500);
+                }
+            });
+
+            sidebar.addEventListener('mouseleave', () => {
+                if (hoverTimeout) {
+                    clearTimeout(hoverTimeout);
+                    hoverTimeout = null;
+                }
+                if (autoExpanded) {
+                    updateSidebar(true, false);
+                    autoExpanded = false;
+                }
+            });
+        }
 
         const themeToggleBtn = document.getElementById('admin-theme-toggle');
         const themeText = document.getElementById('admin-theme-text');

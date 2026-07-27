@@ -17,7 +17,22 @@
 <article class="admin-panel admin-table-panel">
     <div class="admin-panel__head">
         <div><h2>Daftar Gudang</h2></div>
-        <button class="admin-button admin-button--primary" onclick="openAddStorageModal()">Tambah Gudang</button>
+        <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
+            <div style="position:relative; width:240px;">
+                <input type="text" id="storage-search-input" class="admin-select"
+                    style="width:100%; padding:7px 32px 7px 12px; font-size:12px; border-radius:6px; background:#fff;"
+                    placeholder="Cari nama gudang, alamat...">
+                <span
+                    style="position:absolute; right:10px; top:50%; transform:translateY(-50%); color:#9ca3af; pointer-events:none;">
+                    <svg viewBox="0 0 24 24"
+                        style="width:14px; height:14px; fill:none; stroke:currentColor; stroke-width:2;">
+                        <circle cx="11" cy="11" r="8" />
+                        <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                    </svg>
+                </span>
+            </div>
+            <button class="admin-button admin-button--primary" onclick="openAddStorageModal()">Tambah Gudang</button>
+        </div>
     </div>
     <div class="admin-table-wrap">
         <table class="admin-table">
@@ -89,11 +104,12 @@
 
 <div id="modal-view-map" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,.45); z-index:100; align-items:center; justify-content:center;">
     <div class="admin-panel" style="width:550px;">
-        <div class="admin-panel__head"><h2 id="view-map-title">Lokasi Gudang</h2></div>
-        <div id="map-view" style="height:350px; border-radius:8px; border:1px solid #e5e7eb; z-index:1;"></div>
-        <div style="display:flex; justify-content:flex-end; margin-top:12px;">
-            <button type="button" class="admin-button admin-button--primary" onclick="document.getElementById('modal-view-map').style.display='none'">Tutup</button>
+        <div class="admin-panel__head" style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:12px;">
+            <h2 id="view-map-title">Lokasi Gudang</h2>
+            <button type="button" class="admin-button admin-button--primary" style="padding:6px 12px; height:34px;" onclick="document.getElementById('modal-view-map').style.display='none'">Tutup</button>
         </div>
+        <div id="map-view" style="height:350px; border-radius:8px; border:1px solid #e5e7eb; z-index:1;"></div>
+
     </div>
 </div>
 @endsection

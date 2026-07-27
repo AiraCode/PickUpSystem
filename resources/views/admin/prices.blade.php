@@ -38,7 +38,22 @@
             <div>
                 <h2>Area Layanan (Kota)</h2>
             </div>
-            <button class="admin-button admin-button--primary" onclick="openAddCityModal()">Tambah Kota</button>
+            <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
+                <div style="position:relative; width:240px;">
+                    <input type="text" id="city-search-input" class="admin-select"
+                        style="width:100%; padding:7px 32px 7px 12px; font-size:12px; border-radius:6px; background:#fff;"
+                        placeholder="Cari nama kota...">
+                    <span
+                        style="position:absolute; right:10px; top:50%; transform:translateY(-50%); color:#9ca3af; pointer-events:none;">
+                        <svg viewBox="0 0 24 24"
+                            style="width:14px; height:14px; fill:none; stroke:currentColor; stroke-width:2;">
+                            <circle cx="11" cy="11" r="8" />
+                            <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                        </svg>
+                    </span>
+                </div>
+                <button class="admin-button admin-button--primary" onclick="openAddCityModal()">Tambah Kota</button>
+            </div>
         </div>
         <div class="admin-table-wrap">
             <table class="admin-table">
@@ -63,9 +78,26 @@
     <article class="admin-panel admin-table-panel" style="margin-top:20px;">
         <div class="admin-panel__head">
             <div>
-                <h2>Daftar Jenis Aki</h2>
+                <h3 style="font-size:16px; margin:0;">Daftar Jenis Aki (<span id="accu-total"></span>)</h3>
             </div>
-            <button class="admin-button admin-button--primary" onclick="openAddAccuModal()">Tambah Aki</button>
+            <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
+                <div style="position:relative; width:240px;">
+                    <input type="text" id="accu-search-input" class="admin-select"
+                        style="width:100%; padding:7px 32px 7px 12px; font-size:12px; border-radius:6px; background:#fff;"
+                        placeholder="Cari brand, model, ukuran...">
+                    <span
+                        style="position:absolute; right:10px; top:50%; transform:translateY(-50%); color:#9ca3af; pointer-events:none;">
+                        <svg viewBox="0 0 24 24"
+                            style="width:14px; height:14px; fill:none; stroke:currentColor; stroke-width:2;">
+                            <circle cx="11" cy="11" r="8" />
+                            <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                        </svg>
+                    </span>
+                </div>
+                <button class="admin-button admin-button--primary" onclick="document.getElementById('modal-add-accu').style.display='flex'">
+                    <svg viewBox="0 0 24 24" style="width:16px; height:16px; margin-right:6px; fill:none; stroke:currentColor; stroke-width:2;"><path d="M12 5v14M5 12h14"></path></svg> Tambah Aki
+                </button>
+            </div>
         </div>
         <div class="admin-table-wrap">
             <table class="admin-table">
@@ -119,11 +151,13 @@
         <div id="modal-view-city-prices"
         style="display:none; position:fixed; inset:0; background:rgba(0,0,0,.45); z-index:100; align-items:center; justify-content:center;">
         <div class="admin-panel" style="width:780px; max-width:92vw; max-height:90vh; overflow-y:auto; overflow-x:hidden;">
-            <div class="admin-panel__head">
+            <div class="admin-panel__head" style="align-items: flex-start;">
                 <div>
                     <h2 id="city-price-modal-title">Daftar Harga Aki Kota</h2>
                     <p style="font-size:12px; color:#6d727c; margin-top:2px;">Atur persentase (%) untuk kota ini di bagian atas. Harga aki dihitung otomatis dengan rumus.</p>
                 </div>
+                <button type="button" class="admin-button admin-button--secondary" style="padding: 6px 12px; height: 34px; white-space: nowrap; flex-shrink: 0;"
+                    onclick="document.getElementById('modal-view-city-prices').style.display='none'">Tutup</button>
             </div>
 
                         <form id="form-city-detail-percentage" style="display:flex; align-items:center; gap:12px; background:#f8fafc; border:1px solid #e2e8f0; padding:12px 16px; border-radius:8px; margin-top:10px;">
@@ -151,10 +185,7 @@
                     </tbody>
                 </table>
             </div>
-            <div style="display:flex; justify-content:flex-end; margin-top:16px;">
-                <button type="button" class="admin-button admin-button--secondary"
-                    onclick="document.getElementById('modal-view-city-prices').style.display='none'">Tutup</button>
-            </div>
+
         </div>
     </div>
 

@@ -1443,12 +1443,10 @@ document.addEventListener("DOMContentLoaded", () => {
             });
         }
 
-        const loadCities = async () => {
-            const res = await fetchApi("/cities");
-            cachedCities = res.data || [];
+        const renderCities = (cities) => {
             const tbody = document.getElementById("cities-tbody");
-            if (cachedCities.length) {
-                tbody.innerHTML = cachedCities
+            if (cities.length) {
+                tbody.innerHTML = cities
                     .map(
                         (c) => `
                     <tr>
@@ -1468,12 +1466,16 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         };
 
-        const loadAccus = async () => {
-            const res = await fetchApi("/accus");
-            cachedAccus = res.data || [];
+        const loadCities = async () => {
+            const res = await fetchApi("/cities");
+            cachedCities = res.data || [];
+            renderCities(cachedCities);
+        };
+
+        const renderAccus = (accus) => {
             const tbody = document.getElementById("accus-tbody");
-            if (cachedAccus.length) {
-                tbody.innerHTML = cachedAccus
+            if (accus.length) {
+                tbody.innerHTML = accus
                     .map(
                         (a) => `
                     <tr>
@@ -1489,12 +1491,41 @@ document.addEventListener("DOMContentLoaded", () => {
             } else {
                 tbody.innerHTML = `<tr><td colspan="4"><div class="admin-table-empty"><strong>Belum ada aki</strong></div></td></tr>`;
             }
+            const accuTotal = document.getElementById("accu-total");
+            if (accuTotal) accuTotal.innerText = accus.length;
+        };
+
+        const loadAccus = async () => {
+            const res = await fetchApi("/accus");
+            cachedAccus = res.data || [];
+            renderAccus(cachedAccus);
         };
 
         loadSettings();
         loadCities();
         loadAccus();
         loadPriceHistory();
+
+        const citySearchInput = document.getElementById("city-search-input");
+        if (citySearchInput) {
+            citySearchInput.addEventListener("input", (e) => {
+                const term = e.target.value.toLowerCase();
+                const filtered = cachedCities.filter(c => c.name.toLowerCase().includes(term));
+                renderCities(filtered);
+            });
+        }
+
+        const accuSearchInput = document.getElementById("accu-search-input");
+        if (accuSearchInput) {
+            accuSearchInput.addEventListener("input", (e) => {
+                const term = e.target.value.toLowerCase();
+                const filtered = cachedAccus.filter(a => 
+                    a.brand.toLowerCase().includes(term) || 
+                    a.name.toLowerCase().includes(term)
+                );
+                renderAccus(filtered);
+            });
+        }
 
         window.viewCityAccus = async (cityId, cityName) => {
             activeCityId = cityId;
@@ -1826,11 +1857,12 @@ document.addEventListener("DOMContentLoaded", () => {
             }, 200);
         };
 
-        const loadStorages = async () => {
-            const res = await fetchApi("/storages");
+        let cachedStorages = [];
+
+        const renderStorages = (storages) => {
             const tbody = document.getElementById("storages-tbody");
-            if (res.data && res.data.length) {
-                tbody.innerHTML = res.data
+            if (storages.length) {
+                tbody.innerHTML = storages
                     .map(
                         (s) => `
                     <tr>
@@ -1848,6 +1880,12 @@ document.addEventListener("DOMContentLoaded", () => {
             } else {
                 tbody.innerHTML = `<tr><td colspan="3"><div class="admin-table-empty"><strong>Belum ada gudang</strong></div></td></tr>`;
             }
+        };
+
+        const loadStorages = async () => {
+            const res = await fetchApi("/storages");
+            cachedStorages = res.data || [];
+            renderStorages(cachedStorages);
         };
         const loadTrashedStorages = async () => {
             const res = await fetchApi("/storages/trashed");
@@ -1880,6 +1918,18 @@ document.addEventListener("DOMContentLoaded", () => {
 
         loadStorages();
         loadTrashedStorages();
+
+        const storageSearchInput = document.getElementById("storage-search-input");
+        if (storageSearchInput) {
+            storageSearchInput.addEventListener("input", (e) => {
+                const term = e.target.value.toLowerCase();
+                const filtered = cachedStorages.filter(s => 
+                    s.name.toLowerCase().includes(term) || 
+                    (s.address && s.address.toLowerCase().includes(term))
+                );
+                renderStorages(filtered);
+            });
+        }
 
         document
             .getElementById("form-add-storage")

@@ -340,8 +340,10 @@
     <div id="modal-detail-order"
         style="display:none; position:fixed; inset:0; background:rgba(0,0,0,.45); z-index:100; align-items:center; justify-content:center;">
         <div class="admin-panel" style="width:540px; max-height:90vh; overflow-y:auto;">
-            <div class="admin-panel__head">
+            <div class="admin-panel__head" style="align-items: flex-start;">
                 <h2>Detail Transaksi</h2>
+                <button type="button" class="admin-button admin-button--secondary" style="padding: 6px 12px; height: 34px; white-space: nowrap; flex-shrink: 0;"
+                    onclick="document.getElementById('modal-detail-order').style.display='none'">Tutup</button>
             </div>
             <div style="padding-bottom:20px;">
                 <div style="margin-bottom:18px; border-bottom:1px solid #e5e7eb; padding-bottom:14px;">
@@ -431,11 +433,9 @@
                     </table>
                 </div>
             </div>
-            <div style="display:flex; justify-content:space-between; padding-top:10px; border-top:1px solid #e5e7eb;">
+            <div style="display:flex; justify-content:flex-start; padding-top:10px; border-top:1px solid #e5e7eb;">
                 <button type="button" class="admin-button admin-button--secondary" id="btn-open-order-summary">Cek Rincian
                     Harga</button>
-                <button type="button" class="admin-button admin-button--primary"
-                    onclick="document.getElementById('modal-detail-order').style.display='none'">Tutup</button>
             </div>
         </div>
     </div>
@@ -443,8 +443,10 @@
     <div id="modal-order-summary"
         style="display:none; position:fixed; inset:0; background:rgba(0,0,0,.65); z-index:160; align-items:center; justify-content:center;">
         <div class="admin-panel" style="width:600px; max-width:95vw; max-height:90vh; overflow-y:auto; color: #fff;">
-            <div class="admin-panel__head">
+            <div class="admin-panel__head" style="align-items: flex-start;">
                 <h2 style="color: #fff;">Rincian Harga</h2>
+                <button type="button" class="admin-button admin-button--primary" style="padding: 6px 12px; height: 34px; white-space: nowrap; flex-shrink: 0; background-color: #2563eb; color: #fff; border-color: #2563eb;"
+                    onclick="document.getElementById('modal-order-summary').style.display='none'">Tutup Rincian</button>
             </div>
             <div style="padding-bottom:20px;">
                 <div style="overflow-x:auto; width:100%; margin-bottom:16px;">
@@ -484,11 +486,7 @@
                     </div>
                 </div>
             </div>
-            <div style="display:flex; justify-content:flex-end; padding-top:10px; border-top:1px solid #4b5563;">
-                <button type="button" class="admin-button admin-button--primary"
-                    style="background-color: #2563eb; color: #fff;"
-                    onclick="document.getElementById('modal-order-summary').style.display='none'">Tutup Rincian</button>
-            </div>
+
         </div>
     </div>
 
