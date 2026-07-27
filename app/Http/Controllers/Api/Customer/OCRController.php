@@ -1,0 +1,61 @@
+<?php
+
+namespace App\Http\Controllers\Api\Customer;
+
+use App\Http\Controllers\Controller;
+use App\Services\OCRSpaceService;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
+
+//OCR ekstraksi nama dari KTP/SIM
+class OCRController extends Controller
+{
+    protected OCRSpaceService $ocr;
+
+    public function __construct(OCRSpaceService $ocr)
+    {
+        $this->ocr = $ocr;
+    }
+
+    public function extractName(Request $request): JsonResponse
+    {
+        $request->validate([
+            'image' => 'required|file|mimes:png,jpg,jpeg|max:1024',
+        ]);
+
+        $result = $this->ocr->extractText($request->file('image'));
+
+        if (!empty($result['IsErroredOnProcessing'])) {
+            $errorMsg = is_array($result['ErrorMessage']) ? implode(', ', $result['ErrorMessage']) : ($result['ErrorMessage'] ?? 'Unknown error');
+            return response()->json([
+                'message' => 'OCR gagal memproses gambar: ' . $errorMsg,
+                'name' => null,
+                'debug' => $result
+            ], 422);
+        }
+
+        $text = $result['ParsedResults'][0]['ParsedText'] ?? null;
+
+        if (!$text) {
+            return response()->json([
+                'message' => 'Tidak dapat membaca teks dari gambar.',
+                'name' => null,
+            ], 422);
+        }
+
+        $name = $this->ocr->extractName($text);
+
+        if (!$name) {
+            return response()->json([
+                'message' => 'Nama tidak ditemukan pada gambar. Pastikan foto KTP/SIM jelas dan tidak terpotong.',
+                'name' => null,
+                'raw_text' => $text,
+            ], 422);
+        }
+
+        return response()->json([
+            'message' => 'Nama berhasil diekstrak.',
+            'name' => $name,
+        ]);
+    }
+}
