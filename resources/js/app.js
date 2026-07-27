@@ -166,6 +166,79 @@ const formatRupiah = (number) => {
     return "Rp " + Number(number).toLocaleString("id-ID");
 };
 
+    window.userConfirm = function (message) {
+        return new Promise((resolve) => {
+            const overlay = document.createElement("div");
+            overlay.className = "user-confirm-overlay";
+            overlay.innerHTML = `
+                <div class="user-confirm-modal">
+                    <h4>Konfirmasi</h4>
+                    <p>${message}</p>
+                    <div class="user-confirm-actions">
+                        <button type="button" class="user-button user-button--secondary" id="user-confirm-cancel">Batal</button>
+                        <button type="button" class="user-button user-button--primary" style="background:var(--user-red);border-color:var(--user-red);" id="user-confirm-ok">Hapus</button>
+                    </div>
+                </div>
+            `;
+
+            document.body.appendChild(overlay);
+            overlay.getBoundingClientRect();
+            overlay.classList.add("is-visible");
+
+            const close = (result) => {
+                overlay.classList.remove("is-visible");
+                setTimeout(() => {
+                    overlay.remove();
+                    resolve(result);
+                }, 200);
+            };
+
+            overlay.querySelector("#user-confirm-cancel").addEventListener("click", () => close(false));
+            overlay.querySelector("#user-confirm-ok").addEventListener("click", () => close(true));
+            overlay.addEventListener("click", (e) => {
+                if (e.target === overlay) close(false);
+            });
+        });
+    };
+
+    window.userAlert = function (message) {
+        return new Promise((resolve) => {
+            const overlay = document.createElement("div");
+            overlay.className = "user-confirm-overlay";
+            overlay.innerHTML = `
+                <div class="user-confirm-modal" style="text-align: center; max-width: 320px; padding: 32px 24px;">
+                    <div style="margin-bottom: 16px; color: #f59e0b; display: flex; justify-content: center;">
+                        <svg viewBox="0 0 24 24" width="48" height="48" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+                            <line x1="12" y1="9" x2="12" y2="13"></line>
+                            <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                        </svg>
+                    </div>
+                    <h4 style="margin-bottom: 8px;">Pemberitahuan</h4>
+                    <p style="margin-bottom: 24px;">${message}</p>
+                    <button type="button" class="user-button user-button--primary" style="width: 100%; border-radius: 8px;" id="user-alert-ok">Tutup</button>
+                </div>
+            `;
+
+            document.body.appendChild(overlay);
+            overlay.getBoundingClientRect();
+            overlay.classList.add("is-visible");
+
+            const close = () => {
+                overlay.classList.remove("is-visible");
+                setTimeout(() => {
+                    overlay.remove();
+                    resolve();
+                }, 200);
+            };
+
+            overlay.querySelector("#user-alert-ok").addEventListener("click", close);
+            overlay.addEventListener("click", (e) => {
+                if (e.target === overlay) close();
+            });
+        });
+    };
+
 const renderUserCart = () => {
     if (!cartItemsContainer || !cartEmpty) return;
 
@@ -210,40 +283,7 @@ const renderUserCart = () => {
         pickupLabel.textContent = formatRupiah(effectiveFee);
     }
 
-    window.userConfirm = function (message) {
-        return new Promise((resolve) => {
-            const overlay = document.createElement("div");
-            overlay.className = "user-confirm-overlay";
-            overlay.innerHTML = `
-                <div class="user-confirm-modal">
-                    <h4>Konfirmasi</h4>
-                    <p>${message}</p>
-                    <div class="user-confirm-actions">
-                        <button type="button" class="user-button user-button--secondary" id="user-confirm-cancel">Batal</button>
-                        <button type="button" class="user-button user-button--primary" style="background:var(--user-red);border-color:var(--user-red);" id="user-confirm-ok">Hapus</button>
-                    </div>
-                </div>
-            `;
 
-            document.body.appendChild(overlay);
-            overlay.getBoundingClientRect();
-            overlay.classList.add("is-visible");
-
-            const close = (result) => {
-                overlay.classList.remove("is-visible");
-                setTimeout(() => {
-                    overlay.remove();
-                    resolve(result);
-                }, 200);
-            };
-
-            overlay.querySelector("#user-confirm-cancel").addEventListener("click", () => close(false));
-            overlay.querySelector("#user-confirm-ok").addEventListener("click", () => close(true));
-            overlay.addEventListener("click", (e) => {
-                if (e.target === overlay) close(false);
-            });
-        });
-    };
 
     cartItemsContainer.querySelectorAll("[data-delete-item]").forEach((btn) => {
         btn.addEventListener("click", async (e) => {

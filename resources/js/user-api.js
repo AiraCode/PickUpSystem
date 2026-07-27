@@ -33,11 +33,8 @@ document.addEventListener("DOMContentLoaded", () => {
         }).format(n);
 
     const showCustomAlert = (msg) => {
-        const alertModal = document.getElementById("modal-user-alert");
-        const alertMsg = document.getElementById("user-alert-message");
-        if (alertModal && alertMsg) {
-            alertMsg.textContent = msg;
-            alertModal.style.display = "flex";
+        if (typeof window.userAlert === 'function') {
+            window.userAlert(msg);
         } else {
             alert(msg);
         }
@@ -659,7 +656,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 if (modal) modal.hidden = true;
                 window.location.href = `/receipt?order_id=${res.data.order_id}`;
             } else {
-                alert(res.message || "Gagal mengirim pesanan");
+                showCustomAlert(res.message || "Gagal mengirim pesanan");
                 if (modalConfirmBtn) {
                     modalConfirmBtn.disabled = false;
                     modalConfirmBtn.innerHTML =
@@ -818,11 +815,11 @@ document.addEventListener("DOMContentLoaded", () => {
                                             noteDisplay.textContent = newNote || "-";
                                             localStorage.setItem("pickup_address_note", newNote);
                                         } else {
-                                            alert("Gagal memperbarui catatan.");
+                                            showCustomAlert("Gagal memperbarui catatan.");
                                         }
                                     } catch (e) {
                                         console.error(e);
-                                        alert("Terjadi kesalahan.");
+                                        showCustomAlert("Terjadi kesalahan.");
                                     }
                                     
                                     btnSaveNote.disabled = false;
@@ -1214,7 +1211,7 @@ document.addEventListener("DOMContentLoaded", () => {
                             userMarker.setLatLng([lat, lon]);
                         }
                     } else {
-                        alert("Lokasi tidak ditemukan. Cobalah hapus nomor rumah atau cari nama jalan utamanya saja, lalu geser pin secara manual.");
+                        showCustomAlert("Lokasi tidak ditemukan. Cobalah hapus nomor rumah atau cari nama jalan utamanya saja, lalu geser pin secara manual.");
                     }
                 } catch(e) { console.error(e); }
                 btnMapSearch.textContent = oldText;
