@@ -35,4 +35,9 @@ return [
         ],
     ],
 
+    //Fonnte WhatsApp API
+    'fonnte' => [
+        'token' => env('FONNTE_TOKEN'),
+    ],
+
 ];
