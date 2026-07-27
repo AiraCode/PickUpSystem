@@ -94,7 +94,7 @@ class OCRSpaceService
 
     private function cleanName(string $name): string
     {
-        $name = preg_replace('/[^a-zA-Z\s\.]/', '', $name);
+        $name = preg_replace('/[^a-zA-Z\s.,]/', '', $name);
         $name = preg_replace('/\s+/', ' ', $name);
         return strtoupper(trim($name));
     }
