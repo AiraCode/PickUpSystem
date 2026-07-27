@@ -257,7 +257,9 @@ class OrderController extends Controller
                 if ($request->status === 'processing') {
                     $message .= "Pesanan Anda (ID: #{$order->id}) saat ini sedang *DIPROSES* oleh tim kami.";
                 } elseif ($request->status === 'completed') {
-                    $message .= "Pesanan Anda (ID: #{$order->id}) telah *SELESAI*.\n\nPembayaran untuk aki Anda juga telah berhasil ditransfer. Terima kasih telah mempercayakan layanan tukar tambah aki kepada PickUpSystem.\n\nDitunggu pesanan selanjutnya!";
+                    $message .= "Pesanan Anda (ID: #{$order->id}) telah *SELESAI*.\n\nPembayaran untuk aki Anda dapat dilihat melalui link nota. Terima kasih telah mempercayakan layanan tukar tambah aki kepada Pick Up System.
+                    \n\nKami tunggu pesanan selanjutnya!
+                    \n🔗 http://pickupsystem.test/receipt?order_id={$order->id}";
                 } elseif ($request->status === 'cancelled') {
                     $reason = $cancelReason ?? 'Tidak ada alasan yang diberikan.';
                     $message .= "Mohon maaf, Pesanan Anda (ID: #{$order->id}) telah *DIBATALKAN*.\n\n*Alasan Pembatalan*:\n\"{$reason}\"\n\nJika ada pertanyaan lebih lanjut atau ingin memesan ulang, dapat menghubungi admin di nomor berikut 0812-3456-7891. Terima kasih! 🙏";
