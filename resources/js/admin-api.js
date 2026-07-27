@@ -689,6 +689,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
             }
         };
+        let cachedOrders = [];
 
         const loadOrders = async () => {
             const tbody = document.getElementById("orders-tbody");
@@ -782,7 +783,8 @@ document.addEventListener("DOMContentLoaded", () => {
             }
 
             if (res.data && res.data.length) {
-                tbody.innerHTML = res.data
+                cachedOrders = res.data;
+                tbody.innerHTML = cachedOrders
                     .map(
                         (o) => `
                     <tr onclick="viewOrderDetail(${o.id})" style="cursor:pointer;">
@@ -959,6 +961,7 @@ document.addEventListener("DOMContentLoaded", () => {
         loadOrders();
 
         window.editOrderStatus = (id, currentStatus) => {
+            const order = cachedOrders.find(o => o.id === id);
             document.getElementById("update-order-id").value = id;
             if (orderUpdateError) orderUpdateError.style.display = "none";
 
@@ -1007,9 +1010,42 @@ document.addEventListener("DOMContentLoaded", () => {
                 if (cancelReasonInput) cancelReasonInput.value = "";
             }
 
-            uploadPreview.style.display = "none";
-            uploadPlaceholder.style.display = "block";
-            uploadInput.value = "";
+            const uploadArea = document.getElementById("upload-area");
+            const proofViewArea = document.getElementById("proof-view-area");
+            const linkViewProof = document.getElementById("link-view-proof");
+            const btnSubmit = document.getElementById("btn-update-submit");
+            const btnCancel = document.getElementById("btn-update-cancel");
+            const btnBack = document.getElementById("btn-update-back");
+
+            if (currentStatus === "completed") {
+                if (btnSubmit) btnSubmit.style.display = "none";
+                if (btnCancel) btnCancel.style.display = "none";
+                if (btnBack) btnBack.style.display = "block";
+
+                if (uploadArea) uploadArea.style.display = "none";
+                if (proofViewArea) proofViewArea.style.display = "block";
+                if (linkViewProof && order && order.receipt && order.receipt.transfer && order.receipt.transfer.proof_image) {
+                    linkViewProof.onclick = (e) => {
+                        e.preventDefault();
+                        openImageViewer('/storage/' + order.receipt.transfer.proof_image);
+                    };
+                } else if (linkViewProof) {
+                    linkViewProof.onclick = (e) => {
+                        e.preventDefault();
+                        showToast("Bukti pembayaran tidak ditemukan", "warning");
+                    };
+                }
+            } else {
+                if (btnSubmit) btnSubmit.style.display = "block";
+                if (btnCancel) btnCancel.style.display = "block";
+                if (btnBack) btnBack.style.display = "none";
+                if (uploadArea) uploadArea.style.display = "block";
+                if (proofViewArea) proofViewArea.style.display = "none";
+                uploadPreview.style.display = "none";
+                uploadPlaceholder.style.display = "block";
+                uploadInput.value = "";
+            }
+
             document.getElementById("modal-update-order").style.display =
                 "flex";
         };

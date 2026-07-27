@@ -324,14 +324,25 @@
                         <img id="upload-preview"
                             style="display:none; max-width:100%; max-height:150px; border-radius:6px; margin:0 auto; position:relative; z-index:5; pointer-events:none;">
                     </div>
+                    <div id="proof-view-area" style="display:none; padding:12px; background:#f9fafb; border:1px solid #e5e7eb; border-radius:8px; margin-top:8px;">
+                        <a href="#" id="link-view-proof" style="display:inline-flex; align-items:center; gap:6px; font-size:13px; font-weight:600; color:#2563eb; text-decoration:none;" onclick="return false;">
+                            <svg viewBox="0 0 24 24" style="width:16px; height:16px; fill:none; stroke:currentColor; stroke-width:2;">
+                                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                                <circle cx="12" cy="12" r="3" />
+                            </svg>
+                            Lihat Bukti Pembayaran
+                        </a>
+                    </div>
                 </div>
                 <div id="order-update-error"
                     style="display:none; background:#fee2e2; color:#991b1b; padding:10px 14px; border-radius:6px; font-size:12px; font-weight:600; margin-bottom:16px;">
                 </div>
                 <div style="display:flex; gap:10px; justify-content:flex-end;">
-                    <button type="button" class="admin-button admin-button--secondary"
+                    <button type="button" id="btn-update-back" class="admin-button admin-button--secondary" style="display:none;"
+                        onclick="document.getElementById('modal-update-order').style.display='none'">Kembali</button>
+                    <button type="button" id="btn-update-cancel" class="admin-button admin-button--secondary"
                         onclick="document.getElementById('modal-update-order').style.display='none'">Batal</button>
-                    <button type="submit" class="admin-button admin-button--primary">Simpan</button>
+                    <button type="submit" id="btn-update-submit" class="admin-button admin-button--primary">Simpan</button>
                 </div>
             </form>
         </div>

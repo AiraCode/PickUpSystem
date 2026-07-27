@@ -41,7 +41,7 @@ class OrderController extends Controller
             'all' => (clone $filterCountsQuery)->count(),
         ];
 
-        $query = Order::with(['city', 'customer.bank']);
+        $query = Order::with(['city', 'customer.bank', 'receipt.transfer']);
 
         $search = $request->input('search');
         $status = $request->input('status');
