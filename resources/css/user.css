@@ -1560,7 +1560,7 @@ body.user-shell textarea:focus-visible {
     border-top: 1px solid #d4d9e1;
 
     color: var(--user-muted);
-    font-size: 10px;
+    font-size: 12px;
 }
 
 .user-footer__bottom a {
@@ -1855,18 +1855,18 @@ body.user-shell textarea:focus-visible {
 }
 
 .user-upload-field strong {
-    font-size: 11px;
+    font-size: 13px;
     font-weight: 750;
 }
 
 .user-upload-field small {
     color: var(--user-muted);
-    font-size: 9px;
+    font-size: 11px;
 }
 
 .user-upload-field__action {
     color: var(--user-blue);
-    font-size: 10px;
+    font-size: 12px;
     font-weight: 750;
     white-space: nowrap;
 }
@@ -1884,13 +1884,13 @@ body.user-shell textarea:focus-visible {
 
 .user-form-card--privacy strong {
     display: block;
-    font-size: 12px;
+    font-size: 14px;
     font-weight: 750;
 }
 
 .user-form-card--privacy p {
     color: var(--user-muted);
-    font-size: 11px;
+    font-size: 13px;
     line-height: 1.55;
     margin-top: 5px;
 }
@@ -1923,11 +1923,11 @@ body.user-shell textarea:focus-visible {
 .user-flow-summary__item span,
 .user-flow-summary__total span {
     color: var(--user-muted);
-    font-size: 10px;
+    font-size: 12px;
 }
 
 .user-flow-summary__item strong {
-    font-size: 12px;
+    font-size: 14px;
     font-weight: 700;
 }
 
@@ -1959,7 +1959,7 @@ body.user-shell textarea:focus-visible {
     border-radius: 9px;
     color: var(--user-blue);
     display: flex;
-    font-size: 10px;
+    font-size: 12px;
     gap: 8px;
     line-height: 1.45;
     margin-top: 23px;
@@ -2818,7 +2818,9 @@ body.user-shell textarea:focus-visible {
     .user-receipt-actions .user-button {
         flex: 1;
     }
+}
 
+@media (max-width: 1024px) {
     .user-receipt-toolbar {
         display: flex;
         flex-direction: column;

@@ -301,16 +301,19 @@ document.addEventListener("DOMContentLoaded", () => {
             const itemsSummary = flowSummary.querySelectorAll(".user-flow-summary__item")[0]?.querySelector("strong");
             let totalItems = 0;
             let subtotal = 0;
+            let itemsHtml = "";
             
+            //UI ringkasan pesanan
             savedCart.forEach((item) => {
                 if (item && item.quantity) {
                     totalItems += item.quantity;
                     subtotal += item.price * item.quantity;
+                    itemsHtml += `<div style="margin-bottom: 6px;">${item.name} <span style="font-weight: 400;">(${item.quantity} unit)</span><br><span style="font-size: 13px; font-weight: 600; color: var(--user-blue);">${rupiah(item.price * item.quantity)}</span></div>`;
                 }
             });
             
             if (itemsSummary) {
-                itemsSummary.textContent = `${totalItems} unit aki`;
+                itemsSummary.innerHTML = itemsHtml || `${totalItems} unit aki`;
             }
             const deliverySummary = flowSummary.querySelectorAll(".user-flow-summary__item")[1]?.querySelector("strong");
             const savedDeliveryMethod = localStorage.getItem("pickup_delivery_method") || 'warehouse';
@@ -446,6 +449,37 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
                 if (elAlamat) elAlamat.textContent = formDataToSubmit.pickup_address;
                 if (elCatatan) elCatatan.textContent = formDataToSubmit.pickup_address_note || "-";
+
+                //UI ringkasan aki di modal
+                const modalCartItems = document.getElementById("modal-cart-items");
+                if (modalCartItems) {
+                    let modalItemsHtml = "";
+                    let modalSubtotal = 0;
+                    savedCartItems.forEach(item => {
+                        const qty = parseInt(item.quantity) || 1;
+                        const price = parseFloat(item.price) || 0;
+                        const sub = qty * price;
+                        modalSubtotal += sub;
+                        modalItemsHtml += `
+                            <tr>
+                                <td><strong>${item.name}</strong><br><small style="color: #64748b;">${item.brand || 'Aki'}</small></td>
+                                <td style="text-align: center;">${qty} unit</td>
+                                <td style="text-align: right;">${rupiah(price)}</td>
+                                <td style="text-align: right; font-weight: 600; color: #0f172a;">${rupiah(sub)}</td>
+                            </tr>
+                        `;
+                    });
+                    modalCartItems.innerHTML = modalItemsHtml;
+                    
+                    const elSubtotal = document.getElementById("modal-subtotal");
+                    const elFee = document.getElementById("modal-fee");
+                    const elTotal = document.getElementById("modal-total");
+                    const fee = Number(localStorage.getItem("pickup_fee")) || 0;
+                    
+                    if (elSubtotal) elSubtotal.textContent = rupiah(modalSubtotal);
+                    if (elFee) elFee.textContent = fee === 0 ? "Gratis" : rupiah(fee);
+                    if (elTotal) elTotal.textContent = rupiah(modalSubtotal + fee);
+                }
 
                 modal.hidden = false;
                 document.body.classList.add("overflow-hidden");
