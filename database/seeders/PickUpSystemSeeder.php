@@ -9,23 +9,54 @@ use Illuminate\Support\Facades\Hash;
 
 class PickUpSystemSeeder extends Seeder
 {
+    protected function disableForeignKeyChecks(): void
+    {
+        if (DB::getDriverName() === 'sqlite') {
+            DB::statement('PRAGMA foreign_keys = OFF;');
+
+            return;
+        }
+
+        DB::statement('SET FOREIGN_KEY_CHECKS=0;');
+    }
+
+    protected function enableForeignKeyChecks(): void
+    {
+        if (DB::getDriverName() === 'sqlite') {
+            DB::statement('PRAGMA foreign_keys = ON;');
+
+            return;
+        }
+
+        DB::statement('SET FOREIGN_KEY_CHECKS=1;');
+    }
+
+    protected function truncateTables(array $tables): void
+    {
+        foreach ($tables as $table) {
+            DB::table($table)->truncate();
+        }
+    }
+
     public function run(): void
     {
-        DB::statement('SET FOREIGN_KEY_CHECKS=0;');
-        DB::table('accus_has_receipts')->truncate();
-        DB::table('cities_has_accus')->truncate();
-        DB::table('transfers')->truncate();
-        DB::table('shipments')->truncate();
-        DB::table('receipts')->truncate();
-        DB::table('orders')->truncate();
-        DB::table('customers')->truncate();
-        DB::table('storages')->truncate();
-        DB::table('banks')->truncate();
-        DB::table('users')->truncate();
-        DB::table('accus')->truncate();
-        DB::table('brands')->truncate();
-        DB::table('cities')->truncate();
-        DB::statement('SET FOREIGN_KEY_CHECKS=1;');
+        $this->disableForeignKeyChecks();
+        $this->truncateTables([
+            'accus_has_receipts',
+            'cities_has_accus',
+            'transfers',
+            'shipments',
+            'receipts',
+            'orders',
+            'customers',
+            'storages',
+            'banks',
+            'users',
+            'accus',
+            'brands',
+            'cities',
+        ]);
+        $this->enableForeignKeyChecks();
 
         $now = Carbon::now();
 
@@ -280,8 +311,8 @@ class PickUpSystemSeeder extends Seeder
 
             $bankId = rand(1, count($banksData));
             $accountNum = rand(1000000000, 9999999999);
-            $ktpNum = '3578'.rand(1000000000, 9999999999);
-            $phone = '08'.rand(111111111, 999999999);
+            $ktpNum = '3578' . rand(1000000000, 9999999999);
+            $phone = '08' . rand(111111111, 999999999);
 
             $customersBatch[] = [
                 'id' => $i,
