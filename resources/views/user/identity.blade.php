@@ -101,8 +101,14 @@
                             <label class="user-floating-field user-floating-field--full"><input type="text"
                                     name="account_holder" placeholder=" " style="text-transform: uppercase;" required><span>Nama pemilik
                                     rekening</span></label>
-                            <label class="user-floating-field user-floating-field--full"><input type="tel"
-                                    name="whatsapp" placeholder=" " required><span>Nomor WhatsApp aktif</span></label>
+                            <div class="user-floating-field--full">
+                                <label class="user-floating-field" style="margin-bottom:0;">
+                                    <input type="tel" name="whatsapp" placeholder=" " required>
+                                    <span>Nomor WhatsApp aktif</span>
+                                </label>
+                                <div id="wa-hint-1" style="color: var(--user-red); font-size: 11px; margin-top: 6px; margin-left: 4px;">*pengisian diawali dengan 0 (cth: 08123456789)</div>
+                                <div id="wa-hint-2" style="color: var(--user-red); font-size: 11px; margin-top: 4px; margin-left: 4px;">*jumlah nomor berkisar 10-13 digit</div>
+                            </div>
                         </div>
                     </div>
 

@@ -334,6 +334,38 @@ document.addEventListener("DOMContentLoaded", () => {
             });
         }
 
+        const waInput = identityForm.querySelector('input[name="whatsapp"]');
+        const waHint1 = document.getElementById("wa-hint-1");
+        const waHint2 = document.getElementById("wa-hint-2");
+
+        if (waInput && waHint1 && waHint2) {
+            const validateWa = () => {
+                const val = waInput.value;
+                let isValid1 = val.length > 0 && val.startsWith("0");
+                let isValid2 = val.length >= 10 && val.length <= 13;
+
+                waHint1.style.display = isValid1 ? "none" : "block";
+                waHint2.style.display = isValid2 ? "none" : "block";
+
+                if (val.length === 0) {
+                    waInput.setCustomValidity("Wajib diisi");
+                } else if (!isValid1) {
+                    waInput.setCustomValidity("Nomor harus diawali dengan 0");
+                } else if (!isValid2) {
+                    waInput.setCustomValidity("Jumlah digit harus antara 10-13");
+                } else {
+                    waInput.setCustomValidity("");
+                }
+            };
+
+            waInput.addEventListener("input", (e) => {
+                e.target.value = e.target.value.replace(/[^0-9]/g, '');
+                validateWa();
+            });
+
+            validateWa();
+        }
+
         const numberInputs = identityForm.querySelectorAll('input[name="account_number"], input[name="whatsapp"]');
         numberInputs.forEach(input => {
             input.addEventListener('keypress', (e) => {
