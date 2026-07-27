@@ -113,8 +113,7 @@
                     <div class="user-flow-summary__item"><span>Metode penyerahan</span><strong>Menunggu pilihan</strong>
                     </div>
                     <div class="user-flow-summary__item"><span>Alamat</span><strong>Menunggu data alamat</strong></div>
-                    <div class="user-flow-summary__total"><span>Total estimasi</span><strong>—</strong><small>Nilai akan
-                            tersedia setelah data harga terhubung.</small></div>
+                    <div class="user-flow-summary__total"><span>Total estimasi</span><strong>—</strong></div>
                     <div class="user-flow-summary__note"><svg viewBox="0 0 24 24" aria-hidden="true">
                             <circle cx="12" cy="12" r="8.5" />
                             <path d="M12 10v5M12 7.5h.01" />
@@ -133,21 +132,64 @@
 
     <div class="user-modal" data-identity-modal hidden>
         <div class="user-modal__backdrop" data-modal-close></div>
-        <div class="user-modal__dialog" role="dialog" aria-modal="true" aria-labelledby="identity-modal-title">
+        <div class="user-modal__dialog" role="dialog" aria-modal="true" aria-labelledby="identity-modal-title" style="max-width: 800px; width: 95vw;">
             <button type="button" class="user-modal__close" data-modal-close aria-label="Tutup konfirmasi">×</button>
             <span class="user-modal__icon"><svg viewBox="0 0 24 24" aria-hidden="true">
                     <path d="M5 12.5 9.5 17 19 7.5" />
                 </svg></span>
             <span class="user-kicker">KONFIRMASI DATA</span>
             <h2 id="identity-modal-title">Apakah semua data<br>yang Anda masukkan sudah benar?</h2>
-            <div id="modal-data-summary" style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 16px; margin: 16px 0; text-align: left; font-size: 13px; color: #334155; line-height: 1.5;">
-                <div style="margin-bottom: 8px;"><strong style="color:#0f172a; display:inline-block; width:130px;">Nama Lengkap</strong>: <span id="summary-nama"></span></div>
-                <div style="margin-bottom: 8px;"><strong style="color:#0f172a; display:inline-block; width:130px;">WhatsApp</strong>: <span id="summary-wa"></span></div>
-                <div style="margin-bottom: 8px;"><strong style="color:#0f172a; display:inline-block; width:130px;">Rekening Bank</strong>: <span id="summary-bank"></span></div>
-                <div style="margin-bottom: 8px;"><strong style="color:#0f172a; display:inline-block; width:130px;">Alamat</strong>: <span id="summary-alamat"></span></div>
-                <div><strong style="color:#0f172a; display:inline-block; width:130px;">Catatan</strong>: <span id="summary-catatan"></span></div>
+            <style>
+                .modal-split-layout { display: grid; grid-template-columns: 1fr; gap: 16px; margin: 16px 0; text-align: left; }
+                @media (min-width: 768px) {
+                    .modal-split-layout { grid-template-columns: 1fr 1fr; }
+                }
+                .modal-cart-table { width: 100%; border-collapse: collapse; }
+                .modal-cart-table th, .modal-cart-table td { padding: 8px 4px; border-bottom: 1px solid #e2e8f0; font-size: 11px; }
+                .modal-cart-table th { color: #64748b; font-weight: 600; font-size: 10px; }
+            </style>
+            <div class="modal-split-layout">
+                <div id="modal-data-summary" style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 16px; font-size: 13px; color: #334155; line-height: 1.5; height: fit-content;">
+                    <div style="margin-bottom: 8px;"><strong style="color:#0f172a; display:inline-block; width:110px;">Nama Lengkap</strong>: <span id="summary-nama"></span></div>
+                    <div style="margin-bottom: 8px;"><strong style="color:#0f172a; display:inline-block; width:110px;">WhatsApp</strong>: <span id="summary-wa"></span></div>
+                    <div style="margin-bottom: 8px;"><strong style="color:#0f172a; display:inline-block; width:110px;">Rekening Bank</strong>: <span id="summary-bank"></span></div>
+                    <div style="margin-bottom: 8px;"><strong style="color:#0f172a; display:inline-block; width:110px;">Alamat</strong>: <span id="summary-alamat"></span></div>
+                    <div><strong style="color:#0f172a; display:inline-block; width:110px;">Catatan</strong>: <span id="summary-catatan"></span></div>
+                </div>
+                
+                <div id="modal-order-summary" style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 16px; font-size: 13px; color: #334155; height: fit-content;">
+                    <strong style="color:#0f172a; display:block; margin-bottom: 12px; font-size: 15px;">Rincian Harga</strong>
+                    <div style="max-height: 200px; overflow-y: auto;">
+                        <table class="modal-cart-table">
+                            <thead style="position: sticky; top: 0; background: #f8fafc; z-index: 1;">
+                                <tr>
+                                    <th style="text-align: left;">AKI / BRAND</th>
+                                    <th style="text-align: center;">QTY</th>
+                                    <th style="text-align: right;">HARGA UNIT</th>
+                                    <th style="text-align: right;">SUBTOTAL</th>
+                                </tr>
+                            </thead>
+                            <tbody id="modal-cart-items">
+                            </tbody>
+                        </table>
+                    </div>
+                    <div style="margin-top: 12px; padding-top: 12px;">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 6px;">
+                            <span style="color: #64748b;">Subtotal</span>
+                            <span id="modal-subtotal" style="color: #0f172a;">Rp 0</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 6px;">
+                            <span style="color: #64748b;">Biaya penjemputan</span>
+                            <span id="modal-fee" style="color: #0f172a;">Rp 0</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; margin-top: 8px; padding-top: 8px; border-top: 1px solid #e2e8f0;">
+                            <strong style="color: #0f172a;">Total penjualan</strong>
+                            <strong id="modal-total" style="color: var(--user-blue); font-size: 15px;">Rp 0</strong>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <p>Pastikan nama, rekening, dan nomor WhatsApp sudah sesuai. Data ini akan digunakan untuk proses verifikasi dan
+            <p style="margin: 0 auto; margin-bottom: 16px;">Pastikan nama, rekening, dan nomor WhatsApp sudah sesuai. Data ini akan digunakan untuk proses verifikasi dan
                 pembayaran.</p>
             <div class="user-modal__actions">
                 <button type="button" class="user-button user-button--secondary" data-modal-close>Belum</button>
