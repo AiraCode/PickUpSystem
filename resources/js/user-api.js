@@ -146,27 +146,42 @@ document.addEventListener("DOMContentLoaded", () => {
 
             return `
                 <div class="user-battery-item" data-product-card data-product-name="${accu.name}" data-product-brand="${accu.brand}" data-product-price="${accu.price}" data-accu-id="${accu.id}">
-                    <div class="user-battery-item__info">
-                        <span class="user-battery-item__tag">${tagLabel}</span>
+                    <div class="user-battery-item__left">
                         <h3>${accu.name}${beratInfo}</h3>
-                        <p>Kondisi diverifikasi saat penyerahan di gudang.</p>
-                    </div>
-                    <div class="user-battery-item__price">
-                        <span class="user-price-label">Estimasi Harga:</span>
-                        <strong data-product-price-label>${accu.price > 0 ? formatRupiah(accu.price) : 'Harga belum tersedia'}</strong>
-                    </div>
-                    <div class="user-battery-item__actions">
                         <div class="user-quantity">
                             <button type="button" data-quantity-minus aria-label="Kurangi jumlah">−</button>
-                            <input type="number" value="1" min="1" max="99" data-quantity aria-label="Jumlah ${accu.name}">
+                            <input type="number" value="1" min="1" max="9999" data-quantity aria-label="Jumlah ${accu.name}">
                             <button type="button" data-quantity-plus aria-label="Tambah jumlah">+</button>
+                        </div>
+                    </div>
+                    <div class="user-battery-item__right">
+                        <div class="user-battery-item__price">
+                            <span class="user-price-label">Harga:</span>
+                            <strong data-product-price-label>${accu.price > 0 ? formatRupiah(accu.price) : 'Belum tersedia'}</strong>
                         </div>
                         <button type="button" class="user-add-button" data-add-to-cart>+ Tambahkan ke Keranjang</button>
                     </div>
                 </div>`;
         }).join("");
         bindProductCardEvents();
+        if (typeof window.updateProductCardButtons === 'function') {
+            window.updateProductCardButtons();
+        }
     }
+
+    window.updateProductCardButtons = function() {
+        document.querySelectorAll("[data-product-card]").forEach((card) => {
+            const name = card.dataset.productName;
+            const addButton = card.querySelector("[data-add-to-cart]");
+            if (addButton && name && window.userCart && window.userCart.has(name)) {
+                addButton.textContent = "Update jumlah keranjang";
+                addButton.classList.add("user-add-button--update");
+            } else if (addButton) {
+                addButton.textContent = "+ Tambahkan ke Keranjang";
+                addButton.classList.remove("user-add-button--update");
+            }
+        });
+    };
 
     function bindProductCardEvents() {
         document.querySelectorAll("[data-product-card]").forEach((card) => {
@@ -177,7 +192,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
             const setQuantity = (value) => {
                 if (quantityInput)
-                    quantityInput.value = Math.min(99, Math.max(1, Number(value) || 1));
+                    quantityInput.value = Math.min(9999, Math.max(1, Number(value) || 1));
             };
 
             minusButton?.addEventListener("click", () =>
@@ -193,19 +208,17 @@ document.addEventListener("DOMContentLoaded", () => {
                 const price = Number(card.dataset.productPrice) || 0;
                 const id = Number(card.getAttribute("data-accu-id")) || 1;
                 const quantity = Math.min(
-                    99,
+                    9999,
                     Math.max(1, Number(quantityInput?.value) || 1),
                 );
                 window.userCart.set(name, { id, name, brand, price, quantity });
                 if (typeof window.renderUserCart === 'function') {
                     window.renderUserCart();
                 }
-
-                const originalText = addButton.textContent;
-                addButton.textContent = "✓ Ditambahkan";
-                window.setTimeout(() => {
-                    addButton.textContent = originalText;
-                }, 1200);
+                
+                if (typeof window.updateProductCardButtons === 'function') {
+                    window.updateProductCardButtons();
+                }
             });
         });
     }

@@ -797,13 +797,13 @@ body.user-shell textarea:focus-visible {
 }
 
 .user-battery-item {
-    align-items: center;
+    align-items: stretch;
     background: var(--user-white);
     border: 1px solid var(--user-line);
     border-radius: 12px;
-    display: grid;
-    gap: 20px;
-    grid-template-columns: 1fr auto auto;
+    display: flex;
+    justify-content: space-between;
+    gap: 15px;
     padding: 18px 22px;
     transition: border-color 0.2s, box-shadow 0.2s;
 }
@@ -813,20 +813,21 @@ body.user-shell textarea:focus-visible {
     box-shadow: 0 4px 14px rgba(0, 0, 0, 0.04);
 }
 
-.user-battery-item__info {
-    min-width: 0;
+.user-battery-item__left {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    gap: 12px;
 }
 
-.user-battery-item__tag {
-    background: #eff6ff;
-    border-radius: 4px;
-    color: var(--user-blue);
-    display: inline-block;
-    font-size: 10px;
-    font-weight: 800;
-    letter-spacing: 0.08em;
-    margin-bottom: 6px;
-    padding: 3px 7px;
+.user-battery-item__right {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 12px;
+    text-align: right;
 }
 
 .user-battery-item h3 {
@@ -837,17 +838,9 @@ body.user-shell textarea:focus-visible {
     margin: 0;
 }
 
-.user-battery-item__info p {
-    color: var(--user-muted);
-    font-size: 14px;
-    line-height: 1.5;
-    margin: 4px 0 0;
-}
-
 .user-battery-item__price {
     display: flex;
     flex-direction: column;
-    text-align: right;
 }
 
 .user-price-label {
@@ -861,12 +854,6 @@ body.user-shell textarea:focus-visible {
     font-size: 18px;
     font-weight: 800;
     white-space: nowrap;
-}
-
-.user-battery-item__actions {
-    align-items: center;
-    display: flex;
-    gap: 12px;
 }
 
 .user-product-grid {
@@ -1010,13 +997,18 @@ body.user-shell textarea:focus-visible {
     font-weight: 750;
     outline: 0;
     text-align: center;
-    width: 28px;
+    width: 42px;
 }
 
 .user-quantity input::-webkit-inner-spin-button,
 .user-quantity input::-webkit-outer-spin-button {
     appearance: none;
     margin: 0;
+}
+
+.user-add-button--update {
+    background: #f97316 !important;
+    border-color: #ea580c !important;
 }
 
 .user-add-button {
@@ -2924,27 +2916,22 @@ body.user-shell textarea:focus-visible {
 
 @media (max-width: 640px) {
     .user-battery-item {
-        grid-template-columns: 1fr;
-        gap: 14px;
-        padding: 16px;
+        gap: 10px;
+        padding: 14px 16px;
     }
-
-    .user-battery-item__price {
-        text-align: left;
+    
+    .user-battery-item__left, 
+    .user-battery-item__right {
+        gap: 10px;
     }
-
-    .user-battery-item__actions {
-        flex-wrap: wrap;
-        width: 100%;
+    
+    .user-battery-item h3 {
+        font-size: 15px;
     }
-
-    .user-quantity {
-        width: 100%;
-        justify-content: space-between;
-    }
-
+    
     .user-add-button {
-        width: 100%;
+        padding: 10px 14px;
+        font-size: 11px;
     }
 }
 

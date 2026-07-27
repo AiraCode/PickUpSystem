@@ -217,6 +217,9 @@ const renderUserCart = () => {
                 if (confirm("Apakah Anda yakin ingin menghapus aki ini dari pesanan?")) {
                     userCart.delete(key);
                     renderUserCart();
+                    if (typeof window.updateProductCardButtons === 'function') {
+                        window.updateProductCardButtons();
+                    }
                 }
             }
         });
