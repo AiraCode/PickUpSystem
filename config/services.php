@@ -40,4 +40,10 @@ return [
         'token' => env('FONNTE_TOKEN'),
     ],
 
+    //OCR.space API
+    'ocr_space' => [
+        'url' => env('OCR_SPACE_URL', 'https://api.ocr.space/parse/image'),
+        'key' => env('OCR_SPACE_API_KEY'),
+    ],
+
 ];

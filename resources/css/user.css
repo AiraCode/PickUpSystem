@@ -8,6 +8,15 @@
     --user-white: #fff;
 }
 
+/*OCR spinner*/
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+.user-ocr-field {
+    grid-column: 1 / -1;
+}
+
 body.user-shell {
     background: var(--user-canvas);
     color: var(--user-ink);
@@ -629,6 +638,14 @@ body.user-shell textarea:focus-visible {
     justify-content: space-between;
     margin-bottom: 28px;
     padding-bottom: 18px;
+    
+    /* Sticky styles */
+    position: sticky;
+    top: 0;
+    z-index: 40;
+    background: var(--user-canvas);
+    padding-top: 15px;
+    margin-top: -15px;
 }
 
 .user-field {

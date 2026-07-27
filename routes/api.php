@@ -26,6 +26,8 @@ use App\Http\Controllers\Api\Customer\StorageController as CustomerStorageContro
 use Illuminate\Support\Facades\Route;
 
 
+use App\Http\Controllers\Api\Customer\OCRController as CustomerOCRController;
+
 Route::prefix('customer')->group(function () {
     Route::get('cities', [CustomerCityController::class, 'index']);
     Route::get('cities/{cityId}/accus', [CustomerAccuController::class, 'getByCity']);
@@ -35,6 +37,7 @@ Route::prefix('customer')->group(function () {
     Route::get('orders/{id}', [CustomerOrderController::class, 'show']);
     Route::put('orders/{id}/note', [CustomerOrderController::class, 'updateNote']);
     Route::get('receipts/{orderId}', [CustomerReceiptController::class, 'show']);
+    Route::post('ocr/extract-name', [CustomerOCRController::class, 'extractName']);
 });
 
 Route::prefix('public-admin')->group(function () {

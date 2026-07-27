@@ -63,8 +63,7 @@
                             </div>
                         </div>
                         <div class="user-form-grid">
-                            <label class="user-floating-field user-floating-field--full"><input type="text"
-                                    name="full_name" placeholder=" " required><span>Nama lengkap</span></label>
+                            {{-- UI upload KTP/SIM --}}
                             <label class="user-upload-field user-upload-field--desktop-full">
                                 <input type="file" name="identity_document" accept=".png,.jpg,.jpeg">
                                 <span class="user-upload-field__icon"><svg viewBox="0 0 24 24" aria-hidden="true">
@@ -75,6 +74,16 @@
                                         sistem</small></span>
                                 <span class="user-upload-field__action">Pilih file</span>
                             </label>
+
+                            {{-- UI OCR nama lengkap --}}
+                            <div class="user-ocr-field user-floating-field--full" id="ocr-name-wrapper" style="display: none;">
+                                <label class="user-floating-field user-floating-field--full">
+                                    <input type="text" name="full_name" placeholder=" " readonly required
+                                        style="background: #f1f5f9; cursor: not-allowed; color: #0f172a; font-weight: 600;">
+                                    <span>Nama Lengkap Sesuai KTP / SIM</span>
+                                </label>
+                                <div id="ocr-status" style="display: none; font-size: 12px; margin-top: 6px; padding: 0 4px;"></div>
+                            </div>
                             <label class="user-floating-field"><select name="bank_type" required>
                                     <option value="" selected disabled></option>
                                     <option>BCA</option>
@@ -86,7 +95,7 @@
                             <label class="user-floating-field"><input type="text" name="account_number"
                                     inputmode="numeric" placeholder=" " required><span>Nomor rekening</span></label>
                             <label class="user-floating-field user-floating-field--full"><input type="text"
-                                    name="account_holder" placeholder=" " required><span>Nama pemilik
+                                    name="account_holder" placeholder=" " style="text-transform: uppercase;" required><span>Nama pemilik
                                     rekening</span></label>
                             <label class="user-floating-field user-floating-field--full"><input type="tel"
                                     name="whatsapp" placeholder=" " required><span>Nomor WhatsApp aktif</span></label>

@@ -249,25 +249,27 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     if (identityForm) {
-        const nameInputs = identityForm.querySelectorAll('input[name="full_name"], input[name="account_holder"]');
-        nameInputs.forEach(input => {
-            input.addEventListener('keypress', (e) => {
+        //UI validasi nama pemilik rekening (hanya huruf + spasi)
+        const holderInput = identityForm.querySelector('input[name="account_holder"]');
+        if (holderInput) {
+            holderInput.addEventListener('keypress', (e) => {
                 if (e.key && e.key.length === 1 && !/[a-zA-Z\s]/.test(e.key)) {
                     e.preventDefault();
                     showCustomAlert("Kolom nama hanya menerima huruf dan spasi!");
                 }
             });
-            input.addEventListener('paste', (e) => {
+            holderInput.addEventListener('paste', (e) => {
                 const pastedText = (e.clipboardData || window.clipboardData).getData('text');
                 if (!/^[a-zA-Z\s]+$/.test(pastedText)) {
                     e.preventDefault();
                     showCustomAlert("Teks yang ditempelkan mengandung karakter non-huruf! Kolom nama hanya menerima huruf.");
                 }
             });
-            input.addEventListener('input', (e) => {
-                e.target.value = e.target.value.replace(/[^a-zA-Z\s]/g, '');
+            holderInput.addEventListener('input', (e) => {
+                e.target.value = e.target.value.replace(/[^a-zA-Z\s]/g, '').toUpperCase();
             });
-        });
+        }
+
         const numberInputs = identityForm.querySelectorAll('input[name="account_number"], input[name="whatsapp"]');
         numberInputs.forEach(input => {
             input.addEventListener('keypress', (e) => {
@@ -287,6 +289,68 @@ document.addEventListener("DOMContentLoaded", () => {
                 e.target.value = e.target.value.replace(/[^0-9]/g, '');
             });
         });
+
+        //UI OCR upload KTP/SIM
+        const ktpInputNode = document.querySelector('input[name="identity_document"]');
+        const ocrNameWrapper = document.getElementById("ocr-name-wrapper");
+        const ocrNameInput = identityForm.querySelector('input[name="full_name"]');
+        const ocrStatus = document.getElementById("ocr-status");
+
+        if (ktpInputNode) {
+            ktpInputNode.addEventListener("change", async (e) => {
+                const file = e.target.files[0];
+                const nameEl = e.target.closest('.user-upload-field').querySelector("strong");
+
+                if (!file) {
+                    if (nameEl) nameEl.textContent = "Upload foto KTP atau SIM";
+                    if (ocrNameWrapper) ocrNameWrapper.style.display = "none";
+                    if (ocrNameInput) ocrNameInput.value = "";
+                    return;
+                }
+
+                if (nameEl) nameEl.textContent = file.name;
+
+                //Tampilkan loading
+                if (ocrNameWrapper) ocrNameWrapper.style.display = "block";
+                if (ocrNameInput) ocrNameInput.value = "";
+                if (ocrStatus) {
+                    ocrStatus.style.display = "block";
+                    ocrStatus.style.color = "#2563eb";
+                    ocrStatus.innerHTML = '<span style="display:inline-flex;align-items:center;gap:6px;"><svg width="14" height="14" viewBox="0 0 24 24" style="animation:spin 1s linear infinite;"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="3" fill="none" stroke-dasharray="31.4" stroke-linecap="round"/></svg> Mengekstrak nama dari KTP/SIM...</span>';
+                }
+
+                try {
+                    const formData = new FormData();
+                    formData.append("image", file);
+
+                    const res = await fetch("/api/customer/ocr/extract-name", {
+                        method: "POST",
+                        headers: { "Accept": "application/json" },
+                        body: formData,
+                    });
+                    const data = await res.json();
+
+                    if (data.name) {
+                        if (ocrNameInput) ocrNameInput.value = data.name;
+                        if (ocrStatus) {
+                            ocrStatus.style.color = "#16a34a";
+                            ocrStatus.innerHTML = '✓ Nama berhasil diekstrak dari dokumen.';
+                        }
+                    } else {
+                        if (ocrStatus) {
+                            ocrStatus.style.color = "#dc2626";
+                            ocrStatus.innerHTML = '✗ ' + (data.message || 'Gagal membaca nama. Coba upload ulang dengan foto yang lebih jelas.');
+                        }
+                    }
+                } catch (err) {
+                    if (ocrStatus) {
+                        ocrStatus.style.color = "#dc2626";
+                        ocrStatus.innerHTML = '✗ Terjadi kesalahan jaringan saat memproses OCR.';
+                    }
+                }
+            });
+        }
+
         const flowSummary = document.querySelector(".user-flow-summary");
         if (flowSummary) {
             const address = localStorage.getItem("pickup_address") || "Belum diisi";
@@ -336,19 +400,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 if (modal) modal.hidden = true;
             });
         });
-        const ktpInputNode = document.querySelector('input[name="identity_document"]');
-        if (ktpInputNode) {
-            ktpInputNode.addEventListener("change", (e) => {
-                const file = e.target.files[0];
-                const nameEl = e.target.closest('.user-upload-field').querySelector("strong");
-                if (file && nameEl) {
-                    nameEl.textContent = file.name;
-                } else if (!file && nameEl) {
-                    nameEl.textContent = "Upload foto KTP atau SIM";
-                }
-            });
-        }
-
         let formDataToSubmit = null;
 
         identityForm.addEventListener("submit", async (e) => {
@@ -359,11 +410,13 @@ document.addEventListener("DOMContentLoaded", () => {
             const holderVal = form.querySelector('input[name="account_holder"]')?.value.trim() || "";
             const numberVal = form.querySelector('input[name="account_number"]')?.value.trim() || "";
             const waVal = form.querySelector('input[name="whatsapp"]')?.value.trim() || "";
-            const namePattern = /^[a-zA-Z\s]+$/;
-            if (!namePattern.test(nameVal)) {
-                showCustomAlert("Nama lengkap hanya boleh berisi huruf dan spasi!");
+
+            //Validasi OCR nama
+            if (!nameVal) {
+                showCustomAlert("Harap upload foto KTP atau SIM terlebih dahulu agar nama dapat diekstrak otomatis.");
                 return;
             }
+            const namePattern = /^[a-zA-Z\s\.]+$/;
             if (!namePattern.test(holderVal)) {
                 showCustomAlert("Nama pemilik rekening hanya boleh berisi huruf dan spasi!");
                 return;
@@ -377,8 +430,9 @@ document.addEventListener("DOMContentLoaded", () => {
                 showCustomAlert("Nomor WhatsApp hanya boleh berisi angka!");
                 return;
             }
-            if (nameVal.toLowerCase() !== holderVal.toLowerCase()) {
-                showCustomAlert("Nama lengkap penjual harus sama dengan nama pemilik rekening bank!");
+            //Validasi nama KTP harus sama dengan nama pemilik rekening
+            if (nameVal.toLowerCase().trim() !== holderVal.toLowerCase().trim()) {
+                showCustomAlert("Nama pada KTP/SIM tidak sesuai dengan nama pemilik rekening! Pastikan kedua nama identik untuk mencegah identitas ganda.");
                 return;
             }
             const ktpInput = form.querySelector('input[name="identity_document"]');
