@@ -310,9 +310,12 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
             });
             holderInput.addEventListener("input", (e) => {
+                const start = e.target.selectionStart;
+                const end = e.target.selectionEnd;
                 e.target.value = e.target.value
                     .replace(/[^a-zA-Z\s.,]/g, "")
-                    .toUpperCase();  
+                    .toUpperCase();
+                e.target.setSelectionRange(start, end);
             });
         }
 
@@ -624,8 +627,10 @@ document.addEventListener("DOMContentLoaded", () => {
                 return;
             }
             //Validasi nama KTP harus sama dengan nama pemilik rekening
+            const cleanNameVal = nameVal.replace(/[^a-zA-Z]/g, "").toLowerCase();
+            const cleanHolderVal = holderVal.replace(/[^a-zA-Z]/g, "").toLowerCase();
             if (
-                nameVal.toLowerCase().trim() !== holderVal.toLowerCase().trim()
+                cleanNameVal !== cleanHolderVal
             ) {
                 showCustomAlert(
                     "Nama pada KTP/SIM tidak sesuai dengan nama pemilik rekening! Pastikan kedua nama identik untuk mencegah identitas ganda.",
