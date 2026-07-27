@@ -3,54 +3,61 @@
 namespace App\Http\Controllers\Api\Customer;
 
 use App\Http\Controllers\Controller;
+use App\Models\Accu;
+use App\Models\City;
 use App\Models\Customer;
 use App\Models\Order;
+use App\Models\Receipt;
+use App\Models\Setting;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Http;
 
 class OrderController extends Controller
 {
     public function store(Request $request): JsonResponse
-    {
-        $validated = $request->validate([
-            'name' => 'required|string|max:100',
-            'phone_number' => 'required|string|max:45',
-            'address' => 'required|string|max:500',
-            'address_note' => 'nullable|string|max:500',
-            'ktp' => 'nullable|string|max:45',
-            'ktp_base64' => 'nullable|string',
-            'banks_id' => 'required|integer|exists:banks,id',
-            'account_name' => 'required|string|max:100',
-            'account_number' => 'required|string|max:45',
-            'cities_id' => 'required|integer|exists:cities,id',
-            'pickup_address' => 'required|string|max:200',
-            'pickup_address_note' => 'nullable|string|max:200',
-            'pickup_lat' => 'nullable|numeric',
-            'pickup_long' => 'nullable|numeric',
-            'delivery_method' => 'nullable|string|in:courier,warehouse',
-            'items' => 'required|array',
-            'items.*.id' => 'required|integer|exists:accus,id',
-            'items.*.quantity' => 'required|integer|min:1',
-        ]);
+{
+    $validated = $request->validate([
+        'name' => 'required|string|max:100',
+        'phone_number' => 'required|string|max:45',
+        'address' => 'required|string|max:500',
+        'address_note' => 'nullable|string|max:500',
+        'ktp' => 'nullable|string|max:45',
+        'ktp_base64' => 'nullable|string',
+        'banks_id' => 'required|integer|exists:banks,id',
+        'account_name' => 'required|string|max:100',
+        'account_number' => 'required|string|max:45',
+        'cities_id' => 'required|integer|exists:cities,id',
+        'pickup_address' => 'required|string|max:200',
+        'pickup_address_note' => 'nullable|string|max:200',
+        'pickup_lat' => 'nullable|numeric',
+        'pickup_long' => 'nullable|numeric',
+        'delivery_method' => 'nullable|string|in:courier,warehouse',
+        'items' => 'required|array',
+        'items.*.id' => 'required|integer|exists:accus,id',
+        'items.*.quantity' => 'required|integer|min:1',
+    ]);
 
-        return DB::transaction(function () use ($validated) {
-            $ktpPath = $validated['ktp'] ?? '3578' . rand(1000000000, 9999999999);
-            if (!empty($validated['ktp_base64'])) {
+    try {
+        // Simpan transaksi DB ke dalam variabel $result (TIDAK PAKAI 'return DB::transaction')
+        $result = DB::transaction(function () use ($validated) {
+            $ktpPath = $validated['ktp'] ?? '3578'.rand(1000000000, 9999999999);
+            if (! empty($validated['ktp_base64'])) {
                 if (preg_match('/^data:image\/(\w+);base64,/', $validated['ktp_base64'], $type)) {
                     $data = substr($validated['ktp_base64'], strpos($validated['ktp_base64'], ',') + 1);
                     $type = strtolower($type[1]);
                     if (in_array($type, ['jpg', 'jpeg', 'png'])) {
                         $data = base64_decode($data);
-                        $filename = 'ktp/' . uniqid() . '.' . $type;
-                        \Illuminate\Support\Facades\Storage::disk('public')->put($filename, $data);
+                        $filename = 'ktp/'.uniqid().'.'.$type;
+                        Storage::disk('public')->put($filename, $data);
                         $ktpPath = substr($filename, 0, 45);
                     }
                 }
             }
 
             $customerId = (Customer::max('id') ?? 0) + 1;
-
             $customer = Customer::create([
                 'id' => $customerId,
                 'name' => $validated['name'],
@@ -67,7 +74,6 @@ class OrderController extends Controller
             ]);
 
             $orderId = (Order::max('id') ?? 0) + 1;
-
             $deliveryMethod = $validated['delivery_method'] ?? 'warehouse';
 
             $order = Order::create([
@@ -82,24 +88,22 @@ class OrderController extends Controller
                 'customers_id' => $customer->id,
             ]);
 
-            // Calculate subtotal using dynamic LME-based pricing
-            $lme = (float) \App\Models\Setting::getValue('lme', 2100);
-            $kurs = (float) \App\Models\Setting::getValue('kurs', 16000);
-            $city = \App\Models\City::find($validated['cities_id']);
+            $lme = (float) Setting::getValue('lme', 2100);
+            $kurs = (float) Setting::getValue('kurs', 16000);
+            $city = City::find($validated['cities_id']);
             $cityPercentage = (float) ($city->percentage ?? 80.00);
             $pricePerKg = ($lme * $kurs * ($cityPercentage / 100)) / 1000.0;
 
             $subtotal = 0;
             $accusPivot = [];
             foreach ($validated['items'] as $item) {
-                $accu = \App\Models\Accu::find($item['id']);
+                $accu = Accu::find($item['id']);
                 $beratKering = (float) ($accu->berat_kering ?? 0);
                 $price = (int) round($pricePerKg * $beratKering);
                 $subtotal += $price * $item['quantity'];
                 $accusPivot[$item['id']] = ['amount' => $item['quantity']];
             }
 
-            // Calculate pickup fee using Haversine
             $pickupFee = 0;
             $lat = $validated['pickup_lat'] ?? -7.2575;
             $lng = $validated['pickup_long'] ?? 112.7521;
@@ -116,10 +120,10 @@ class OrderController extends Controller
                         $R = 6371;
                         $dLat = deg2rad($lat2 - $lat1);
                         $dLon = deg2rad($lon2 - $lon1);
-                        $a = sin($dLat/2) * sin($dLat/2) +
+                        $a = sin($dLat / 2) * sin($dLat / 2) +
                              cos(deg2rad($lat1)) * cos(deg2rad($lat2)) *
-                             sin($dLon/2) * sin($dLon/2);
-                        $c = 2 * atan2(sqrt($a), sqrt(1-$a));
+                             sin($dLon / 2) * sin($dLon / 2);
+                        $c = 2 * atan2(sqrt($a), sqrt(1 - $a));
                         $dist = $R * $c;
                         if ($dist < $minDistance) {
                             $minDistance = $dist;
@@ -130,9 +134,9 @@ class OrderController extends Controller
             }
 
             $receiptId = (DB::table('receipts')->max('id') ?? 0) + 1;
-            $receipt = \App\Models\Receipt::create([
+            $receipt = Receipt::create([
                 'id' => $receiptId,
-                'receipt_number' => 'REC-' . date('Ymd') . '-' . str_pad($orderId, 4, '0', STR_PAD_LEFT),
+                'receipt_number' => 'REC-'.date('Ymd').'-'.str_pad($orderId, 4, '0', STR_PAD_LEFT),
                 'date' => now(),
                 'status' => 'unpaid',
                 'price_received' => 0,
@@ -141,18 +145,48 @@ class OrderController extends Controller
                 'orders_id' => $orderId,
             ]);
 
+            // Sync pivot dimasukkan ke dalam transaksi DB
             $receipt->accus()->sync($accusPivot);
 
-            return response()->json([
-                'message' => 'Pesanan penjualan aki berhasil dibuat',
-                'data' => [
-                    'order_id' => $order->id,
-                    'customer' => $customer,
-                    'status' => $order->status,
-                ],
-            ], 201);
+            // Kembalikan data yang dibutuhkan di luar closure
+            return [
+                'order' => $order,
+                'customer' => $customer,
+                'total_cost' => $subtotal + $pickupFee,
+            ];
         });
+
+        // Pengiriman WA (di luar DB transaction)
+        $token = env('FONNTE_TOKEN');
+        $order = $result['order'];
+        $customer = $result['customer'];
+        $totalCost = $result['total_cost'];
+
+        $message = "Pesanan baru telah dibuat dengan ID: {$order->id}. Total biaya: Rp ".number_format($totalCost, 0, ',', '.').". Silakan cek sistem untuk detail lebih lanjut. http://pickupsystem.test/receipt?order_id={$order->id}";
+
+        Http::withoutVerifying()
+            ->withHeaders([
+                'Authorization' => $token,
+            ])->post('https://api.fonnte.com/send', [
+                'target' => $validated['phone_number'], // Menggunakan 'phone_number' sesuai aturan validasi
+                'message' => $message,
+            ]);
+
+        return response()->json([
+            'message' => 'Pesanan penjualan aki berhasil dibuat',
+            'data' => [
+                'order_id' => $order->id,
+                'customer' => $customer,
+                'status' => $order->status,
+            ],
+        ], 201);
+
+    } catch (\Exception $e) {
+        return response()->json([
+            'message' => 'Terjadi kesalahan saat membuat pesanan: ' . $e->getMessage(),
+        ], 500);
     }
+}
 
     public function show(int $id): JsonResponse
     {
