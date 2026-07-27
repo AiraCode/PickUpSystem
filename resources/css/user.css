@@ -641,11 +641,23 @@ body.user-shell textarea:focus-visible {
     
     /* Sticky styles */
     position: sticky;
-    top: 0;
+    top: 86px;
     z-index: 40;
     background: var(--user-canvas);
     padding-top: 15px;
     margin-top: -15px;
+}
+
+@media (min-width: 721px) and (max-width: 1024px) {
+    .user-catalog-toolbar {
+        top: 74px;
+    }
+}
+
+@media (max-width: 720px) {
+    .user-catalog-toolbar {
+        top: 72px;
+    }
 }
 
 .user-field {

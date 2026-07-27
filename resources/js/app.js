@@ -214,8 +214,10 @@ const renderUserCart = () => {
         btn.addEventListener("click", (e) => {
             const key = e.currentTarget.dataset.deleteItem;
             if (key && userCart.has(key)) {
-                userCart.delete(key);
-                renderUserCart();
+                if (confirm("Apakah Anda yakin ingin menghapus aki ini dari pesanan?")) {
+                    userCart.delete(key);
+                    renderUserCart();
+                }
             }
         });
     });
