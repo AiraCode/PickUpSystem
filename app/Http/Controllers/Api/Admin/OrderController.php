@@ -268,7 +268,7 @@ class OrderController extends Controller
                 \Illuminate\Support\Facades\Http::withoutVerifying()
                     ->withHeaders([
                         'Authorization' => config('services.fonnte.token'),
-                    ])->post('https://api.fonnte.com/send', $fonnteData);
+                    ])->post('http://localhost:3000/send', $fonnteData);
             }
         } catch (\Exception $e) {
             // Log error WA send if needed, but do not interrupt the flow
