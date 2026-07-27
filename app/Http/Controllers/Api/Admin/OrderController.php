@@ -49,7 +49,7 @@ class OrderController extends Controller
         if (!empty($search)) {
             $query->where(function ($q) use ($search) {
                 $cleanSearch = ltrim($search, '#');
-                
+
                 if (is_numeric($cleanSearch)) {
                     $q->where('id', $cleanSearch);
                 }
@@ -57,18 +57,18 @@ class OrderController extends Controller
                 $q->orWhere('id', 'like', "{$cleanSearch}%");
 
                 $q->orWhere('pickup_address', 'like', "{$search}%")
-                  ->orWhere('pickup_address', 'like', "% {$search}%");
+                    ->orWhere('pickup_address', 'like', "% {$search}%");
 
                 $q->orWhereHas('customer', function ($cq) use ($search, $cleanSearch) {
                     $cq->where('name', 'like', "{$search}%")
-                       ->orWhere('name', 'like', "% {$search}%")
-                       ->orWhere('phone_number', 'like', "{$cleanSearch}%")
-                       ->orWhere('phone_number', 'like', "% {$cleanSearch}%");
+                        ->orWhere('name', 'like', "% {$search}%")
+                        ->orWhere('phone_number', 'like', "{$cleanSearch}%")
+                        ->orWhere('phone_number', 'like', "% {$cleanSearch}%");
                 });
 
                 $q->orWhereHas('city', function ($ciq) use ($search) {
                     $ciq->where('name', 'like', "{$search}%")
-                       ->orWhere('name', 'like', "% {$search}%");
+                        ->orWhere('name', 'like', "% {$search}%");
                 });
             });
             if (!empty($status) && $status !== 'all') {
@@ -119,7 +119,7 @@ class OrderController extends Controller
     public function show(int $id): JsonResponse
     {
         $order = Order::with(['city', 'customer.bank', 'receipt.accus'])->findOrFail($id);
-        
+
         $orderData = $order->toArray();
         if ($order->receipt) {
             $lme = (float) \App\Models\Setting::getValue('lme', 2100);
@@ -154,23 +154,25 @@ class OrderController extends Controller
 
     public function updateStatus(UpdateOrderStatusRequest $request, int $id): JsonResponse
     {
-        $order = Order::findOrFail($id);
+        $order = Order::with(['customer', 'city'])->findOrFail($id);
 
         $updateData = ['status' => $request->status];
+        $cancelReason = $request->cancel_reason;
 
         if ($request->status === 'cancelled' && $request->filled('cancel_reason')) {
-            $updateData['cancel_reason'] = $request->cancel_reason;
+            $updateData['cancel_reason'] = $cancelReason;
         }
 
+        $proofPath = null;
         if ($request->status === 'completed' && $request->filled('proof_base64')) {
             $base64 = $request->proof_base64;
             $extension = explode('/', explode(':', substr($base64, 0, strpos($base64, ';')))[1])[1];
-            $replace = substr($base64, 0, strpos($base64, ',')+1);
+            $replace = substr($base64, 0, strpos($base64, ',') + 1);
             $image = str_replace($replace, '', $base64);
             $image = str_replace(' ', '+', $image);
-            $imageName = \Illuminate\Support\Str::random(10).'.'.$extension;
-            \Illuminate\Support\Facades\Storage::disk('public')->put('transfers/'.$imageName, base64_decode($image));
-            $proofPath = 'transfers/'.$imageName;
+            $imageName = \Illuminate\Support\Str::random(10) . '.' . $extension;
+            \Illuminate\Support\Facades\Storage::disk('public')->put('transfers/' . $imageName, base64_decode($image));
+            $proofPath = 'transfers/' . $imageName;
 
             $receipt = $order->receipt;
             if ($receipt) {
@@ -178,23 +180,104 @@ class OrderController extends Controller
                     'status' => 'paid',
                     'date' => now(),
                 ]);
-                
-                \Illuminate\Support\Facades\DB::table('transfers')->updateOrInsert(
-                    ['receipts_id' => $receipt->id],
-                    [
-                        'users_id' => auth()->id() ?? 1,
+
+                $existingTransfer = \Illuminate\Support\Facades\DB::table('transfers')->where('receipts_id', $receipt->id)->first();
+                if (!$existingTransfer) {
+                    $newId = (\Illuminate\Support\Facades\DB::table('transfers')->max('id') ?? 0) + 1;
+                    \Illuminate\Support\Facades\DB::table('transfers')->insert([
+                        'id' => $newId,
+                        'receipts_id' => $receipt->id,
+                        'users_id' => auth()->id(),
                         'amount' => $receipt->price_owed ?? 0,
                         'transfer_date' => now(),
                         'status' => 'verified',
                         'proof_image' => $proofPath,
                         'created_at' => now(),
                         'updated_at' => now(),
-                    ]
-                );
+                    ]);
+                } else {
+                    \Illuminate\Support\Facades\DB::table('transfers')->where('receipts_id', $receipt->id)->update([
+                        'users_id' => auth()->id(),
+                        'amount' => $receipt->price_owed ?? 0,
+                        'transfer_date' => now(),
+                        'status' => 'verified',
+                        'proof_image' => $proofPath,
+                        'updated_at' => now(),
+                    ]);
+                }
             }
         }
 
         $order->update($updateData);
+
+        // Kirim WA
+        try {
+            if (in_array($request->status, ['processing', 'completed', 'cancelled'])) {
+                $customer = $order->customer;
+                $city = $order->city;
+
+                $cityName = strtolower($city->name ?? '');
+                $witaCities = ['denpasar', 'badung', 'gianyar', 'singaraja', 'mataram', 'kupang', 'banjarmasin', 'balikpapan', 'samarinda', 'tarakan', 'makassar', 'manado', 'palu', 'kendari', 'gorontalo', 'mamuju', 'bali', 'lombok'];
+                $witCities = ['ambon', 'ternate', 'jayapura', 'sorong', 'manokwari', 'merauke', 'timika', 'papua', 'maluku'];
+
+                $timezone = 'Asia/Jakarta';
+                foreach ($witaCities as $wita) {
+                    if (str_contains($cityName, $wita)) {
+                        $timezone = 'Asia/Makassar';
+                        break;
+                    }
+                }
+                foreach ($witCities as $wit) {
+                    if (str_contains($cityName, $wit)) {
+                        $timezone = 'Asia/Jayapura';
+                        break;
+                    }
+                }
+
+                $date = new \DateTime('now', new \DateTimeZone($timezone));
+                $hour = (int) $date->format('H');
+
+                if ($hour >= 4 && $hour < 11) {
+                    $greeting = 'Selamat pagi';
+                } elseif ($hour >= 11 && $hour < 15) {
+                    $greeting = 'Selamat siang';
+                } elseif ($hour >= 15 && $hour < 18) {
+                    $greeting = 'Selamat sore';
+                } else {
+                    $greeting = 'Selamat malam';
+                }
+
+                $customerName = $customer->name ?? 'Kak';
+                $message = "Halo {$customerName}, {$greeting}! 😊\n\n";
+
+                $fonnteData = [
+                    'target' => $customer->phone_number,
+                ];
+
+                if ($request->status === 'processing') {
+                    $message .= "Pesanan Anda (ID: #{$order->id}) saat ini sedang *DIPROSES* oleh tim kami.";
+                } elseif ($request->status === 'completed') {
+                    $message .= "Pesanan Anda (ID: #{$order->id}) telah *SELESAI*.\n\nPembayaran untuk aki Anda juga telah berhasil ditransfer. Terima kasih telah mempercayakan layanan tukar tambah aki kepada PickUpSystem.\n\nDitunggu pesanan selanjutnya!";
+                    if ($proofPath) {
+                        $appUrl = env('APP_URL', 'http://pickupsystem.test');
+                        $fonnteData['url'] = rtrim($appUrl, '/') . '/storage/' . $proofPath;
+                    }
+                } elseif ($request->status === 'cancelled') {
+                    $reason = $cancelReason ?? 'Tidak ada alasan yang diberikan.';
+                    $message .= "Mohon maaf, Pesanan Anda (ID: #{$order->id}) telah *DIBATALKAN*.\n\n*Alasan Pembatalan*:\n\"{$reason}\"\n\nJika ada pertanyaan lebih lanjut atau ingin memesan ulang, dapat menghubungi admin di nomor berikut 0812-3456-7891. Terima kasih! 🙏";
+                }
+
+                $fonnteData['message'] = $message;
+
+                \Illuminate\Support\Facades\Http::withoutVerifying()
+                    ->withHeaders([
+                        'Authorization' => env('FONNTE_TOKEN'),
+                    ])->post('https://api.fonnte.com/send', $fonnteData);
+            }
+        } catch (\Exception $e) {
+            // Log error WA send if needed, but do not interrupt the flow
+            \Illuminate\Support\Facades\Log::error('Gagal mengirim WA update status: ' . $e->getMessage());
+        }
 
         return response()->json([
             'message' => 'Status order berhasil diperbarui',

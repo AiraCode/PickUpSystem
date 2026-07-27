@@ -363,7 +363,7 @@
                             <td style="color:#6d727c; padding:6px 0;">No. KTP</td>
                             <td style="font-weight:500; display:flex; align-items:center; gap:8px;">
                                 <span id="detail-customer-ktp"></span>
-                                <a id="detail-customer-ktp-link" href="#" target="_blank"
+                                <a id="detail-customer-ktp-link" href="#"
                                     style="display:none; align-items:center; font-size:11px; font-weight:600; color:#2563eb; text-decoration:none;"><svg
                                         style="width:14px; height:14px; margin-right:4px;" fill="none" stroke="currentColor"
                                         viewBox="0 0 24 24">
@@ -387,6 +387,10 @@
                         <tr>
                             <td style="width:35%; color:#6d727c; padding:6px 0;">Kota Layanan</td>
                             <td id="detail-order-city" style="font-weight:500;"></td>
+                        </tr>
+                        <tr>
+                            <td style="width:35%; color:#6d727c; padding:6px 0;">Metode Pengiriman</td>
+                            <td id="detail-order-delivery-method" style="font-weight:500;"></td>
                         </tr>
                         <tr>
                             <td style="color:#6d727c; padding:6px 0;">Status</td>
@@ -437,51 +441,52 @@
     </div>
 
     <div id="modal-order-summary"
-        style="display:none; position:fixed; inset:0; background:rgba(0,0,0,.45); z-index:160; align-items:center; justify-content:center;">
-        <div class="admin-panel" style="width:600px; max-width:95vw; max-height:90vh; overflow-y:auto;">
+        style="display:none; position:fixed; inset:0; background:rgba(0,0,0,.65); z-index:160; align-items:center; justify-content:center;">
+        <div class="admin-panel" style="width:600px; max-width:95vw; max-height:90vh; overflow-y:auto; color: #fff;">
             <div class="admin-panel__head">
-                <h2>Rincian Harga</h2>
+                <h2 style="color: #fff;">Rincian Harga</h2>
             </div>
             <div style="padding-bottom:20px;">
                 <div style="overflow-x:auto; width:100%; margin-bottom:16px;">
-                    <table style="width:100%; min-width:400px; font-size:13px; border-collapse:collapse;">
+                    <table style="width:100%; min-width:400px; font-size:13px; border-collapse:collapse; color: #e5e7eb;">
                         <thead>
-                            <tr style="border-bottom:2px solid #e5e7eb;">
-                                <th style="text-align:left; padding:8px 0; color:#6d727c; font-weight:600;">AKI / BRAND</th>
-                                <th style="text-align:center; padding:8px 0; color:#6d727c; font-weight:600;">QTY</th>
-                                <th style="text-align:right; padding:8px 0; color:#6d727c; font-weight:600;">HARGA UNIT</th>
-                                <th style="text-align:right; padding:8px 0; color:#6d727c; font-weight:600;">SUBTOTAL</th>
+                            <tr style="border-bottom:2px solid #4b5563;">
+                                <th style="text-align:left; padding:8px 0; color:#9ca3af; font-weight:600;">AKI / BRAND</th>
+                                <th style="text-align:center; padding:8px 0; color:#9ca3af; font-weight:600;">QTY</th>
+                                <th style="text-align:right; padding:8px 0; color:#9ca3af; font-weight:600;">HARGA UNIT</th>
+                                <th style="text-align:right; padding:8px 0; color:#9ca3af; font-weight:600;">SUBTOTAL</th>
                             </tr>
                         </thead>
                         <tbody id="detail-summary-items">
                         </tbody>
                     </table>
                 </div>
-                <div style="border-top:1px solid #e5e7eb; padding-top:12px;">
+                <div style="border-top:1px solid #4b5563; padding-top:12px;">
                     <div
-                        style="display:flex; justify-content:space-between; margin-bottom:6px; font-size:13px; color:#6d727c;">
+                        style="display:flex; justify-content:space-between; margin-bottom:6px; font-size:13px; color:#9ca3af;">
                         <span>Subtotal</span>
-                        <span id="detail-summary-subtotal" style="font-weight:500; color:#111318;">-</span>
+                        <span id="detail-summary-subtotal" style="font-weight:500; color:#fff;">-</span>
                     </div>
                     <div
-                        style="display:flex; justify-content:space-between; margin-bottom:6px; font-size:13px; color:#6d727c;">
+                        style="display:flex; justify-content:space-between; margin-bottom:6px; font-size:13px; color:#9ca3af;">
                         <span>Biaya penjemputan</span>
-                        <span id="detail-summary-shipping" style="font-weight:500; color:#111318;">-</span>
+                        <span id="detail-summary-shipping" style="font-weight:500; color:#fff;">-</span>
                     </div>
                     <div
-                        style="display:flex; justify-content:space-between; margin-bottom:12px; font-size:13px; color:#6d727c;">
+                        style="display:flex; justify-content:space-between; margin-bottom:12px; font-size:13px; color:#9ca3af;">
                         <span>Potongan</span>
-                        <span id="detail-summary-discount" style="font-weight:500; color:#111318;">-</span>
+                        <span id="detail-summary-discount" style="font-weight:500; color:#fff;">-</span>
                     </div>
                     <div
-                        style="display:flex; justify-content:space-between; padding-top:12px; border-top:1px solid #e5e7eb; font-size:15px; font-weight:700;">
-                        <span>Total penjualan</span>
-                        <span id="detail-summary-total" style="color:#2563eb;">-</span>
+                        style="display:flex; justify-content:space-between; padding-top:12px; border-top:1px solid #4b5563; font-size:15px; font-weight:700;">
+                        <span style="color: #fff;">Total penjualan</span>
+                        <span id="detail-summary-total" style="color:#38bdf8;">-</span>
                     </div>
                 </div>
             </div>
-            <div style="display:flex; justify-content:flex-end; padding-top:10px; border-top:1px solid #e5e7eb;">
+            <div style="display:flex; justify-content:flex-end; padding-top:10px; border-top:1px solid #4b5563;">
                 <button type="button" class="admin-button admin-button--primary"
+                    style="background-color: #2563eb; color: #fff;"
                     onclick="document.getElementById('modal-order-summary').style.display='none'">Tutup Rincian</button>
             </div>
         </div>
@@ -510,6 +515,46 @@
                 style="width:100%; height:350px; border-radius:8px; border:1px solid #e5e7eb; position:relative;"></div>
         </div>
     </div>
+
+    <div id="modal-image-viewer"
+        style="display:none; position:fixed; inset:0; background:rgba(0,0,0,.75); z-index:200; align-items:center; justify-content:center; padding: 20px;">
+        <div
+            style="position:relative; max-width:90vw; max-height:90vh; display:flex; flex-direction:column; background:#fff; border-radius:12px; overflow:hidden; box-shadow: 0 10px 40px rgba(0,0,0,0.5);">
+            <div
+                style="display:flex; justify-content:space-between; align-items:center; padding:12px 16px; background:#111318; color:#fff;">
+                <h3 style="margin:0; font-size:14px; font-weight:600;">Lihat Foto</h3>
+                <div style="display:flex; gap:12px; align-items:center;">
+                    <a id="image-viewer-fullscreen" href="#" target="_blank"
+                        style="color:#a0a3aa; text-decoration:none; font-size:12px; display:flex; align-items:center; gap:6px; font-weight:600; transition:color 0.2s;"
+                        onmouseover="this.style.color='#fff'" onmouseout="this.style.color='#a0a3aa'">
+                        <svg viewBox="0 0 24 24"
+                            style="width:14px; height:14px; fill:none; stroke:currentColor; stroke-width:2;">
+                            <path
+                                d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3">
+                            </path>
+                        </svg>
+                        Buka Tab Baru
+                    </a>
+                    <button type="button"
+                        style="background:none; border:none; color:#a0a3aa; cursor:pointer; padding:0; display:flex; align-items:center; transition:color 0.2s;"
+                        onclick="document.getElementById('modal-image-viewer').style.display='none'"
+                        onmouseover="this.style.color='#fff'" onmouseout="this.style.color='#a0a3aa'">
+                        <svg viewBox="0 0 24 24"
+                            style="width:18px; height:18px; fill:none; stroke:currentColor; stroke-width:2;">
+                            <line x1="18" y1="6" x2="6" y2="18"></line>
+                            <line x1="6" y1="6" x2="18" y2="18"></line>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+            <div style="overflow:auto; display:flex; justify-content:center; align-items:center; background:#000; flex:1;">
+                <img id="image-viewer-img" src=""
+                    style="max-width:100%; max-height:calc(90vh - 46px); object-fit:contain; display:block;">
+            </div>
+        </div>
+    </div>
+
+    {{-- Dynamic Island Style --}}
     <style>
         .order-status-tab {
             position: relative;

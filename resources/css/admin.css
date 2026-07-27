@@ -327,7 +327,7 @@ select:focus-visible {
     padding: 24px 8px 18px;
 }
 
-.admin-sidebar.collapsed~.admin-main {
+.admin-sidebar.collapsed ~ .admin-main {
     margin-left: 112px;
 }
 
@@ -640,7 +640,6 @@ select:focus-visible {
 .admin-profile:hover .admin-profile__chevron {
     stroke: var(--brand-blue);
 }
-
 
 .admin-dashboard {
     display: grid;
@@ -1112,7 +1111,7 @@ select:focus-visible {
     width: 17px;
 }
 
-.admin-quick-link>span:nth-child(2) {
+.admin-quick-link > span:nth-child(2) {
     display: flex;
     flex: 1;
     flex-direction: column;
@@ -1241,7 +1240,7 @@ select:focus-visible {
 
 .admin-footer__links {
     margin-top: 8px;
-    }
+}
 
 .admin-footer__links a {
     margin-right: 20px;
@@ -1250,8 +1249,6 @@ select:focus-visible {
 .admin-sidebar-overlay {
     display: none;
 }
-
-
 
 @media (max-width: 1180px) {
     .admin-topbar {
@@ -1715,8 +1712,7 @@ html.admin-dark-mode #modal-logout-confirm .admin-panel,
 html.admin-dark-mode #modal-shopee-filter .admin-panel,
 html.admin-dark-mode #modal-detail-order .admin-panel,
 html.admin-dark-mode #modal-order-map .admin-panel,
-html.admin-dark-mode #modal-view-city-prices .admin-panel
-{
+html.admin-dark-mode #modal-view-city-prices .admin-panel {
     background: #1e293b;
     border: 1px solid #334155;
     color: #f1f5f9;
@@ -1732,10 +1728,10 @@ html.admin-dark-mode #modal-view-city-prices h2 {
     color: #f8fafc !important;
 }
 
-html.admin-dark-mode #modal-view-city-prices form{
+html.admin-dark-mode #modal-view-city-prices form {
     background: #0f172a !important;
 }
-html.admin-dark-mode #modal-view-city-prices label{
+html.admin-dark-mode #modal-view-city-prices label {
     color: #94a3b8 !important;
 }
 
@@ -1753,15 +1749,16 @@ html.admin-dark-mode #modal-edit-profile label,
 html.admin-dark-mode #modal-logout-confirm p,
 html.admin-dark-mode #modal-logout-confirm label,
 html.admin-dark-mode #modal-detail-order td {
-    color: #94a3b8 !important;
+    color: #e5e7eb !important;
 }
 
 html.admin-dark-mode #modal-detail-order td[id^="detail-"] {
-    color: #f1f5f9 !important;
+    color: #e5e7eb !important;
 }
 
 html.admin-dark-mode .leaflet-tile {
-    filter: brightness(0.6) invert(1) contrast(3) hue-rotate(200deg) saturate(0.3) brightness(0.7);
+    filter: brightness(0.6) invert(1) contrast(3) hue-rotate(200deg)
+        saturate(0.3) brightness(0.7);
 }
 
 html.admin-dark-mode .leaflet-container {
@@ -1792,7 +1789,7 @@ html.admin-dark-mode .leaflet-container {
     opacity: 0;
     pointer-events: none;
     transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
     border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
@@ -1806,3 +1803,181 @@ html.admin-dark-mode .admin-sidebar.collapsed .admin-nav__link::after {
     color: #f1f5f9;
     border: 1px solid rgba(255, 255, 255, 0.15);
 }
+
+.admin-text-main {
+    color: #111827;
+}
+
+html.admin-dark-mode .admin-text-main {
+    color: #f1f5f9;
+}
+
+/* ========================================================
+   DARK MODE UNTUK MODAL UPDATE STATUS PESANAN
+   ======================================================== */
+html.admin-dark-mode #modal-update-order .admin-panel {
+    background: #1e293b !important;
+    border: 1px solid #334155 !important;
+}
+
+html.admin-dark-mode #modal-update-order h2,
+html.admin-dark-mode #modal-update-order label {
+    color: #f8fafc !important;
+}
+
+html.admin-dark-mode #modal-update-order span[style*="color:#111318"] {
+    color: #f8fafc !important;
+}
+
+html.admin-dark-mode #modal-update-order span[style*="color:#6d727c"] {
+    color: #94a3b8 !important;
+}
+
+html.admin-dark-mode #modal-update-order label[style*="border:2px solid"] {
+    border-color: #334155 !important;
+}
+
+html.admin-dark-mode #modal-update-order #container-cancel-reason label {
+    color: #ef4444 !important;
+}
+
+html.admin-dark-mode #modal-update-order input[type="text"],
+html.admin-dark-mode #modal-update-order .admin-dropzone {
+    background: #0f172a !important;
+    border: 1px dashed #334155 !important;
+    color: #f1f5f9 !important;
+}/* ========================================================
+   PERBAIKAN DARK MODE UNTUK MODAL RINCIAN HARGA 
+   ======================================================== */
+html.admin-dark-mode #modal-order-summary .admin-panel {
+    background: #1e293b !important;
+    border: 1px solid #334155 !important;
+    color: #f1f5f9 !important;
+}
+
+html.admin-dark-mode #modal-order-summary h2,
+html.admin-dark-mode #modal-order-summary span[id^="detail-summary-"] {
+    color: #f8fafc !important;
+}
+
+html.admin-dark-mode #modal-order-summary td,
+html.admin-dark-mode #modal-order-summary th {
+    color: #cbd5e1 !important;
+    border-bottom-color: #334155 !important;
+}
+
+/* Jika text item aki/qty di-generate dinamis lewat JavaScript */
+html.admin-dark-mode #detail-summary-items tr td {
+    color: #cbd5e1 !important;
+}
+
+/* ========================================================
+   1. LIGHT MODE (DEFAULT) - WARNA TEKS GELAP
+   ======================================================== */
+#modal-order-summary .admin-panel {
+    background: #ffffff !important;
+    border: 1px solid #e5e7eb !important;
+    color: #111318 !important;
+}
+
+#modal-order-summary h2 {
+    color: #111318 !important;
+}
+
+#modal-order-summary th {
+    color: #6d727c !important;
+    border-bottom: 2px solid #e5e7eb !important;
+}
+
+#modal-order-summary td,
+#modal-order-summary span[id^="detail-summary-"] {
+    color: #111318 !important;
+    border-bottom-color: #f0f1f2 !important;
+}
+
+/* Teks item (aki, qty, harga) di Light Mode */
+#detail-summary-items tr td {
+    color: #374151 !important;
+}
+
+#detail-summary-items tr td small,
+#detail-summary-items tr td .text-muted {
+    color: #6b7280 !important;
+}
+
+/* ========================================================
+   2. DARK MODE - WARNA TEKS TERANG (PUTIH)
+   ======================================================== */
+html.admin-dark-mode #modal-order-summary .admin-panel {
+    background: #1e293b !important;
+    border: 1px solid #334155 !important;
+    color: #f1f5f9 !important;
+}
+
+html.admin-dark-mode #modal-order-summary h2,
+html.admin-dark-mode #modal-order-summary span[id^="detail-summary-"] {
+    color: #f8fafc !important;
+}
+
+html.admin-dark-mode #modal-order-summary th {
+    color: #94a3b8 !important;
+    border-bottom-color: #334155 !important;
+}
+
+html.admin-dark-mode #modal-order-summary td {
+    color: #cbd5e1 !important;
+    border-bottom-color: #334155 !important;
+}
+
+/* Teks item (aki, qty, harga) di Dark Mode */
+html.admin-dark-mode #detail-summary-items tr td {
+    color: #cbd5e1 !important;
+}
+
+html.admin-dark-mode #detail-summary-items tr td small,
+html.admin-dark-mode #detail-summary-items tr td .text-muted {
+    color: #94a3b8 !important;
+}
+
+/* ========================================================
+   DYNAMIC TABLE HOVER EFFECT (Comment out to disable)
+   ======================================================== */
+.admin-table tbody tr {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    z-index: 1;
+}
+
+.admin-table tbody tr:hover {
+    transform: scale(1.01) translateY(-2px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+    z-index: 2;
+    background-color: #ffffff;
+    border-radius: 8px;
+}
+
+.admin-table tbody tr td {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.admin-table tbody tr:hover td {
+    border-color: transparent;
+}
+
+.admin-table tbody tr:hover td:first-child {
+    border-top-left-radius: 8px;
+    border-bottom-left-radius: 8px;
+}
+
+.admin-table tbody tr:hover td:last-child {
+    border-top-right-radius: 8px;
+    border-bottom-right-radius: 8px;
+}
+
+html.admin-dark-mode .admin-table tbody tr:hover {
+    background-color: #1e293b;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+}
+/* ========================================================
+   END DYNAMIC TABLE HOVER EFFECT
+   ======================================================== */

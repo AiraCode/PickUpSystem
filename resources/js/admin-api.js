@@ -2,6 +2,17 @@ document.addEventListener("DOMContentLoaded", () => {
     const API_BASE = "/api/admin";
     const token = localStorage.getItem("admin_token");
     const user = JSON.parse(localStorage.getItem("admin_user") || "null");
+    const themeToggleBtn = document.querySelector(".admin-theme-toggle-foot");
+
+    if (themeToggleBtn) {
+        themeToggleBtn.addEventListener("click", () => {
+            // Beri sedikit jeda 50ms agar sistem internal web kamu selesai menyimpan preference tema,
+            // baru kemudian halaman di-refresh otomatis agar semua komponen langsung berubah.
+            setTimeout(() => {
+                location.reload();
+            }, 50);
+        });
+    }
 
     if (!token && window.location.pathname !== "/admin/login") {
         if (window.location.pathname !== "/admin/pengguna") {
@@ -14,11 +25,37 @@ document.addEventListener("DOMContentLoaded", () => {
         return;
     }
 
+    const tabs = document.querySelectorAll(".order-status-tab");
+    tabs.forEach((tab, index) => {
+        tab.addEventListener("mouseenter", () => {
+            tabs.forEach((t, i) => {
+                if (i === index) {
+                    t.style.transform = "scale(1.05) translateY(-5px)";
+                    t.style.zIndex = "10";
+                    t.style.boxShadow = "0 10px 20px rgba(0, 0, 0, 0.1)";
+                } else if (i < index) {
+                    t.style.transform = "translateX(-8px) scale(0.98)";
+                    t.style.zIndex = "1";
+                } else if (i > index) {
+                    t.style.transform = "translateX(8px) scale(0.98)";
+                    t.style.zIndex = "1";
+                }
+            });
+        });
+        tab.addEventListener("mouseleave", () => {
+            tabs.forEach((t) => {
+                t.style.transform = "";
+                t.style.zIndex = "";
+                t.style.boxShadow = "";
+            });
+        });
+    });
+
     const parseSafeDate = (d) => {
         if (!d) return new Date();
         let s = String(d);
-        if (!s.includes('T') && s.includes(' ')) s = s.replace(' ', 'T');
-        if (!s.includes('Z') && !s.includes('+')) s += 'Z';
+        if (!s.includes("T") && s.includes(" ")) s = s.replace(" ", "T");
+        if (!s.includes("Z") && !s.includes("+")) s += "Z";
         return new Date(s);
     };
 
@@ -52,10 +89,26 @@ document.addEventListener("DOMContentLoaded", () => {
 
     window.addEventListener("keydown", (e) => {
         if (e.key === "Escape" || e.key === "Esc") {
-            const modals = document.querySelectorAll('div[id^="modal-"], div[id*="modal"]');
-            modals.forEach((modal) => {
-                modal.style.display = "none";
-            });
+            const modals = Array.from(
+                document.querySelectorAll(
+                    'div[id^="modal-"], div[id*="modal"]',
+                ),
+            ).filter((m) => window.getComputedStyle(m).display !== "none");
+            if (modals.length > 0) {
+                let topmost = modals[0];
+                let maxZ =
+                    parseInt(window.getComputedStyle(topmost).zIndex) || 0;
+                for (let i = 1; i < modals.length; i++) {
+                    const z =
+                        parseInt(window.getComputedStyle(modals[i]).zIndex) ||
+                        0;
+                    if (z >= maxZ) {
+                        maxZ = z;
+                        topmost = modals[i];
+                    }
+                }
+                topmost.style.display = "none";
+            }
         }
     });
 
@@ -706,8 +759,8 @@ document.addEventListener("DOMContentLoaded", () => {
                         <td>${o.city ? o.city.name : "-"}</td>
                         <td style="max-width:200px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${o.pickup_address || "-"}</td>
                         <td>
-                            <div style="font-size:13px; font-weight:500; color:#111827;">${parseSafeDate(o.created_at).toLocaleDateString("id-ID")} ${parseSafeDate(o.created_at).toLocaleTimeString("id-ID", {hour: '2-digit', minute: '2-digit'})}</div>
-                            <div style="font-size:11px; color:#6b7280; margin-top:2px;">Update: ${parseSafeDate(o.updated_at).toLocaleDateString("id-ID")} ${parseSafeDate(o.updated_at).toLocaleTimeString("id-ID", {hour: '2-digit', minute: '2-digit'})}</div>
+                            <div class="admin-text-main" style="font-size:13px; font-weight:500;">${parseSafeDate(o.created_at).toLocaleDateString("id-ID")} ${parseSafeDate(o.created_at).toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit" })}</div>
+                            <div style="font-size:11px; color:#6b7280; margin-top:2px;">Update: ${parseSafeDate(o.updated_at).toLocaleDateString("id-ID")} ${parseSafeDate(o.updated_at).toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit" })}</div>
                         </td>
                         <td>${statusBadge(o.status)}</td>
                         <td style="text-align:right;">
@@ -881,9 +934,34 @@ document.addEventListener("DOMContentLoaded", () => {
             const radios = document.querySelectorAll(
                 'input[name="order_status"]',
             );
+            
+            let allowedOptions = [currentStatus];
+            if (currentStatus === 'pending') {
+                allowedOptions = ['pending', 'processing', 'completed', 'cancelled'];
+            } else if (currentStatus === 'processing') {
+                allowedOptions = ['processing', 'completed', 'cancelled'];
+            } else if (currentStatus === 'completed') {
+                allowedOptions = ['completed'];
+            } else if (currentStatus === 'cancelled') {
+                allowedOptions = ['cancelled'];
+            }
+
             radios.forEach((r) => {
                 r.checked = r.value === currentStatus;
                 const card = r.closest("label");
+                
+                if (!allowedOptions.includes(r.value)) {
+                    r.disabled = true;
+                    card.style.opacity = '0.4';
+                    card.style.cursor = 'not-allowed';
+                    card.style.pointerEvents = 'none';
+                } else {
+                    r.disabled = false;
+                    card.style.opacity = '1';
+                    card.style.cursor = 'pointer';
+                    card.style.pointerEvents = 'auto';
+                }
+                
                 card.style.borderColor = r.checked ? "#3b82f6" : "#e5e7eb";
             });
 
@@ -920,6 +998,19 @@ document.addEventListener("DOMContentLoaded", () => {
                 });
             });
 
+        window.openImageViewer = (url) => {
+            const viewer = document.getElementById("modal-image-viewer");
+            const img = document.getElementById("image-viewer-img");
+            const fullscreen = document.getElementById(
+                "image-viewer-fullscreen",
+            );
+            if (viewer && img && fullscreen) {
+                img.src = url;
+                fullscreen.href = url;
+                viewer.style.display = "flex";
+            }
+        };
+
         window.viewOrderDetail = async (id) => {
             const res = await fetchApi(`/orders/${id}`);
             if (!res.data) return;
@@ -936,14 +1027,20 @@ document.addEventListener("DOMContentLoaded", () => {
                 c.address || "-";
             const ktpVal = c.ktp || "-";
             document.getElementById("detail-customer-ktp").innerText = ktpVal;
-            const ktpLinkEl = document.getElementById("detail-customer-ktp-link");
+            const ktpLinkEl = document.getElementById(
+                "detail-customer-ktp-link",
+            );
             if (ktpLinkEl) {
                 if (ktpVal !== "-" && ktpVal.includes("ktp/")) {
-                    ktpLinkEl.href = `/storage/${ktpVal}`;
+                    const imgUrl = `/storage/${ktpVal}`;
+                    ktpLinkEl.onclick = (e) => {
+                        e.preventDefault();
+                        window.openImageViewer(imgUrl);
+                    };
                     ktpLinkEl.style.display = "inline-flex";
                 } else {
                     ktpLinkEl.style.display = "none";
-                    ktpLinkEl.href = "#";
+                    ktpLinkEl.onclick = null;
                 }
             }
             document.getElementById("detail-customer-bank").innerText =
@@ -951,12 +1048,14 @@ document.addEventListener("DOMContentLoaded", () => {
             document.getElementById("detail-order-city").innerText = o.city
                 ? o.city.name
                 : "-";
+            const deliveryMethodText = o.delivery_method === 'courier' ? 'Kurir PickUpSystem' : (o.delivery_method === 'warehouse' ? 'Kirim Sendiri (Gudang)' : (o.delivery_method || '-'));
+            const deliveryMethodEl = document.getElementById("detail-order-delivery-method");
+            if (deliveryMethodEl) deliveryMethodEl.innerText = deliveryMethodText;
             document.getElementById("detail-order-status").innerHTML =
                 statusBadge(o.status);
-            document.getElementById("detail-order-time").innerText = parseSafeDate(
-                o.created_at,
-            ).toLocaleString("id-ID");
-            
+            document.getElementById("detail-order-time").innerText =
+                parseSafeDate(o.created_at).toLocaleString("id-ID");
+
             const updatedEl = document.getElementById("detail-order-updated");
             if (updatedEl) {
                 updatedEl.innerText = parseSafeDate(
@@ -1044,34 +1143,48 @@ document.addEventListener("DOMContentLoaded", () => {
             });
         }
 
-        const btnOpenSummary = document.getElementById("btn-open-order-summary");
+        const btnOpenSummary = document.getElementById(
+            "btn-open-order-summary",
+        );
         if (btnOpenSummary) {
             btnOpenSummary.addEventListener("click", () => {
                 if (!currentDetailOrder) return;
-                
+
                 const receipt = currentDetailOrder.receipt;
                 const tbody = document.getElementById("detail-summary-items");
-                
-                const formatRp = (n) => new Intl.NumberFormat("id-ID", { style: "currency", currency: "IDR", minimumFractionDigits: 0 }).format(n);
-                
+
+                const formatRp = (n) =>
+                    new Intl.NumberFormat("id-ID", {
+                        style: "currency",
+                        currency: "IDR",
+                        minimumFractionDigits: 0,
+                    }).format(n);
+
                 if (!receipt) {
                     tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; padding:20px; color:#6d727c;">Rincian harga belum tersedia / belum di-generate.</td></tr>`;
-                    document.getElementById("detail-summary-subtotal").innerText = "-";
-                    document.getElementById("detail-summary-shipping").innerText = "-";
-                    document.getElementById("detail-summary-discount").innerText = "-";
-                    document.getElementById("detail-summary-total").innerText = "-";
+                    document.getElementById(
+                        "detail-summary-subtotal",
+                    ).innerText = "-";
+                    document.getElementById(
+                        "detail-summary-shipping",
+                    ).innerText = "-";
+                    document.getElementById(
+                        "detail-summary-discount",
+                    ).innerText = "-";
+                    document.getElementById("detail-summary-total").innerText =
+                        "-";
                 } else {
                     let itemsHtml = "";
                     const accus = receipt.accus || [];
                     let subtotal = 0;
 
                     if (accus.length > 0) {
-                        accus.forEach(item => {
+                        accus.forEach((item) => {
                             const qty = item.amount || 1;
                             const price = item.price || 0;
                             const sub = item.subtotal || 0;
                             subtotal += sub;
-                            
+
                             itemsHtml += `<tr style="border-bottom:1px solid #f1f5f9;">
                                 <td style="padding:10px 0; font-weight:500; color:#111318;">${item.name || "-"} <span style="font-weight:400; color:#6d727c; font-size:12px;">${item.brand || "-"}</span></td>
                                 <td style="text-align:center; padding:10px 0; color:#4a4f59;">${qty} unit</td>
@@ -1083,16 +1196,25 @@ document.addEventListener("DOMContentLoaded", () => {
                         itemsHtml = `<tr><td colspan="4" style="text-align:center; padding:20px; color:#6d727c;">Tidak ada data item aki.</td></tr>`;
                     }
                     tbody.innerHTML = itemsHtml;
-                    
+
                     const deliveryCost = (receipt.price_owed || 0) - subtotal;
 
-                    document.getElementById("detail-summary-subtotal").innerText = formatRp(subtotal);
-                    document.getElementById("detail-summary-shipping").innerText = deliveryCost > 0 ? formatRp(deliveryCost) : "Gratis";
-                    document.getElementById("detail-summary-discount").innerText = "-"; // Discount logic can be added if backend supports it
-                    document.getElementById("detail-summary-total").innerText = formatRp(receipt.price_owed || 0);
+                    document.getElementById(
+                        "detail-summary-subtotal",
+                    ).innerText = formatRp(subtotal);
+                    document.getElementById(
+                        "detail-summary-shipping",
+                    ).innerText =
+                        deliveryCost > 0 ? formatRp(deliveryCost) : "Gratis";
+                    document.getElementById(
+                        "detail-summary-discount",
+                    ).innerText = "-"; // Discount logic can be added if backend supports it
+                    document.getElementById("detail-summary-total").innerText =
+                        formatRp(receipt.price_owed || 0);
                 }
 
-                document.getElementById("modal-order-summary").style.display = "flex";
+                document.getElementById("modal-order-summary").style.display =
+                    "flex";
             });
         }
 
@@ -1150,16 +1272,20 @@ document.addEventListener("DOMContentLoaded", () => {
                     }
                     if (hasFile) {
                         try {
-                            const base64Str = await new Promise((resolve, reject) => {
-                                const reader = new FileReader();
-                                reader.onload = (ev) => resolve(ev.target.result);
-                                reader.onerror = (err) => reject(err);
-                                reader.readAsDataURL(uploadInput.files[0]);
-                            });
+                            const base64Str = await new Promise(
+                                (resolve, reject) => {
+                                    const reader = new FileReader();
+                                    reader.onload = (ev) =>
+                                        resolve(ev.target.result);
+                                    reader.onerror = (err) => reject(err);
+                                    reader.readAsDataURL(uploadInput.files[0]);
+                                },
+                            );
                             payload.proof_base64 = base64Str;
-                        } catch(err) {
+                        } catch (err) {
                             if (orderUpdateError) {
-                                orderUpdateError.innerText = "Gagal membaca foto bukti pembayaran.";
+                                orderUpdateError.innerText =
+                                    "Gagal membaca foto bukti pembayaran.";
                                 orderUpdateError.style.display = "block";
                             }
                             return;
@@ -1214,33 +1340,41 @@ document.addEventListener("DOMContentLoaded", () => {
             const history = res.data || [];
             if (history.length) {
                 tbody.innerHTML = history
-                    .map(
-                        (h) => {
-                            const date = parseSafeDate(h.created_at).toLocaleString("id-ID", {
+                    .map((h) => {
+                        const date = parseSafeDate(h.created_at).toLocaleString(
+                            "id-ID",
+                            {
                                 day: "2-digit",
                                 month: "2-digit",
                                 year: "numeric",
                                 hour: "2-digit",
                                 minute: "2-digit",
-                                second: "2-digit"
-                            });
-                            let valSuffix = "";
-                            if (h.type === "lme") valSuffix = " USD/Ton";
-                            if (h.type === "kurs") valSuffix = " IDR/USD";
-                            if (h.type === "percentage") valSuffix = "%";
+                                second: "2-digit",
+                            },
+                        );
+                        let valSuffix = "";
+                        if (h.type === "lme") valSuffix = " USD/Ton";
+                        if (h.type === "kurs") valSuffix = " IDR/USD";
+                        if (h.type === "percentage") valSuffix = "%";
 
-                            const oldValStr = h.old_value !== null ? parseFloat(h.old_value).toLocaleString("id-ID") + valSuffix : "-";
-                            const newValStr = parseFloat(h.new_value).toLocaleString("id-ID") + valSuffix;
+                        const oldValStr =
+                            h.old_value !== null
+                                ? parseFloat(h.old_value).toLocaleString(
+                                      "id-ID",
+                                  ) + valSuffix
+                                : "-";
+                        const newValStr =
+                            parseFloat(h.new_value).toLocaleString("id-ID") +
+                            valSuffix;
 
-                            return `
+                        return `
                             <tr>
                                 <td>${date} WIB</td>
                                 <td style="font-weight:600; color:#1e293b;">${h.label}</td>
                                 <td style="color:#64748b;">${oldValStr}</td>
                                 <td style="font-weight:700; color:#2563eb;">${newValStr}</td>
                             </tr>`;
-                        }
-                    )
+                    })
                     .join("");
             } else {
                 tbody.innerHTML = `<tr><td colspan="4"><div class="admin-table-empty">Belum ada riwayat perubahan parameter</div></td></tr>`;
@@ -1251,8 +1385,12 @@ document.addEventListener("DOMContentLoaded", () => {
         if (formSettings) {
             formSettings.addEventListener("submit", async (e) => {
                 e.preventDefault();
-                const lme = parseFloat(document.getElementById("setting-lme").value);
-                const kurs = parseFloat(document.getElementById("setting-kurs").value);
+                const lme = parseFloat(
+                    document.getElementById("setting-lme").value,
+                );
+                const kurs = parseFloat(
+                    document.getElementById("setting-kurs").value,
+                );
 
                 const res = await fetchApi("/settings", {
                     method: "PUT",
@@ -1263,30 +1401,44 @@ document.addEventListener("DOMContentLoaded", () => {
                     showToast("LME & Kurs berhasil diperbarui!", "success");
                     loadPriceHistory();
                 } else {
-                    showToast(res.message || "Gagal menyimpan LME & Kurs", "error");
+                    showToast(
+                        res.message || "Gagal menyimpan LME & Kurs",
+                        "error",
+                    );
                 }
             });
         }
 
-        const formCityDetailPct = document.getElementById("form-city-detail-percentage");
+        const formCityDetailPct = document.getElementById(
+            "form-city-detail-percentage",
+        );
         if (formCityDetailPct) {
             formCityDetailPct.addEventListener("submit", async (e) => {
                 e.preventDefault();
                 if (!activeCityId) return;
 
-                const newPct = parseFloat(document.getElementById("city-detail-percentage-input").value);
+                const newPct = parseFloat(
+                    document.getElementById("city-detail-percentage-input")
+                        .value,
+                );
                 const res = await fetchApi(`/cities/${activeCityId}`, {
                     method: "PUT",
                     body: JSON.stringify({ percentage: newPct }),
                 });
 
                 if (res && (res.data || res.message)) {
-                    showToast("Persentase kota berhasil diperbarui!", "success");
+                    showToast(
+                        "Persentase kota berhasil diperbarui!",
+                        "success",
+                    );
                     loadCities();
                     loadPriceHistory();
                     viewCityAccus(activeCityId, activeCityName);
                 } else {
-                    showToast(res.message || "Gagal memperbarui persentase kota", "error");
+                    showToast(
+                        res.message || "Gagal memperbarui persentase kota",
+                        "error",
+                    );
                 }
             });
         }
@@ -1359,7 +1511,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
             const res = await fetchApi(`/cities/${cityId}/accus`);
             if (res.data && res.data.city) {
-                const pctInp = document.getElementById("city-detail-percentage-input");
+                const pctInp = document.getElementById(
+                    "city-detail-percentage-input",
+                );
                 if (pctInp) pctInp.value = res.data.city.percentage || 80;
             }
 
@@ -1527,7 +1681,10 @@ document.addEventListener("DOMContentLoaded", () => {
                 if (!rawName) return;
                 const formattedName = toTitleCase(rawName);
                 document.getElementById("city-name").value = formattedName;
-                const pctVal = parseFloat(document.getElementById("city-percentage").value) || 80.0;
+                const pctVal =
+                    parseFloat(
+                        document.getElementById("city-percentage").value,
+                    ) || 80.0;
 
                 const isDuplicate = cachedCities.some(
                     (c) =>
@@ -2092,4 +2249,3 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 });
-
