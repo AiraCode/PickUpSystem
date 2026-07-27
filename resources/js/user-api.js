@@ -148,7 +148,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 <div class="user-battery-item" data-product-card data-product-name="${accu.name}" data-product-brand="${accu.brand}" data-product-price="${accu.price}" data-accu-id="${accu.id}">
                     <div class="user-battery-item__info">
                         <span class="user-battery-item__tag">${tagLabel}</span>
-                        <h3>${accu.brand} ${accu.name}${beratInfo}</h3>
+                        <h3>${accu.name}${beratInfo}</h3>
                         <p>Kondisi diverifikasi saat penyerahan di gudang.</p>
                     </div>
                     <div class="user-battery-item__price">
