@@ -143,14 +143,13 @@
                 <thead>
                     <tr>
                         <th style="width:200px;">Tanggal / Waktu</th>
-                        <th>Parameter</th>
-                        <th>Nilai Lama</th>
-                        <th>Nilai Baru</th>
+                        <th>LME</th>
+                        <th>Kurs</th>
                     </tr>
                 </thead>
                 <tbody id="price-history-tbody">
                     <tr>
-                        <td colspan="4">
+                        <td colspan="5">
                             <div class="admin-table-empty"><strong>Memuat riwayat...</strong></div>
                         </td>
                     </tr>

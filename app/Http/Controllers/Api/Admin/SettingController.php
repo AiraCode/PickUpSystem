@@ -3,8 +3,8 @@
 namespace App\Http\Controllers\Api\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\Setting;
 use App\Models\PriceHistory;
+use App\Models\Setting;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -37,23 +37,13 @@ class SettingController extends Controller
         $newLme = (float) $validated['lme'];
         $newKurs = (float) $validated['kurs'];
 
-        if ($oldLme !== $newLme) {
-            PriceHistory::create([
-                'type' => 'lme',
-                'label' => 'Global LME',
-                'old_value' => $oldLme,
-                'new_value' => $newLme,
-            ]);
-        }
-
-        if ($oldKurs !== $newKurs) {
-            PriceHistory::create([
-                'type' => 'kurs',
-                'label' => 'Global Kurs',
-                'old_value' => $oldKurs,
-                'new_value' => $newKurs,
-            ]);
-        }
+        PriceHistory::create([
+            'type' => 'lme',
+            'label' => 'Global LME',
+            'old_value' => $oldKurs,
+            'new_value' => $newKurs,
+            'lme' => $newLme,
+        ]);
 
         Setting::setValue('lme', $newLme);
         Setting::setValue('kurs', $newKurs);

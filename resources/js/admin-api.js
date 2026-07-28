@@ -207,26 +207,26 @@ document.addEventListener("DOMContentLoaded", () => {
             document.documentElement.classList.contains("admin-dark-mode");
         const colors = isDark
             ? {
-                  pending: { bg: "rgba(245, 158, 11, 0.25)", color: "#fbbf24" },
-                  processing: {
-                      bg: "rgba(59, 130, 246, 0.25)",
-                      color: "#60a5fa",
-                  },
-                  completed: {
-                      bg: "rgba(16, 185, 129, 0.25)",
-                      color: "#34d399",
-                  },
-                  cancelled: {
-                      bg: "rgba(239, 68, 68, 0.25)",
-                      color: "#f87171",
-                  },
-              }
+                pending: { bg: "rgba(245, 158, 11, 0.25)", color: "#fbbf24" },
+                processing: {
+                    bg: "rgba(59, 130, 246, 0.25)",
+                    color: "#60a5fa",
+                },
+                completed: {
+                    bg: "rgba(16, 185, 129, 0.25)",
+                    color: "#34d399",
+                },
+                cancelled: {
+                    bg: "rgba(239, 68, 68, 0.25)",
+                    color: "#f87171",
+                },
+            }
             : {
-                  pending: { bg: "#fef3c7", color: "#92400e" },
-                  processing: { bg: "#dbeafe", color: "#1e40af" },
-                  completed: { bg: "#d1fae5", color: "#065f46" },
-                  cancelled: { bg: "#fee2e2", color: "#991b1b" },
-              };
+                pending: { bg: "#fef3c7", color: "#92400e" },
+                processing: { bg: "#dbeafe", color: "#1e40af" },
+                completed: { bg: "#d1fae5", color: "#065f46" },
+                cancelled: { bg: "#fee2e2", color: "#991b1b" },
+            };
         const c =
             colors[status] ||
             (isDark
@@ -829,34 +829,34 @@ document.addEventListener("DOMContentLoaded", () => {
                 activeCard.classList.add("active");
                 const cardColors = isDark
                     ? {
-                          pending: {
-                              border: "#f59e0b",
-                              bg: "rgba(245, 158, 11, 0.18)",
-                          },
-                          processing: {
-                              border: "#3b82f6",
-                              bg: "rgba(59, 130, 246, 0.18)",
-                          },
-                          completed: {
-                              border: "#10b981",
-                              bg: "rgba(16, 185, 129, 0.18)",
-                          },
-                          cancelled: {
-                              border: "#ef4444",
-                              bg: "rgba(239, 68, 68, 0.18)",
-                          },
-                          all: {
-                              border: "#94a3b8",
-                              bg: "rgba(148, 163, 184, 0.18)",
-                          },
-                      }
+                        pending: {
+                            border: "#f59e0b",
+                            bg: "rgba(245, 158, 11, 0.18)",
+                        },
+                        processing: {
+                            border: "#3b82f6",
+                            bg: "rgba(59, 130, 246, 0.18)",
+                        },
+                        completed: {
+                            border: "#10b981",
+                            bg: "rgba(16, 185, 129, 0.18)",
+                        },
+                        cancelled: {
+                            border: "#ef4444",
+                            bg: "rgba(239, 68, 68, 0.18)",
+                        },
+                        all: {
+                            border: "#94a3b8",
+                            bg: "rgba(148, 163, 184, 0.18)",
+                        },
+                    }
                     : {
-                          pending: { border: "#f59e0b", bg: "#fffbeb" },
-                          processing: { border: "#3b82f6", bg: "#eff6ff" },
-                          completed: { border: "#10b981", bg: "#ecfdf5" },
-                          cancelled: { border: "#ef4444", bg: "#fef2f2" },
-                          all: { border: "#6b7280", bg: "#f9fafb" },
-                      };
+                        pending: { border: "#f59e0b", bg: "#fffbeb" },
+                        processing: { border: "#3b82f6", bg: "#eff6ff" },
+                        completed: { border: "#10b981", bg: "#ecfdf5" },
+                        cancelled: { border: "#ef4444", bg: "#fef2f2" },
+                        all: { border: "#6b7280", bg: "#f9fafb" },
+                    };
                 const c = cardColors[status] || {
                     border: "#3b82f6",
                     bg: "#eff6ff",
@@ -1124,8 +1124,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 o.delivery_method === "courier"
                     ? "Kurir PickUpSystem"
                     : o.delivery_method === "warehouse"
-                      ? "Kirim Sendiri (Gudang)"
-                      : o.delivery_method || "-";
+                        ? "Kirim Sendiri (Gudang)"
+                        : o.delivery_method || "-";
             const deliveryMethodEl = document.getElementById(
                 "detail-order-delivery-method",
             );
@@ -1408,50 +1408,61 @@ document.addEventListener("DOMContentLoaded", () => {
         };
 
         const loadPriceHistory = async () => {
-            const res = await fetchApi("/price-histories");
-            const tbody = document.getElementById("price-history-tbody");
-            if (!tbody) return;
-            const history = res.data || [];
-            if (history.length) {
-                tbody.innerHTML = history
-                    .map((h) => {
-                        const date = parseSafeDate(h.created_at).toLocaleString(
-                            "id-ID",
-                            {
-                                day: "2-digit",
-                                month: "2-digit",
-                                year: "numeric",
-                                hour: "2-digit",
-                                minute: "2-digit",
-                                second: "2-digit",
-                            },
-                        );
-                        let valSuffix = "";
-                        if (h.type === "lme") valSuffix = " USD/Ton";
-                        if (h.type === "kurs") valSuffix = " IDR/USD";
-                        if (h.type === "percentage") valSuffix = "%";
+            try {
+                const res = await fetchApi("/price-histories");
+                const tbody = document.getElementById("price-history-tbody");
+                if (!tbody) return;
 
-                        const oldValStr =
-                            h.old_value !== null
-                                ? parseFloat(h.old_value).toLocaleString(
-                                      "id-ID",
-                                  ) + valSuffix
+                const history = res?.data || [];
+
+                if (history.length > 0) {
+                    tbody.innerHTML = history
+                        .map((h) => {
+                            // 1. Format Tanggal
+                            let dateStr = "-";
+                            if (h.created_at) {
+                                const d = new Date(h.created_at);
+                                if (!isNaN(d.getTime())) {
+                                    dateStr = d.toLocaleString("id-ID", {
+                                        day: "2-digit",
+                                        month: "2-digit",
+                                        year: "numeric",
+                                        hour: "2-digit",
+                                        minute: "2-digit",
+                                        second: "2-digit",
+                                    });
+                                }
+                            }
+
+                            // 2. Kolom LME (Mengambil dari h.lme atau h.LME)
+                            const lmeVal = h.lme ?? h.LME ?? null;
+                            const lmeStr = lmeVal !== null
+                                ? parseFloat(lmeVal).toLocaleString("id-ID") + " USD/Ton"
                                 : "-";
-                        const newValStr =
-                            parseFloat(h.new_value).toLocaleString("id-ID") +
-                            valSuffix;
 
-                        return `
-                            <tr>
-                                <td>${date} WIB</td>
-                                <td style="font-weight:600; color:#1e293b;">${h.label}</td>
-                                <td style="color:#64748b;">${oldValStr}</td>
-                                <td style="font-weight:700; color:#2563eb;">${newValStr}</td>
-                            </tr>`;
-                    })
-                    .join("");
-            } else {
-                tbody.innerHTML = `<tr><td colspan="4"><div class="admin-table-empty">Belum ada riwayat perubahan parameter</div></td></tr>`;
+                            // 3. Kolom KURS (Mengambil dari h.new_value)
+                            const kursVal = h.new_value ?? null;
+                            const kursStr = kursVal !== null
+                                ? parseFloat(kursVal).toLocaleString("id-ID") + " IDR/USD"
+                                : "-";
+
+                            return `
+                        <tr>
+                            <td>${dateStr} WIB</td>
+                            <td style="color:#64748b; font-weight:600;">${lmeStr}</td>
+                            <td style="font-weight:700; color:#2563eb;">${kursStr}</td>
+                        </tr>`;
+                        })
+                        .join("");
+                } else {
+                    tbody.innerHTML = `<tr><td colspan="3"><div class="admin-table-empty">Belum ada riwayat perubahan parameter</div></td></tr>`;
+                }
+            } catch (error) {
+                console.error("Gagal merender price history:", error);
+                const tbody = document.getElementById("price-history-tbody");
+                if (tbody) {
+                    tbody.innerHTML = `<tr><td colspan="3"><div class="admin-table-empty" style="color:#ef4444;">Gagal memuat data riwayat</div></td></tr>`;
+                }
             }
         };
 
@@ -1824,9 +1835,9 @@ document.addEventListener("DOMContentLoaded", () => {
                 } else {
                     showToast(
                         res.message ||
-                            (res.errors && res.errors.name
-                                ? res.errors.name[0]
-                                : "Gagal menambahkan kota"),
+                        (res.errors && res.errors.name
+                            ? res.errors.name[0]
+                            : "Gagal menambahkan kota"),
                         "error",
                     );
                 }
@@ -2099,7 +2110,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 } else {
                     showToast(
                         res.message ||
-                            "Password admin salah / Gagal menghapus gudang",
+                        "Password admin salah / Gagal menghapus gudang",
                         "error",
                     );
                 }
@@ -2305,11 +2316,11 @@ document.addEventListener("DOMContentLoaded", () => {
                                 m.revenue > 0
                                     ? m.revenue >= 1000000000
                                         ? (m.revenue / 1000000000).toFixed(1) +
-                                          "M"
+                                        "M"
                                         : m.revenue >= 1000000
-                                          ? (m.revenue / 1000000).toFixed(0) +
+                                            ? (m.revenue / 1000000).toFixed(0) +
                                             "jt"
-                                          : (m.revenue / 1000).toFixed(0) + "k"
+                                            : (m.revenue / 1000).toFixed(0) + "k"
                                     : "0";
 
                             return `
