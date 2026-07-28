@@ -517,7 +517,7 @@ document.addEventListener("DOMContentLoaded", () => {
                         const ktpOverlayImg = document.getElementById("ktp-overlay-img");
                         if (viewBtn && ktpOverlayImg) {
                             viewBtn.style.display = "inline-block";
-                            ktpOverlayImg.src = URL.createObjectURL(file);
+                            ktpOverlayImg.src = "/img/ktp_template.jpeg";
                         }
                     } else {
                         if (ocrStatus) {
@@ -650,12 +650,21 @@ document.addEventListener("DOMContentLoaded", () => {
             }
             //Validasi nama KTP harus sama dengan nama pemilik rekening (mengabaikan gelar)
             const stripTitles = (str) => {
-                const titles = ['s.psi', 's.pd', 's.kom', 'm.si', 'prof.', 'dr.', 'amd.', 'kep.', 's.t', 's.e', 's.h', 'ir.', 'dra.', 'drs.', 'h.', 'hj.', 's.s', 'm.kom', 'm.pd', 's.si', 'amd', 'kep', 'prof', 'dr', 'st', 'se', 'sh', 'ir', 'dra', 'drs', 'spd', 'skom', 'spsi', 'msi', 'sst'];
-                let words = str.toLowerCase().replace(/[,.]/g, ' ').split(/\s+/);
-                return words.filter(w => {
-                    let clean = w.replace(/\./g, '');
-                    return !titles.includes(w) && !titles.includes(clean);
-                }).join('').replace(/[^a-z]/g, "");
+                let s = str.toLowerCase();
+                // Gabungkan gelar yang sering terpisah spasi akibat OCR (misal "s. psi" -> "spsi")
+                s = s.replace(/\b(s|m)\b\.?\s+(psi|pd|kom|si|t|e|h|s)\b/g, "$1$2");
+                s = s.replace(/\ba\b\.?\s+md\b/g, "amd");
+                s = s.replace(/\bamd\b\.?\s+kep\b/g, "amdkep");
+                
+                // Hapus titik agar gelar seperti "s.psi" menyatu jadi "spsi"
+                s = s.replace(/\./g, "");
+                
+                // Pisahkan string berdasarkan karakter non-alfabet (spasi, koma, strip, dll)
+                let words = s.split(/[^a-z]+/);
+                
+                const titles = ['spsi', 'spd', 'skom', 'msi', 'prof', 'dr', 'amd', 'kep', 'amdkep', 'st', 'se', 'sh', 'ir', 'dra', 'drs', 'h', 'hj', 'ss', 'mkom', 'mpd', 'ssi', 'sst'];
+                
+                return words.filter(w => !titles.includes(w)).join('');
             };
             const cleanNameVal = stripTitles(nameVal);
             const cleanHolderVal = stripTitles(holderVal);
