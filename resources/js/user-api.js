@@ -1242,9 +1242,9 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     function updatePickupFee(distance) {
-        const selectedMethod = document.querySelector(
-            'input[name="delivery_method"]:checked',
-        )?.value;
+        const radioChecked = document.querySelector('input[name="delivery_method"]:checked');
+        const selectedMethod = radioChecked ? radioChecked.value : (localStorage.getItem("pickup_delivery_method") || "warehouse");
+        
         const pickupLabel =
             document.getElementById("user-pickup-fee-label") ||
             document.querySelector("[data-cart-pickup]");
@@ -1305,6 +1305,10 @@ document.addEventListener("DOMContentLoaded", () => {
                 const pickupWarning = document.getElementById("pickup-fee-warning");
                 if (pickupWarning) {
                     pickupWarning.style.display = selectedMethod === "courier" ? "block" : "none";
+                }
+
+                if (selectedMethod === "courier" && btnOpenUserMap) {
+                    btnOpenUserMap.click();
                 }
             });
         });
