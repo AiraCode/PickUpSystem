@@ -277,10 +277,10 @@ const renderUserCart = () => {
 
     if (cartCount) cartCount.textContent = totalQuantity;
     if (cartSubtotal) cartSubtotal.textContent = userCart.size ? formatRupiah(subtotal) : "—";
-    if (cartTotal) cartTotal.textContent = userCart.size ? formatRupiah(subtotal + effectiveFee) : "—";
+    if (cartTotal) cartTotal.textContent = userCart.size ? formatRupiah(subtotal - effectiveFee) : "—";
     const pickupLabel = document.getElementById("user-pickup-fee-label") || document.querySelector("[data-cart-pickup]");
     if (pickupLabel && selectedMethod === "courier" && effectiveFee > 0) {
-        pickupLabel.textContent = formatRupiah(effectiveFee);
+        pickupLabel.textContent = "- " + formatRupiah(effectiveFee);
     }
 
 
@@ -327,6 +327,12 @@ document.querySelectorAll("[data-pickup-method]").forEach((radio) => {
                 radio.value === "courier"
                     ? "Dihitung berdasarkan jarak"
                     : "Gratis";
+
+        // Show/hide pickup fee warning hint
+        const pickupWarning = document.getElementById("pickup-fee-warning");
+        if (pickupWarning) {
+            pickupWarning.style.display = radio.value === "courier" ? "block" : "none";
+        }
 
         renderUserCart();
     });

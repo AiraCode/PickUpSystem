@@ -140,7 +140,7 @@ class OrderController extends Controller
                     'date' => now(),
                     'status' => 'unpaid',
                     'price_received' => 0,
-                    'price_owed' => $subtotal + $pickupFee,
+                    'price_owed' => $subtotal - $pickupFee,
                     'users_id' => 1,
                     'orders_id' => $orderId,
                 ]);
@@ -153,7 +153,7 @@ class OrderController extends Controller
                     'order' => $order,
                     'customer' => $customer,
                     'city' => $city,
-                    'total_cost' => $subtotal + $pickupFee,
+                    'total_cost' => $subtotal - $pickupFee,
                 ];
             });
 

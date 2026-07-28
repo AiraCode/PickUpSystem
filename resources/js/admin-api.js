@@ -1248,9 +1248,6 @@ document.addEventListener("DOMContentLoaded", () => {
                     document.getElementById(
                         "detail-summary-shipping",
                     ).innerText = "-";
-                    document.getElementById(
-                        "detail-summary-discount",
-                    ).innerText = "-";
                     document.getElementById("detail-summary-total").innerText =
                         "-";
                 } else {
@@ -1277,7 +1274,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     }
                     tbody.innerHTML = itemsHtml;
 
-                    const deliveryCost = (receipt.price_owed || 0) - subtotal;
+                    const deliveryCost = subtotal - (receipt.price_owed || 0);
 
                     document.getElementById(
                         "detail-summary-subtotal",
@@ -1285,10 +1282,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     document.getElementById(
                         "detail-summary-shipping",
                     ).innerText =
-                        deliveryCost > 0 ? formatRp(deliveryCost) : "Gratis";
-                    document.getElementById(
-                        "detail-summary-discount",
-                    ).innerText = "-"; // Discount logic can be added if backend supports it
+                        deliveryCost > 0 ? "- " + formatRp(deliveryCost) : "Gratis";
                     document.getElementById("detail-summary-total").innerText =
                         formatRp(receipt.price_owed || 0);
                 }

@@ -570,7 +570,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 ".user-flow-summary__total strong",
             );
             if (totalSummary) {
-                totalSummary.textContent = rupiah(subtotal + fee);
+                totalSummary.textContent = rupiah(subtotal - fee);
             }
         }
         const modal = document.querySelector("[data-identity-modal]");
@@ -750,9 +750,9 @@ document.addEventListener("DOMContentLoaded", () => {
                     if (elSubtotal)
                         elSubtotal.textContent = rupiah(modalSubtotal);
                     if (elFee)
-                        elFee.textContent = fee === 0 ? "Gratis" : rupiah(fee);
+                        elFee.textContent = fee === 0 ? "Gratis" : "- " + rupiah(fee);
                     if (elTotal)
-                        elTotal.textContent = rupiah(modalSubtotal + fee);
+                        elTotal.textContent = rupiah(modalSubtotal - fee);
                 }
 
                 modal.hidden = false;
@@ -904,7 +904,7 @@ document.addEventListener("DOMContentLoaded", () => {
                         subtotal += item.subtotal || 0;
                     });
                     const totalCost = receipt.price_owed || subtotal;
-                    const deliveryCost = totalCost - subtotal;
+                    const deliveryCost = subtotal - totalCost;
                     const orderDeliveryMethod =
                         o.delivery_method || "warehouse";
                     const isCourier = orderDeliveryMethod === "courier";
@@ -920,7 +920,7 @@ document.addEventListener("DOMContentLoaded", () => {
                         if (dds[2])
                             dds[2].textContent =
                                 isCourier && deliveryCost > 0
-                                    ? rupiah(deliveryCost)
+                                    ? "- " + rupiah(deliveryCost)
                                     : "Gratis";
 
                         const noteDisplay = document.getElementById(
@@ -1057,10 +1057,8 @@ document.addEventListener("DOMContentLoaded", () => {
                         if (divs[1])
                             divs[1].querySelector("strong").textContent =
                                 deliveryCost > 0
-                                    ? rupiah(deliveryCost)
+                                    ? "- " + rupiah(deliveryCost)
                                     : "Gratis";
-                        if (divs[2])
-                            divs[2].querySelector("strong").textContent = "—";
 
                         const grandTotalElement =
                             receiptContainer.querySelector(
@@ -1254,7 +1252,7 @@ document.addEventListener("DOMContentLoaded", () => {
         if (selectedMethod === "courier") {
             const fee = Math.max(10000, Math.round(distance * 2000));
             localStorage.setItem("pickup_fee", fee);
-            if (pickupLabel) pickupLabel.textContent = rupiah(fee);
+            if (pickupLabel) pickupLabel.textContent = "- " + rupiah(fee);
             recalculateTotal(fee);
         } else {
             localStorage.removeItem("pickup_fee");
@@ -1273,7 +1271,7 @@ document.addEventListener("DOMContentLoaded", () => {
             if (subText) subVal = parseInt(subText);
 
             if (cartTotal && subVal > 0) {
-                cartTotal.textContent = rupiah(subVal + fee);
+                cartTotal.textContent = rupiah(subVal - fee);
             }
         }
     }
@@ -1301,6 +1299,12 @@ document.addEventListener("DOMContentLoaded", () => {
                         localStorage.removeItem("pickup_fee");
                         if (pickupLabel) pickupLabel.textContent = "Gratis";
                     }
+                }
+
+                // Show/hide pickup fee warning hint
+                const pickupWarning = document.getElementById("pickup-fee-warning");
+                if (pickupWarning) {
+                    pickupWarning.style.display = selectedMethod === "courier" ? "block" : "none";
                 }
             });
         });

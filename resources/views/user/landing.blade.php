@@ -154,12 +154,14 @@
                                     <span class="user-radio-card__indicator"></span>
                                     <span><strong>Dijemput kurir Indoprima</strong><small>Biaya penjemputan akan dihitung berdasarkan jarak.</small></span>
                                 </label>
+                                <small id="pickup-fee-warning" class="user-pickup-warning" style="display: none; color: #dc2626; font-size: 12px; font-weight: 600; padding: 6px 12px; margin-top: -4px; background: #fef2f2; border: 1px solid #fecaca; border-radius: 6px; line-height: 1.4;">
+                                    ⚠️ Biaya penjemputan ditanggung oleh penjual dan akan mengurangi total pembayaran.
+                                </small>
                             </div>
 
                             <div class="user-checkout-totals">
                                 <div><span>Subtotal</span><strong data-cart-subtotal>—</strong></div>
                                 <div><span>Biaya penjemputan</span><strong id="user-pickup-fee-label" data-cart-pickup>Gratis</strong></div>
-                                <div><span>Potongan</span><strong>—</strong></div>
                                 <div class="user-checkout-totals__total"><span>Total estimasi</span><strong data-cart-total>—</strong></div>
                             </div>
 

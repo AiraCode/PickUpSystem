@@ -91,7 +91,6 @@
                     <div class="user-receipt__summary">
                         <div><span>Subtotal</span><strong>—</strong></div>
                         <div><span>Biaya penjemputan</span><strong>—</strong></div>
-                        <div><span>Potongan</span><strong>—</strong></div>
                         <div class="user-receipt__grand-total"><span>Total penjualan</span><strong>—</strong></div>
                     </div>
 

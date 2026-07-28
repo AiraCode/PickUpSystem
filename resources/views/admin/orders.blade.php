@@ -488,11 +488,6 @@
                         <span id="detail-summary-shipping" style="font-weight:500; color:#fff;">-</span>
                     </div>
                     <div
-                        style="display:flex; justify-content:space-between; margin-bottom:12px; font-size:13px; color:#9ca3af;">
-                        <span>Potongan</span>
-                        <span id="detail-summary-discount" style="font-weight:500; color:#fff;">-</span>
-                    </div>
-                    <div
                         style="display:flex; justify-content:space-between; padding-top:12px; border-top:1px solid #4b5563; font-size:15px; font-weight:700;">
                         <span style="color: #fff;">Total penjualan</span>
                         <span id="detail-summary-total" style="color:#38bdf8;">-</span>
