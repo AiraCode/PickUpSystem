@@ -5,7 +5,7 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <title>@yield('title', 'Dashboard') | Pick Up System</title>
-                <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+        <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
         <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
         @vite(['resources/css/app.css', 'resources/js/app.js', 'resources/js/admin-api.js'])
         <script>
@@ -122,11 +122,11 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" />
                             </svg>
                         </button>
-                        <button type="button" class="sidebar-open" data-sidebar-open aria-label="Buka navigasi">
+                        {{-- <button type="button" class="sidebar-open" data-sidebar-open aria-label="Buka navigasi">
                             <svg viewBox="0 0 24 24" aria-hidden="true">
                                 <path d="M4 7h16M4 12h16M4 17h16" />
                             </svg>
-                        </button>
+                        </button> --}}
                         <div class="admin-breadcrumb">
                             <span>Workspace</span>
                             <svg viewBox="0 0 24 24" aria-hidden="true">
@@ -137,9 +137,9 @@
                     </div>
 
                     <div class="admin-topbar__right" style="display:flex; align-items:center; gap:16px;">
-                                                <div id="live-clock-widget"
+                        <div id="live-clock-widget"
                             style="display:flex; align-items:center; gap:8px; background:#f8fafc; border:1px solid #e2e8f0; padding:6px 14px; border-radius:20px; font-size:12px; color:#475569;">
-                                                        <span id="admin-live-clock">Memuat jam...</span>
+                            <span id="admin-live-clock">Memuat jam...</span>
                         </div>
 
                         <button type="button" class="admin-profile" id="admin-profile-btn" aria-expanded="false">
@@ -162,13 +162,13 @@
             </div>
         </div>
 
-                <div id="admin-toast"
+        <div id="admin-toast"
             style="display:none; position:fixed; top:24px; right:24px; z-index:999; background:#10b981; color:#fff; padding:12px 20px; border-radius:8px; box-shadow:0 10px 25px rgba(0,0,0,0.18); font-size:13px; font-weight:600; align-items:center; gap:10px; opacity:0; transition:opacity .25s ease;">
             <span id="admin-toast-icon">✓</span>
             <span id="admin-toast-message">Notifikasi</span>
         </div>
 
-                <div id="modal-custom-confirm"
+        <div id="modal-custom-confirm"
             style="display:none; position:fixed; inset:0; background:rgba(0,0,0,.45); z-index:200; align-items:center; justify-content:center;">
             <div class="admin-panel" style="width:380px; text-align:center;">
                 <div style="margin-bottom:14px;">
@@ -185,7 +185,7 @@
             </div>
         </div>
 
-                <div id="modal-edit-profile"
+        <div id="modal-edit-profile"
             style="display:none; position:fixed; inset:0; background:rgba(0,0,0,.45); z-index:110; align-items:center; justify-content:center;">
             <div class="admin-panel" style="width:420px;">
                 <div class="admin-panel__head">
@@ -225,7 +225,7 @@
             </div>
         </div>
 
-                <div id="modal-logout-confirm"
+        <div id="modal-logout-confirm"
             style="display:none; position:fixed; inset:0; background:rgba(0,0,0,.45); z-index:110; align-items:center; justify-content:center;">
             <div class="admin-panel" style="width:400px;">
                 <div class="admin-panel__head">
