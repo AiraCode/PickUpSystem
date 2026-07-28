@@ -511,7 +511,13 @@ document.addEventListener("DOMContentLoaded", () => {
                         if (ocrStatus) {
                             ocrStatus.style.color = "#16a34a";
                             ocrStatus.innerHTML =
-                                "✓ Nama berhasil diekstrak dari dokumen.";
+                                "✓ Nama berhasil diekstrak dari dokumen. (jika nama yang diekstraksi salah, lakukan foto sesuai dengan contoh)";
+                        }
+                        const viewBtn = document.getElementById("view-ktp-btn");
+                        const ktpOverlayImg = document.getElementById("ktp-overlay-img");
+                        if (viewBtn && ktpOverlayImg) {
+                            viewBtn.style.display = "inline-block";
+                            ktpOverlayImg.src = URL.createObjectURL(file);
                         }
                     } else {
                         if (ocrStatus) {
@@ -521,6 +527,8 @@ document.addEventListener("DOMContentLoaded", () => {
                                 (data.message ||
                                     "Gagal membaca nama. Coba upload ulang dengan foto yang lebih jelas.");
                         }
+                        const viewBtn = document.getElementById("view-ktp-btn");
+                        if (viewBtn) viewBtn.style.display = "none";
                     }
                 } catch (err) {
                     if (ocrStatus) {
@@ -640,14 +648,22 @@ document.addEventListener("DOMContentLoaded", () => {
                 showCustomAlert("Nomor WhatsApp hanya boleh berisi angka!");
                 return;
             }
-            //Validasi nama KTP harus sama dengan nama pemilik rekening
-            const cleanNameVal = nameVal.replace(/[^a-zA-Z]/g, "").toLowerCase();
-            const cleanHolderVal = holderVal.replace(/[^a-zA-Z]/g, "").toLowerCase();
+            //Validasi nama KTP harus sama dengan nama pemilik rekening (mengabaikan gelar)
+            const stripTitles = (str) => {
+                const titles = ['s.psi', 's.pd', 's.kom', 'm.si', 'prof.', 'dr.', 'amd.', 'kep.', 's.t', 's.e', 's.h', 'ir.', 'dra.', 'drs.', 'h.', 'hj.', 's.s', 'm.kom', 'm.pd', 's.si', 'amd', 'kep', 'prof', 'dr', 'st', 'se', 'sh', 'ir', 'dra', 'drs', 'spd', 'skom', 'spsi', 'msi', 'sst'];
+                let words = str.toLowerCase().replace(/[,.]/g, ' ').split(/\s+/);
+                return words.filter(w => {
+                    let clean = w.replace(/\./g, '');
+                    return !titles.includes(w) && !titles.includes(clean);
+                }).join('').replace(/[^a-z]/g, "");
+            };
+            const cleanNameVal = stripTitles(nameVal);
+            const cleanHolderVal = stripTitles(holderVal);
             if (
                 cleanNameVal !== cleanHolderVal
             ) {
                 showCustomAlert(
-                    "Nama pada KTP/SIM tidak sesuai dengan nama pemilik rekening! Pastikan kedua nama identik untuk mencegah identitas ganda.",
+                    "Nama pada KTP/SIM tidak sesuai dengan nama pemilik rekening! Pastikan kedua nama identik untuk mencegah identitas ganda (Gelar akademik diabaikan).",
                 );
                 return;
             }
@@ -1655,4 +1671,22 @@ document.addEventListener("DOMContentLoaded", () => {
         localStorage.setItem("pickup_delivery_method", selectedDelivery);
         window.location.href = "/user/identitas";
     });
+
+    const viewBtn = document.getElementById("view-ktp-btn");
+    const ktpOverlay = document.getElementById("ktp-overlay");
+    const closeOverlay = document.getElementById("close-ktp-overlay");
+    if (viewBtn && ktpOverlay && closeOverlay) {
+        viewBtn.addEventListener("click", (e) => {
+            e.preventDefault();
+            ktpOverlay.style.display = "flex";
+        });
+        closeOverlay.addEventListener("click", () => {
+            ktpOverlay.style.display = "none";
+        });
+        ktpOverlay.addEventListener("click", (e) => {
+            if (e.target === ktpOverlay) {
+                ktpOverlay.style.display = "none";
+            }
+        });
+    }
 });

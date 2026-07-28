@@ -55,7 +55,7 @@ class OCRController extends Controller
 
         if (!$name) {
             return response()->json([
-                'message' => 'Nama tidak ditemukan pada gambar. Pastikan foto KTP/SIM jelas dan tidak terpotong.',
+                'message' => 'Silakan foto ulang. Coba ganti posisi foto KTP dengan posisi tulisan terbaca dengan baik.',
                 'name' => null,
                 'raw_text' => $text,
             ], 422);

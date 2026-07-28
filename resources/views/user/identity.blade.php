@@ -82,7 +82,10 @@
                                         style="background: #f1f5f9; cursor: not-allowed; color: #0f172a; font-weight: 600;">
                                     <span>Nama Lengkap Sesuai KTP / SIM</span>
                                 </label>
-                                <div id="ocr-status" style="display: none; font-size: 12px; margin-top: 6px; padding: 0 4px;"></div>
+                                <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-top: 6px; padding: 0 4px;">
+                                    <div id="ocr-status" style="display: none; font-size: 12px; flex: 1; padding-right: 8px;"></div>
+                                    <a href="#" id="view-ktp-btn" style="display: none; font-size: 12px; font-weight: 600; color: #2563eb; text-decoration: none; white-space: nowrap;">Lihat foto</a>
+                                </div>
                             </div>
                             <label class="user-floating-field"><select name="bank_type" required>
                                     <option value="" selected disabled></option>
@@ -220,6 +223,22 @@
     </div>
 
     @include('user.partials.footer')
+
+    <!-- Modal Lihat Foto KTP -->
+    <div id="ktp-overlay" style="display: none; position: fixed; inset: 0; z-index: 10000; background: rgba(17, 19, 24, 0.85); backdrop-filter: blur(4px); align-items: center; justify-content: center; padding: 20px;">
+        <div style="position: relative; max-width: 90vw; max-height: 90vh; display: flex; flex-direction: column; background: #fff; border-radius: 12px; overflow: hidden; box-shadow: 0 10px 40px rgba(0,0,0,0.5);">
+            <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px 16px; background: #111318; color: #fff;">
+                <h3 style="margin: 0; font-size: 14px; font-weight: 600;">Foto KTP/SIM</h3>
+                <button type="button" id="close-ktp-overlay" style="background: transparent; border: none; color: #a0a3aa; cursor: pointer; display: flex; align-items: center; padding: 4px; transition: color 0.2s;">
+                    <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                </button>
+            </div>
+            <div style="padding: 16px; display: flex; justify-content: center; align-items: center; background: #f8fafc; overflow: auto;">
+                <img id="ktp-overlay-img" src="" style="max-width: 100%; max-height: 70vh; border-radius: 8px; object-fit: contain;">
+            </div>
+        </div>
+    </div>
+
 <div id="modal-user-alert" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,.55); z-index:10000; align-items:center; justify-content:center; padding: 20px;">
     <div style="background:#fff; border-radius:12px; width:360px; max-width:100%; box-shadow: 0 10px 25px rgba(0,0,0,0.2); overflow:hidden; border: 1px solid #e2e8f0; text-align:center; padding: 24px;">
         <span style="font-size: 40px; display:block; margin-bottom: 12px;">⚠️</span>
