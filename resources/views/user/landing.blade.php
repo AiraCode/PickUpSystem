@@ -77,8 +77,7 @@
                     <div class="user-section-heading">
                         <span class="user-kicker">KATALOG AKI</span>
                         <h2>Harga jual aki terbaik<br><em>se-Indonesia.</em></h2>
-                        <p>Harga mengikuti wilayah dan kondisi aki. Pilih kota untuk menampilkan data yang terhubung pada
-                            sistem.</p>
+                        <p style="max-width: none; font-size: 16px;">Pilih kota untuk menampilkan data yang terhubung pada sistem.</p>
                     </div>
 
                     <div class="user-catalog-toolbar">
@@ -157,7 +156,8 @@
                             <div class="user-delivery" data-delivery-method>
                                 <span class="user-checkout-label">METODE PENYERAHAN AKI</span>
                                 <label class="user-radio-card is-selected">
-                                    <input type="radio" name="delivery_method" value="warehouse" checked data-pickup-method>
+                                    <input type="radio" name="delivery_method" value="warehouse" checked
+                                        data-pickup-method>
                                     <span class="user-radio-card__indicator"></span>
                                     <span><strong>Antar ke gudang Indoprima</strong><small>Rekomendasi gudang terdekat ·
                                             biaya layanan gratis.</small></span>
@@ -170,12 +170,18 @@
                                         <strong>Dijemput kurir Indoprima</strong>
                                         <small>Biaya penjemputan akan dihitung berdasarkan jarak.</small>
                                         <style>
-                                            .user-radio-card input:not(:checked) ~ span #pickup-fee-warning { display: none !important; }
-                                            .user-radio-card input:checked ~ span #pickup-fee-warning { display: block !important; }
+                                            .user-radio-card input:not(:checked)~span #pickup-fee-warning {
+                                                display: none !important;
+                                            }
+
+                                            .user-radio-card input:checked~span #pickup-fee-warning {
+                                                display: block !important;
+                                            }
                                         </style>
                                         <small id="pickup-fee-warning" class="user-pickup-warning"
                                             style="color: #dc2626; font-size: 12px; font-weight: 600; padding: 6px 12px; margin-top: 8px; background: #fef2f2; border: 1px solid #fecaca; border-radius: 6px; line-height: 1.4;">
-                                            ⚠️ Biaya penjemputan ditanggung oleh penjual dan akan mengurangi total pembayaran.
+                                            ⚠️ Biaya penjemputan ditanggung oleh penjual dan akan mengurangi total
+                                            pembayaran.
                                         </small>
                                     </span>
                                 </label>
@@ -195,8 +201,7 @@
                                     lokasi presisi penjemputan.</p>
                                 <div id="user-address-fields" style="display:none;">
                                     <label class="user-floating-field">
-                                        <textarea rows="3" placeholder=" " id="user-address-input"
-                                            name="address"></textarea><span>Alamat lengkap</span>
+                                        <textarea rows="3" placeholder=" " id="user-address-input" name="address"></textarea><span>Alamat lengkap</span>
                                     </label>
                                     <div class="user-address__row">
                                         <label class="user-floating-field"><input type="text" placeholder=" "
@@ -206,8 +211,7 @@
                                     </div>
                                 </div>
                                 <label class="user-floating-field" style="margin-top: 10px;">
-                                    <textarea rows="2" placeholder=" " id="user-note-input"
-                                        name="note"></textarea><span>Tambahkan catatan (cth: pagar cokelat)</span>
+                                    <textarea rows="2" placeholder=" " id="user-note-input" name="note"></textarea><span>Tambahkan catatan (cth: pagar cokelat)</span>
                                 </label>
                                 <button type="button" id="btn-open-user-map"
                                     class="user-button user-button--secondary user-button--full"
@@ -232,7 +236,8 @@
                             </div>
 
                             <button type="button" id="checkout-submit-btn"
-                                class="user-button user-button--primary user-button--full" style="margin-top: 20px;">Lanjut
+                                class="user-button user-button--primary user-button--full"
+                                style="margin-top: 20px;">Lanjut
                                 Isi Identitas <span aria-hidden="true">→</span></button>
                         </aside>
                     </div>
@@ -275,7 +280,8 @@
             <div
                 style="padding: 16px 20px; border-bottom:1px solid #e2e8f0; display:flex; justify-content:space-between; align-items:center; background:#f8fafc;">
                 <h3 style="margin:0; font-size:15px; font-weight:700; color:#1e293b;">📍 Tentukan Lokasi Anda</h3>
-                <button type="button" style="border:none; background:none; font-size:18px; cursor:pointer; color:#64748b;"
+                <button type="button"
+                    style="border:none; background:none; font-size:18px; cursor:pointer; color:#64748b;"
                     onclick="document.getElementById('modal-user-map').style.display='none'">✕</button>
             </div>
             <div
@@ -288,7 +294,8 @@
             <div
                 style="padding: 8px 20px; font-size:11px; color:#64748b; background:#f8fafc; border-bottom:1px solid #e2e8f0; line-height: 1.4;">
                 *Apabila pin belum tepat di rumah Anda, mohon bantuannya untuk menggeser pin ke lokasi yang pas.<br>
-                <span style="color: #94a3b8;">(Alamat yang diketik akan otomatis tersimpan sebagai alamat pengiriman)</span>
+                <span style="color: #94a3b8;">(Alamat yang diketik akan otomatis tersimpan sebagai alamat
+                    pengiriman)</span>
             </div>
             <div id="user-map-picker" style="width:100%; height:320px; background:#e5e7eb;"></div>
             <div
