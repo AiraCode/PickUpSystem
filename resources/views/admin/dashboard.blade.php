@@ -99,6 +99,7 @@
                                 <th>Nomor pesanan</th>
                                 <th>Pelanggan</th>
                                 <th>Kota</th>
+                                <th>Metode Pengiriman</th>
                                 <th>Waktu</th>
                                 <th>Status</th>
                             </tr>
@@ -106,7 +107,7 @@
 
                         <tbody id="attention-orders-tbody">
                             <tr>
-                                <td colspan="5">
+                                <td colspan="6">
                                     <div class="admin-table-empty">
                                         <strong>Memuat data...</strong>
                                     </div>

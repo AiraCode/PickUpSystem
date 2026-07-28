@@ -262,8 +262,8 @@ class PickUpSystemSeeder extends Seeder
             ]);
         }
 
-        // 8. Generate 1,250 Dummy Transactions (Spread across 2024, 2025, 2026)
-        $totalTransactions = 1250;
+        // 8. Generate 2.537 Dummy Transactions (Spread across 2024, 2025, 2026)
+        $totalTransactions = 2537; // Diubah sesuai permintaan menjadi 2537 data
 
         $firstNames = ['Agus', 'Budi', 'Candra', 'Dewi', 'Eko', 'Fajar', 'Gita', 'Hendra', 'Irfan', 'Joko', 'Kartika', 'Lestari', 'Mega', 'Novi', 'Oscar', 'Pratama', 'Rian', 'Sari', 'Taufik', 'Utami', 'Vina', 'Wawan', 'Yudi', 'Zainal'];
         $lastNames = ['Santoso', 'Wijaya', 'Pratama', 'Hidayat', 'Kusuma', 'Saputra', 'Laksana', 'Nugroho', 'Wibowo', 'Firmansyah', 'Suryono', 'Utomo', 'Subagyo', 'Gunawan', 'Setiawan'];
@@ -334,11 +334,17 @@ class PickUpSystemSeeder extends Seeder
             $status = $statuses[array_rand($statuses)];
             $cancelReason = ($status === 'cancelled') ? 'Customer membatalkan pesanan (ganti pikiran)' : null;
 
+            // LOGIKA BARU: Tentukan apakah dijemput kurir (80% kemungkinan) atau antar sendiri (20%)
+            $isCourierPickup = rand(1, 100) <= 80;
+            $deliveryMethod = $isCourierPickup ? 'courier' : 'warehouse';
+            $pickupFee = $isCourierPickup ? 10000 : 0; // Biaya 10.000 jika dijemput kurir
+
             $ordersBatch[] = [
                 'id' => $i,
                 'cities_id' => $cityObj['id'],
+                'delivery_method' => $deliveryMethod,
                 'pickup_address' => $pickupAddr,
-                'pickup_address_note' => 'Lokasi penyerahan barang',
+                'pickup_address_note' => $isCourierPickup ? 'Lokasi penjemputan kurir' : 'Diantar sendiri ke gudang',
                 'pickup_lat' => $cityObj['lat'] + (rand(-50, 50) / 10000),
                 'pickup_long' => $cityObj['long'] + (rand(-50, 50) / 10000),
                 'status' => $status,
@@ -357,16 +363,20 @@ class PickUpSystemSeeder extends Seeder
             $qty1 = rand(1, 3);
             $pricePerKg = (2100 * 16000 * 80.0) / 1000.0;
             $price1 = (int) round($pricePerKg * $accuItem1['berat_kering']);
-            $totalAmount = $price1 * $qty1;
+            $totalAccuPrice = $price1 * $qty1;
 
             if (isset($accuKeys[1])) {
                 $accuItem2 = $accusData[$accuKeys[1]];
                 $qty2 = rand(1, 2);
                 $price2 = (int) round($pricePerKg * $accuItem2['berat_kering']);
-                $totalAmount += $price2 * $qty2;
+                $totalAccuPrice += $price2 * $qty2;
             } else {
                 $accuItem2 = null;
             }
+
+            // Hitung total bersih yang dibayarkan ke customer (Total Harga Aki - Biaya Jemput)
+            // Gunakan max() agar nilai tidak negatif jika terjadi anomali harga aki di bawah 10rb
+            $totalAmount = (int) max(0, $totalAccuPrice - $pickupFee);
 
             $receiptStatus = ($status === 'completed') ? 'PAID' : (($status === 'cancelled') ? 'CANCELLED' : 'UNPAID');
             $priceReceived = ($status === 'completed') ? $totalAmount : (($status === 'processing') ? rand(0, $totalAmount) : 0);
@@ -426,7 +436,7 @@ class PickUpSystemSeeder extends Seeder
                         'id' => $transferIdCounter++,
                         'receipts_id' => $i,
                         'users_id' => rand(1, count($usersData)),
-                        'amount' => (float) $totalAmount,
+                        'amount' => (float) $totalAmount, // Nominal transfer sudah otomatis terpotong 10.000 jika kurir
                         'transfer_date' => $receivedDate ?? $updatedAt,
                         'status' => 'COMPLETED',
                         'proof_image' => 'img/default-accu.png',

@@ -450,7 +450,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 !res.data.attention_orders ||
                 !res.data.attention_orders.length
             ) {
-                tbody.innerHTML = `<tr><td colspan="5"><div class="admin-table-empty"><strong>Belum ada pesanan</strong></div></td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="6"><div class="admin-table-empty"><strong>Belum ada pesanan</strong></div></td></tr>`;
             } else {
                 tbody.innerHTML = res.data.attention_orders
                     .map(
@@ -459,6 +459,14 @@ document.addEventListener("DOMContentLoaded", () => {
                         <td>#${o.id}</td>
                         <td>${o.customer ? o.customer.name : "-"}</td>
                         <td>${o.city ? o.city.name : "-"}</td>
+                        <td>
+                            ${o.delivery_method === 'courier' ? 
+                                '<span style="background:#dbeafe; color:#1e40af; padding:2px 8px; border-radius:12px; font-size:11px; font-weight:600;">Kurir</span>' : 
+                                (o.delivery_method === 'warehouse' ? 
+                                '<span style="background:#fef3c7; color:#92400e; padding:2px 8px; border-radius:12px; font-size:11px; font-weight:600;">Kirim Sendiri</span>' : 
+                                '<span style="color:#6b7280;">-</span>')
+                            }
+                        </td>
                         <td>${parseSafeDate(o.created_at).toLocaleDateString("id-ID")}</td>
                         <td>${statusBadge(o.status)}</td>
                     </tr>`,
@@ -791,6 +799,14 @@ document.addEventListener("DOMContentLoaded", () => {
                         <td style="font-weight:600; color:#3b82f6;">#${o.id}</td>
                         <td style="font-weight:500;">${o.customer ? o.customer.name : "-"}</td>
                         <td>${o.city ? o.city.name : "-"}</td>
+                        <td>
+                            ${o.delivery_method === 'courier' ? 
+                                '<span style="background:#dbeafe; color:#1e40af; padding:2px 8px; border-radius:12px; font-size:11px; font-weight:600;">Kurir</span>' : 
+                                (o.delivery_method === 'warehouse' ? 
+                                '<span style="background:#fef3c7; color:#92400e; padding:2px 8px; border-radius:12px; font-size:11px; font-weight:600;">Kirim Sendiri</span>' : 
+                                '<span style="color:#6b7280;">-</span>')
+                            }
+                        </td>
                         <td style="max-width:200px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${o.pickup_address || "-"}</td>
                         <td>
                             <div class="admin-text-main" style="font-size:13px; font-weight:500;">${parseSafeDate(o.created_at).toLocaleDateString("id-ID")} ${parseSafeDate(o.created_at).toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit" })}</div>
@@ -806,7 +822,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     )
                     .join("");
             } else {
-                tbody.innerHTML = `<tr><td colspan="7"><div class="admin-table-empty"><strong>Tidak ada pesanan ditemukan</strong></div></td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="8"><div class="admin-table-empty"><strong>Tidak ada pesanan ditemukan</strong></div></td></tr>`;
             }
         };
 

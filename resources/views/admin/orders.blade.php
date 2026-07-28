@@ -154,6 +154,7 @@
                         <th style="width:80px;">ID Order</th>
                         <th>Pelanggan</th>
                         <th>Kota</th>
+                        <th>Metode Pengiriman</th>
                         <th>Alamat Penjemputan</th>
                         <th>Waktu Pesan</th>
                         <th>Status</th>
