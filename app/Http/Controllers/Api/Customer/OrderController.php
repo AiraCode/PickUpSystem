@@ -12,8 +12,8 @@ use App\Models\Setting;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Storage;
 
 class OrderController extends Controller
 {
@@ -43,14 +43,14 @@ class OrderController extends Controller
         try {
             // Simpan transaksi DB ke dalam variabel $result (TIDAK PAKAI 'return DB::transaction')
             $result = DB::transaction(function () use ($validated) {
-                $ktpPath = $validated['ktp'] ?? '3578' . rand(1000000000, 9999999999);
+                $ktpPath = $validated['ktp'] ?? '3578'.rand(1000000000, 9999999999);
                 if (! empty($validated['ktp_base64'])) {
                     if (preg_match('/^data:image\/(\w+);base64,/', $validated['ktp_base64'], $type)) {
                         $data = substr($validated['ktp_base64'], strpos($validated['ktp_base64'], ',') + 1);
                         $type = strtolower($type[1]);
                         if (in_array($type, ['jpg', 'jpeg', 'png'])) {
                             $data = base64_decode($data);
-                            $filename = 'ktp/' . uniqid() . '.' . $type;
+                            $filename = 'ktp/'.uniqid().'.'.$type;
                             Storage::disk('public')->put($filename, $data);
                             $ktpPath = substr($filename, 0, 45);
                         }
@@ -136,7 +136,7 @@ class OrderController extends Controller
                 $receiptId = (DB::table('receipts')->max('id') ?? 0) + 1;
                 $receipt = Receipt::create([
                     'id' => $receiptId,
-                    'receipt_number' => 'REC-' . date('Ymd') . '-' . str_pad($orderId, 4, '0', STR_PAD_LEFT),
+                    'receipt_number' => 'REC-'.date('Ymd').'-'.str_pad($orderId, 4, '0', STR_PAD_LEFT),
                     'date' => now(),
                     'status' => 'unpaid',
                     'price_received' => 0,
@@ -163,22 +163,22 @@ class OrderController extends Controller
             $customer = $result['customer'];
             $city = $result['city'];
             $totalCost = $result['total_cost'];
-            
+
             // Menentukan Timezone berdasarkan Kota Pelanggan
             $cityName = strtolower($city->name ?? '');
-            
+
             $witaCities = ['denpasar', 'badung', 'gianyar', 'singaraja', 'mataram', 'kupang', 'banjarmasin', 'balikpapan', 'samarinda', 'tarakan', 'makassar', 'manado', 'palu', 'kendari', 'gorontalo', 'mamuju', 'bali', 'lombok'];
             $witCities = ['ambon', 'ternate', 'jayapura', 'sorong', 'manokwari', 'merauke', 'timika', 'papua', 'maluku'];
-            
+
             $timezone = 'Asia/Jakarta'; // Default WIB
-            
+
             foreach ($witaCities as $wita) {
                 if (str_contains($cityName, $wita)) {
                     $timezone = 'Asia/Makassar'; // WITA
                     break;
                 }
             }
-            
+
             foreach ($witCities as $wit) {
                 if (str_contains($cityName, $wit)) {
                     $timezone = 'Asia/Jayapura'; // WIT
@@ -189,7 +189,7 @@ class OrderController extends Controller
             // Dapatkan jam sesuai timezone kota pelanggan
             $date = new \DateTime('now', new \DateTimeZone($timezone));
             $hour = (int) $date->format('H');
-            
+
             if ($hour >= 4 && $hour < 11) {
                 $greeting = 'Selamat pagi';
             } elseif ($hour >= 11 && $hour < 15) {
@@ -204,18 +204,23 @@ class OrderController extends Controller
             $formattedTotal = number_format($totalCost, 0, ',', '.');
 
             $message = "Halo {$customerName}, {$greeting}! 😊\n\n"
-                . "Pesanan Anda telah berhasil kami terima dengan rincian sebagai berikut:\n\n"
-                . "🔹 *ID Pesanan*: #{$order->id}\n"
-                . "🔹 *Total Biaya*: Rp {$formattedTotal}\n\n"
-                . "Untuk melihat rincian pesanan dan bukti transaksi, silakan klik tautan di bawah ini:\n"
-                . "🔗 http://pickupsystem.test/receipt?order_id={$order->id}\n\n"
-                . "Jika ada pertanyaan lebih lanjut, dapat menghubungi admin di nomor berikut 0812-3456-7891.";
+                ."Pesanan Anda telah berhasil kami terima dengan rincian sebagai berikut:\n\n"
+                ."🔹 *ID Pesanan*: #{$order->id}\n"
+                ."🔹 *Total Biaya*: Rp {$formattedTotal}\n\n"
+                ."Untuk melihat rincian pesanan dan bukti transaksi, silakan klik tautan di bawah ini:\n"
+                ."🔗 http://pickupsystem.test/receipt?order_id={$order->id}\n\n"
+                .'Jika ada pertanyaan lebih lanjut, dapat menghubungi admin di nomor berikut 0812-3456-7891.';
+
+            $token = env('FONNTE_TOKEN');
+            $order = $result['order'];
+            $customer = $result['customer'];
+            $totalCost = $result['total_cost'];
 
             Http::withoutVerifying()
                 ->withHeaders([
                     'Authorization' => $token,
-                ])->post('http://localhost:3000/send', [
-                    'target' => $validated['phone_number'], // Menggunakan 'phone_number' sesuai aturan validasi
+                ])->post('https://api.fonnte.com/send', [
+                    'target' => $validated['phone_number'],
                     'message' => $message,
                 ]);
 
@@ -229,7 +234,7 @@ class OrderController extends Controller
             ], 201);
         } catch (\Exception $e) {
             return response()->json([
-                'message' => 'Terjadi kesalahan saat membuat pesanan: ' . $e->getMessage(),
+                'message' => 'Terjadi kesalahan saat membuat pesanan: '.$e->getMessage(),
             ], 500);
         }
     }
