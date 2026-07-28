@@ -1978,3 +1978,19 @@ html.admin-dark-mode .admin-table tbody tr:hover {
 /* ========================================================
    END DYNAMIC TABLE HOVER EFFECT
    ======================================================== */
+
+.card-all-title,
+.card-all-count {
+    color: #111827;
+}
+.card-all-small {
+    color: #6b7280;
+}
+
+html.admin-dark-mode .card-all-title,
+html.admin-dark-mode .card-all-count {
+    color: #ffffff;
+}
+html.admin-dark-mode .card-all-small {
+    color: #d1d5db;
+}

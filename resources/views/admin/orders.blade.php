@@ -41,9 +41,9 @@
                     </svg>
                 </span>
             </div>
-            <p style="margin:0; font-size:12px; color:#4b5563; font-weight:600;">Processing</p>
-            <strong id="count-processing" style="font-size:22px; color:#1d4ed8;">0</strong>
-            <small style="color:#6b7280; font-size:11px;">Sedang dijemput</small>
+            <p style="margin:0; font-size:12px; color:#60a5fa; font-weight:600;">Processing</p>
+            <strong id="count-processing" style="font-size:22px; color:#3b82f6;">0</strong>
+            <small style="color:#93c5fd; font-size:11px;">Sedang dijemput</small>
         </article>
 
         <article id="card-status-completed" class="admin-panel admin-stat-card order-status-tab"
@@ -58,9 +58,9 @@
                     </svg>
                 </span>
             </div>
-            <p style="margin:0; font-size:12px; color:#4b5563; font-weight:600;">Completed</p>
-            <strong id="count-completed" style="font-size:22px; color:#047857;">0</strong>
-            <small style="color:#6b7280; font-size:11px;">Transaksi selesai</small>
+            <p style="margin:0; font-size:12px; color:#34d399; font-weight:600;">Completed</p>
+            <strong id="count-completed" style="font-size:22px; color:#10b981;">0</strong>
+            <small style="color:#6ee7b7; font-size:11px;">Transaksi selesai</small>
         </article>
 
         <article id="card-status-cancelled" class="admin-panel admin-stat-card order-status-tab"
@@ -76,9 +76,9 @@
                     </svg>
                 </span>
             </div>
-            <p style="margin:0; font-size:12px; color:#4b5563; font-weight:600;">Cancelled</p>
-            <strong id="count-cancelled" style="font-size:22px; color:#b91c1c;">0</strong>
-            <small style="color:#6b7280; font-size:11px;">Pesanan dibatalkan</small>
+            <p style="margin:0; font-size:12px; color:#f87171; font-weight:600;">Cancelled</p>
+            <strong id="count-cancelled" style="font-size:22px; color:#ef4444;">0</strong>
+            <small style="color:#fca5a5; font-size:11px;">Pesanan dibatalkan</small>
         </article>
 
         <article id="card-status-all" class="admin-panel admin-stat-card order-status-tab" onclick="switchOrderTab('all')"
@@ -92,9 +92,9 @@
                     </svg>
                 </span>
             </div>
-            <p style="margin:0; font-size:12px; color:#4b5563; font-weight:600;">Semua Transaksi</p>
-            <strong id="count-all" style="font-size:22px; color:#374151;">0</strong>
-            <small style="color:#6b7280; font-size:11px;">Tampilkan seluruh data</small>
+            <p class="card-all-title" style="margin:0; font-size:12px; font-weight:600;">Semua Transaksi</p>
+            <strong id="count-all" class="card-all-count" style="font-size:22px;">0</strong>
+            <small class="card-all-small" style="font-size:11px;">Tampilkan seluruh data</small>
         </article>
     </div>
 
