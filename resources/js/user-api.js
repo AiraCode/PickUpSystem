@@ -462,11 +462,25 @@ document.addEventListener("DOMContentLoaded", () => {
                     .closest(".user-upload-field")
                     .querySelector("strong");
 
+                const sizeHint = document.getElementById("ktp-size-hint");
+
                 if (!file) {
                     if (nameEl) nameEl.textContent = "Upload foto KTP atau SIM";
                     if (ocrNameWrapper) ocrNameWrapper.style.display = "none";
                     if (ocrNameInput) ocrNameInput.value = "";
+                    if (sizeHint) sizeHint.style.display = "none";
                     return;
+                }
+
+                if (file.size > 10 * 1024 * 1024) {
+                    if (sizeHint) sizeHint.style.display = "block";
+                    ktpInputNode.value = ""; // Bersihkan file yang di-upload
+                    if (nameEl) nameEl.textContent = "Upload foto KTP atau SIM";
+                    if (ocrNameWrapper) ocrNameWrapper.style.display = "none";
+                    if (ocrNameInput) ocrNameInput.value = "";
+                    return;
+                } else {
+                    if (sizeHint) sizeHint.style.display = "none";
                 }
 
                 if (nameEl) nameEl.textContent = file.name;
@@ -904,7 +918,13 @@ document.addEventListener("DOMContentLoaded", () => {
                         subtotal += item.subtotal || 0;
                     });
                     const totalCost = receipt.price_owed || subtotal;
-                    const deliveryCost = subtotal - totalCost;
+                    let deliveryCost = subtotal - totalCost;
+                    
+                    // Handle old orders where totalCost (price_owed) was computed incorrectly as > subtotal
+                    if (deliveryCost < 0) {
+                        deliveryCost = Math.abs(deliveryCost);
+                    }
+                    
                     const orderDeliveryMethod =
                         o.delivery_method || "warehouse";
                     const isCourier = orderDeliveryMethod === "courier";

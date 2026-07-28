@@ -73,6 +73,7 @@
                                 <span><strong>Upload foto KTP atau SIM</strong><small>PNG/JPEG</small></span>
                                 <span class="user-upload-field__action">Pilih file</span>
                             </label>
+                            <p id="ktp-size-hint" class="user-hint" style="display: none; color: #ef4444; margin-top: 4px; font-size: 13px;">*maksimal ukuran file 10 MB</p>
 
                             {{-- UI OCR nama lengkap --}}
                             <div class="user-ocr-field user-floating-field--full" id="ocr-name-wrapper" style="display: none;">

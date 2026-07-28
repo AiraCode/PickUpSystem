@@ -20,7 +20,7 @@ class OCRController extends Controller
     public function extractName(Request $request): JsonResponse
     {
         $request->validate([
-            'image' => 'required|file|mimes:png,jpg,jpeg|max:1024',
+            'image' => 'required|file|mimes:png,jpg,jpeg|max:10240',
         ]);
 
         $result = $this->ocr->extractText($request->file('image'));
