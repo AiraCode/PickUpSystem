@@ -152,6 +152,7 @@
                 <thead>
                     <tr>
                         <th style="width:80px;">ID Order</th>
+                        <th>Tipe</th>
                         <th>Pelanggan</th>
                         <th>Kota</th>
                         <th>Metode Pengiriman</th>
@@ -409,8 +410,20 @@
                     <h3 style="font-size:14px; margin-bottom:12px; color:#111318;">Informasi Pesanan</h3>
                     <table style="width:100%; font-size:13px; border-collapse:collapse;">
                         <tr>
+                            <td style="width:35%; color:#6d727c; padding:6px 0;">Tipe Pesanan</td>
+                            <td id="detail-order-type" style="font-weight:700;"></td>
+                        </tr>
+                        <tr>
                             <td style="width:35%; color:#6d727c; padding:6px 0;">Kota Layanan</td>
                             <td id="detail-order-city" style="font-weight:500;"></td>
+                        </tr>
+                        <tr>
+                            <td style="width:35%; color:#6d727c; padding:6px 0;">Metode Pembayaran</td>
+                            <td id="detail-order-payment-method" style="font-weight:500;"></td>
+                        </tr>
+                        <tr id="row-detail-new-accu" style="display:none;">
+                            <td style="width:35%; color:#6d727c; padding:6px 0;">Aki Baru (Trade In)</td>
+                            <td id="detail-order-new-accu" style="font-weight:500; color:#2563eb;"></td>
                         </tr>
                         <tr>
                             <td style="width:35%; color:#6d727c; padding:6px 0;">Metode Pengiriman</td>
@@ -492,6 +505,11 @@
                         <span>Subtotal</span>
                         <span id="detail-summary-subtotal" style="font-weight:500; color:#fff;">-</span>
                     </div>
+                    <div id="detail-summary-row-new-accu"
+                        style="display:none; justify-content:space-between; margin-bottom:6px; font-size:13px; color:#9ca3af;">
+                        <span>Aki Baru (Trade In)</span>
+                        <span id="detail-summary-new-accu" style="font-weight:500; color:#ef4444;">-</span>
+                    </div>
                     <div
                         style="display:flex; justify-content:space-between; margin-bottom:6px; font-size:13px; color:#9ca3af;">
                         <span>Biaya penjemputan</span>
@@ -499,7 +517,7 @@
                     </div>
                     <div
                         style="display:flex; justify-content:space-between; padding-top:12px; border-top:1px solid #4b5563; font-size:15px; font-weight:700;">
-                        <span style="color: #fff;">Total penjualan</span>
+                        <span id="detail-summary-total-label" style="color: #fff;">Total Dibayar ke Customer</span>
                         <span id="detail-summary-total" style="color:#38bdf8;">-</span>
                     </div>
                 </div>

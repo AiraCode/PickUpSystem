@@ -20,6 +20,9 @@ class OrderController extends Controller
     public function store(Request $request): JsonResponse
     {
         $validated = $request->validate([
+            'order_type' => 'nullable|string|in:sell,trade_in',
+            'new_accus_id' => 'nullable|integer|exists:new_accus,id',
+            'payment_method' => 'nullable|string',
             'name' => 'required|string|max:100',
             'phone_number' => 'required|string|max:45',
             'address' => 'required|string|max:500',
@@ -41,7 +44,7 @@ class OrderController extends Controller
         ]);
 
         try {
-            // Simpan transaksi DB ke dalam variabel $result (TIDAK PAKAI 'return DB::transaction')
+            // Simpan transaksi DB ke dalam variabel $result
             $result = DB::transaction(function () use ($validated) {
                 $ktpPath = $validated['ktp'] ?? '3578'.rand(1000000000, 9999999999);
                 if (! empty($validated['ktp_base64'])) {
@@ -75,6 +78,7 @@ class OrderController extends Controller
 
                 $orderId = (Order::max('id') ?? 0) + 1;
                 $deliveryMethod = $validated['delivery_method'] ?? 'warehouse';
+                $orderType = $validated['order_type'] ?? 'sell';
 
                 $order = Order::create([
                     'id' => $orderId,
@@ -86,6 +90,9 @@ class OrderController extends Controller
                     'status' => 'pending',
                     'delivery_method' => $deliveryMethod,
                     'customers_id' => $customer->id,
+                    'order_type' => $orderType,
+                    'new_accus_id' => $orderType === 'trade_in' ? ($validated['new_accus_id'] ?? null) : null,
+                    'payment_method' => $orderType === 'trade_in' ? ($validated['payment_method'] ?? null) : null,
                 ]);
 
                 $lme = (float) Setting::getValue('lme', 2100);
@@ -133,6 +140,20 @@ class OrderController extends Controller
                     }
                 }
 
+                // Kalkulasi harga owe/receive
+                $newAccuPrice = 0;
+                if ($orderType === 'trade_in' && !empty($validated['new_accus_id'])) {
+                    $newAccu = \App\Models\NewAccu::find($validated['new_accus_id']);
+                    if ($newAccu) {
+                        $newAccuPrice = $newAccu->price;
+                    }
+                }
+
+                // Jika sell: price_owed = uang yg didapat customer (perusahaan hutang ke customer).
+                // Jika trade_in: price_owed = (uang aki bekas - fee) - harga aki baru. 
+                // Jika negatif berarti customer yang hutang ke perusahaan.
+                $priceOwed = $subtotal - $pickupFee - $newAccuPrice;
+
                 $receiptId = (DB::table('receipts')->max('id') ?? 0) + 1;
                 $receipt = Receipt::create([
                     'id' => $receiptId,
@@ -140,20 +161,20 @@ class OrderController extends Controller
                     'date' => now(),
                     'status' => 'unpaid',
                     'price_received' => 0,
-                    'price_owed' => $subtotal - $pickupFee,
+                    'price_owed' => $priceOwed,
                     'users_id' => 1,
                     'orders_id' => $orderId,
                 ]);
 
-                // Sync pivot dimasukkan ke dalam transaksi DB
+                // Sync pivot
                 $receipt->accus()->sync($accusPivot);
 
-                // Kembalikan data yang dibutuhkan di luar closure
                 return [
                     'order' => $order,
                     'customer' => $customer,
                     'city' => $city,
-                    'total_cost' => $subtotal - $pickupFee,
+                    'total_cost' => $priceOwed, // can be negative
+                    'new_accu_price' => $newAccuPrice,
                 ];
             });
 
@@ -201,13 +222,27 @@ class OrderController extends Controller
             }
 
             $customerName = $customer->name ?? 'Kak';
-            $formattedTotal = number_format($totalCost, 0, ',', '.');
+            
+            $isCustomerPaying = $totalCost < 0;
+            $formattedTotal = number_format(abs($totalCost), 0, ',', '.');
+            
+            $orderTypeMsg = $order->order_type === 'trade_in' ? 'Tukar Tambah Aki' : 'Penjualan Aki Bekas';
 
             $message = "Halo {$customerName}, {$greeting}! 😊\n\n"
-                ."Pesanan Anda telah berhasil kami terima dengan rincian sebagai berikut:\n\n"
-                ."🔹 *ID Pesanan*: #{$order->id}\n"
-                ."🔹 *Total Biaya*: Rp {$formattedTotal}\n\n"
-                ."Untuk melihat rincian pesanan dan bukti transaksi, silakan klik tautan di bawah ini:\n"
+                ."Pesanan *{$orderTypeMsg}* Anda telah berhasil kami terima dengan rincian sebagai berikut:\n\n"
+                ."🔹 *ID Pesanan*: #{$order->id}\n";
+                
+            if ($order->order_type === 'trade_in') {
+                if ($isCustomerPaying) {
+                    $message .= "🔹 *Total Tagihan Anda*: Rp {$formattedTotal} (" . strtoupper($order->payment_method) . ")\n\n";
+                } else {
+                    $message .= "🔹 *Total Uang Diterima*: Rp {$formattedTotal}\n\n";
+                }
+            } else {
+                $message .= "🔹 *Total Uang Diterima*: Rp {$formattedTotal}\n\n";
+            }
+
+            $message .= "Untuk melihat rincian pesanan dan bukti transaksi, silakan klik tautan di bawah ini:\n"
                 ."🔗 http://pickupsystem.test/receipt?order_id={$order->id}\n\n"
                 .'Jika ada pertanyaan lebih lanjut, dapat menghubungi admin di nomor berikut 0812-3456-7891.';
 

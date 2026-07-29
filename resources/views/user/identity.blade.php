@@ -133,6 +133,18 @@
                                 <div id="wa-hint-1" style="color: var(--user-red); font-size: 11px; margin-top: 6px; margin-left: 4px;">*pengisian diawali dengan 0 (cth: 08123456789)</div>
                                 <div id="wa-hint-2" style="color: var(--user-red); font-size: 11px; margin-top: 4px; margin-left: 4px;">*jumlah nomor berkisar 10-13 digit</div>
                             </div>
+                            </div>
+                            <div class="user-floating-field--full" id="payment-method-wrapper" style="display: none;">
+                                <label class="user-floating-field" style="margin-bottom:0;">
+                                    <select name="payment_method" id="payment-method-select">
+                                        <option value="" selected disabled></option>
+                                        <option value="cod">COD (Bayar di Tempat)</option>
+                                        <option value="transfer">Transfer Bank</option>
+                                        <option value="qris">QRIS</option>
+                                    </select>
+                                    <span>Metode Pembayaran (Untuk Kekurangan Trade In)</span>
+                                </label>
+                            </div>
                         </div>
                     </div>
 
@@ -226,7 +238,7 @@
                             <span id="modal-fee" style="color: #0f172a;">Rp 0</span>
                         </div>
                         <div style="display: flex; justify-content: space-between; margin-top: 8px; padding-top: 8px; border-top: 1px solid #e2e8f0;">
-                            <strong style="color: #0f172a;">Total penjualan</strong>
+                            <strong id="modal-total-label" style="color: #0f172a;">Total penjualan</strong>
                             <strong id="modal-total" style="color: var(--user-blue); font-size: 15px;">Rp 0</strong>
                         </div>
                     </div>

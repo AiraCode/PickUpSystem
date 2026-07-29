@@ -31,6 +31,7 @@ use App\Http\Controllers\Api\Customer\OCRController as CustomerOCRController;
 Route::prefix('customer')->group(function () {
     Route::get('cities', [CustomerCityController::class, 'index']);
     Route::get('cities/{cityId}/accus', [CustomerAccuController::class, 'getByCity']);
+    Route::get('new-accus', [\App\Http\Controllers\Api\Customer\NewAccuController::class, 'index']);
     Route::get('storages', [CustomerStorageController::class, 'index']);
     Route::get('banks', [CustomerBankController::class, 'index']);
     Route::post('orders', [CustomerOrderController::class, 'store']);
@@ -102,6 +103,8 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('accus/trashed', [AdminAccuController::class, 'trashed']);
         Route::post('accus/{id}/restore', [AdminAccuController::class, 'restore']);
         Route::apiResource('accus', AdminAccuController::class);
+        
+        Route::apiResource('new-accus', \App\Http\Controllers\Api\Admin\NewAccuController::class);
 
         Route::get('cities/{cityId}/accus', [CityAccuPriceController::class, 'index']);
         Route::post('cities/{cityId}/accus', [CityAccuPriceController::class, 'store']);

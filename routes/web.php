@@ -12,6 +12,9 @@ Route::get('/user', function () {
 Route::get('/identity', function () {
     return view('user.identity');
 });
+Route::get('/trade-in', function () {
+    return view('user.trade-in');
+});
 Route::get('/user/identitas', function () {
     return view('user.identity');
 });

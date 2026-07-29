@@ -21,7 +21,15 @@ class Order extends Model
         'delivery_method',
         'cancel_reason',
         'customers_id',
+        'order_type',
+        'new_accus_id',
+        'payment_method',
     ];
+
+    public function newAccu(): BelongsTo
+    {
+        return $this->belongsTo(NewAccu::class, 'new_accus_id');
+    }
 
     public function city(): BelongsTo
     {
