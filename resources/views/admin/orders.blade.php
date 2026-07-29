@@ -384,7 +384,7 @@
                             <td id="detail-customer-address" style="font-weight:500;"></td>
                         </tr>
                         <tr>
-                            <td style="color:#6d727c; padding:6px 0;">No. KTP</td>
+                            <td style="color:#6d727c; padding:6px 0;">Foto KTP</td>
                             <td style="font-weight:500; display:flex; align-items:center; gap:8px;">
                                 <span id="detail-customer-ktp"></span>
                                 <a id="detail-customer-ktp-link" href="#"

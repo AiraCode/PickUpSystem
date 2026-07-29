@@ -67,7 +67,7 @@
                 <thead>
                     <tr>
                         <th>Nama Kota</th>
-                        <th>Persentase Default (%)</th>
+                        <th>Persentase (%)</th>
                         <th style="width:180px; text-align:right;">Aksi</th>
                     </tr>
                 </thead>
