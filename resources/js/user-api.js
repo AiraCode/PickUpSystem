@@ -179,7 +179,7 @@ document.addEventListener("DOMContentLoaded", () => {
                         <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
                     </svg>
                     <strong>Silakan mencari jenis aki terlebih dahulu.</strong>
-                    <p style="font-size:13px;">Ketikkan nama aki pada kolom pencarian di atas.</p>
+                    <p style="font-size:13px;">Ketikkan jenis aki pada kolom pencarian di atas.</p>
                 </div>`;
                 
         batteryList.innerHTML = hintHtml + cardsHtml;
@@ -235,7 +235,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
             addButton?.addEventListener("click", () => {
                 const name = card.dataset.productName || "Aki";
-                const brand = card.dataset.productBrand || "Indoprima";
+                const brand = card.dataset.productBrand || "Modern Mulia Mandiri";
                 const price = Number(card.dataset.productPrice) || 0;
                 const id = Number(card.getAttribute("data-accu-id")) || 1;
                 const quantity = Math.min(
@@ -669,7 +669,16 @@ document.addEventListener("DOMContentLoaded", () => {
                     return;
                 }
 
-                if (file.size > 10 * 1024 * 1024) {
+                if (!file.type.startsWith("image/")) {
+                    alert("Harap upload file berupa gambar (JPEG, PNG).");
+                    accuKtpFileInput.value = "";
+                    if (label) label.textContent = "Upload foto Aki & KTP dalam 1 Frame";
+                    if (hint) hint.style.display = "none";
+                    return;
+                }
+
+                if (file.size > 5 * 1024 * 1024) {
+                    alert("Ukuran file terlalu besar (Maksimal 5MB).");
                     if (hint) hint.style.display = "block";
                     accuKtpFileInput.value = "";
                     if (label) label.textContent = "Upload foto Aki & KTP dalam 1 Frame";
@@ -709,7 +718,18 @@ document.addEventListener("DOMContentLoaded", () => {
                     return;
                 }
 
-                if (file.size > 10 * 1024 * 1024) {
+                if (!file.type.startsWith("image/")) {
+                    alert("Harap upload file berupa gambar (JPEG, PNG).");
+                    ktpInputNode.value = "";
+                    if (nameEl) nameEl.textContent = "Upload foto KTP atau SIM";
+                    if (ocrNameWrapper) ocrNameWrapper.style.display = "none";
+                    if (ocrNameInput) ocrNameInput.value = "";
+                    if (sizeHint) sizeHint.style.display = "none";
+                    return;
+                }
+
+                if (file.size > 5 * 1024 * 1024) {
+                    alert("Ukuran file terlalu besar (Maksimal 5MB).");
                     if (sizeHint) sizeHint.style.display = "block";
                     ktpInputNode.value = ""; // Bersihkan file yang di-upload
                     if (nameEl) nameEl.textContent = "Upload foto KTP atau SIM";
@@ -762,6 +782,9 @@ document.addEventListener("DOMContentLoaded", () => {
                     });
                     const data = await res.json();
 
+                    const viewBtn = document.getElementById("view-ktp-btn");
+                    const ktpOverlayImg = document.getElementById("ktp-overlay-img");
+
                     if (data.name) {
                         if (ocrNameInput) ocrNameInput.value = data.name;
                         if (ocrStatus) {
@@ -769,10 +792,9 @@ document.addEventListener("DOMContentLoaded", () => {
                             ocrStatus.innerHTML =
                                 "✓ Nama berhasil diekstrak dari dokumen. (jika nama yang diekstraksi salah, lakukan foto sesuai dengan contoh)";
                         }
-                        const viewBtn = document.getElementById("view-ktp-btn");
-                        const ktpOverlayImg = document.getElementById("ktp-overlay-img");
                         if (viewBtn && ktpOverlayImg) {
                             viewBtn.style.display = "inline-block";
+                            viewBtn.style.color = "#16a34a";
                             ktpOverlayImg.src = "/img/ktp_template.jpeg";
                         }
                     } else {
@@ -783,14 +805,24 @@ document.addEventListener("DOMContentLoaded", () => {
                                 (data.message ||
                                     "Gagal membaca nama. Coba upload ulang dengan foto yang lebih jelas.");
                         }
-                        const viewBtn = document.getElementById("view-ktp-btn");
-                        if (viewBtn) viewBtn.style.display = "none";
+                        if (viewBtn && ktpOverlayImg) {
+                            viewBtn.style.display = "inline-block";
+                            viewBtn.style.color = "#dc2626";
+                            ktpOverlayImg.src = "/img/ktp_template.jpeg";
+                        }
                     }
                 } catch (err) {
                     if (ocrStatus) {
                         ocrStatus.style.color = "#dc2626";
                         ocrStatus.innerHTML =
                             "✗ Terjadi kesalahan jaringan saat memproses OCR.";
+                    }
+                    const viewBtn = document.getElementById("view-ktp-btn");
+                    const ktpOverlayImg = document.getElementById("ktp-overlay-img");
+                    if (viewBtn && ktpOverlayImg) {
+                        viewBtn.style.display = "inline-block";
+                        viewBtn.style.color = "#dc2626";
+                        ktpOverlayImg.src = "/img/ktp_template.jpeg";
                     }
                 }
             });
@@ -1046,7 +1078,7 @@ document.addEventListener("DOMContentLoaded", () => {
                         modalSubtotal += sub;
                         modalItemsHtml += `
                             <tr>
-                                <td><strong>${item.name}</strong><br><small style="color: #64748b;">${item.brand || "Aki"}</small></td>
+                                <td><strong>${item.name}</strong></td>
                                 <td style="text-align: center;">${qty} unit</td>
                                 <td style="text-align: right;">${rupiah(price)}</td>
                                 <td style="text-align: right; font-weight: 600; color: #0f172a;">${rupiah(sub)}</td>
@@ -1258,7 +1290,7 @@ document.addEventListener("DOMContentLoaded", () => {
                         const dds = blockPenyerahan.querySelectorAll("dd");
                         if (dds[0])
                             dds[0].textContent = isCourier
-                                ? "Dijemput Kurir Indoprima"
+                                ? "Dijemput Kurir"
                                 : "Antar ke Gudang";
                         if (dds[1])
                             dds[1].textContent = o.city ? o.city.name : "-";
@@ -1380,7 +1412,6 @@ document.addEventListener("DOMContentLoaded", () => {
                                 <tr>
                                     <td>
                                         <strong>${item.name || "-"}</strong>
-                                        <small>${item.brand || "-"}</small>
                                     </td>
                                     <td>${item.amount || 1} unit</td>
                                     <td>${rupiah(item.price || 0)}</td>
@@ -2067,7 +2098,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 const priceFmt = new Intl.NumberFormat("id-ID", { style: "currency", currency: "IDR", minimumFractionDigits: 0 }).format(accu.price);
                 card.innerHTML = `
                     <div class="user-product-card__content">
-                        <span class="user-product-card__brand">${accu.brand_relation ? accu.brand_relation.name : "Indoprima"}</span>
                         <h3>${accu.name}</h3>
                         <p class="user-product-card__price" style="color:#2563eb;">${priceFmt}</p>
                     </div>

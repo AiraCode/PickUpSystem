@@ -1125,11 +1125,17 @@ document.addEventListener("DOMContentLoaded", () => {
                 "detail-customer-ktp-link",
             );
             if (ktpLinkEl) {
-                if (ktpVal !== "-" && ktpVal.includes("ktp/")) {
-                    const imgUrl = `/storage/${ktpVal}`;
+                if (ktpVal !== "-" && (ktpVal.includes("ktp/") || ktpVal.includes(".jpg") || ktpVal.includes(".jpeg") || ktpVal.includes(".png") || ktpVal.includes("data:image"))) {
+                    const imgUrl = ktpVal.startsWith("http") || ktpVal.startsWith("data:") 
+                        ? ktpVal 
+                        : (ktpVal.startsWith("/") ? ktpVal : `/storage/${ktpVal}`);
                     ktpLinkEl.onclick = (e) => {
                         e.preventDefault();
-                        window.openImageViewer(imgUrl);
+                        if (typeof openImageViewer === 'function') {
+                            openImageViewer(imgUrl);
+                        } else {
+                            window.open(imgUrl, '_blank');
+                        }
                     };
                     ktpLinkEl.style.display = "inline-flex";
                 } else {

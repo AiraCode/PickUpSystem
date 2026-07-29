@@ -6,7 +6,13 @@
     <main class="user-flow-page">
         <section class="user-flow-hero">
 
-            <div class="user-flow-hero__bg"></div>
+            <div class="user-flow-hero__bg">
+                <div class="hero-slideshow">
+                    <div class="hero-slide is-active" style="background-image: url('{{ asset('img/Aki_GS_Hijau-removebg-preview.png') }}');"></div>
+                    <div class="hero-slide" style="background-image: url('{{ asset('img/Aki_GS_Putih-removebg-preview.png') }}');"></div>
+                    <div class="hero-slide" style="background-image: url('{{ asset('img/Aki_Yuasa-removebg-preview.png') }}');"></div>
+                </div>
+            </div>
             <div class="user-flow-hero__overlay"></div>
 
             <div class="user-container user-flow-hero__inner">
@@ -144,7 +150,6 @@
                                     </select>
                                     <span>Metode Pembayaran (Untuk Kekurangan Trade In)</span>
                                 </label>
-                            </div>
                         </div>
                     </div>
 
@@ -218,7 +223,7 @@
                         <table class="modal-cart-table">
                             <thead style="position: sticky; top: 0; background: #f8fafc; z-index: 1;">
                                 <tr>
-                                    <th style="text-align: left;">AKI / BRAND</th>
+                                    <th style="text-align: left;">AKI</th>
                                     <th style="text-align: center;">QTY</th>
                                     <th style="text-align: right;">HARGA UNIT</th>
                                     <th style="text-align: right;">SUBTOTAL</th>

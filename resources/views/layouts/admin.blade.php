@@ -21,14 +21,14 @@
 
             <aside class="admin-sidebar" id="admin-sidebar" aria-label="Navigasi utama admin">
                 <div class="admin-sidebar__head">
-                    <a href="{{ url('/admin/dashboard') }}" class="admin-brand" aria-label="Pick Up System admin">
+                    <a href="{{ url('/admin/dashboard') }}" class="admin-brand" aria-label="One Stop Solution admin">
 
-                        <img src="{{ Vite::asset('resources/img/indoprima_logo.png') }}" alt="Indoprima Group"
-                            class="admin-brand__logo" style=>
+                        <img src="{{ Vite::asset('resources/img/logo_admin2-removebg-preview.png') }}" alt="Modern Mulia Mandiri"
+                            class="admin-brand__logo" style="height: 38px; width: auto; object-fit: contain;">
 
                         <span class="admin-brand__copy">
-                            <strong>Indoprima Group</strong>
-                            <small>Pick Up System</small>
+                            <strong>Modern Mulia Mandiri</strong>
+                            <small>One Stop Solution</small>
                         </span>
 
                     </a>
@@ -107,7 +107,7 @@
                         <span id="admin-theme-text">Mode Gelap</span>
                     </button>
                     <div class="admin-sidebar__foot-copy">
-                        <span>© 2026 Indoprima Group</span>
+                        <span>© 2026 Modern Mulia Mandiri</span>
                         <span>v1.0.0</span>
                     </div>
                 </div>

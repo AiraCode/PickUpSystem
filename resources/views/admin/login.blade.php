@@ -70,68 +70,79 @@
             .login-wrapper {
                 width: 100%;
                 max-width: 430px;
+                max-width: 440px;
+                padding: 24px 20px;
                 position: relative;
                 z-index: 10;
             }
 
             .login-card {
-                background: rgba(255, 255, 255, 0.96);
+                background: rgba(15, 23, 42, 0.75);
                 backdrop-filter: blur(16px);
-                border: 1px solid rgba(255, 255, 255, 0.2);
+                -webkit-backdrop-filter: blur(16px);
+                border: 1px solid rgba(255, 255, 255, 0.08);
                 border-radius: 20px;
-                padding: 44px 38px 34px;
-                box-shadow: 
-                    0 25px 50px -12px rgba(0, 0, 0, 0.4),
-                    0 0 0 1px rgba(255, 255, 255, 0.1) inset;
-                transition: transform 0.25s ease, box-shadow 0.25s ease;
+                padding: 40px 32px;
+                box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
             }
 
             .login-brand {
                 text-align: center;
-                margin-bottom: 28px;
+                margin-bottom: 32px;
             }
 
             .brand-logo-wrap {
-                display: inline-flex;
+                width: 68px;
+                height: 68px;
+                background: rgba(255, 255, 255, 0.03);
+                border: 1px solid rgba(255, 255, 255, 0.1);
+                border-radius: 18px;
+                display: flex;
                 align-items: center;
                 justify-content: center;
-                width: 64px;
-                height: 64px;
-                background: #ffffff;
-                border-radius: 16px;
-                box-shadow: 0 10px 25px rgba(34, 80, 252, 0.15);
-                border: 1px solid #f1f5f9;
-                margin-bottom: 16px;
+                margin: 0 auto 16px;
+                box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
             }
 
             .brand-logo-wrap img {
-                height: 38px;
+                height: 40px;
                 width: auto;
                 object-fit: contain;
             }
 
             .brand-kicker {
-                display: block;
                 font-size: 11px;
                 font-weight: 800;
-                letter-spacing: 0.14em;
+                letter-spacing: 0.15em;
                 color: var(--brand-blue);
-                text-transform: uppercase;
+                display: block;
                 margin-bottom: 4px;
             }
 
             .login-brand h1 {
                 font-size: 24px;
                 font-weight: 800;
-                color: var(--brand-dark);
-                letter-spacing: -0.03em;
-                line-height: 1.2;
+                color: #ffffff;
+                letter-spacing: -0.02em;
+                margin-bottom: 6px;
             }
 
             .login-brand p {
                 font-size: 13px;
-                color: var(--text-muted);
-                margin-top: 6px;
+                color: #94a3b8;
+            }
+
+            .error-message {
+                display: none;
+                background: rgba(220, 38, 38, 0.15);
+                border: 1px solid rgba(239, 68, 68, 0.3);
+                color: #fca5a5;
+                font-size: 13px;
+                padding: 12px 16px;
+                border-radius: 10px;
+                margin-bottom: 24px;
+                text-align: center;
+                line-height: 1.4;
             }
 
             .form-group {
@@ -141,105 +152,86 @@
             .form-label {
                 display: block;
                 font-size: 12px;
-                font-weight: 700;
-                color: var(--brand-dark);
+                font-weight: 600;
+                color: #cbd5e1;
                 margin-bottom: 8px;
-                letter-spacing: 0.01em;
+                text-transform: uppercase;
+                letter-spacing: 0.05em;
             }
 
-            .input-wrapper {
+            .input-wrap {
                 position: relative;
-                display: flex;
-                align-items: center;
             }
 
             .input-icon {
                 position: absolute;
                 left: 14px;
-                color: #94a3b8;
-                width: 18px;
-                height: 18px;
+                top: 50%;
+                transform: translateY(-50%);
+                color: #64748b;
+                display: flex;
+                align-items: center;
                 pointer-events: none;
                 transition: color 0.2s;
             }
 
-            .form-input {
+            .form-control {
                 width: 100%;
-                height: 46px;
-                padding: 0 14px 0 42px;
-                background: #f8fafc;
-                border: 1.5px solid #e2e8f0;
-                border-radius: 10px;
-                font-size: 13.5px;
-                color: var(--brand-dark);
+                background: rgba(15, 23, 42, 0.6);
+                border: 1px solid rgba(255, 255, 255, 0.12);
+                border-radius: 12px;
+                padding: 14px 14px 14px 44px;
+                color: #ffffff;
+                font-size: 14px;
+                font-family: inherit;
                 outline: none;
-                transition: all 0.2s ease;
+                transition: all 0.2s;
             }
 
-            .form-input::placeholder {
-                color: #94a3b8;
-            }
-
-            .form-input:focus {
-                background: #ffffff;
+            .form-control:focus {
                 border-color: var(--brand-blue);
-                box-shadow: 0 0 0 4px rgba(34, 80, 252, 0.12);
+                background: rgba(15, 23, 42, 0.9);
+                box-shadow: 0 0 0 4px rgba(34, 80, 252, 0.15);
             }
 
-            .form-input:focus + .input-icon,
-            .input-wrapper:focus-within .input-icon {
+            .form-control:focus + .input-icon {
                 color: var(--brand-blue);
+            }
+
+            .form-control::placeholder {
+                color: #475569;
             }
 
             .btn-login {
                 width: 100%;
-                height: 48px;
                 background: linear-gradient(135deg, var(--brand-blue) 0%, #1d40d8 100%);
                 color: #ffffff;
                 border: none;
-                border-radius: 10px;
+                border-radius: 12px;
+                padding: 14px;
                 font-size: 14px;
                 font-weight: 700;
+                font-family: inherit;
                 cursor: pointer;
+                box-shadow: 0 8px 20px rgba(34, 80, 252, 0.3);
+                transition: all 0.2s;
+                margin-top: 8px;
                 display: flex;
                 align-items: center;
                 justify-content: center;
                 gap: 8px;
-                box-shadow: 0 8px 20px rgba(34, 80, 252, 0.28);
-                transition: all 0.2s ease;
-                margin-top: 26px;
             }
 
             .btn-login:hover {
-                background: linear-gradient(135deg, #1d40d8 0%, var(--brand-red) 100%);
-                box-shadow: 0 10px 25px rgba(186, 27, 43, 0.35);
                 transform: translateY(-1px);
+                box-shadow: 0 12px 24px rgba(34, 80, 252, 0.4);
+                background: linear-gradient(135deg, #1d40d8 0%, var(--brand-red) 100%);
             }
 
             .btn-login:active {
                 transform: translateY(0);
             }
 
-            .btn-login svg {
-                width: 18px;
-                height: 18px;
-                transition: transform 0.2s;
-            }
-
-            .btn-login:hover svg {
-                transform: translateX(3px);
-            }
-
-            .error-message {
-                color: var(--brand-red);
-                font-size: 12.5px;
-                font-weight: 600;
-                margin-bottom: 20px;
-                display: none;
-                text-align: center;
-                background: #fef2f2;
-                border: 1px solid #fecaca;
-                padding: 12px;
                 border-radius: 10px;
                 animation: fadeIn 0.3s ease;
             }

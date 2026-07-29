@@ -7,8 +7,11 @@
         <main>
             <section class="user-hero" style="min-height: 40vh; padding: 120px 0 60px;">
                 <div class="user-hero__media" aria-label="Area gambar hero">
-                    <img src="https://images.unsplash.com/photo-1621259182978-fbf93132d53d?q=80&w=1000&auto=format&fit=crop"
-                        alt="Trade In Aki" class="user-hero__image">
+                    <div class="hero-slideshow">
+                        <div class="hero-slide is-active" style="background-image: url('{{ asset('img/Aki_GS_Hijau-removebg-preview.png') }}');"></div>
+                        <div class="hero-slide" style="background-image: url('{{ asset('img/Aki_GS_Putih-removebg-preview.png') }}');"></div>
+                        <div class="hero-slide" style="background-image: url('{{ asset('img/Aki_Yuasa-removebg-preview.png') }}');"></div>
+                    </div>
                     <span class="user-hero__overlay" aria-hidden="true"></span>
                 </div>
                 <div class="user-hero__content user-container">
@@ -17,7 +20,7 @@
                             Pilih Aki Baru Anda untuk<br>
                             <em>Tukar Tambah</em>
                         </h1>
-                        <p>Dapatkan harga aki baru terbaik dan potongan harga dari penjualan aki bekas Anda.</p>
+                        <p>Dapatkan harga aki baru terbaik dan potongan harga dari penjualan aki reject Anda.</p>
                         <div class="user-hero__actions">
                             <a href="#daftar-aki-baru" class="user-button user-button--primary">Pilih Aki Baru <span
                                     aria-hidden="true">→</span></a>
@@ -36,8 +39,8 @@
 
                     <div class="user-catalog-toolbar">
                         <label class="user-field user-field--search" for="new-accu-search-input" style="flex:1;">
-                            <span>CARI NAMA AKI BARU</span>
-                            <input type="text" id="new-accu-search-input" placeholder="Cari GS Astra, Yuasa, dll...">
+                            <span>CARI JENIS AKI BARU</span>
+                            <input type="text" id="new-accu-search-input" placeholder="Cari jenis aki (NX100, NS40, dll)...">
                         </label>
                     </div>
 
@@ -72,7 +75,7 @@
                                 Lanjut Isi Identitas <span aria-hidden="true">→</span>
                             </button>
                             <p style="margin-top:12px; font-size:11px; color:#64748b; line-height:1.4;">
-                                *Catatan: Anda akan diarahkan ke halaman pengisian identitas. Data aki bekas yang sudah Anda pilih sebelumnya akan tetap tersimpan.
+                                *Catatan: Anda akan diarahkan ke halaman pengisian identitas. Data aki reject yang sudah Anda pilih sebelumnya akan tetap tersimpan.
                             </p>
                         </aside>
                     </div>

@@ -5,7 +5,13 @@
 
     <main class="user-flow-page user-receipt-page">
         <section class="user-flow-hero user-flow-hero--receipt">
-            <div class="user-flow-hero__bg"></div>
+            <div class="user-flow-hero__bg">
+                <div class="hero-slideshow">
+                    <div class="hero-slide is-active" style="background-image: url('{{ asset('img/Aki_GS_Hijau-removebg-preview.png') }}');"></div>
+                    <div class="hero-slide" style="background-image: url('{{ asset('img/Aki_GS_Putih-removebg-preview.png') }}');"></div>
+                    <div class="hero-slide" style="background-image: url('{{ asset('img/Aki_Yuasa-removebg-preview.png') }}');"></div>
+                </div>
+            </div>
             <div class="user-flow-hero__overlay"></div>
 
             <div class="user-container user-flow-hero__inner">
@@ -17,7 +23,7 @@
                     <div class="user-progress__step is-current"><span>03</span><small>Receipt</small></div>
                 </div>
                 <span class="user-kicker">DOKUMEN PENJUALAN</span>
-                <h1>Receipt pesanan<br><em>Pick Up System.</em></h1>
+                <h1>Receipt pesanan<br><em>One Stop Solution.</em></h1>
                 <p>Simpan receipt ini sebagai referensi transaksi. Informasi identitas sensitif tidak ditampilkan pada dokumen ini.</p>
             </div>
         </section>
@@ -35,8 +41,8 @@
                 <article class="user-receipt" data-receipt>
                     <div class="user-receipt__top">
                         <div class="user-receipt__brand">
-                            <img src="{{ Vite::asset('resources/img/indoprima_logo.png') }}" alt="Indoprima Group" style="height: 55px; width: auto; object-fit: contain;">
-                            <div><strong>Indoprima Group</strong><small>Pick Up System</small></div>
+                            <img src="{{ Vite::asset('resources/img/logo_admin2-removebg-preview.png') }}" alt="Modern Mulia Mandiri" style="height: 45px; width: auto; object-fit: contain;">
+                            <div><strong>Modern Mulia Mandiri</strong><small>One Stop Solution</small></div>
                         </div>
                         <div class="user-receipt__meta">
                             <span>RECEIPT PENJUALAN</span>
@@ -64,18 +70,8 @@
                                 <div><dt>Gudang / kurir</dt><dd>—</dd></div>
                                 <div><dt>Biaya penjemputan</dt><dd>—</dd></div>
                                 <div>
-                                    <dt style="display:inline-flex; align-items:center; gap:10px;">
-                                        Catatan    
-                                        <button type="button" id="btn-edit-note" style="background:#eff6ff; border:1px solid #bfdbfe; color:#1d4ed8; cursor:pointer; font-size:12px; font-weight:600; padding:2px 10px; border-radius:12px; text-decoration:none;">Edit</button>
-                                    </dt>
+                                    <dt>Catatan</dt>
                                     <dd id="receipt-note-display">—</dd>
-                                    <div id="receipt-note-edit-container" style="display:none; margin-top:6px;">
-                                        <textarea id="receipt-note-input" rows="2" style="width:100%; border:1px solid #cbd5e1; border-radius:4px; padding:6px 8px; font-size:12px; font-family:inherit; margin-bottom:6px;"></textarea>
-                                        <div style="display:flex; gap:6px; justify-content:flex-end;">
-                                            <button type="button" id="btn-cancel-note" style="padding:4px 8px; font-size:11px; background:#f1f5f9; color:#475569; border:none; border-radius:4px; cursor:pointer;">Batal</button>
-                                            <button type="button" id="btn-save-note" style="padding:4px 8px; font-size:11px; background:#2563eb; color:#fff; border:none; border-radius:4px; cursor:pointer;">Simpan</button>
-                                        </div>
-                                    </div>
                                 </div>
                             </dl>
                         </section>
@@ -83,7 +79,7 @@
 
                     <div class="user-receipt__table-wrap">
                         <table class="user-receipt__table">
-                            <thead><tr><th>AKI / BRAND</th><th>QTY</th><th>HARGA UNIT</th><th>SUBTOTAL</th></tr></thead>
+                            <thead><tr><th>AKI</th><th>QTY</th><th>HARGA UNIT</th><th>SUBTOTAL</th></tr></thead>
                             <tbody><tr><td colspan="4"><div class="user-receipt__empty"><strong>Detail aki belum tersedia</strong><span>Item akan tampil setelah transaksi terhubung.</span></div></td></tr></tbody>
                         </table>
                     </div>

@@ -1,13 +1,8 @@
 <header class="user-header {{ $headerClass ?? '' }}" data-user-header>
     <div class="user-header__inner">
-        <a href="/user" class="user-brand" aria-label="Pick Up System user">
-            <img src="{{ Vite::asset('resources/img/indoprima_logo.png') }}" alt="Indoprima Group"
-                class="admin-brand__logo" style=>
-
-            <span class="user-brand__copy">
-                <strong>Indoprima Group</strong>
-                <small>Pick Up System</small>
-            </span>
+        <a href="/user" class="user-brand" aria-label="One Stop Solution user">
+            <img src="{{ Vite::asset('resources/img/Logo_user-removebg-preview.png') }}" alt="AKIKU"
+                style="height: 140px; width: auto; object-fit: contain;">
         </a>
 
         @unless($hideNav ?? false)

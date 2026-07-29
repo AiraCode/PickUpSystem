@@ -7,17 +7,20 @@
         <main>
             <section class="user-hero">
                 <div class="user-hero__media" aria-label="Area gambar hero">
-                    <img src="https://images.unsplash.com/photo-1676337167629-d896b3ed5724?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-                        alt="Gambar pabrik dan gudang Indoprima belum tersedia (not found)" class="user-hero__image">
+                    <div class="hero-slideshow">
+                        <div class="hero-slide is-active" style="background-image: url('{{ asset('img/Aki_GS_Hijau-removebg-preview.png') }}');"></div>
+                        <div class="hero-slide" style="background-image: url('{{ asset('img/Aki_GS_Putih-removebg-preview.png') }}');"></div>
+                        <div class="hero-slide" style="background-image: url('{{ asset('img/Aki_Yuasa-removebg-preview.png') }}');"></div>
+                    </div>
                     <span class="user-hero__overlay" aria-hidden="true"></span>
                 </div>
                 <div class="user-hero__content user-container">
                     <div class="user-hero__copy">
                         <h1>
-                            Jual Aki Bekas Anda dengan<br>
+                            Jual Aki Reject Anda dengan<br>
                             <em>Harga Terbaik</em>
                         </h1>
-                        <p>Indoprima Group membeli aki mobil dan aki motor bekas dengan proses cepat, transparan, dan
+                        <p>Modern Mulia Mandiri membeli aki mobil dan aki motor reject dengan proses cepat, transparan, dan
                             pembayaran langsung ke rekening Anda.</p>
                         <div class="user-hero__actions">
                             <a href="#daftar-harga" class="user-button user-button--primary">Jual Sekarang <span
@@ -96,8 +99,8 @@
                             </select>
                         </label>
                         <label class="user-field user-field--search" for="accu-search-input">
-                            <span>CARI NAMA AKI</span>
-                            <input type="text" id="accu-search-input" placeholder="Cari GS Astra, Yuasa, dll..."
+                            <span>CARI JENIS AKI</span>
+                            <input type="text" id="accu-search-input" placeholder="Cari jenis aki (NX100, NS40, dll)..."
                                 style="padding: 10px 14px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 13px; width: 100%; height: 44px; box-sizing: border-box;">
                         </label>
                         <div class="user-catalog-notice" id="user-city-warning" data-city-warning>
@@ -158,12 +161,12 @@
                                 <label class="user-radio-card">
                                     <input type="radio" name="order_type_selection" value="sell" checked>
                                     <span class="user-radio-card__indicator"></span>
-                                    <span><strong>Jual Aki Bekas Saja</strong><small>Penjualan aki bekas ke Indoprima.</small></span>
+                                    <span><strong>Jual Aki Reject Saja</strong><small>Penjualan aki reject ke Modern Mulia Mandiri.</small></span>
                                 </label>
                                 <label class="user-radio-card">
                                     <input type="radio" name="order_type_selection" value="trade_in">
                                     <span class="user-radio-card__indicator"></span>
-                                    <span><strong>Trade In (Tukar Tambah)</strong><small>Tukar tambah aki bekas dengan aki baru.</small></span>
+                                    <span><strong>Trade In (Tukar Tambah)</strong><small>Tukar tambah aki reject dengan aki baru.</small></span>
                                 </label>
                             </div>
 
@@ -173,7 +176,7 @@
                                     <input type="radio" name="delivery_method" value="warehouse" checked
                                         data-pickup-method>
                                     <span class="user-radio-card__indicator"></span>
-                                    <span><strong>Antar ke gudang Indoprima</strong><small>Rekomendasi gudang terdekat ·
+                                    <span><strong>Antar ke gudang</strong><small>Rekomendasi gudang terdekat ·
                                             biaya layanan gratis.</small></span>
                                 </label>
                                 <label class="user-radio-card">
@@ -181,7 +184,7 @@
                                     <span class="user-radio-card__indicator"></span>
                                     <span class="user-radio-card__content"
                                         style="display: flex; flex-direction: column; width: 100%;">
-                                        <strong>Dijemput kurir Indoprima</strong>
+                                        <strong>Dijemput kurir</strong>
                                         <small>Biaya penjemputan akan dihitung berdasarkan jarak.</small>
                                         <style>
                                             .user-radio-card input:not(:checked)~span #pickup-fee-warning {
@@ -251,8 +254,7 @@
 
                             <button type="button" id="checkout-submit-btn"
                                 class="user-button user-button--primary user-button--full"
-                                style="margin-top: 20px;">Lanjut
-                                Isi Identitas <span aria-hidden="true">→</span></button>
+                                style="margin-top: 20px;">Lanjut <span aria-hidden="true">→</span></button>
                         </aside>
                     </div>
                 </div>
@@ -272,8 +274,8 @@
                         </details>
                         <details>
                             <summary>Apakah aki harus diantar ke gudang?</summary>
-                            <p>Anda dapat memilih untuk mengantar aki ke gudang Indoprima atau menggunakan layanan
-                                penjemputan kurir.</p>
+                            <p>Anda dapat memilih untuk mengantar aki ke gudang atau menggunakan layanan
+                                penjemputan oleh kurir kami.</p>
                         </details>
                         <details>
                             <summary>Data apa yang perlu disiapkan?</summary>
