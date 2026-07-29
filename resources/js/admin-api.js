@@ -1255,6 +1255,45 @@ document.addEventListener("DOMContentLoaded", () => {
                     o.pickup_address_note || "-";
             }
 
+            const transferContainer = document.getElementById("container-detail-transfer-proof");
+            const transferImg = document.getElementById("detail-transfer-proof-img");
+            const btnZoomTransfer = document.getElementById("btn-zoom-transfer-proof");
+            const btnDownloadTransfer = document.getElementById("btn-download-transfer-proof");
+
+            if (o.order_type === "trade_in" && o.receipt && o.receipt.transfer && o.receipt.transfer.proof_image) {
+                const imgPath = o.receipt.transfer.proof_image;
+                const imgUrl = imgPath.startsWith("http") || imgPath.startsWith("data:")
+                    ? imgPath
+                    : (imgPath.startsWith("/") ? imgPath : `/storage/${imgPath}`);
+
+                if (transferImg) transferImg.src = imgUrl;
+                if (btnDownloadTransfer) {
+                    btnDownloadTransfer.href = imgUrl;
+                    btnDownloadTransfer.setAttribute("download", `bukti_transfer_order_${o.id}.jpg`);
+                }
+                if (btnZoomTransfer) {
+                    btnZoomTransfer.onclick = () => {
+                        if (typeof window.openImageViewer === 'function') {
+                            window.openImageViewer(imgUrl);
+                        } else {
+                            window.open(imgUrl, '_blank');
+                        }
+                    };
+                }
+                if (transferImg) {
+                    transferImg.onclick = () => {
+                        if (typeof window.openImageViewer === 'function') {
+                            window.openImageViewer(imgUrl);
+                        } else {
+                            window.open(imgUrl, '_blank');
+                        }
+                    };
+                }
+                if (transferContainer) transferContainer.style.display = "block";
+            } else {
+                if (transferContainer) transferContainer.style.display = "none";
+            }
+
             document.getElementById("modal-detail-order").style.display =
                 "flex";
         };

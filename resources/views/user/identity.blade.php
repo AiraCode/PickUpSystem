@@ -140,32 +140,29 @@
                                 <div id="wa-hint-2" style="color: var(--user-red); font-size: 11px; margin-top: 4px; margin-left: 4px;">*jumlah nomor berkisar 10-13 digit</div>
                             </div>
                             </div>
-                            <div class="user-floating-field--full" id="payment-method-wrapper" style="display: none;">
-                                <label class="user-floating-field" style="margin-bottom:0;">
-                                    <select name="payment_method" id="payment-method-select">
-                                        <option value="" selected disabled></option>
-                                        @foreach($paymentMethods as $pm)
-                                            <option value="{{ $pm->code }}">{{ $pm->name }}</option>
-                                        @endforeach
-                                    </select>
-                                    <span>Metode Pembayaran (Untuk Kekurangan Trade In)</span>
-                                </label>
-                                 <div id="trade-in-transfer-wrapper" style="display: none; margin-top: 16px;">
-                                     <div class="user-upload-field user-upload-field--desktop-full" id="upload-transfer-trigger" style="cursor: pointer;">
-                                         <input type="file" id="transfer-proof-input" accept=".png,.jpg,.jpeg" style="display: none;">
-                                         <span class="user-upload-field__icon">
-                                             <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2">
-                                                 <rect x="2" y="5" width="20" height="14" rx="2" />
-                                                 <line x1="2" y1="10" x2="22" y2="10" />
-                                             </svg>
-                                         </span>
-                                         <span><strong id="transfer-filename-label">Upload Bukti Transfer Kekurangan Pembayaran</strong><small>PNG/JPEG</small></span>
-                                         <span class="user-upload-field__action">Pilih foto</span>
-                                     </div>
-                                     <div id="transfer-ocr-status" style="margin-top: 8px; font-size: 12px; display: none;"></div>
-                                 </div>
-                         </div>
-                     </div>
+                            <div id="trade-in-transfer-wrapper" style="display: none; margin-top: 16px;">
+                                <p style="font-size: 13px; color: #475569; margin-bottom: 8px; font-weight: 500;">
+                                    <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="#2563eb" stroke-width="2" style="width: 16px; height: 16px; display: inline-block; vertical-align: text-bottom; margin-right: 4px;">
+                                        <circle cx="12" cy="12" r="10" />
+                                        <line x1="12" y1="16" x2="12" y2="12" />
+                                        <line x1="12" y1="8" x2="12.01" y2="8" />
+                                    </svg>
+                                    Harap memberi bukti transfer untuk membayar biaya tambahan tukar tambah aki.
+                                </p>
+                                <div class="user-upload-field user-upload-field--desktop-full" id="upload-transfer-trigger" style="cursor: pointer;">
+                                    <input type="file" id="transfer-proof-input" accept=".png,.jpg,.jpeg" style="display: none;">
+                                    <span class="user-upload-field__icon">
+                                        <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2">
+                                            <rect x="2" y="5" width="20" height="14" rx="2" />
+                                            <line x1="2" y1="10" x2="22" y2="10" />
+                                        </svg>
+                                    </span>
+                                    <span><strong id="transfer-filename-label">Upload Bukti Transfer Kekurangan Pembayaran</strong><small>PNG/JPEG</small></span>
+                                    <span class="user-upload-field__action">Pilih foto</span>
+                                </div>
+                                <div id="transfer-ocr-status" style="margin-top: 8px; font-size: 12px; display: none;"></div>
+                            </div>
+                        </div>
 
                     <div class="user-form-card user-form-card--privacy">
                         <span class="user-form-card__icon user-form-card__icon--red"><svg viewBox="0 0 24 24"
@@ -266,9 +263,9 @@
             <p style="margin: 0 auto; margin-bottom: 16px;">Pastikan nama, rekening, dan nomor WhatsApp sudah sesuai. Data ini akan digunakan untuk proses verifikasi dan
                 pembayaran.</p>
             <div class="user-modal__actions">
-                <button type="button" class="user-button user-button--secondary" data-modal-close>Belum</button>
-                <a href="/user/receipt" class="user-button user-button--primary">Sudah Benar <span
-                        aria-hidden="true">→</span></a>
+                <button type="button" class="user-button user-button--secondary" data-modal-close>Kembali</button>
+                <button type="button" id="btn-modal-confirm-submit" class="user-button user-button--primary">Konfirmasi <span
+                        aria-hidden="true">→</span></button>
             </div>
         </div>
     </div>

@@ -55,21 +55,40 @@ document.addEventListener("DOMContentLoaded", () => {
         manado: { lat: 1.4748, lng: 124.8421 },
     };
     let selectedCityName = "";
-    if (
-        window.location.pathname === "/user" ||
-        window.location.pathname === "/"
-    ) {
+    let shouldClear = false;
+    const stateTimestamp = localStorage.getItem("pickup_state_timestamp");
+    const TEN_MINUTES = 10 * 60 * 1000;
+    if (stateTimestamp && (Date.now() - parseInt(stateTimestamp, 10)) > TEN_MINUTES) {
+        shouldClear = true;
+    }
+
+    if (window.location.pathname === "/user" || window.location.pathname === "/") {
+        const navEntries = performance.getEntriesByType("navigation");
+        const isNavigation = navEntries.length > 0 && navEntries[0].type === "navigate";
+        const isExternal = document.referrer === "" || (document.referrer && !document.referrer.includes(window.location.origin));
+        if (isNavigation || isExternal) {
+            shouldClear = true;
+        }
+    }
+
+    if (shouldClear) {
         localStorage.removeItem("pickup_address");
         localStorage.removeItem("pickup_city");
         localStorage.removeItem("pickup_zip");
         localStorage.removeItem("pickup_lat");
         localStorage.removeItem("pickup_long");
         localStorage.removeItem("pickup_cart");
+        localStorage.removeItem("pickup_trade_in_cart");
         localStorage.removeItem("pickup_fee");
         localStorage.removeItem("pickup_delivery_method");
+        localStorage.removeItem("pickup_order_type");
+        localStorage.removeItem("pickup_trade_in_accu_id");
+        localStorage.removeItem("pickup_trade_in_accu_name");
+        localStorage.removeItem("pickup_trade_in_accu_price");
         localStorage.removeItem("nearest_warehouse_name");
         localStorage.removeItem("nearest_warehouse_address");
         localStorage.removeItem("nearest_warehouse_distance");
+        localStorage.removeItem("pickup_state_timestamp");
         if (window.userCart) {
             window.userCart.clear();
         }
@@ -852,7 +871,6 @@ document.addEventListener("DOMContentLoaded", () => {
             let itemsHtml = "";
 
             const orderTypeVal = localStorage.getItem("pickup_order_type") || "sell";
-            const paymentMethodWrapper = document.getElementById("payment-method-wrapper");
             const transferWrapper = document.getElementById("trade-in-transfer-wrapper");
             const identityProgressBar = document.getElementById("identity-progress-bar");
 
@@ -925,9 +943,6 @@ document.addEventListener("DOMContentLoaded", () => {
             }
 
             const userMustPay = orderTypeVal === "trade_in" && netDiff < 0;
-            if (paymentMethodWrapper) {
-                paymentMethodWrapper.style.display = userMustPay ? "block" : "none";
-            }
             if (transferWrapper) {
                 transferWrapper.style.display = userMustPay ? "block" : "none";
             }
@@ -943,79 +958,66 @@ document.addEventListener("DOMContentLoaded", () => {
                 } else {
                     totalSummary.textContent = rupiah(subtotal - fee);
                 }
-            }
 
-            // OCR Pengecekan Bukti Transfer
-            let transferProofFlagReason = null;
-            const uploadTransferTrigger = document.getElementById("upload-transfer-trigger");
-            const transferInput = document.getElementById("transfer-proof-input");
-            const transferLabel = document.getElementById("transfer-filename-label");
-            const transferStatusEl = document.getElementById("transfer-ocr-status");
+                // Upload Bukti Transfer (Tanpa OCR, Verifikasi Manual Admin)
+                const uploadTransferTrigger = document.getElementById("upload-transfer-trigger");
+                const transferInput = document.getElementById("transfer-proof-input");
+                const transferLabel = document.getElementById("transfer-filename-label");
+                const transferStatusEl = document.getElementById("transfer-ocr-status");
 
-            if (uploadTransferTrigger && transferInput) {
-                uploadTransferTrigger.onclick = () => {
-                    transferInput.click();
-                };
-            }
+                if (uploadTransferTrigger && transferInput) {
+                    uploadTransferTrigger.onclick = () => {
+                        transferInput.click();
+                    };
+                }
 
-            if (transferInput && userMustPay) {
-                transferInput.addEventListener("change", async (e) => {
-                    const file = e.target.files[0];
-                    if (!file) return;
-                    if (transferLabel) {
-                        transferLabel.textContent = file.name;
-                    }
-                    if (transferStatusEl) {
-                        transferStatusEl.style.display = "block";
-                        transferStatusEl.style.color = "#2563eb";
-                        transferStatusEl.innerHTML = "⏳ Memeriksa bukti transfer dengan OCR...";
-                    }
+                if (transferInput && userMustPay) {
+                    transferInput.addEventListener("change", (e) => {
+                        const file = e.target.files[0];
+                        if (!file) return;
 
-                    const targetNominal = Math.abs(netDiff);
-                    const fd = new FormData();
-                    fd.append("image", file);
-                    fd.append("target_amount", targetNominal);
+                        const validExtensions = ["jpg", "jpeg", "png"];
+                        const ext = file.name.split(".").pop().toLowerCase();
+                        const isImage = file.type.startsWith("image/") || validExtensions.includes(ext);
 
-                    try {
-                        const res = await fetch("/api/customer/ocr/verify-proof", {
-                            method: "POST",
-                            body: fd,
-                        }).then(r => r.json());
-
-                        if (res && res.is_match) {
-                            transferProofFlagReason = null;
+                        if (!isImage) {
+                            showCustomAlert("Format file tidak sesuai! Mohon unggah bukti transfer dalam format gambar (JPG, JPEG, PNG). Format PDF atau berkas non-gambar tidak didukung.");
+                            transferInput.value = "";
+                            if (transferLabel) transferLabel.textContent = "Upload Bukti Transfer Kekurangan Pembayaran";
                             if (transferStatusEl) {
-                                transferStatusEl.style.color = "#059669";
-                                transferStatusEl.style.background = "#ecfdf5";
-                                transferStatusEl.style.border = "1px solid #a7f3d0";
+                                transferStatusEl.style.display = "block";
+                                transferStatusEl.style.color = "#dc2626";
+                                transferStatusEl.style.background = "#fef2f2";
+                                transferStatusEl.style.border = "1px solid #fecaca";
                                 transferStatusEl.style.padding = "8px 12px";
                                 transferStatusEl.style.borderRadius = "6px";
-                                transferStatusEl.innerHTML = `✓ Nominal terdeteksi otomatis: <strong>${rupiah(res.detected_amount || targetNominal)}</strong> (Sesuai).`;
+                                transferStatusEl.innerHTML = "⚠️ Format file tidak didukung. Silakan gunakan format foto JPG, JPEG, atau PNG.";
                             }
-                        } else {
-                            transferProofFlagReason = `Nominal bukti transfer tidak terdeteksi otomatis (Tagihan: ${rupiah(targetNominal)})`;
-                            if (transferStatusEl) {
-                                transferStatusEl.style.color = "#d97706";
-                                transferStatusEl.style.background = "#fffbeb";
-                                transferStatusEl.style.border = "1px solid #fde68a";
-                                transferStatusEl.style.padding = "8px 12px";
-                                transferStatusEl.style.borderRadius = "6px";
-                                transferStatusEl.innerHTML = `ℹ️ Nominal bukti transfer tidak terdeteksi otomatis. Transaksi tetap dapat dilanjutkan dan akan diverifikasi manual oleh admin.`;
-                            }
+                            return;
                         }
-                    } catch (err) {
-                        console.error(err);
-                        transferProofFlagReason = "Gagal memproses OCR bukti transfer";
+
+                        if (file.size > 10 * 1024 * 1024) {
+                            showCustomAlert("Ukuran file terlalu besar! Maksimal 10 MB.");
+                            transferInput.value = "";
+                            if (transferLabel) transferLabel.textContent = "Upload Bukti Transfer Kekurangan Pembayaran";
+                            if (transferStatusEl) transferStatusEl.style.display = "none";
+                            return;
+                        }
+
+                        if (transferLabel) {
+                            transferLabel.textContent = file.name;
+                        }
                         if (transferStatusEl) {
-                            transferStatusEl.style.color = "#d97706";
-                            transferStatusEl.style.background = "#fffbeb";
-                            transferStatusEl.style.border = "1px solid #fde68a";
+                            transferStatusEl.style.display = "block";
+                            transferStatusEl.style.color = "#2563eb";
+                            transferStatusEl.style.background = "#eff6ff";
+                            transferStatusEl.style.border = "1px solid #bfdbfe";
                             transferStatusEl.style.padding = "8px 12px";
                             transferStatusEl.style.borderRadius = "6px";
-                            transferStatusEl.innerHTML = `ℹ️ Pembacaan bukti transfer terkendala. Transaksi tetap dapat dilanjutkan.`;
+                            transferStatusEl.innerHTML = "ℹ️ Bukti transfer akan diverifikasi secara manual oleh Admin.";
                         }
-                    }
-                });
+                    });
+                }
             }
         }
         const modal = document.querySelector("[data-identity-modal]");
@@ -1154,11 +1156,30 @@ document.addEventListener("DOMContentLoaded", () => {
 
             const orderTypeVal = localStorage.getItem("pickup_order_type") || "sell";
             const newAccusIdVal = parseInt(localStorage.getItem("pickup_trade_in_accu_id")) || null;
-            const paymentMethodInput = document.getElementById("payment-method-select");
-            const paymentMethodVal = paymentMethodInput ? paymentMethodInput.value : null;
+
+            let rejectSubtotal = 0;
+            savedCartItems.forEach(item => {
+                rejectSubtotal += (parseFloat(item.price) || 0) * (parseInt(item.quantity) || 1);
+            });
+            let modalNewAccuTotal = 0;
+            const savedTradeInCart = orderTypeVal === "trade_in" ? JSON.parse(localStorage.getItem("pickup_trade_in_cart") || "[]") : [];
+            savedTradeInCart.forEach(item => {
+                modalNewAccuTotal += (parseFloat(item.price) || 0) * (parseInt(item.quantity) || 1);
+            });
+            const fee = Number(localStorage.getItem("pickup_fee")) || 0;
+            const netDiff = (rejectSubtotal - fee) - modalNewAccuTotal;
+            const userMustPay = orderTypeVal === "trade_in" && netDiff < 0;
+
+            const transferInput = document.getElementById("transfer-proof-input");
+            
+            if (userMustPay) {
+                if (!transferInput || !transferInput.files || !transferInput.files[0]) {
+                    showCustomAlert("Harap upload bukti transfer untuk pembayaran kekurangan Trade In.");
+                    return;
+                }
+            }
 
             let transferProofBase64 = null;
-            const transferInput = document.getElementById("transfer-proof-input");
             if (transferInput && transferInput.files && transferInput.files[0]) {
                 try {
                     transferProofBase64 = await new Promise((resolve, reject) => {
@@ -1211,8 +1232,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 flag_reason: finalReason,
                 order_type: orderTypeVal,
                 new_accus_id: newAccusIdVal,
-                new_accus_items: orderTypeVal === "trade_in" ? JSON.parse(localStorage.getItem("pickup_trade_in_cart") || "[]") : [],
-                payment_method: paymentMethodVal,
+                new_accus_items: savedTradeInCart,
             };
 
             if (modal) {
@@ -1236,9 +1256,8 @@ document.addEventListener("DOMContentLoaded", () => {
                     elCatatan.textContent =
                         formDataToSubmit.pickup_address_note || "-";
 
-                //UI ringkasan aki di modal
-                const modalCartItems =
-                    document.getElementById("modal-cart-items");
+                // UI ringkasan aki di modal
+                const modalCartItems = document.getElementById("modal-cart-items");
                 if (modalCartItems) {
                     let modalItemsHtml = "";
                     let modalSubtotal = 0;
@@ -1249,50 +1268,61 @@ document.addEventListener("DOMContentLoaded", () => {
                         modalSubtotal += sub;
                         modalItemsHtml += `
                             <tr>
-                                <td><strong>${item.name}</strong></td>
+                                <td><strong>${item.name}</strong><br><small style="color: #64748b;">(Aki Reject)</small></td>
                                 <td style="text-align: center;">${qty} unit</td>
                                 <td style="text-align: right;">${rupiah(price)}</td>
-                                <td style="text-align: right; font-weight: 600; color: #0f172a;">${rupiah(sub)}</td>
+                                <td style="text-align: right; font-weight: 600; color: #10b981;">+ ${rupiah(sub)}</td>
                             </tr>
                         `;
                     });
 
-                    if (orderTypeVal === "trade_in" && newAccusIdVal) {
-                        const newAccuName = localStorage.getItem("pickup_trade_in_accu_name") || "Aki Baru";
-                        const newAccuPrice = parseFloat(localStorage.getItem("pickup_trade_in_accu_price")) || 0;
-                        modalItemsHtml += `
-                            <tr>
-                                <td><strong>${newAccuName}</strong><br><small style="color: #ef4444; font-weight:700;">[TRADE IN] Aki Baru</small></td>
-                                <td style="text-align: center;">1 unit</td>
-                                <td style="text-align: right; color:#ef4444;">- ${rupiah(newAccuPrice)}</td>
-                                <td style="text-align: right; font-weight: 600; color: #ef4444;">- ${rupiah(newAccuPrice)}</td>
-                            </tr>
-                        `;
+                    let modalNewAccuTotal = 0;
+                    const savedTradeInCart = JSON.parse(localStorage.getItem("pickup_trade_in_cart") || "[]");
+                    if (orderTypeVal === "trade_in" && savedTradeInCart.length > 0) {
+                        savedTradeInCart.forEach(item => {
+                            const qty = parseInt(item.quantity) || 1;
+                            const price = parseFloat(item.price) || 0;
+                            const sub = qty * price;
+                            modalNewAccuTotal += sub;
+                            modalItemsHtml += `
+                                <tr>
+                                    <td><strong>${item.name}</strong><br><small style="color: #2563eb; font-weight:700;">[AKI BARU - TRADE IN]</small></td>
+                                    <td style="text-align: center;">${qty} unit</td>
+                                    <td style="text-align: right; color:#2563eb;">${rupiah(price)}</td>
+                                    <td style="text-align: right; font-weight: 600; color: #ef4444;">- ${rupiah(sub)}</td>
+                                </tr>
+                            `;
+                        });
                     }
 
                     modalCartItems.innerHTML = modalItemsHtml;
 
-                    const elSubtotal =
-                        document.getElementById("modal-subtotal");
+                    const elSubtotal = document.getElementById("modal-subtotal");
                     const elFee = document.getElementById("modal-fee");
                     const elTotal = document.getElementById("modal-total");
+                    const totalLabelEl = document.getElementById("modal-total-label");
                     const fee = Number(localStorage.getItem("pickup_fee")) || 0;
 
-                    if (elSubtotal)
-                        elSubtotal.textContent = rupiah(modalSubtotal);
-                    if (elFee)
-                        elFee.textContent = fee === 0 ? "Gratis" : "- " + rupiah(fee);
+                    if (elSubtotal) elSubtotal.textContent = rupiah(modalSubtotal);
+                    if (elFee) elFee.textContent = fee === 0 ? "Gratis" : "- " + rupiah(fee);
+
                     if (elTotal) {
-                        let finalTotal = modalSubtotal - fee;
-                        if (orderTypeVal === "trade_in" && newAccusIdVal) {
-                            const newAccuPrice = parseFloat(localStorage.getItem("pickup_trade_in_accu_price")) || 0;
-                            finalTotal -= newAccuPrice;
-                        }
-                        const isMinus = finalTotal < 0;
-                        elTotal.textContent = rupiah(Math.abs(finalTotal));
-                        const totalLabelEl = document.querySelector(".user-receipt-modal .user-modal-summary__total strong:first-child") || document.getElementById("modal-total-label");
-                        if (totalLabelEl) {
-                            totalLabelEl.textContent = isMinus ? "Tagihan Pembayaran" : "Total yang Anda Terima";
+                        if (orderTypeVal === "trade_in") {
+                            const net = modalSubtotal - fee - modalNewAccuTotal;
+                            const isMinus = net < 0;
+                            elTotal.textContent = rupiah(Math.abs(net));
+                            if (isMinus) {
+                                elTotal.style.color = "#dc2626";
+                                if (totalLabelEl) totalLabelEl.textContent = "Kekurangan Biaya (Dibayar Pembeli)";
+                            } else {
+                                elTotal.style.color = "#10b981";
+                                if (totalLabelEl) totalLabelEl.textContent = "Kelebihan Saldo (Dibayar MMM ke Penjual)";
+                            }
+                        } else {
+                            const net = modalSubtotal - fee;
+                            elTotal.textContent = rupiah(net);
+                            elTotal.style.color = "var(--user-blue)";
+                            if (totalLabelEl) totalLabelEl.textContent = "Total Penjualan (Dibayar ke Penjual)";
                         }
                     }
                 }
@@ -1305,11 +1335,12 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-        if (modalConfirmBtn) {
-            modalConfirmBtn.addEventListener("click", async (e) => {
+        const btnModalConfirmSubmit = document.getElementById("btn-modal-confirm-submit");
+        if (btnModalConfirmSubmit) {
+            btnModalConfirmSubmit.addEventListener("click", async (e) => {
                 e.preventDefault();
-                modalConfirmBtn.disabled = true;
-                modalConfirmBtn.textContent = "Memproses...";
+                btnModalConfirmSubmit.disabled = true;
+                btnModalConfirmSubmit.textContent = "Memproses...";
                 if (formDataToSubmit) {
                     await submitOrder(formDataToSubmit);
                 }
@@ -1324,13 +1355,15 @@ document.addEventListener("DOMContentLoaded", () => {
 
             if (res.data && res.data.order_id) {
                 if (modal) modal.hidden = true;
+                // Simpan timestamp setelah sukses submit agar data tidak kadaluarsa sebelum buka receipt
+                localStorage.setItem("pickup_state_timestamp", Date.now().toString());
                 window.location.href = `/receipt?order_id=${res.data.order_id}`;
             } else {
                 showCustomAlert(res.message || "Gagal mengirim pesanan");
-                if (modalConfirmBtn) {
-                    modalConfirmBtn.disabled = false;
-                    modalConfirmBtn.innerHTML =
-                        'Sudah Benar <span aria-hidden="true">→</span>';
+                const submitBtn = document.getElementById("btn-modal-confirm-submit");
+                if (submitBtn) {
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = 'Konfirmasi <span aria-hidden="true">→</span>';
                 }
             }
         }
@@ -2283,6 +2316,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Trade-In Logic
     if (window.location.pathname === "/trade-in") {
+        if (localStorage.getItem("pickup_order_type") !== "trade_in") {
+            localStorage.removeItem("pickup_trade_in_cart");
+            localStorage.removeItem("pickup_cart");
+        }
         let newAccus = [];
         let tradeInCart = JSON.parse(localStorage.getItem("pickup_trade_in_cart") || "[]");
 
@@ -2404,6 +2441,38 @@ document.addEventListener("DOMContentLoaded", () => {
             });
         };
 
+        const showDeleteConfirmModal = (msg, onConfirm) => {
+            const modal = document.getElementById("modal-delete-confirm");
+            const msgEl = document.getElementById("delete-confirm-message");
+            const btnCancel = document.getElementById("btn-cancel-delete");
+            const btnAction = document.getElementById("btn-action-delete");
+
+            if (!modal) {
+                if (confirm(msg)) onConfirm();
+                return;
+            }
+
+            if (msgEl) msgEl.textContent = msg;
+            modal.style.display = "flex";
+
+            const handleCancel = () => {
+                modal.style.display = "none";
+                cleanup();
+            };
+            const handleAction = () => {
+                modal.style.display = "none";
+                onConfirm();
+                cleanup();
+            };
+            const cleanup = () => {
+                if (btnCancel) btnCancel.removeEventListener("click", handleCancel);
+                if (btnAction) btnAction.removeEventListener("click", handleAction);
+            };
+
+            if (btnCancel) btnCancel.addEventListener("click", handleCancel);
+            if (btnAction) btnAction.addEventListener("click", handleAction);
+        };
+
         const updateTradeInSelected = () => {
             const container = document.getElementById("new-accu-selected");
             const btn = document.getElementById("btn-trade-in-continue");
@@ -2411,17 +2480,20 @@ document.addEventListener("DOMContentLoaded", () => {
             const netSummary = document.getElementById("trade-in-net-summary");
             if (!container || !btn) return;
 
-            const savedCart = JSON.parse(localStorage.getItem("pickup_cart") || "[]");
+            let savedCart = JSON.parse(localStorage.getItem("pickup_cart") || "[]");
             let rejectSubtotal = 0;
 
             if (rejectContainer) {
                 if (savedCart.length > 0) {
-                    let itemsHtml = savedCart.map(item => {
+                    let itemsHtml = savedCart.map((item, idx) => {
                         const sub = item.price * item.quantity;
                         rejectSubtotal += sub;
-                        return `<div style="display:flex; justify-content:space-between; font-size:12px; margin-bottom:4px; color:#475569;">
+                        return `<div style="display:flex; justify-content:space-between; align-items:center; font-size:12px; margin-bottom:6px; color:#475569;">
                             <span>${item.name} (${item.quantity} unit)</span>
-                            <span style="font-weight:600; color:#0f172a;">${rupiah(sub)}</span>
+                            <div style="display:flex; align-items:center; gap:8px;">
+                                <span style="font-weight:600; color:#0f172a;">${rupiah(sub)}</span>
+                                <button type="button" class="btn-delete-reject-item" data-index="${idx}" style="background:none; border:none; color:#ef4444; cursor:pointer; padding:0 2px; font-weight:700; font-size:13px;" title="Hapus aki reject">🗑️</button>
+                            </div>
                         </div>`;
                     }).join("");
 
@@ -2435,10 +2507,26 @@ document.addEventListener("DOMContentLoaded", () => {
                             </div>
                         </div>
                     `;
+
+                    rejectContainer.querySelectorAll(".btn-delete-reject-item").forEach(btnEl => {
+                        btnEl.onclick = (e) => {
+                            e.stopPropagation();
+                            const itemIndex = parseInt(btnEl.getAttribute("data-index"));
+                            showDeleteConfirmModal("Apakah Anda yakin ingin menghapus aki ini dari pilihan?", () => {
+                                const removedItem = savedCart[itemIndex];
+                                savedCart.splice(itemIndex, 1);
+                                localStorage.setItem("pickup_cart", JSON.stringify(savedCart));
+                                if (window.userCart && removedItem) {
+                                    window.userCart.delete(removedItem.name);
+                                }
+                                updateTradeInSelected();
+                            });
+                        };
+                    });
                 } else {
                     rejectContainer.innerHTML = `
-                        <div style="padding:10px; background:#fff7ed; border-radius:8px; border:1px solid #fed7aa; color:#c2410c; font-size:12px; margin-bottom:14px;">
-                            <strong>Belum ada aki reject dipilih.</strong> <a href="/user" style="color:#ea580c; text-decoration:underline;">Pilih di katalog landing</a>.
+                        <div style="padding:10px 12px; background:#fff7ed; border-radius:8px; border:1px solid #fed7aa; color:#c2410c; font-size:12px; margin-bottom:14px;">
+                            <strong>Belum ada aki reject dipilih.</strong> <a href="/user" style="color:#ea580c; text-decoration:underline; font-weight:600;">Pilih di katalog landing</a>.
                         </div>
                     `;
                 }
@@ -2446,12 +2534,15 @@ document.addEventListener("DOMContentLoaded", () => {
 
             let newAccuSubtotal = 0;
             if (tradeInCart.length > 0) {
-                let itemsHtml = tradeInCart.map(item => {
+                let itemsHtml = tradeInCart.map((item, idx) => {
                     const sub = item.price * item.quantity;
                     newAccuSubtotal += sub;
-                    return `<div style="display:flex; justify-content:space-between; font-size:12px; margin-bottom:4px; color:#1e3a8a;">
+                    return `<div style="display:flex; justify-content:space-between; align-items:center; font-size:12px; margin-bottom:6px; color:#1e3a8a;">
                         <span>${item.name} (${item.quantity} unit)</span>
-                        <span style="font-weight:600; color:#2563eb;">${rupiah(sub)}</span>
+                        <div style="display:flex; align-items:center; gap:8px;">
+                            <span style="font-weight:600; color:#2563eb;">${rupiah(sub)}</span>
+                            <button type="button" class="btn-delete-new-item" data-id="${item.id}" style="background:none; border:none; color:#ef4444; cursor:pointer; padding:0 2px; font-weight:700; font-size:13px;" title="Hapus aki baru">🗑️</button>
+                        </div>
                     </div>`;
                 }).join("");
 
@@ -2465,6 +2556,21 @@ document.addEventListener("DOMContentLoaded", () => {
                         </div>
                     </div>
                 `;
+
+                container.querySelectorAll(".btn-delete-new-item").forEach(btnEl => {
+                    btnEl.onclick = (e) => {
+                        e.stopPropagation();
+                        const itemId = parseInt(btnEl.getAttribute("data-id"));
+                        showDeleteConfirmModal("Apakah Anda yakin ingin menghapus aki ini dari pilihan?", () => {
+                            tradeInCart = tradeInCart.filter(i => i.id !== itemId);
+                            localStorage.setItem("pickup_trade_in_cart", JSON.stringify(tradeInCart));
+                            const currentSearch = document.getElementById("new-accu-search-input")?.value.toLowerCase().trim() || "";
+                            renderNewAccus(newAccus.filter(a => a.name.toLowerCase().includes(currentSearch)), currentSearch);
+                            updateTradeInSelected();
+                        });
+                    };
+                });
+
                 btn.style.opacity = "1";
                 btn.style.pointerEvents = "auto";
 
@@ -2488,18 +2594,31 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
             } else {
                 container.innerHTML = `
-                    <span style="display:block; font-size:24px; margin-bottom:8px;">
-                        <svg viewBox="0 0 24 24" style="width:24px; height:24px; fill:none; stroke:currentColor; stroke-width:2; margin:auto;">
-                            <rect x="2" y="7" width="20" height="15" rx="2" ry="2"/>
-                            <polyline points="17 2 12 7 7 2"/>
-                        </svg>
-                    </span>
-                    <strong>Belum ada aki baru dipilih</strong>
-                    <p style="font-size:12px;">Silakan pilih minimal 1 aki dari katalog.</p>
+                    <div style="padding: 20px 16px; text-align: center; color: #64748b; background: #f8fafc; border: 1px dashed #cbd5e1; border-radius: 10px;">
+                        <span style="display:block; font-size:24px; margin-bottom:6px;">
+                            <svg viewBox="0 0 24 24" style="width:24px; height:24px; fill:none; stroke:currentColor; stroke-width:2; margin:auto; color:#94a3b8;">
+                                <rect x="2" y="7" width="20" height="15" rx="2" ry="2"/>
+                                <polyline points="17 2 12 7 7 2"/>
+                            </svg>
+                        </span>
+                        <strong style="color:#334155; font-size:13px;">Belum ada aki baru dipilih</strong>
+                        <p style="font-size:12px; color:#64748b; margin:4px 0 0;">Silakan pilih minimal 1 aki dari katalog.</p>
+                    </div>
                 `;
                 btn.style.opacity = "0.5";
                 btn.style.pointerEvents = "none";
                 if (netSummary) netSummary.innerHTML = "";
+            }
+
+            if (savedCart.length === 0 && tradeInCart.length === 0) {
+                if (rejectContainer) {
+                    rejectContainer.innerHTML = `
+                        <div style="padding:20px 16px; text-align:center; color:#64748b; background:#f8fafc; border:1px dashed #cbd5e1; border-radius:12px; margin-bottom:14px;">
+                            <strong style="color:#1e293b; font-size:13px; display:block; margin-bottom:4px;">Belum ada aki yang dipilih.</strong>
+                            <p style="font-size:12px; margin:0; line-height:1.4; color:#64748b;">Silakan pilih aki reject dan aki baru untuk mulai menghitung estimasi biaya.</p>
+                        </div>
+                    `;
+                }
             }
         };
 

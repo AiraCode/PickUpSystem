@@ -113,6 +113,19 @@
             </section>
         </main>
 
+        <!-- Modal Konfirmasi Hapus Aki -->
+        <div id="modal-delete-confirm" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,.55); z-index:10000; align-items:center; justify-content:center; padding: 20px;">
+            <div style="background:#fff; border-radius:16px; width:380px; max-width:100%; box-shadow: 0 10px 30px rgba(0,0,0,0.3); overflow:hidden; border: 1px solid #e2e8f0; text-align:center; padding: 24px;">
+                <span style="font-size: 36px; display:block; margin-bottom: 8px;">🗑️</span>
+                <h3 style="margin:0 0 6px; font-size:16px; font-weight:700; color:#0f172a;">Hapus Aki Pilihan</h3>
+                <p id="delete-confirm-message" style="font-size:13px; color:#64748b; margin:0 0 20px; line-height:1.5;">Apakah Anda yakin ingin menghapus aki ini dari pilihan?</p>
+                <div style="display:flex; gap:10px;">
+                    <button type="button" id="btn-cancel-delete" class="user-button user-button--secondary" style="flex:1;">Batal</button>
+                    <button type="button" id="btn-action-delete" class="user-button user-button--primary" style="flex:1; background:#ef4444; border-color:#ef4444; color:#fff;">Hapus</button>
+                </div>
+            </div>
+        </div>
+
         @include('user.partials.footer')
     </div>
 @endsection
