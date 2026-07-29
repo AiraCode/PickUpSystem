@@ -131,7 +131,7 @@ class OrderController extends Controller
             foreach ($order->receipt->accus as $accu) {
                 $beratKering = (float) ($accu->berat_kering ?? 0);
                 $calculatedPrice = (int) round($pricePerKg * $beratKering);
-                $brandName = \Illuminate\Support\Facades\DB::table('brands')->where('id', $accu->brands_id)->value('name') ?? 'Indoprima';
+                $brandName = '-';
 
                 $formattedAccus[] = [
                     'id' => $accu->id,

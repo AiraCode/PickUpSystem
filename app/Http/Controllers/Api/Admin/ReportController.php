@@ -63,10 +63,9 @@ class ReportController extends Controller
         $topAccus = DB::table('accus_has_receipts')
             ->join('receipts', 'accus_has_receipts.receipts_id', '=', 'receipts.id')
             ->join('accus', 'accus_has_receipts.accus_id', '=', 'accus.id')
-            ->leftJoin('brands', 'accus.brands_id', '=', 'brands.id')
             ->whereYear('receipts.created_at', $selectedYear)
-            ->selectRaw('accus.id, accus.name, brands.name as brand, SUM(accus_has_receipts.amount) as total_sold')
-            ->groupBy('accus.id', 'accus.name', 'brands.name')
+            ->selectRaw('accus.id, accus.name, "-" as brand, SUM(accus_has_receipts.amount) as total_sold')
+            ->groupBy('accus.id', 'accus.name')
             ->orderByDesc('total_sold')
             ->take(5)
             ->get();

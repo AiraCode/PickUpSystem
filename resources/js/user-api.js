@@ -1197,9 +1197,6 @@ document.addEventListener("DOMContentLoaded", () => {
             if (manualWrapper && manualWrapper.style.display !== "none") {
                 flagReasons.push("Nama diisi manual karena OCR KTP gagal > 3x");
             }
-            if (transferProofFlagReason) {
-                flagReasons.push(transferProofFlagReason);
-            }
 
             const finalFlag = flagReasons.length > 0 ? 0 : 1;
             const finalReason = flagReasons.length > 0 ? flagReasons.join(" | ") : null;

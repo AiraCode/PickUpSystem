@@ -12,26 +12,9 @@ class Accu extends Model
     use SoftDeletes;
     public $incrementing = false;
 
-    protected $fillable = ['id', 'brands_id', 'name', 'berat_kering'];
+    protected $fillable = ['id', 'name', 'berat_kering'];
 
-    protected $appends = ['brand'];
 
-    public function brandRelation(): BelongsTo
-    {
-        return $this->belongsTo(Brand::class, 'brands_id');
-    }
-
-    public function getBrandAttribute(): string
-    {
-        if ($this->relationLoaded('brandRelation') && $this->brandRelation) {
-            return $this->brandRelation->name;
-        }
-        if ($this->brands_id) {
-            $b = Brand::find($this->brands_id);
-            return $b ? $b->name : '-';
-        }
-        return '-';
-    }
 
     public function cities(): BelongsToMany
     {

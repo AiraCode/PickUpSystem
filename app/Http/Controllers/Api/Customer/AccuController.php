@@ -31,7 +31,7 @@ class AccuController extends Controller
 
             return [
                 'id' => $accu->id,
-                'brand' => $accu->brand,
+                'brand' => '-',
                 'name' => $accu->name,
                 'berat_kering' => $beratKering,
                 'percentage' => $cityPercentage,

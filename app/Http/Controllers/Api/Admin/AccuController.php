@@ -14,7 +14,7 @@ class AccuController extends Controller
 {
     public function index(): JsonResponse
     {
-        $accus = Accu::with('brandRelation')->get();
+        $accus = Accu::all();
 
         return response()->json([
             'message' => 'Daftar accu berhasil diambil',
@@ -25,19 +25,13 @@ class AccuController extends Controller
     public function store(StoreAccuRequest $request): JsonResponse
     {
         $validated = $request->validated();
-        
-        $brandName = $request->input('brand');
-        $brand = Brand::firstOrCreate(['name' => $brandName]);
-
         $trashed = Accu::onlyTrashed()
-            ->where('brands_id', $brand->id)
             ->where('name', $validated['name'])
             ->first();
 
         if ($trashed) {
             $trashed->restore();
             $trashed->update(['berat_kering' => $validated['berat_kering']]);
-            $trashed->load('brandRelation');
 
             // Ensure attached to all cities
             $cityIds = City::pluck('id')->toArray();
@@ -51,13 +45,11 @@ class AccuController extends Controller
 
         $data = [
             'id' => (Accu::withTrashed()->max('id') ?? 0) + 1,
-            'brands_id' => $brand->id,
             'name' => $validated['name'],
             'berat_kering' => $validated['berat_kering'],
         ];
 
         $accu = Accu::create($data);
-        $accu->load('brandRelation');
 
         // Automatically attach to ALL existing cities
         $cityIds = City::pluck('id')->toArray();
@@ -73,7 +65,7 @@ class AccuController extends Controller
 
     public function trashed(): JsonResponse
     {
-        $accus = Accu::onlyTrashed()->with('brandRelation')->get();
+        $accus = Accu::onlyTrashed()->get();
 
         return response()->json([
             'message' => 'Daftar accu terhapus berhasil diambil',
@@ -85,7 +77,6 @@ class AccuController extends Controller
     {
         $accu = Accu::onlyTrashed()->findOrFail($id);
         $accu->restore();
-        $accu->load('brandRelation');
 
         return response()->json([
             'message' => 'Accu berhasil dipulihkan',
@@ -95,7 +86,7 @@ class AccuController extends Controller
 
     public function show(int $id): JsonResponse
     {
-        $accu = Accu::with(['cities', 'brandRelation'])->findOrFail($id);
+        $accu = Accu::with(['cities'])->findOrFail($id);
 
         return response()->json([
             'message' => 'Detail accu berhasil diambil',
@@ -109,10 +100,6 @@ class AccuController extends Controller
         $validated = $request->validated();
 
         $data = [];
-        if (!empty($validated['brand'])) {
-            $brand = Brand::firstOrCreate(['name' => $validated['brand']]);
-            $data['brands_id'] = $brand->id;
-        }
         if (!empty($validated['name'])) {
             $data['name'] = $validated['name'];
         }
@@ -121,7 +108,6 @@ class AccuController extends Controller
         }
 
         $accu->update($data);
-        $accu->load('brandRelation');
 
         return response()->json([
             'message' => 'Accu berhasil diperbarui',

@@ -34,7 +34,7 @@ class ReceiptController extends Controller
                 $beratKering = (float) ($accu->berat_kering ?? 0);
                 $calculatedPrice = (int) round($pricePerKg * $beratKering);
 
-                $brandName = \Illuminate\Support\Facades\DB::table('brands')->where('id', $accu->brands_id)->value('name') ?? 'Modern Mulya Mandiri';
+                $brandName = '-';
 
                 $formattedAccus[] = [
                     'id' => $accu->id,
