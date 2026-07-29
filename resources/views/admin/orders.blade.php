@@ -375,6 +375,7 @@
                     onclick="document.getElementById('modal-detail-order').style.display='none'">Tutup</button>
             </div>
             <div style="padding-bottom:20px;">
+                <div id="detail-flag-container" style="display:none; margin-bottom:16px;"></div>
 
                 <div
                     style="display: flex; justify-content: space-between; align-items: center; padding-top: 10px; border-top: 1px solid #e5e7eb;">

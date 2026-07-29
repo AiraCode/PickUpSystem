@@ -17,10 +17,10 @@
 
             <div class="user-container user-flow-hero__inner">
 
-                <div class="user-progress">
+                <div class="user-progress" id="identity-progress-bar">
                     <div class="user-progress__step is-complete">
                         <span>01</span>
-                        <small>Pilih aki</small>
+                        <small>Aki Reject</small>
                     </div>
 
                     <span class="user-progress__line is-complete"></span>
@@ -150,8 +150,22 @@
                                     </select>
                                     <span>Metode Pembayaran (Untuk Kekurangan Trade In)</span>
                                 </label>
-                        </div>
-                    </div>
+                                 <div id="trade-in-transfer-wrapper" style="display: none; margin-top: 16px;">
+                                     <div class="user-upload-field user-upload-field--desktop-full" id="upload-transfer-trigger" style="cursor: pointer;">
+                                         <input type="file" id="transfer-proof-input" accept=".png,.jpg,.jpeg" style="display: none;">
+                                         <span class="user-upload-field__icon">
+                                             <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2">
+                                                 <rect x="2" y="5" width="20" height="14" rx="2" />
+                                                 <line x1="2" y1="10" x2="22" y2="10" />
+                                             </svg>
+                                         </span>
+                                         <span><strong id="transfer-filename-label">Upload Bukti Transfer Kekurangan Pembayaran</strong><small>PNG/JPEG</small></span>
+                                         <span class="user-upload-field__action">Pilih foto</span>
+                                     </div>
+                                     <div id="transfer-ocr-status" style="margin-top: 8px; font-size: 12px; display: none;"></div>
+                                 </div>
+                         </div>
+                     </div>
 
                     <div class="user-form-card user-form-card--privacy">
                         <span class="user-form-card__icon user-form-card__icon--red"><svg viewBox="0 0 24 24"
@@ -181,7 +195,7 @@
                 </aside>
                 <div class="user-form-actions">
                     <a href="/user" class="user-button user-button--secondary">← Kembali</a>
-                    <button type="submit" form="identityForm" class="user-button user-button--primary">
+                    <button type="button" id="btn-identity-next" class="user-button user-button--primary">
                         Konfirmasi Data
                         <span aria-hidden="true">→</span>
                     </button>

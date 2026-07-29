@@ -35,6 +35,13 @@
                             <span>03</span>
                             <small>Identitas</small>
                         </div>
+
+                        <span class="user-progress__line"></span>
+
+                        <div class="user-progress__step">
+                            <span>04</span>
+                            <small>Receipt</small>
+                        </div>
                     </div>
 
                     <span class="user-kicker">KATALOG AKI BARU</span>

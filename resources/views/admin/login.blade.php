@@ -217,6 +217,11 @@
                 box-shadow: 0 12px 24px rgba(34, 80, 252, 0.4);
             }
 
+            .btn-login svg {
+                width: 18px;
+                height: 18px;
+            }
+
             .login-footer-info {
                 margin-top: 26px;
                 padding-top: 20px;

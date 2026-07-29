@@ -1035,8 +1035,8 @@ body.user-shell textarea:focus-visible {
     border-radius: 14px;
     padding: 21px;
     position: sticky;
-    top: 90px;
-    max-height: calc(100vh - 130px);
+    top: 170px;
+    max-height: calc(100vh - 190px);
     overflow-y: auto;
 }
 
@@ -1632,24 +1632,20 @@ body.user-shell textarea:focus-visible {
 .user-flow-hero__bg {
     position: absolute;
     inset: 0;
-    background-image: url("https://images.unsplash.com/photo-1676337167629-d896b3ed5724?q=80&w=1170&auto=format&fit=crop");
-    background-size: cover;
-    background-position: center;
+    background: linear-gradient(135deg, #1d4ed8 0%, #1e3a8a 100%);
     z-index: 0;
 }
 
 .user-flow-hero__overlay {
     position: absolute;
     inset: 0;
-    background: rgba(34, 80, 252, 0.82);
+    background: rgba(30, 58, 138, 0.4);
     z-index: 1;
 }
 
 .user-flow-hero__inner {
     position: relative;
     z-index: 2;
-    padding-top: 120px;
-    padding-bottom: 70px;
 }
 
 .user-flow-hero .user-kicker,
@@ -1696,16 +1692,17 @@ body.user-shell textarea:focus-visible {
     border-radius: 50%;
     color: rgba(255, 255, 255, 0.72);
     display: flex;
-    font-size: 10px;
+    font-size: 12px;
     font-weight: 800;
-    height: 30px;
+    height: 32px;
     justify-content: center;
-    width: 30px;
+    width: 32px;
 }
 
 .user-progress__step small {
-    color: rgba(255, 255, 255, 0.67);
-    font-size: 9px;
+    color: rgba(255, 255, 255, 0.85);
+    font-size: 12px;
+    font-weight: 600;
     white-space: nowrap;
 }
 

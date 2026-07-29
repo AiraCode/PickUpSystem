@@ -11,7 +11,7 @@ class ReceiptController extends Controller
 {
     public function show(int $orderId): JsonResponse
     {
-        $order = \App\Models\Order::with(['city', 'customer.bank', 'receipt.accus', 'newAccu'])->find($orderId);
+        $order = \App\Models\Order::with(['city', 'customer.bank', 'receipt.accus', 'newAccusItems', 'newAccu'])->find($orderId);
 
         if (! $order) {
             return response()->json([
@@ -59,13 +59,35 @@ class ReceiptController extends Controller
                 'transfer' => $transfer,
             ];
         }
+        
+        $newAccusFormatted = [];
+        if ($order->newAccusItems && $order->newAccusItems->count() > 0) {
+            foreach ($order->newAccusItems as $item) {
+                $newAccusFormatted[] = [
+                    'id' => $item->id,
+                    'name' => $item->name,
+                    'amount' => $item->pivot->quantity,
+                    'price' => $item->pivot->price,
+                    'subtotal' => $item->pivot->price * $item->pivot->quantity,
+                ];
+            }
+        } elseif ($order->newAccu) {
+             // Fallback for older single-item data
+             $newAccusFormatted[] = [
+                  'id' => $order->newAccu->id,
+                  'name' => $order->newAccu->name,
+                  'amount' => 1,
+                  'price' => $order->newAccu->price,
+                  'subtotal' => $order->newAccu->price,
+             ];
+        }
 
         return response()->json([
             'message' => 'Struk transaksi berhasil diambil',
             'data' => [
                 'order_id' => $order->id,
                 'order_type' => $order->order_type ?? 'sell',
-                'new_accu' => $order->newAccu,
+                'new_accus_items' => $newAccusFormatted,
                 'payment_method' => $order->payment_method,
                 'status' => $order->status,
                 'delivery_method' => $order->delivery_method ?? 'warehouse',

@@ -15,8 +15,8 @@
             <div class="user-flow-hero__overlay"></div>
 
             <div class="user-container user-flow-hero__inner">
-                <div class="user-progress">
-                    <div class="user-progress__step is-complete"><span>01</span><small>Pilih aki</small></div>
+                <div class="user-progress" id="receipt-progress-bar">
+                    <div class="user-progress__step is-complete"><span>01</span><small>Aki Reject</small></div>
                     <span class="user-progress__line is-complete"></span>
                     <div class="user-progress__step is-complete"><span>02</span><small>Identitas</small></div>
                     <span class="user-progress__line is-complete"></span>

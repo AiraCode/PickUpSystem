@@ -376,7 +376,7 @@ const initHeroSlideshow = () => {
             slides[current].classList.remove("is-active");
             current = (current + 1) % slides.length;
             slides[current].classList.add("is-active");
-        }, 3000);
+        }, 5000);
     }
 };
 if (document.readyState === "loading") {

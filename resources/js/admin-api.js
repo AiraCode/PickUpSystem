@@ -1184,6 +1184,62 @@ document.addEventListener("DOMContentLoaded", () => {
                     o.updated_at,
                 ).toLocaleString("id-ID");
             }
+            const flagContainer = document.getElementById("detail-flag-container");
+            if (flagContainer) {
+                if (c && c.flag === 0) {
+                    const reason = c.flag_reason || "Catatan verifikasi manual oleh sistem";
+                    flagContainer.style.display = "block";
+                    flagContainer.innerHTML = `
+                        <div style="background:#fef2f2; border:1px solid #fecaca; border-radius:8px; padding:12px 14px; display:flex; align-items:center; justify-content:space-between; gap:12px;">
+                            <div>
+                                <strong style="color:#dc2626; font-size:12px; display:block; margin-bottom:2px;">⚠️ PERHATIAN ADMIN: Pelanggan Ditandai (Flag 0)</strong>
+                                <span style="color:#991b1b; font-size:11px; line-height:1.4; display:block;">Alasan: ${reason}</span>
+                            </div>
+                            <button type="button" class="admin-button admin-button--primary" id="btn-clear-customer-flag" data-customer-id="${c.id}" style="padding:4px 10px; font-size:11px; height:auto; white-space:nowrap; flex-shrink:0;">
+                                ✓ Bebaskan Flag (Set Safe)
+                            </button>
+                        </div>
+                    `;
+
+                    const btnClearFlag = document.getElementById("btn-clear-customer-flag");
+                    if (btnClearFlag) {
+                        btnClearFlag.onclick = async () => {
+                            btnClearFlag.disabled = true;
+                            btnClearFlag.textContent = "Memproses...";
+                            try {
+                                const res = await fetch(`${API_BASE}/customers/${c.id}/flag`, {
+                                    method: "PUT",
+                                    headers: {
+                                        "Content-Type": "application/json",
+                                        Accept: "application/json",
+                                        Authorization: `Bearer ${token}`,
+                                    },
+                                    body: JSON.stringify({ flag: 1 }),
+                                });
+                                if (res.ok) {
+                                    c.flag = 1;
+                                    c.flag_reason = null;
+                                    flagContainer.style.display = "none";
+                                    alert("Status pelanggan telah diubah menjadi Aman (Flag 1).");
+                                } else {
+                                    alert("Gagal mengubah status flag.");
+                                    btnClearFlag.disabled = false;
+                                    btnClearFlag.textContent = "✓ Bebaskan Flag (Set Safe)";
+                                }
+                            } catch (err) {
+                                console.error(err);
+                                alert("Terjadi kesalahan.");
+                                btnClearFlag.disabled = false;
+                                btnClearFlag.textContent = "✓ Bebaskan Flag (Set Safe)";
+                            }
+                        };
+                    }
+                } else {
+                    flagContainer.style.display = "none";
+                    flagContainer.innerHTML = "";
+                }
+            }
+
             document.getElementById("detail-order-pickup-address").innerText =
                 o.pickup_address || "-";
             const noteLabelEl = document.getElementById(
@@ -1198,6 +1254,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 document.getElementById("detail-order-pickup-note").innerText =
                     o.pickup_address_note || "-";
             }
+
             document.getElementById("modal-detail-order").style.display =
                 "flex";
         };

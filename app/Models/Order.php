@@ -45,4 +45,11 @@ class Order extends Model
     {
         return $this->hasOne(Receipt::class, 'orders_id');
     }
+
+    public function newAccusItems()
+    {
+        return $this->belongsToMany(NewAccu::class, 'new_accus_orders', 'orders_id', 'new_accus_id')
+            ->withPivot(['quantity', 'price'])
+            ->withTimestamps();
+    }
 }

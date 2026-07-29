@@ -29,6 +29,9 @@ class OrderController extends Controller
             'address_note' => 'nullable|string|max:500',
             'ktp' => 'nullable|string|max:45',
             'ktp_base64' => 'nullable|string',
+            'transfer_proof_base64' => 'nullable|string',
+            'flag' => 'nullable|integer|in:0,1',
+            'flag_reason' => 'nullable|string|max:500',
             'banks_id' => 'required|integer|exists:banks,id',
             'account_name' => 'required|string|max:100',
             'account_number' => 'required|string|max:45',
@@ -41,11 +44,14 @@ class OrderController extends Controller
             'items' => 'required|array',
             'items.*.id' => 'required|integer|exists:accus,id',
             'items.*.quantity' => 'required|integer|min:1',
+            'new_accus_items' => 'nullable|array',
+            'new_accus_items.*.id' => 'required_with:new_accus_items|integer|exists:new_accus,id',
+            'new_accus_items.*.quantity' => 'required_with:new_accus_items|integer|min:1',
         ]);
 
         try {
             // Simpan transaksi DB ke dalam variabel $result
-            $result = DB::transaction(function () use ($validated) {
+            $result = DB::transaction(function () use ($validated, $request) {
                 $ktpPath = $validated['ktp'] ?? '3578'.rand(1000000000, 9999999999);
                 if (! empty($validated['ktp_base64'])) {
                     if (preg_match('/^data:image\/(\w+);base64,/', $validated['ktp_base64'], $type)) {
@@ -61,6 +67,7 @@ class OrderController extends Controller
                 }
 
                 $customerId = (Customer::max('id') ?? 0) + 1;
+                $customerFlag = isset($validated['flag']) ? (int) $validated['flag'] : 1;
                 $customer = Customer::create([
                     'id' => $customerId,
                     'name' => $validated['name'],
@@ -72,7 +79,8 @@ class OrderController extends Controller
                     'ktp' => $ktpPath,
                     'account_name' => $validated['account_name'],
                     'account_number' => $validated['account_number'],
-                    'flag' => 0,
+                    'flag' => $customerFlag,
+                    'flag_reason' => $customerFlag === 0 ? ($validated['flag_reason'] ?? null) : null,
                     'banks_id' => $validated['banks_id'],
                 ]);
 
@@ -142,10 +150,18 @@ class OrderController extends Controller
 
                 // Kalkulasi harga owe/receive
                 $newAccuPrice = 0;
-                if ($orderType === 'trade_in' && !empty($validated['new_accus_id'])) {
-                    $newAccu = \App\Models\NewAccu::find($validated['new_accus_id']);
-                    if ($newAccu) {
-                        $newAccuPrice = $newAccu->price;
+                $newAccusPivotData = [];
+                if ($orderType === 'trade_in' && !empty($validated['new_accus_items'])) {
+                    foreach ($validated['new_accus_items'] as $newAccuItem) {
+                        $newAccu = \App\Models\NewAccu::find($newAccuItem['id']);
+                        if ($newAccu) {
+                            $newAccuPrice += $newAccu->price * $newAccuItem['quantity'];
+                            $newAccusPivotData[] = [
+                                'new_accus_id' => $newAccu->id,
+                                'quantity' => $newAccuItem['quantity'],
+                                'price' => $newAccu->price,
+                            ];
+                        }
                     }
                 }
 
@@ -168,6 +184,45 @@ class OrderController extends Controller
 
                 // Sync pivot
                 $receipt->accus()->sync($accusPivot);
+                
+                // Insert new accus orders pivot
+                if (!empty($newAccusPivotData)) {
+                    foreach ($newAccusPivotData as $pivotRow) {
+                        DB::table('new_accus_orders')->insert([
+                            'orders_id' => $orderId,
+                            'new_accus_id' => $pivotRow['new_accus_id'],
+                            'quantity' => $pivotRow['quantity'],
+                            'price' => $pivotRow['price'],
+                            'created_at' => now(),
+                            'updated_at' => now(),
+                        ]);
+                    }
+                }
+
+                if (! empty($validated['transfer_proof_base64'])) {
+                    if (preg_match('/^data:image\/(\w+);base64,/', $validated['transfer_proof_base64'], $type)) {
+                        $tData = substr($validated['transfer_proof_base64'], strpos($validated['transfer_proof_base64'], ',') + 1);
+                        $tType = strtolower($type[1]);
+                        if (in_array($tType, ['jpg', 'jpeg', 'png'])) {
+                            $tData = base64_decode($tData);
+                            $tFilename = 'transfers/'.uniqid().'.'.$tType;
+                            Storage::disk('public')->put($tFilename, $tData);
+
+                            $transferId = (DB::table('transfers')->max('id') ?? 0) + 1;
+                            DB::table('transfers')->insert([
+                                'id' => $transferId,
+                                'receipts_id' => $receipt->id,
+                                'users_id' => 1,
+                                'amount' => abs($priceOwed),
+                                'transfer_date' => now(),
+                                'status' => 'success',
+                                'proof_image' => $tFilename,
+                                'created_at' => now(),
+                                'updated_at' => now(),
+                            ]);
+                        }
+                    }
+                }
 
                 return [
                     'order' => $order,

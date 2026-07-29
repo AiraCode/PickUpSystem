@@ -853,8 +853,29 @@ document.addEventListener("DOMContentLoaded", () => {
 
             const orderTypeVal = localStorage.getItem("pickup_order_type") || "sell";
             const paymentMethodWrapper = document.getElementById("payment-method-wrapper");
-            if (paymentMethodWrapper) {
-                paymentMethodWrapper.style.display = orderTypeVal === "trade_in" ? "block" : "none";
+            const transferWrapper = document.getElementById("trade-in-transfer-wrapper");
+            const identityProgressBar = document.getElementById("identity-progress-bar");
+
+            if (identityProgressBar) {
+                if (orderTypeVal === "trade_in") {
+                    identityProgressBar.innerHTML = `
+                        <div class="user-progress__step is-complete"><span>01</span><small>Aki Reject</small></div>
+                        <span class="user-progress__line is-complete"></span>
+                        <div class="user-progress__step is-complete"><span>02</span><small>Pilih Aki Baru</small></div>
+                        <span class="user-progress__line is-complete"></span>
+                        <div class="user-progress__step is-current"><span>03</span><small>Identitas</small></div>
+                        <span class="user-progress__line"></span>
+                        <div class="user-progress__step"><span>04</span><small>Receipt</small></div>
+                    `;
+                } else {
+                    identityProgressBar.innerHTML = `
+                        <div class="user-progress__step is-complete"><span>01</span><small>Aki Reject</small></div>
+                        <span class="user-progress__line is-complete"></span>
+                        <div class="user-progress__step is-current"><span>02</span><small>Identitas</small></div>
+                        <span class="user-progress__line"></span>
+                        <div class="user-progress__step"><span>03</span><small>Receipt</small></div>
+                    `;
+                }
             }
 
             //UI ringkasan pesanan
@@ -866,13 +887,16 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
             });
 
-            if (orderTypeVal === "trade_in") {
-                const newAccuName = localStorage.getItem("pickup_trade_in_accu_name") || "Aki Baru";
-                const newAccuPrice = parseFloat(localStorage.getItem("pickup_trade_in_accu_price")) || 0;
-                itemsHtml += `<div style="margin-top: 8px; padding-top: 6px; border-top: 1px dashed #cbd5e1; color: #dc2626;">
-                    <strong>[TUKAR AKI] ${newAccuName}</strong><br>
-                    <span style="font-size: 13px; font-weight: 600;">- ${rupiah(newAccuPrice)}</span>
-                </div>`;
+            const savedTradeInCart = JSON.parse(localStorage.getItem("pickup_trade_in_cart") || "[]");
+            let newAccuSubtotal = 0;
+            if (orderTypeVal === "trade_in" && savedTradeInCart.length > 0) {
+                let tradeInHtml = "";
+                savedTradeInCart.forEach(item => {
+                    const sub = item.price * item.quantity;
+                    newAccuSubtotal += sub;
+                    tradeInHtml += `<div style="margin-bottom: 4px;"><strong>[TUKAR AKI] ${item.name}</strong> (${item.quantity} unit)<br><span style="font-size: 13px; font-weight: 600; color: #dc2626;">- ${rupiah(sub)}</span></div>`;
+                });
+                itemsHtml += `<div style="margin-top: 8px; padding-top: 6px; border-top: 1px dashed #cbd5e1;">${tradeInHtml}</div>`;
             }
 
             if (itemsSummary) {
@@ -894,10 +918,22 @@ document.addEventListener("DOMContentLoaded", () => {
             const totalSummary = flowSummary.querySelector(
                 ".user-flow-summary__total strong",
             );
+
+            let netDiff = subtotal - fee;
+            if (orderTypeVal === "trade_in") {
+                netDiff = (subtotal - fee) - newAccuSubtotal;
+            }
+
+            const userMustPay = orderTypeVal === "trade_in" && netDiff < 0;
+            if (paymentMethodWrapper) {
+                paymentMethodWrapper.style.display = userMustPay ? "block" : "none";
+            }
+            if (transferWrapper) {
+                transferWrapper.style.display = userMustPay ? "block" : "none";
+            }
+
             if (totalSummary) {
                 if (orderTypeVal === "trade_in") {
-                    const newAccuPrice = parseFloat(localStorage.getItem("pickup_trade_in_accu_price")) || 0;
-                    const netDiff = (subtotal - fee) - newAccuPrice;
                     const isMinus = netDiff < 0;
                     const totalLabel = totalSummary.previousElementSibling || flowSummary.querySelector(".user-flow-summary__total span");
                     if (totalLabel) {
@@ -907,6 +943,79 @@ document.addEventListener("DOMContentLoaded", () => {
                 } else {
                     totalSummary.textContent = rupiah(subtotal - fee);
                 }
+            }
+
+            // OCR Pengecekan Bukti Transfer
+            let transferProofFlagReason = null;
+            const uploadTransferTrigger = document.getElementById("upload-transfer-trigger");
+            const transferInput = document.getElementById("transfer-proof-input");
+            const transferLabel = document.getElementById("transfer-filename-label");
+            const transferStatusEl = document.getElementById("transfer-ocr-status");
+
+            if (uploadTransferTrigger && transferInput) {
+                uploadTransferTrigger.onclick = () => {
+                    transferInput.click();
+                };
+            }
+
+            if (transferInput && userMustPay) {
+                transferInput.addEventListener("change", async (e) => {
+                    const file = e.target.files[0];
+                    if (!file) return;
+                    if (transferLabel) {
+                        transferLabel.textContent = file.name;
+                    }
+                    if (transferStatusEl) {
+                        transferStatusEl.style.display = "block";
+                        transferStatusEl.style.color = "#2563eb";
+                        transferStatusEl.innerHTML = "⏳ Memeriksa bukti transfer dengan OCR...";
+                    }
+
+                    const targetNominal = Math.abs(netDiff);
+                    const fd = new FormData();
+                    fd.append("image", file);
+                    fd.append("target_amount", targetNominal);
+
+                    try {
+                        const res = await fetch("/api/customer/ocr/verify-proof", {
+                            method: "POST",
+                            body: fd,
+                        }).then(r => r.json());
+
+                        if (res && res.is_match) {
+                            transferProofFlagReason = null;
+                            if (transferStatusEl) {
+                                transferStatusEl.style.color = "#059669";
+                                transferStatusEl.style.background = "#ecfdf5";
+                                transferStatusEl.style.border = "1px solid #a7f3d0";
+                                transferStatusEl.style.padding = "8px 12px";
+                                transferStatusEl.style.borderRadius = "6px";
+                                transferStatusEl.innerHTML = `✓ Nominal terdeteksi otomatis: <strong>${rupiah(res.detected_amount || targetNominal)}</strong> (Sesuai).`;
+                            }
+                        } else {
+                            transferProofFlagReason = `Nominal bukti transfer tidak terdeteksi otomatis (Tagihan: ${rupiah(targetNominal)})`;
+                            if (transferStatusEl) {
+                                transferStatusEl.style.color = "#d97706";
+                                transferStatusEl.style.background = "#fffbeb";
+                                transferStatusEl.style.border = "1px solid #fde68a";
+                                transferStatusEl.style.padding = "8px 12px";
+                                transferStatusEl.style.borderRadius = "6px";
+                                transferStatusEl.innerHTML = `ℹ️ Nominal bukti transfer tidak terdeteksi otomatis. Transaksi tetap dapat dilanjutkan dan akan diverifikasi manual oleh admin.`;
+                            }
+                        }
+                    } catch (err) {
+                        console.error(err);
+                        transferProofFlagReason = "Gagal memproses OCR bukti transfer";
+                        if (transferStatusEl) {
+                            transferStatusEl.style.color = "#d97706";
+                            transferStatusEl.style.background = "#fffbeb";
+                            transferStatusEl.style.border = "1px solid #fde68a";
+                            transferStatusEl.style.padding = "8px 12px";
+                            transferStatusEl.style.borderRadius = "6px";
+                            transferStatusEl.innerHTML = `ℹ️ Pembacaan bukti transfer terkendala. Transaksi tetap dapat dilanjutkan.`;
+                        }
+                    }
+                });
             }
         }
         const modal = document.querySelector("[data-identity-modal]");
@@ -920,12 +1029,17 @@ document.addEventListener("DOMContentLoaded", () => {
         });
         let formDataToSubmit = null;
 
-        identityForm.addEventListener("submit", async (e) => {
-            e.preventDefault();
-            const form = e.target;
+        const btnIdentityNext = document.getElementById("btn-identity-next");
+        if (btnIdentityNext) {
+            btnIdentityNext.addEventListener("click", async (e) => {
+                e.preventDefault();
+                if (!identityForm.reportValidity()) {
+                    return;
+                }
+                const form = identityForm;
 
-            let nameVal =
-                form.querySelector('input[name="full_name"]')?.value.trim() ||
+                let nameVal =
+                    form.querySelector('input[name="full_name"]')?.value.trim() ||
                 "";
             const manualWrapper = document.getElementById("manual-name-wrapper");
             const manualInput = form.querySelector('input[name="manual_full_name"]');
@@ -999,9 +1113,15 @@ document.addEventListener("DOMContentLoaded", () => {
             const ktpInput = form.querySelector(
                 'input[name="identity_document"]',
             );
-            const ktpFile = ktpInput ? ktpInput.files[0] : null;
+            const accuKtpInputNode = document.getElementById("accu-ktp-file-input");
+            
+            let ktpFile = ktpInput && ktpInput.files ? ktpInput.files[0] : null;
+            if (!ktpFile && accuKtpInputNode && accuKtpInputNode.files) {
+                ktpFile = accuKtpInputNode.files[0];
+            }
+
             if (!ktpFile) {
-                showCustomAlert("Harap upload foto KTP atau SIM Anda.");
+                showCustomAlert("Harap upload foto identitas Anda.");
                 return;
             }
             let ktpBase64 = null;
@@ -1037,10 +1157,31 @@ document.addEventListener("DOMContentLoaded", () => {
             const paymentMethodInput = document.getElementById("payment-method-select");
             const paymentMethodVal = paymentMethodInput ? paymentMethodInput.value : null;
 
-            if (orderTypeVal === "trade_in" && (!paymentMethodVal || paymentMethodVal === "")) {
-                showCustomAlert("Harap pilih metode pembayaran untuk Trade In.");
-                return;
+            let transferProofBase64 = null;
+            const transferInput = document.getElementById("transfer-proof-input");
+            if (transferInput && transferInput.files && transferInput.files[0]) {
+                try {
+                    transferProofBase64 = await new Promise((resolve, reject) => {
+                        const r = new FileReader();
+                        r.onload = (ev) => resolve(ev.target.result);
+                        r.onerror = (err) => reject(err);
+                        r.readAsDataURL(transferInput.files[0]);
+                    });
+                } catch (e) {
+                    console.error("Gagal membaca bukti transfer:", e);
+                }
             }
+
+            const flagReasons = [];
+            if (manualWrapper && manualWrapper.style.display !== "none") {
+                flagReasons.push("Nama diisi manual karena OCR KTP gagal > 3x");
+            }
+            if (transferProofFlagReason) {
+                flagReasons.push(transferProofFlagReason);
+            }
+
+            const finalFlag = flagReasons.length > 0 ? 0 : 1;
+            const finalReason = flagReasons.length > 0 ? flagReasons.join(" | ") : null;
 
             formDataToSubmit = {
                 name: nameVal,
@@ -1065,8 +1206,12 @@ document.addEventListener("DOMContentLoaded", () => {
                 delivery_method: deliveryMethodVal,
                 items: itemsPayload,
                 ktp_base64: ktpBase64,
+                transfer_proof_base64: transferProofBase64,
+                flag: finalFlag,
+                flag_reason: finalReason,
                 order_type: orderTypeVal,
                 new_accus_id: newAccusIdVal,
+                new_accus_items: orderTypeVal === "trade_in" ? JSON.parse(localStorage.getItem("pickup_trade_in_cart") || "[]") : [],
                 payment_method: paymentMethodVal,
             };
 
@@ -1158,6 +1303,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 submitOrder(formDataToSubmit);
             }
         });
+    }
 
         if (modalConfirmBtn) {
             modalConfirmBtn.addEventListener("click", async (e) => {
@@ -1207,6 +1353,29 @@ document.addEventListener("DOMContentLoaded", () => {
                     const c = o.customer || {};
                     const b = c.bank || {};
                     const receipt = o.receipt || {};
+                    const receiptProgressBar = document.getElementById("receipt-progress-bar");
+                    if (receiptProgressBar) {
+                        if (o.order_type === "trade_in") {
+                            receiptProgressBar.innerHTML = `
+                                <div class="user-progress__step is-complete"><span>01</span><small>Aki Reject</small></div>
+                                <span class="user-progress__line is-complete"></span>
+                                <div class="user-progress__step is-complete"><span>02</span><small>Pilih Aki Baru</small></div>
+                                <span class="user-progress__line is-complete"></span>
+                                <div class="user-progress__step is-complete"><span>03</span><small>Identitas</small></div>
+                                <span class="user-progress__line is-complete"></span>
+                                <div class="user-progress__step is-current"><span>04</span><small>Receipt</small></div>
+                            `;
+                        } else {
+                            receiptProgressBar.innerHTML = `
+                                <div class="user-progress__step is-complete"><span>01</span><small>Aki Reject</small></div>
+                                <span class="user-progress__line is-complete"></span>
+                                <div class="user-progress__step is-complete"><span>02</span><small>Identitas</small></div>
+                                <span class="user-progress__line is-complete"></span>
+                                <div class="user-progress__step is-current"><span>03</span><small>Receipt</small></div>
+                            `;
+                        }
+                    }
+
                     const metaMeta = receiptContainer.querySelector(
                         ".user-receipt__meta strong",
                     );
@@ -1428,25 +1597,37 @@ document.addEventListener("DOMContentLoaded", () => {
                         ".user-receipt__table tbody",
                     );
                     if (tableBody) {
-                        if (itemsList.length === 0) {
-                            tableBody.innerHTML =
-                                '<tr><td colspan="4"><div class="user-receipt__empty"><strong>Detail aki belum tersedia</strong><span>Item akan muncul setelah transaksi terhubung.</span></div></td></tr>';
-                        } else {
-                            tableBody.innerHTML = itemsList
-                                .map(
-                                    (item) => `
+                        let html = "";
+                        if (itemsList.length > 0) {
+                            html += `<tr><td colspan="4" style="background:#f8fafc; font-size:12px; font-weight:700; color:#64748b; padding:8px 12px; text-transform:uppercase;">Aki Reject</td></tr>`;
+                            html += itemsList.map(item => `
                                 <tr>
-                                    <td>
-                                        <strong>${item.name || "-"}</strong>
-                                    </td>
+                                    <td><strong>${item.name || "-"}</strong></td>
                                     <td>${item.amount || 1} unit</td>
                                     <td>${rupiah(item.price || 0)}</td>
                                     <td><strong>${rupiah(item.subtotal || 0)}</strong></td>
                                 </tr>
-                            `,
-                                )
-                                .join("");
+                            `).join("");
                         }
+                        
+                        const newAccusList = o.new_accus_items || [];
+                        if (newAccusList.length > 0) {
+                            html += `<tr><td colspan="4" style="background:#eff6ff; font-size:12px; font-weight:700; color:#1d4ed8; padding:8px 12px; text-transform:uppercase;">Aki Baru (Trade In)</td></tr>`;
+                            html += newAccusList.map(item => `
+                                <tr>
+                                    <td><strong>${item.name || "-"}</strong></td>
+                                    <td>${item.amount || 1} unit</td>
+                                    <td style="color:#2563eb;">${rupiah(item.price || 0)}</td>
+                                    <td style="color:#2563eb;"><strong>${rupiah(item.subtotal || 0)}</strong></td>
+                                </tr>
+                            `).join("");
+                        }
+                        
+                        if (itemsList.length === 0 && newAccusList.length === 0) {
+                            html = '<tr><td colspan="4"><div class="user-receipt__empty"><strong>Detail aki belum tersedia</strong><span>Item akan muncul setelah transaksi terhubung.</span></div></td></tr>';
+                        }
+                        
+                        tableBody.innerHTML = html;
                     }
                     const summaryBlocks = receiptContainer.querySelector(
                         ".user-receipt__summary",
@@ -2103,36 +2284,122 @@ document.addEventListener("DOMContentLoaded", () => {
     // Trade-In Logic
     if (window.location.pathname === "/trade-in") {
         let newAccus = [];
-        let selectedNewAccu = null;
+        let tradeInCart = JSON.parse(localStorage.getItem("pickup_trade_in_cart") || "[]");
 
-        const renderNewAccus = (data) => {
+        const getCartItem = (id) => tradeInCart.find(i => i.id === id);
+
+        const renderNewAccus = (data, searchVal = "") => {
             const grid = document.getElementById("new-accus-grid");
             if (!grid) return;
             grid.innerHTML = "";
+
+            if (!searchVal || searchVal.trim() === "") {
+                grid.innerHTML = '<div style="padding:40px; text-align:center; color:#64748b; font-size:14px; grid-column:1/-1; background:#f8fafc; border:1px dashed #cbd5e1; border-radius:12px;">Silakan ketik jenis aki baru pada kolom pencarian di atas (contoh: N50, NS40, dll) untuk melihat katalog.</div>';
+                return;
+            }
+
             if (data.length === 0) {
-                grid.innerHTML = '<div style="padding:40px; text-align:center; color:#64748b; font-size:14px; grid-column:1/-1;">Tidak ada aki baru yang cocok.</div>';
+                grid.innerHTML = '<div style="padding:40px; text-align:center; color:#64748b; font-size:14px; grid-column:1/-1;">Tidak ada aki baru yang cocok dengan kata kunci pencarian.</div>';
                 return;
             }
             data.forEach(accu => {
+                const existing = getCartItem(accu.id);
+                const currentQty = existing ? existing.quantity : 1;
+                const inCart = !!existing;
+
                 const card = document.createElement("div");
                 card.className = "user-product-card";
-                card.style.cursor = "pointer";
-                if (selectedNewAccu && selectedNewAccu.id === accu.id) {
-                    card.style.border = "2px solid #2563eb";
-                    card.style.boxShadow = "0 10px 25px -5px rgba(37,99,235,0.3)";
+                card.style.padding = "28px 32px";
+                card.style.borderRadius = "12px";
+                card.style.background = "#ffffff";
+                card.style.marginBottom = "12px";
+                card.style.border = inCart ? "2px solid #2563eb" : "1px solid #e2e8f0";
+                if (inCart) {
+                    card.style.boxShadow = "0 10px 25px -5px rgba(37,99,235,0.2)";
                 }
-                const priceFmt = new Intl.NumberFormat("id-ID", { style: "currency", currency: "IDR", minimumFractionDigits: 0 }).format(accu.price);
+
                 card.innerHTML = `
-                    <div class="user-product-card__content">
-                        <h3>${accu.name}</h3>
-                        <p class="user-product-card__price" style="color:#2563eb;">${priceFmt}</p>
+                    <div class="user-product-card__content" style="width:100%; box-sizing:border-box;">
+                        <h3 style="margin-top:0; margin-bottom:6px; font-size:16px;">${accu.name}</h3>
+                        <p class="user-product-card__price" style="color:#2563eb; margin-bottom:14px; font-size:16px; font-weight:700;">${rupiah(accu.price)}</p>
+                        <div style="display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap;">
+                            <div style="display:inline-flex; align-items:center; border:1px solid #cbd5e1; border-radius:6px; overflow:hidden;">
+                                <button type="button" class="btn-qty-minus" style="padding:6px 14px; background:#f8fafc; border:none; cursor:pointer; font-weight:700;">-</button>
+                                <span class="qty-val" style="padding:4px 14px; font-weight:700; font-size:13px;">${currentQty}</span>
+                                <button type="button" class="btn-qty-plus" style="padding:6px 14px; background:#f8fafc; border:none; cursor:pointer; font-weight:700;">+</button>
+                            </div>
+                            <div style="display: flex; flex-direction: column; gap: 4px; flex: 1;">
+                                <button type="button" class="btn-toggle-cart user-button ${inCart ? 'user-button--secondary' : 'user-button--primary'}" style="font-size:12px; padding:8px 16px;">
+                                    ${inCart ? 'Update jumlah keranjang' : '+ Tambahkan ke Keranjang'}
+                                </button>
+                                ${inCart ? '<button type="button" class="btn-delete-cart user-button" style="font-size:12px; padding:8px 16px; background: #fff1f2; color: #e11d48; border-color: #ffe4e6;">Hapus dari Keranjang</button>' : ''}
+                            </div>
+                        </div>
                     </div>
                 `;
-                card.onclick = () => {
-                    selectedNewAccu = accu;
-                    renderNewAccus(newAccus);
+
+                let qtyCounter = currentQty;
+                const qtyValEl = card.querySelector(".qty-val");
+                const btnMinus = card.querySelector(".btn-qty-minus");
+                const btnPlus = card.querySelector(".btn-qty-plus");
+                const btnToggle = card.querySelector(".btn-toggle-cart");
+                const btnDelete = card.querySelector(".btn-delete-cart");
+
+                btnMinus.onclick = (e) => {
+                    e.stopPropagation();
+                    if (qtyCounter > 1) {
+                        qtyCounter--;
+                        qtyValEl.textContent = qtyCounter;
+                    }
+                };
+
+                btnPlus.onclick = (e) => {
+                    e.stopPropagation();
+                    qtyCounter++;
+                    qtyValEl.textContent = qtyCounter;
+                };
+
+                btnToggle.onclick = (e) => {
+                    e.stopPropagation();
+                    const idx = tradeInCart.findIndex(i => i.id === accu.id);
+                    if (idx >= 0) {
+                        tradeInCart[idx].quantity = qtyCounter;
+                        btnToggle.textContent = "Jumlah telah diupdate!";
+                        btnToggle.style.backgroundColor = "#10b981";
+                        btnToggle.style.color = "#fff";
+                        btnToggle.style.borderColor = "#10b981";
+                        setTimeout(() => {
+                            localStorage.setItem("pickup_trade_in_cart", JSON.stringify(tradeInCart));
+                            const currentSearch = document.getElementById("new-accu-search-input")?.value.toLowerCase().trim() || "";
+                            renderNewAccus(newAccus.filter(a => a.name.toLowerCase().includes(currentSearch)), currentSearch);
+                            updateTradeInSelected();
+                        }, 1000);
+                        return;
+                    } else {
+                        tradeInCart.push({
+                            id: accu.id,
+                            name: accu.name,
+                            price: accu.price,
+                            quantity: qtyCounter
+                        });
+                    }
+                    localStorage.setItem("pickup_trade_in_cart", JSON.stringify(tradeInCart));
+                    const currentSearch = document.getElementById("new-accu-search-input")?.value.toLowerCase().trim() || "";
+                    renderNewAccus(newAccus.filter(a => a.name.toLowerCase().includes(currentSearch)), currentSearch);
                     updateTradeInSelected();
                 };
+
+                if (btnDelete) {
+                    btnDelete.onclick = (e) => {
+                        e.stopPropagation();
+                        tradeInCart = tradeInCart.filter(i => i.id !== accu.id);
+                        localStorage.setItem("pickup_trade_in_cart", JSON.stringify(tradeInCart));
+                        const currentSearch = document.getElementById("new-accu-search-input")?.value.toLowerCase().trim() || "";
+                        renderNewAccus(newAccus.filter(a => a.name.toLowerCase().includes(currentSearch)), currentSearch);
+                        updateTradeInSelected();
+                    };
+                }
+
                 grid.appendChild(card);
             });
         };
@@ -2177,20 +2444,32 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
             }
 
-            if (selectedNewAccu) {
-                const priceFmt = rupiah(selectedNewAccu.price);
+            let newAccuSubtotal = 0;
+            if (tradeInCart.length > 0) {
+                let itemsHtml = tradeInCart.map(item => {
+                    const sub = item.price * item.quantity;
+                    newAccuSubtotal += sub;
+                    return `<div style="display:flex; justify-content:space-between; font-size:12px; margin-bottom:4px; color:#1e3a8a;">
+                        <span>${item.name} (${item.quantity} unit)</span>
+                        <span style="font-weight:600; color:#2563eb;">${rupiah(sub)}</span>
+                    </div>`;
+                }).join("");
+
                 container.innerHTML = `
                     <div style="text-align:left; padding:12px; background:#eff6ff; border-radius:8px; border:1px solid #bfdbfe;">
-                        <span style="font-size:11px; font-weight:700; color:#1d4ed8; text-transform:uppercase; margin-bottom:4px; display:block;">Aki Baru Pilihan Anda:</span>
-                        <div style="font-size:15px; font-weight:600; color:#1e3a8a; margin-bottom:4px;">${selectedNewAccu.name}</div>
-                        <div style="font-size:16px; font-weight:700; color:#2563eb;">${priceFmt}</div>
+                        <span style="font-size:11px; font-weight:700; color:#1d4ed8; text-transform:uppercase; margin-bottom:6px; display:block;">Aki Baru Pilihan Anda:</span>
+                        ${itemsHtml}
+                        <div style="display:flex; justify-content:space-between; font-size:13px; font-weight:700; color:#1e40af; padding-top:6px; margin-top:6px; border-top:1px dashed #93c5fd;">
+                            <span>Total Aki Baru:</span>
+                            <span>${rupiah(newAccuSubtotal)}</span>
+                        </div>
                     </div>
                 `;
                 btn.style.opacity = "1";
                 btn.style.pointerEvents = "auto";
 
                 if (netSummary) {
-                    const diff = selectedNewAccu.price - rejectSubtotal;
+                    const diff = newAccuSubtotal - rejectSubtotal;
                     if (diff >= 0) {
                         netSummary.innerHTML = `
                             <div style="display:flex; justify-content:space-between; margin-top:14px; padding-top:10px; border-top:1px solid #e2e8f0; font-size:13px;">
@@ -2216,7 +2495,7 @@ document.addEventListener("DOMContentLoaded", () => {
                         </svg>
                     </span>
                     <strong>Belum ada aki baru dipilih</strong>
-                    <p style="font-size:12px;">Silakan pilih 1 aki dari katalog.</p>
+                    <p style="font-size:12px;">Silakan pilih minimal 1 aki dari katalog.</p>
                 `;
                 btn.style.opacity = "0.5";
                 btn.style.pointerEvents = "none";
@@ -2229,7 +2508,7 @@ document.addEventListener("DOMContentLoaded", () => {
             const res = await fetchPublicApi("/new-accus");
             if (res && res.data) {
                 newAccus = res.data;
-                renderNewAccus(newAccus);
+                renderNewAccus(newAccus, "");
             }
         };
 
@@ -2238,22 +2517,35 @@ document.addEventListener("DOMContentLoaded", () => {
             searchInputTradeIn.addEventListener("input", (e) => {
                 const q = e.target.value.toLowerCase().trim();
                 const filtered = newAccus.filter(a => a.name.toLowerCase().includes(q) || (a.brand_relation && a.brand_relation.name.toLowerCase().includes(q)));
-                renderNewAccus(filtered);
+                renderNewAccus(filtered, q);
             });
         }
 
         const btnContinue = document.getElementById("btn-trade-in-continue");
         if (btnContinue) {
             btnContinue.addEventListener("click", () => {
-                if (!selectedNewAccu) return;
-                localStorage.setItem("pickup_trade_in_accu_id", selectedNewAccu.id);
-                localStorage.setItem("pickup_trade_in_accu_name", selectedNewAccu.name);
-                localStorage.setItem("pickup_trade_in_accu_price", selectedNewAccu.price);
+                if (tradeInCart.length === 0) return;
+                const firstItem = tradeInCart[0];
+                localStorage.setItem("pickup_trade_in_accu_id", firstItem.id);
+                localStorage.setItem("pickup_trade_in_accu_name", firstItem.name);
+                localStorage.setItem("pickup_trade_in_accu_price", firstItem.price);
+                localStorage.setItem("pickup_trade_in_cart", JSON.stringify(tradeInCart));
                 localStorage.setItem("pickup_order_type", "trade_in");
                 window.location.href = "/identity";
             });
         }
 
         initTradeIn();
+    }
+
+    // Hero Slideshow Rotator
+    const slides = document.querySelectorAll(".hero-slide");
+    if (slides.length > 1) {
+        let currentSlide = 0;
+        setInterval(() => {
+            slides[currentSlide].classList.remove("is-active");
+            currentSlide = (currentSlide + 1) % slides.length;
+            slides[currentSlide].classList.add("is-active");
+        }, 5000);
     }
 });

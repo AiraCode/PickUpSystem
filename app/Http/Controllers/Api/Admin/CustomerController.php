@@ -34,10 +34,14 @@ class CustomerController extends Controller
     {
         $request->validate([
             'flag' => 'required|integer|in:0,1',
+            'flag_reason' => 'nullable|string|max:500',
         ]);
 
         $customer = Customer::findOrFail($id);
-        $customer->update(['flag' => $request->flag]);
+        $customer->update([
+            'flag' => $request->flag,
+            'flag_reason' => $request->flag == 1 ? null : ($request->flag_reason ?? $customer->flag_reason),
+        ]);
 
         return response()->json([
             'message' => 'Status customer berhasil diperbarui',

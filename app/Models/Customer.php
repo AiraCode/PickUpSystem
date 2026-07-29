@@ -22,6 +22,7 @@ class Customer extends Model
         'account_number',
         'phone_number',
         'flag',
+        'flag_reason',
         'banks_id',
     ];
 

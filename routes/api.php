@@ -39,6 +39,7 @@ Route::prefix('customer')->group(function () {
     Route::put('orders/{id}/note', [CustomerOrderController::class, 'updateNote']);
     Route::get('receipts/{orderId}', [CustomerReceiptController::class, 'show']);
     Route::post('ocr/extract-name', [CustomerOCRController::class, 'extractName']);
+    Route::post('ocr/verify-proof', [CustomerOCRController::class, 'verifyProof']);
 });
 
 Route::prefix('public-admin')->group(function () {
