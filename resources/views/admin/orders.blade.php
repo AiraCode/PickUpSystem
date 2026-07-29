@@ -281,7 +281,8 @@
                                 style="accent-color:#8b5cf6; width:16px; height:16px;">
                             <div>
                                 <span style="font-weight:600; font-size:13px; color:#111318;">Sampai di Gudang</span>
-                                <span style="display:block; font-size:11px; color:#6d727c;">Aki telah diterima & sampai di gudang</span>
+                                <span style="display:block; font-size:11px; color:#6d727c;">Aki telah diterima & sampai di
+                                    gudang</span>
                             </div>
                         </label>
                         <label
@@ -335,9 +336,13 @@
                         <img id="upload-preview"
                             style="display:none; max-width:100%; max-height:150px; border-radius:6px; margin:0 auto; position:relative; z-index:5; pointer-events:none;">
                     </div>
-                    <div id="proof-view-area" style="display:none; padding:12px; background:#f9fafb; border:1px solid #e5e7eb; border-radius:8px; margin-top:8px;">
-                        <a href="#" id="link-view-proof" style="display:inline-flex; align-items:center; gap:6px; font-size:13px; font-weight:600; color:#2563eb; text-decoration:none;" onclick="return false;">
-                            <svg viewBox="0 0 24 24" style="width:16px; height:16px; fill:none; stroke:currentColor; stroke-width:2;">
+                    <div id="proof-view-area"
+                        style="display:none; padding:12px; background:#f9fafb; border:1px solid #e5e7eb; border-radius:8px; margin-top:8px;">
+                        <a href="#" id="link-view-proof"
+                            style="display:inline-flex; align-items:center; gap:6px; font-size:13px; font-weight:600; color:#2563eb; text-decoration:none;"
+                            onclick="return false;">
+                            <svg viewBox="0 0 24 24"
+                                style="width:16px; height:16px; fill:none; stroke:currentColor; stroke-width:2;">
                                 <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
                                 <circle cx="12" cy="12" r="3" />
                             </svg>
@@ -349,7 +354,8 @@
                     style="display:none; background:#fee2e2; color:#991b1b; padding:10px 14px; border-radius:6px; font-size:12px; font-weight:600; margin-bottom:16px;">
                 </div>
                 <div style="display:flex; gap:10px; justify-content:flex-end;">
-                    <button type="button" id="btn-update-back" class="admin-button admin-button--secondary" style="display:none;"
+                    <button type="button" id="btn-update-back" class="admin-button admin-button--secondary"
+                        style="display:none;"
                         onclick="document.getElementById('modal-update-order').style.display='none'">Kembali</button>
                     <button type="button" id="btn-update-cancel" class="admin-button admin-button--secondary"
                         onclick="document.getElementById('modal-update-order').style.display='none'">Batal</button>
@@ -369,8 +375,17 @@
                     onclick="document.getElementById('modal-detail-order').style.display='none'">Tutup</button>
             </div>
             <div style="padding-bottom:20px;">
+
+                <div
+                    style="display: flex; justify-content: space-between; align-items: center; padding-top: 10px; border-top: 1px solid #e5e7eb;">
+                    <h3 style="font-size: 14px; margin-bottom: 0; color: #111318;">
+                        Informasi Pelanggan
+                    </h3>
+                    <button type="button" class="admin-button admin-button--secondary" id="btn-open-order-summary">
+                        Cek Rincian Harga
+                    </button>
+                </div>
                 <div style="margin-bottom:18px; border-bottom:1px solid #e5e7eb; padding-bottom:14px;">
-                    <h3 style="font-size:14px; margin-bottom:12px; color:#111318;">Informasi Pelanggan</h3>
                     <table style="width:100%; font-size:13px; border-collapse:collapse;">
                         <tr>
                             <td style="width:35%; color:#6d727c; padding:6px 0;">Nama Lengkap</td>
@@ -468,10 +483,7 @@
                     </table>
                 </div>
             </div>
-            <div style="display:flex; justify-content:flex-start; padding-top:10px; border-top:1px solid #e5e7eb;">
-                <button type="button" class="admin-button admin-button--secondary" id="btn-open-order-summary">Cek Rincian
-                    Harga</button>
-            </div>
+
         </div>
     </div>
 
