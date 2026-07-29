@@ -10,13 +10,15 @@ Route::get('/user', function () {
 });
 
 Route::get('/identity', function () {
-    return view('user.identity');
+    $paymentMethods = \App\Models\PaymentMethod::where('is_active', true)->get();
+    return view('user.identity', compact('paymentMethods'));
 });
 Route::get('/trade-in', function () {
     return view('user.trade-in');
 });
 Route::get('/user/identitas', function () {
-    return view('user.identity');
+    $paymentMethods = \App\Models\PaymentMethod::where('is_active', true)->get();
+    return view('user.identity', compact('paymentMethods'));
 });
 
 Route::get('/receipt', function () {

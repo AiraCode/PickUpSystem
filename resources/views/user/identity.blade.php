@@ -144,9 +144,9 @@
                                 <label class="user-floating-field" style="margin-bottom:0;">
                                     <select name="payment_method" id="payment-method-select">
                                         <option value="" selected disabled></option>
-                                        <option value="cod">COD (Bayar di Tempat)</option>
-                                        <option value="transfer">Transfer Bank</option>
-                                        <option value="qris">QRIS</option>
+                                        @foreach($paymentMethods as $pm)
+                                            <option value="{{ $pm->code }}">{{ $pm->name }}</option>
+                                        @endforeach
                                     </select>
                                     <span>Metode Pembayaran (Untuk Kekurangan Trade In)</span>
                                 </label>
