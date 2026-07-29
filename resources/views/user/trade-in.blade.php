@@ -2,41 +2,56 @@
 
 @section('content')
     <div id="top">
-        @include('user.partials.header', ['headerClass' => 'user-header--hero'])
+        @include('user.partials.header', ['headerClass' => 'user-header--solid user-header--simple', 'hideNav' => true])
 
-        <main>
-            <section class="user-hero" style="min-height: 40vh; padding: 120px 0 60px;">
-                <div class="user-hero__media" aria-label="Area gambar hero">
+        <main class="user-flow-page">
+            <section class="user-flow-hero">
+                <div class="user-flow-hero__bg">
                     <div class="hero-slideshow">
                         <div class="hero-slide is-active" style="background-image: url('{{ asset('img/Aki_GS_Hijau-removebg-preview.png') }}');"></div>
                         <div class="hero-slide" style="background-image: url('{{ asset('img/Aki_GS_Putih-removebg-preview.png') }}');"></div>
                         <div class="hero-slide" style="background-image: url('{{ asset('img/Aki_Yuasa-removebg-preview.png') }}');"></div>
                     </div>
-                    <span class="user-hero__overlay" aria-hidden="true"></span>
                 </div>
-                <div class="user-hero__content user-container">
-                    <div class="user-hero__copy">
-                        <h1>
-                            Pilih Aki Baru Anda untuk<br>
-                            <em>Tukar Tambah</em>
-                        </h1>
-                        <p>Dapatkan harga aki baru terbaik dan potongan harga dari penjualan aki reject Anda.</p>
-                        <div class="user-hero__actions">
-                            <a href="#daftar-aki-baru" class="user-button user-button--primary">Pilih Aki Baru <span
-                                    aria-hidden="true">→</span></a>
+                <div class="user-flow-hero__overlay"></div>
+
+                <div class="user-container user-flow-hero__inner">
+                    <div class="user-progress">
+                        <div class="user-progress__step is-complete">
+                            <span>01</span>
+                            <small>Aki Reject</small>
+                        </div>
+
+                        <span class="user-progress__line is-complete"></span>
+
+                        <div class="user-progress__step is-current">
+                            <span>02</span>
+                            <small>Pilih Aki Baru</small>
+                        </div>
+
+                        <span class="user-progress__line"></span>
+
+                        <div class="user-progress__step">
+                            <span>03</span>
+                            <small>Identitas</small>
                         </div>
                     </div>
+
+                    <span class="user-kicker">KATALOG AKI BARU</span>
+
+                    <h1>
+                        Pilih Aki Baru Anda untuk<br>
+                        <em>Tukar Tambah.</em>
+                    </h1>
+
+                    <p>
+                        Dapatkan harga aki baru terbaik dan potongan harga dari penjualan aki reject Anda.
+                    </p>
                 </div>
             </section>
 
-            <section class="user-catalog user-section" id="daftar-aki-baru">
+            <section class="user-catalog user-section" id="daftar-aki-baru" style="padding-top: 40px;">
                 <div class="user-container">
-                    <div class="user-section-heading">
-                        <span class="user-kicker">KATALOG AKI BARU</span>
-                        <h2>Aki baru berkualitas<br><em>langsung dipasang.</em></h2>
-                        <p style="max-width: none; font-size: 16px;">Pilih 1 (satu) aki baru yang ingin Anda beli.</p>
-                    </div>
-
                     <div class="user-catalog-toolbar">
                         <label class="user-field user-field--search" for="new-accu-search-input" style="flex:1;">
                             <span>CARI JENIS AKI BARU</span>
@@ -54,8 +69,13 @@
 
                         <aside class="user-checkout-panel">
                             <div class="user-checkout-panel__header">
-                                <h3>Aki Baru Pilihan Anda</h3>
+                                <h3>Ringkasan Tukar Tambah</h3>
                             </div>
+
+                            <!-- Summary Aki Reject dari Landing Page -->
+                            <div id="reject-accu-summary"></div>
+
+                            <!-- Aki Baru Pilihan -->
                             <div class="user-cart">
                                 <div id="new-accu-selected" style="padding: 20px 0; text-align: center; color: #64748b;">
                                     <span style="display:block; font-size:24px; margin-bottom:8px;">
@@ -69,13 +89,16 @@
                                 </div>
                             </div>
 
+                            <!-- Summary Kalkulasi Net Trade-In -->
+                            <div id="trade-in-net-summary"></div>
+
                             <button type="button" id="btn-trade-in-continue"
                                 class="user-button user-button--primary user-button--full"
                                 style="margin-top: 20px; opacity:0.5; pointer-events:none;">
                                 Lanjut Isi Identitas <span aria-hidden="true">→</span>
                             </button>
                             <p style="margin-top:12px; font-size:11px; color:#64748b; line-height:1.4;">
-                                *Catatan: Anda akan diarahkan ke halaman pengisian identitas. Data aki reject yang sudah Anda pilih sebelumnya akan tetap tersimpan.
+                                *Catatan: Anda akan diarahkan ke halaman pengisian identitas. Data aki reject yang sudah Anda pilih sebelumnya tetap tersimpan.
                             </p>
                         </aside>
                     </div>

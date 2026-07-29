@@ -20,7 +20,7 @@
                             Jual Aki Reject Anda dengan<br>
                             <em>Harga Terbaik</em>
                         </h1>
-                        <p>Modern Mulia Mandiri membeli aki mobil dan aki motor reject dengan proses cepat, transparan, dan
+                        <p>Modern Mulya Mandiri membeli aki mobil dan aki motor reject dengan proses cepat, transparan, dan
                             pembayaran langsung ke rekening Anda.</p>
                         <div class="user-hero__actions">
                             <a href="#daftar-harga" class="user-button user-button--primary">Jual Sekarang <span
@@ -161,7 +161,7 @@
                                 <label class="user-radio-card">
                                     <input type="radio" name="order_type_selection" value="sell" checked>
                                     <span class="user-radio-card__indicator"></span>
-                                    <span><strong>Jual Aki Reject Saja</strong><small>Penjualan aki reject ke Modern Mulia Mandiri.</small></span>
+                                    <span><strong>Jual Aki Reject Saja</strong><small>Penjualan aki reject ke Modern Mulya Mandiri.</small></span>
                                 </label>
                                 <label class="user-radio-card">
                                     <input type="radio" name="order_type_selection" value="trade_in">

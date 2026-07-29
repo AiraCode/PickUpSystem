@@ -298,8 +298,8 @@
         style="display:none; position:fixed; inset:0; background:rgba(0,0,0,.45); z-index:100; align-items:center; justify-content:center;">
         <div class="admin-panel" style="width:440px; max-width:92vw;">
             <div class="admin-panel__head">
-                <h2>Tambah Aki Baru</h2>
-                <p style="font-size:12px; color:#6d727c; margin-top:2px;">Aki baru akan otomatis terhubung dan berlaku di
+                <h2>Tambah Aki Reject</h2>
+                <p style="font-size:12px; color:#6d727c; margin-top:2px;">Aki reject akan otomatis terhubung dan berlaku di
                     semua kota.</p>
             </div>
             <form id="form-add-accu">

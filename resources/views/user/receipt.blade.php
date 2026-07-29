@@ -41,8 +41,8 @@
                 <article class="user-receipt" data-receipt>
                     <div class="user-receipt__top">
                         <div class="user-receipt__brand">
-                            <img src="{{ Vite::asset('resources/img/logo_admin2-removebg-preview.png') }}" alt="Modern Mulia Mandiri" style="height: 45px; width: auto; object-fit: contain;">
-                            <div><strong>Modern Mulia Mandiri</strong><small>One Stop Solution</small></div>
+                            <img src="{{ Vite::asset('resources/img/logo_admin2-removebg-preview.png') }}" alt="Modern Mulya Mandiri" style="height: 45px; width: auto; object-fit: contain;">
+                            <div><strong>Modern Mulya Mandiri</strong><small>One Stop Solution</small></div>
                         </div>
                         <div class="user-receipt__meta">
                             <span>RECEIPT PENJUALAN</span>

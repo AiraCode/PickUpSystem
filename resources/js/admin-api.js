@@ -1878,6 +1878,48 @@ document.addEventListener("DOMContentLoaded", () => {
             );
         };
         
+        const formAddAccu = document.getElementById("form-add-accu");
+        if (formAddAccu) {
+            formAddAccu.addEventListener("submit", async (e) => {
+                e.preventDefault();
+                const name = document.getElementById("accu-name").value;
+                const berat_kering = document.getElementById("accu-berat-kering").value;
+
+                const res = await fetchApi("/accus", {
+                    method: "POST",
+                    body: JSON.stringify({ brand: "Modern Mulya Mandiri", name, berat_kering }),
+                });
+                if (res && res.data) {
+                    showToast("Aki reject berhasil ditambahkan", "success");
+                    document.getElementById("modal-add-accu").style.display = "none";
+                    formAddAccu.reset();
+                    loadAccus();
+                    loadTrashedAccus();
+                }
+            });
+        }
+
+        const formAddCity = document.getElementById("form-add-city");
+        if (formAddCity) {
+            formAddCity.addEventListener("submit", async (e) => {
+                e.preventDefault();
+                const name = document.getElementById("city-name").value;
+                const percentage = document.getElementById("city-percentage").value;
+
+                const res = await fetchApi("/cities", {
+                    method: "POST",
+                    body: JSON.stringify({ name, percentage }),
+                });
+                if (res && res.data) {
+                    showToast("Kota berhasil ditambahkan", "success");
+                    document.getElementById("modal-add-city").style.display = "none";
+                    formAddCity.reset();
+                    loadCities();
+                    loadTrashedCities();
+                }
+            });
+        }
+
         const formAddNewAccu = document.getElementById("form-add-new-accu");
         if (formAddNewAccu) {
             formAddNewAccu.addEventListener("submit", async (e) => {

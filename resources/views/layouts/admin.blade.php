@@ -23,11 +23,11 @@
                 <div class="admin-sidebar__head">
                     <a href="{{ url('/admin/dashboard') }}" class="admin-brand" aria-label="One Stop Solution admin">
 
-                        <img src="{{ Vite::asset('resources/img/logo_admin2-removebg-preview.png') }}" alt="Modern Mulia Mandiri"
-                            class="admin-brand__logo" style="height: 38px; width: auto; object-fit: contain;">
+                        <img src="{{ Vite::asset('resources/img/logo_admin2-removebg-preview.png') }}" alt="Modern Mulya Mandiri"
+                            class="admin-brand__logo" style="height: 40px; width: auto; object-fit: contain;">
 
                         <span class="admin-brand__copy">
-                            <strong>Modern Mulia Mandiri</strong>
+                            <strong>Modern Mulya Mandiri</strong>
                             <small>One Stop Solution</small>
                         </span>
 
@@ -107,7 +107,7 @@
                         <span id="admin-theme-text">Mode Gelap</span>
                     </button>
                     <div class="admin-sidebar__foot-copy">
-                        <span>© 2026 Modern Mulia Mandiri</span>
+                        <span>© 2026 Modern Mulya Mandiri</span>
                         <span>v1.0.0</span>
                     </div>
                 </div>

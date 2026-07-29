@@ -14,7 +14,7 @@ class StoreAccuRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'brand' => 'required|string|max:45',
+            'brand' => 'nullable|string|max:45',
             'name' => 'required|string|max:45',
             'berat_kering' => 'required|numeric|min:0',
             'percentages' => 'nullable|array',

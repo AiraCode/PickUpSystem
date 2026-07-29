@@ -235,7 +235,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
             addButton?.addEventListener("click", () => {
                 const name = card.dataset.productName || "Aki";
-                const brand = card.dataset.productBrand || "Modern Mulia Mandiri";
+                const brand = card.dataset.productBrand || "Modern Mulya Mandiri";
                 const price = Number(card.dataset.productPrice) || 0;
                 const id = Number(card.getAttribute("data-accu-id")) || 1;
                 const quantity = Math.min(
@@ -851,6 +851,12 @@ document.addEventListener("DOMContentLoaded", () => {
             let subtotal = 0;
             let itemsHtml = "";
 
+            const orderTypeVal = localStorage.getItem("pickup_order_type") || "sell";
+            const paymentMethodWrapper = document.getElementById("payment-method-wrapper");
+            if (paymentMethodWrapper) {
+                paymentMethodWrapper.style.display = orderTypeVal === "trade_in" ? "block" : "none";
+            }
+
             //UI ringkasan pesanan
             savedCart.forEach((item) => {
                 if (item && item.quantity) {
@@ -859,6 +865,15 @@ document.addEventListener("DOMContentLoaded", () => {
                     itemsHtml += `<div style="margin-bottom: 6px;">${item.name} <span style="font-weight: 400;">(${item.quantity} unit)</span><br><span style="font-size: 13px; font-weight: 600; color: var(--user-blue);">${rupiah(item.price * item.quantity)}</span></div>`;
                 }
             });
+
+            if (orderTypeVal === "trade_in") {
+                const newAccuName = localStorage.getItem("pickup_trade_in_accu_name") || "Aki Baru";
+                const newAccuPrice = parseFloat(localStorage.getItem("pickup_trade_in_accu_price")) || 0;
+                itemsHtml += `<div style="margin-top: 8px; padding-top: 6px; border-top: 1px dashed #cbd5e1; color: #dc2626;">
+                    <strong>[TUKAR AKI] ${newAccuName}</strong><br>
+                    <span style="font-size: 13px; font-weight: 600;">- ${rupiah(newAccuPrice)}</span>
+                </div>`;
+            }
 
             if (itemsSummary) {
                 itemsSummary.innerHTML = itemsHtml || `${totalItems} unit aki`;
@@ -880,7 +895,18 @@ document.addEventListener("DOMContentLoaded", () => {
                 ".user-flow-summary__total strong",
             );
             if (totalSummary) {
-                totalSummary.textContent = rupiah(subtotal - fee);
+                if (orderTypeVal === "trade_in") {
+                    const newAccuPrice = parseFloat(localStorage.getItem("pickup_trade_in_accu_price")) || 0;
+                    const netDiff = (subtotal - fee) - newAccuPrice;
+                    const isMinus = netDiff < 0;
+                    const totalLabel = totalSummary.previousElementSibling || flowSummary.querySelector(".user-flow-summary__total span");
+                    if (totalLabel) {
+                        totalLabel.textContent = isMinus ? "Estimasi Biaya Tambah" : "Total Estimasi Diterima";
+                    }
+                    totalSummary.textContent = rupiah(Math.abs(netDiff));
+                } else {
+                    totalSummary.textContent = rupiah(subtotal - fee);
+                }
             }
         }
         const modal = document.querySelector("[data-identity-modal]");
@@ -2114,19 +2140,73 @@ document.addEventListener("DOMContentLoaded", () => {
         const updateTradeInSelected = () => {
             const container = document.getElementById("new-accu-selected");
             const btn = document.getElementById("btn-trade-in-continue");
+            const rejectContainer = document.getElementById("reject-accu-summary");
+            const netSummary = document.getElementById("trade-in-net-summary");
             if (!container || !btn) return;
-            
+
+            const savedCart = JSON.parse(localStorage.getItem("pickup_cart") || "[]");
+            let rejectSubtotal = 0;
+
+            if (rejectContainer) {
+                if (savedCart.length > 0) {
+                    let itemsHtml = savedCart.map(item => {
+                        const sub = item.price * item.quantity;
+                        rejectSubtotal += sub;
+                        return `<div style="display:flex; justify-content:space-between; font-size:12px; margin-bottom:4px; color:#475569;">
+                            <span>${item.name} (${item.quantity} unit)</span>
+                            <span style="font-weight:600; color:#0f172a;">${rupiah(sub)}</span>
+                        </div>`;
+                    }).join("");
+
+                    rejectContainer.innerHTML = `
+                        <div style="padding:12px; background:#f8fafc; border-radius:8px; border:1px solid #e2e8f0; margin-bottom:14px;">
+                            <span style="font-size:11px; font-weight:700; color:#64748b; text-transform:uppercase; margin-bottom:6px; display:block;">Aki Reject Pilihan Anda:</span>
+                            ${itemsHtml}
+                            <div style="display:flex; justify-content:space-between; font-size:12px; font-weight:700; color:#10b981; padding-top:6px; margin-top:6px; border-top:1px dashed #cbd5e1;">
+                                <span>Potongan Aki Reject:</span>
+                                <span>- ${rupiah(rejectSubtotal)}</span>
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    rejectContainer.innerHTML = `
+                        <div style="padding:10px; background:#fff7ed; border-radius:8px; border:1px solid #fed7aa; color:#c2410c; font-size:12px; margin-bottom:14px;">
+                            <strong>Belum ada aki reject dipilih.</strong> <a href="/user" style="color:#ea580c; text-decoration:underline;">Pilih di katalog landing</a>.
+                        </div>
+                    `;
+                }
+            }
+
             if (selectedNewAccu) {
-                const priceFmt = new Intl.NumberFormat("id-ID", { style: "currency", currency: "IDR", minimumFractionDigits: 0 }).format(selectedNewAccu.price);
+                const priceFmt = rupiah(selectedNewAccu.price);
                 container.innerHTML = `
                     <div style="text-align:left; padding:12px; background:#eff6ff; border-radius:8px; border:1px solid #bfdbfe;">
-                        <span style="font-size:11px; font-weight:700; color:#1d4ed8; text-transform:uppercase; margin-bottom:4px; display:block;">Pilihan Anda:</span>
+                        <span style="font-size:11px; font-weight:700; color:#1d4ed8; text-transform:uppercase; margin-bottom:4px; display:block;">Aki Baru Pilihan Anda:</span>
                         <div style="font-size:15px; font-weight:600; color:#1e3a8a; margin-bottom:4px;">${selectedNewAccu.name}</div>
                         <div style="font-size:16px; font-weight:700; color:#2563eb;">${priceFmt}</div>
                     </div>
                 `;
                 btn.style.opacity = "1";
                 btn.style.pointerEvents = "auto";
+
+                if (netSummary) {
+                    const diff = selectedNewAccu.price - rejectSubtotal;
+                    if (diff >= 0) {
+                        netSummary.innerHTML = `
+                            <div style="display:flex; justify-content:space-between; margin-top:14px; padding-top:10px; border-top:1px solid #e2e8f0; font-size:13px;">
+                                <strong>Estimasi Biaya Tambah:</strong>
+                                <strong style="color:#2563eb; font-size:15px;">${rupiah(diff)}</strong>
+                            </div>
+                        `;
+                    } else {
+                        netSummary.innerHTML = `
+                            <div style="display:flex; justify-content:space-between; margin-top:14px; padding-top:10px; border-top:1px solid #e2e8f0; font-size:13px;">
+                                <strong>Estimasi Uang Diterima:</strong>
+                                <strong style="color:#10b981; font-size:15px;">${rupiah(Math.abs(diff))}</strong>
+                            </div>
+                        `;
+                    }
+                }
             } else {
                 container.innerHTML = `
                     <span style="display:block; font-size:24px; margin-bottom:8px;">
@@ -2136,14 +2216,16 @@ document.addEventListener("DOMContentLoaded", () => {
                         </svg>
                     </span>
                     <strong>Belum ada aki baru dipilih</strong>
-                    <p>Silakan pilih 1 aki dari katalog.</p>
+                    <p style="font-size:12px;">Silakan pilih 1 aki dari katalog.</p>
                 `;
                 btn.style.opacity = "0.5";
                 btn.style.pointerEvents = "none";
+                if (netSummary) netSummary.innerHTML = "";
             }
         };
 
         const initTradeIn = async () => {
+            updateTradeInSelected();
             const res = await fetchPublicApi("/new-accus");
             if (res && res.data) {
                 newAccus = res.data;

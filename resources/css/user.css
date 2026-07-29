@@ -1028,14 +1028,15 @@ body.user-shell textarea:focus-visible {
     border-color: var(--user-red);
 }
 
-.user-checkout-card {
+.user-checkout-card,
+.user-checkout-panel {
     background: var(--user-white);
     border: 1px solid var(--user-line);
     border-radius: 14px;
     padding: 21px;
     position: sticky;
-    top: 104px;
-    max-height: calc(100vh - 120px);
+    top: 90px;
+    max-height: calc(100vh - 130px);
     overflow-y: auto;
 }
 
@@ -2674,9 +2675,23 @@ body.user-shell textarea:focus-visible {
     }
 
     .user-header__inner {
-        height: 72px;
+        height: auto;
+        min-height: 150px;
+        padding-top: 10px;
+        padding-bottom: 10px;
         padding-left: 18px;
         padding-right: 18px;
+        overflow: visible;
+    }
+
+    .user-brand {
+        overflow: visible;
+    }
+
+    .user-brand img {
+        height: 150px !important;
+        max-height: 150px !important;
+        object-fit: contain;
     }
 
     .user-brand__mark {

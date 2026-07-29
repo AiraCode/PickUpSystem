@@ -11,7 +11,7 @@ class ReceiptController extends Controller
 {
     public function show(int $orderId): JsonResponse
     {
-        $order = \App\Models\Order::with(['city', 'customer.bank', 'receipt.accus'])->find($orderId);
+        $order = \App\Models\Order::with(['city', 'customer.bank', 'receipt.accus', 'newAccu'])->find($orderId);
 
         if (! $order) {
             return response()->json([
@@ -34,7 +34,7 @@ class ReceiptController extends Controller
                 $beratKering = (float) ($accu->berat_kering ?? 0);
                 $calculatedPrice = (int) round($pricePerKg * $beratKering);
 
-                $brandName = \Illuminate\Support\Facades\DB::table('brands')->where('id', $accu->brands_id)->value('name') ?? 'Indoprima';
+                $brandName = \Illuminate\Support\Facades\DB::table('brands')->where('id', $accu->brands_id)->value('name') ?? 'Modern Mulya Mandiri';
 
                 $formattedAccus[] = [
                     'id' => $accu->id,
@@ -64,6 +64,9 @@ class ReceiptController extends Controller
             'message' => 'Struk transaksi berhasil diambil',
             'data' => [
                 'order_id' => $order->id,
+                'order_type' => $order->order_type ?? 'sell',
+                'new_accu' => $order->newAccu,
+                'payment_method' => $order->payment_method,
                 'status' => $order->status,
                 'delivery_method' => $order->delivery_method ?? 'warehouse',
                 'created_at' => $order->created_at,
