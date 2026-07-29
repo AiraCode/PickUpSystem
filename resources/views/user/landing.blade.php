@@ -320,7 +320,7 @@
         </div>
     </div>
 
-    <a href="#user-checkout-section" id="floating-checkout-btn" class="user-floating-btn" style="display: none;"
+    <a href="#user-checkout-section" id="floating-checkout-btn" class="user-floating-btn"
         title="Lanjutkan ke ringkasan pembelian">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
             stroke-linejoin="round">

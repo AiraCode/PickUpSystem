@@ -100,6 +100,13 @@
                                     <a href="#" id="view-ktp-btn" style="display: none; font-size: 12px; font-weight: 600; color: #2563eb; text-decoration: none; white-space: nowrap;">Lihat foto</a>
                                 </div>
                             </div>
+                            <div class="user-floating-field--full" id="manual-name-wrapper" style="display: none; margin-top: 4px;">
+                                <p style="font-size: 12px; color: #ef4444; margin-bottom: 8px; padding-left: 4px;">Apakah nama yang diinputkan belum sesuai? Inputkan nama yang benar pada kolom di bawah ini</p>
+                                <label class="user-floating-field user-floating-field--full">
+                                    <input type="text" name="manual_full_name" placeholder=" " style="text-transform: uppercase;">
+                                    <span>Input Nama Manual</span>
+                                </label>
+                            </div>
                             <label class="user-floating-field"><select name="bank_type" required>
                                     <option value="" selected disabled></option>
                                     <option>BCA</option>
@@ -149,7 +156,7 @@
                     <div class="user-flow-summary__item"><span>Metode penyerahan</span><strong>Menunggu pilihan</strong>
                     </div>
                     <div class="user-flow-summary__item"><span>Alamat</span><strong>Menunggu data alamat</strong></div>
-                    <div class="user-flow-summary__total"><span>Total estimasi</span><strong>—</strong></div>
+                    <div class="user-flow-summary__total"><span>Total harga</span><strong>—</strong></div>
                     <div class="user-flow-summary__note"><svg viewBox="0 0 24 24" aria-hidden="true">
                             <circle cx="12" cy="12" r="8.5" />
                             <path d="M12 10v5M12 7.5h.01" />
@@ -266,7 +273,7 @@
                 <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
                 Pilih dari Galeri / File
             </button>
-            <button type="button" id="btn-choice-cancel" style="background:none; border:none; color:#94a3b8; font-size:13px; font-weight:600; cursor:pointer; margin-top:4px;">Batal</button>
+            <button type="button" id="btn-choice-cancel" style="background:none; border: 1px solid #ef4444; color:#ef4444; font-size:13px; font-weight:600; cursor:pointer; margin-top:4px; border-radius: 8px; padding: 10px 16px;">Batal</button>
         </div>
     </div>
 </div>

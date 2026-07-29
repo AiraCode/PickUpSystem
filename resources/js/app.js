@@ -300,14 +300,6 @@ const renderUserCart = () => {
         });
     });
 
-    const floatingBtn = document.getElementById("floating-checkout-btn");
-    if (floatingBtn) {
-        if (userCart.size > 0) {
-            floatingBtn.style.display = "flex";
-        } else {
-            floatingBtn.style.display = "none";
-        }
-    }
 };
 window.renderUserCart = renderUserCart;
 

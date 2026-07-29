@@ -91,6 +91,11 @@ document.addEventListener("DOMContentLoaded", () => {
                 card.style.display = "none";
             }
         });
+        
+        const hintEl = document.getElementById("search-hint-placeholder");
+        if (hintEl) {
+            hintEl.style.display = query.length === 0 ? "block" : "none";
+        }
     });
 
     if (citySelect) {
@@ -148,7 +153,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         const searchQuery = searchInput?.value.toLowerCase().trim() || "";
 
-        batteryList.innerHTML = accus
+        let cardsHtml = accus
             .map((accu) => {
                 const displayStyle = (searchQuery.length > 0 && (accu.name.toLowerCase().includes(searchQuery) || accu.brand.toLowerCase().includes(searchQuery))) ? "" : "display:none;";
 
@@ -168,6 +173,16 @@ document.addEventListener("DOMContentLoaded", () => {
                 </div>`;
             })
             .join("");
+            
+        let hintHtml = `<div id="search-hint-placeholder" style="text-align:center; padding: 40px 20px; color: #64748b; ${searchQuery.length === 0 ? '' : 'display:none;'}">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:48px;height:48px;margin:0 auto 12px;display:block;opacity:0.4;">
+                        <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                    </svg>
+                    <strong>Silakan mencari jenis aki terlebih dahulu.</strong>
+                    <p style="font-size:13px;">Ketikkan nama aki pada kolom pencarian di atas.</p>
+                </div>`;
+                
+        batteryList.innerHTML = hintHtml + cardsHtml;
         bindProductCardEvents();
         if (typeof window.updateProductCardButtons === "function") {
             window.updateProductCardButtons();
@@ -184,11 +199,14 @@ document.addEventListener("DOMContentLoaded", () => {
                 window.userCart &&
                 window.userCart.has(name)
             ) {
-                addButton.textContent = "Update jumlah keranjang";
+                if (addButton.getAttribute("data-is-animating") !== "true") {
+                    addButton.textContent = "Update jumlah keranjang";
+                }
                 addButton.classList.add("user-add-button--update");
             } else if (addButton) {
                 addButton.textContent = "+ Tambahkan ke Keranjang";
                 addButton.classList.remove("user-add-button--update");
+                addButton.setAttribute("data-is-animating", "false");
             }
         });
     };
@@ -230,6 +248,8 @@ document.addEventListener("DOMContentLoaded", () => {
                     return;
                 }
 
+                const isUpdate = window.userCart.has(name);
+
                 window.userCart.set(name, { id, name, brand, price, quantity });
                 if (typeof window.renderUserCart === "function") {
                     window.renderUserCart();
@@ -237,6 +257,31 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 if (typeof window.updateProductCardButtons === "function") {
                     window.updateProductCardButtons();
+                }
+
+                if (isUpdate) {
+                    addButton.setAttribute("data-is-animating", "true");
+                    const originalText = "Update jumlah keranjang";
+                    addButton.textContent = "✓ Jumlah telah diupdate";
+                    addButton.style.backgroundColor = "#e04b4b"; 
+                    addButton.style.borderColor = "#e04b4b";
+                    addButton.style.color = "#fff";
+                    
+                    if (addButton.dataset.animTimeoutId) {
+                        clearTimeout(Number(addButton.dataset.animTimeoutId));
+                    }
+                    
+                    const timeoutId = setTimeout(() => {
+                        addButton.setAttribute("data-is-animating", "false");
+                        if (window.userCart.has(name)) {
+                            addButton.textContent = originalText;
+                        }
+                        addButton.style.backgroundColor = "";
+                        addButton.style.borderColor = "";
+                        addButton.style.color = "";
+                    }, 1500);
+                    
+                    addButton.dataset.animTimeoutId = timeoutId.toString();
                 }
             });
         });
@@ -312,6 +357,43 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
             });
             holderInput.addEventListener("input", (e) => {
+                const start = e.target.selectionStart;
+                const end = e.target.selectionEnd;
+                e.target.value = e.target.value
+                    .replace(/[^a-zA-Z\s.,]/g, "")
+                    .toUpperCase();
+                e.target.setSelectionRange(start, end);
+            });
+        }
+        
+        const manualNameInputEl = identityForm.querySelector(
+            'input[name="manual_full_name"]',
+        );
+        if (manualNameInputEl) {
+            manualNameInputEl.addEventListener("keypress", (e) => {
+                if (
+                    e.key &&
+                    e.key.length === 1 &&
+                    !/[a-zA-Z\s.,]/.test(e.key)
+                ) {
+                    e.preventDefault();
+                    showCustomAlert(
+                        "Kolom nama hanya menerima huruf, spasi, titik, dan koma!",
+                    );
+                }
+            });
+            manualNameInputEl.addEventListener("paste", (e) => {
+                const pastedText = (
+                    e.clipboardData || window.clipboardData
+                ).getData("text");
+                if (!/^[a-zA-Z\s.,]+$/.test(pastedText)) {
+                    e.preventDefault();
+                    showCustomAlert(
+                        "Teks yang ditempelkan hanya boleh berisi huruf, spasi, titik, dan koma!",
+                    );
+                }
+            });
+            manualNameInputEl.addEventListener("input", (e) => {
                 const start = e.target.selectionStart;
                 const end = e.target.selectionEnd;
                 e.target.value = e.target.value
@@ -472,8 +554,14 @@ document.addEventListener("DOMContentLoaded", () => {
             if (modalUploadChoice) modalUploadChoice.style.display = "flex";
         };
 
-        uploadKtpTrigger?.addEventListener("click", () => openChoiceModal("ktp"));
-        uploadAccuKtpTrigger?.addEventListener("click", () => openChoiceModal("accu_ktp"));
+        uploadKtpTrigger?.addEventListener("click", (e) => {
+            if (e.target.tagName.toLowerCase() === 'input') return;
+            openChoiceModal("ktp");
+        });
+        uploadAccuKtpTrigger?.addEventListener("click", (e) => {
+            if (e.target.tagName.toLowerCase() === 'input') return;
+            openChoiceModal("accu_ktp");
+        });
 
         btnChoiceCancel?.addEventListener("click", () => {
             if (modalUploadChoice) modalUploadChoice.style.display = "none";
@@ -648,6 +736,25 @@ document.addEventListener("DOMContentLoaded", () => {
                     const formData = new FormData();
                     formData.append("image", file);
 
+                    // Lacak percobaan upload
+                    const now = Date.now();
+                    let attempts = JSON.parse(localStorage.getItem("ktp_upload_attempts") || "[]");
+                    attempts = attempts.filter(time => now - time < 10 * 60 * 1000); // 10 menit
+                    attempts.push(now);
+                    localStorage.setItem("ktp_upload_attempts", JSON.stringify(attempts));
+
+                    if (attempts.length > 3) {
+                        const manualWrapper = document.getElementById("manual-name-wrapper");
+                        if (manualWrapper) {
+                            manualWrapper.style.display = "block";
+                            const manualInput = manualWrapper.querySelector('input');
+                            if (manualInput) manualInput.required = true;
+                            
+                            const ocrInput = document.querySelector('input[name="full_name"]');
+                            if (ocrInput) ocrInput.required = false;
+                        }
+                    }
+
                     const res = await fetch("/api/customer/ocr/extract-name", {
                         method: "POST",
                         headers: { Accept: "application/json" },
@@ -759,9 +866,15 @@ document.addEventListener("DOMContentLoaded", () => {
             e.preventDefault();
             const form = e.target;
 
-            const nameVal =
+            let nameVal =
                 form.querySelector('input[name="full_name"]')?.value.trim() ||
                 "";
+            const manualWrapper = document.getElementById("manual-name-wrapper");
+            const manualInput = form.querySelector('input[name="manual_full_name"]');
+            if (manualWrapper && manualWrapper.style.display !== "none" && manualInput && manualInput.value.trim() !== "") {
+                nameVal = manualInput.value.trim();
+            }
+
             const holderVal =
                 form
                     .querySelector('input[name="account_holder"]')
