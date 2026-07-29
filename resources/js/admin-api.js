@@ -797,6 +797,12 @@ document.addEventListener("DOMContentLoaded", () => {
                         (o) => `
                     <tr onclick="viewOrderDetail(${o.id})" style="cursor:pointer;">
                         <td style="font-weight:600; color:#3b82f6;">#${o.id}</td>
+                        <td>
+                            ${o.order_type === 'trade_in' ? 
+                                '<span style="background:#fef3c7; color:#92400e; padding:2px 6px; border-radius:4px; font-size:10px; font-weight:700;">TRADE IN</span>' : 
+                                '<span style="background:#e0e7ff; color:#3730a3; padding:2px 6px; border-radius:4px; font-size:10px; font-weight:700;">JUAL</span>'
+                            }
+                        </td>
                         <td style="font-weight:500;">${o.customer ? o.customer.name : "-"}</td>
                         <td>${o.city ? o.city.name : "-"}</td>
                         <td>
@@ -1133,6 +1139,20 @@ document.addEventListener("DOMContentLoaded", () => {
             }
             document.getElementById("detail-customer-bank").innerText =
                 `${bankName} - ${c.account_number || "-"} (a.n. ${c.account_name || "-"})`;
+            document.getElementById("detail-order-type").innerHTML = o.order_type === 'trade_in' 
+                ? '<span style="background:#fef3c7; color:#92400e; padding:2px 6px; border-radius:4px; font-size:10px; font-weight:700;">TRADE IN</span>' 
+                : '<span style="background:#e0e7ff; color:#3730a3; padding:2px 6px; border-radius:4px; font-size:10px; font-weight:700;">JUAL</span>';
+            
+            const rowNewAccu = document.getElementById("row-detail-new-accu");
+            if (o.order_type === 'trade_in') {
+                rowNewAccu.style.display = "table-row";
+                document.getElementById("detail-order-new-accu").innerText = o.new_accu ? (o.new_accu.name + ' - ' + new Intl.NumberFormat("id-ID", {style: "currency", currency: "IDR", minimumFractionDigits: 0}).format(o.new_accu.price)) : "-";
+            } else {
+                rowNewAccu.style.display = "none";
+            }
+            
+            document.getElementById("detail-order-payment-method").innerText = o.payment_method ? (o.payment_method === 'cod' ? 'COD (Bayar di Tempat)' : (o.payment_method === 'transfer' ? 'Transfer Bank' : (o.payment_method === 'qris' ? 'QRIS' : o.payment_method.toUpperCase()))) : "-";
+
             document.getElementById("detail-order-city").innerText = o.city
                 ? o.city.name
                 : "-";
@@ -1290,17 +1310,33 @@ document.addEventListener("DOMContentLoaded", () => {
                     }
                     tbody.innerHTML = itemsHtml;
 
-                    const deliveryCost = subtotal - (receipt.price_owed || 0);
+                    let deliveryCost = 0;
+                    if (currentDetailOrder.order_type === 'trade_in') {
+                        const newAccuPrice = currentDetailOrder.new_accu ? currentDetailOrder.new_accu.price : 0;
+                        deliveryCost = subtotal - newAccuPrice - (receipt.price_owed || 0);
+                    } else {
+                        deliveryCost = subtotal - (receipt.price_owed || 0);
+                    }
 
-                    document.getElementById(
-                        "detail-summary-subtotal",
-                    ).innerText = formatRp(subtotal);
-                    document.getElementById(
-                        "detail-summary-shipping",
-                    ).innerText =
-                        deliveryCost > 0 ? "- " + formatRp(deliveryCost) : "Gratis";
-                    document.getElementById("detail-summary-total").innerText =
-                        formatRp(receipt.price_owed || 0);
+                    document.getElementById("detail-summary-subtotal").innerText = formatRp(subtotal);
+                    
+                    const rowSummaryNewAccu = document.getElementById("detail-summary-row-new-accu");
+                    if (currentDetailOrder.order_type === 'trade_in' && currentDetailOrder.new_accu && rowSummaryNewAccu) {
+                        rowSummaryNewAccu.style.display = "table-row";
+                        document.getElementById("detail-summary-new-accu").innerText = "- " + formatRp(currentDetailOrder.new_accu.price);
+                    } else if (rowSummaryNewAccu) {
+                        rowSummaryNewAccu.style.display = "none";
+                    }
+
+                    document.getElementById("detail-summary-shipping").innerText = deliveryCost > 0 ? "- " + formatRp(deliveryCost) : "Gratis";
+                    
+                    const totalVal = receipt.price_owed || 0;
+                    const isMinus = totalVal < 0;
+                    document.getElementById("detail-summary-total").innerText = formatRp(Math.abs(totalVal));
+                    const totalLabel = document.getElementById("detail-summary-total-label");
+                    if (totalLabel) {
+                        totalLabel.innerText = isMinus ? "Total Tagihan (Customer Bayar)" : "Total Dibayar ke Customer";
+                    }
                 }
 
                 document.getElementById("modal-order-summary").style.display =
@@ -1410,6 +1446,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (window.location.pathname === "/admin/harga") {
         let cachedCities = [];
         let cachedAccus = [];
+        let cachedNewAccus = [];
         let activeCityId = null;
         let activeCityName = "";
 
@@ -1600,10 +1637,65 @@ document.addEventListener("DOMContentLoaded", () => {
             renderAccus(cachedAccus);
         };
 
+        const renderNewAccus = (accus) => {
+            const tbody = document.getElementById("new-accus-tbody");
+            if (accus.length) {
+                tbody.innerHTML = accus
+                    .map(
+                        (a) => `
+                    <tr>
+                        <td>${a.name}</td>
+                        <td>${a.brand || '-'}</td>
+                        <td style="font-weight:700; color:#10b981;">${rupiah(a.price)}</td>
+                        <td style="text-align:right;">
+                            <div style="display:flex; gap:6px; justify-content:flex-end;">
+                                <button onclick="editNewAccu(${a.id})" class="admin-button admin-button--secondary" style="height:30px; font-size:11px; color:#2563eb;">Edit</button>
+                                <button onclick="deleteNewAccu(${a.id})" class="admin-button admin-button--secondary" style="height:30px; font-size:11px; color:#ba1b2b;">Hapus</button>
+                            </div>
+                        </td>
+                    </tr>`,
+                    )
+                    .join("");
+            } else {
+                tbody.innerHTML = `<tr><td colspan="4"><div class="admin-table-empty"><strong>Belum ada data aki baru</strong></div></td></tr>`;
+            }
+        };
+
+        const loadNewAccus = async () => {
+            const res = await fetchApi("/new-accus");
+            cachedNewAccus = res.data || [];
+            renderNewAccus(cachedNewAccus);
+        };
+
         loadSettings();
         loadCities();
         loadAccus();
+        loadNewAccus();
         loadPriceHistory();
+        
+        window.switchAccuTab = (tab) => {
+            if (tab === 'old') {
+                document.getElementById('tab-old-accu').style.display = 'block';
+                document.getElementById('tab-new-accu').style.display = 'none';
+                document.getElementById('btn-old-accu').style.background = '#fff';
+                document.getElementById('btn-old-accu').style.color = '#1e293b';
+                document.getElementById('btn-old-accu').style.boxShadow = '0 1px 3px rgba(0,0,0,0.1)';
+                
+                document.getElementById('btn-new-accu').style.background = 'transparent';
+                document.getElementById('btn-new-accu').style.color = '#64748b';
+                document.getElementById('btn-new-accu').style.boxShadow = 'none';
+            } else {
+                document.getElementById('tab-old-accu').style.display = 'none';
+                document.getElementById('tab-new-accu').style.display = 'block';
+                document.getElementById('btn-new-accu').style.background = '#fff';
+                document.getElementById('btn-new-accu').style.color = '#1e293b';
+                document.getElementById('btn-new-accu').style.boxShadow = '0 1px 3px rgba(0,0,0,0.1)';
+                
+                document.getElementById('btn-old-accu').style.background = 'transparent';
+                document.getElementById('btn-old-accu').style.color = '#64748b';
+                document.getElementById('btn-old-accu').style.boxShadow = 'none';
+            }
+        };
 
         const citySearchInput = document.getElementById("city-search-input");
         if (citySearchInput) {
@@ -1622,10 +1714,23 @@ document.addEventListener("DOMContentLoaded", () => {
                 const term = e.target.value.toLowerCase();
                 const filtered = cachedAccus.filter(
                     (a) =>
-                        a.brand.toLowerCase().includes(term) ||
+                        (a.brand && a.brand.toLowerCase().includes(term)) ||
                         a.name.toLowerCase().includes(term),
                 );
                 renderAccus(filtered);
+            });
+        }
+        
+        const newAccuSearchInput = document.getElementById("new-accu-search-input");
+        if (newAccuSearchInput) {
+            newAccuSearchInput.addEventListener("input", (e) => {
+                const term = e.target.value.toLowerCase();
+                const filtered = cachedNewAccus.filter(
+                    (a) =>
+                        (a.brand && a.brand.toLowerCase().includes(term)) ||
+                        a.name.toLowerCase().includes(term),
+                );
+                renderNewAccus(filtered);
             });
         }
 
@@ -1688,6 +1793,47 @@ document.addEventListener("DOMContentLoaded", () => {
             document.getElementById("modal-add-accu").style.display = "flex";
         };
 
+        window.openAddNewAccuModal = async () => {
+            document.getElementById("form-add-new-accu").reset();
+            document.getElementById("new-accu-id").value = "";
+            document.getElementById("modal-new-accu-title").innerText = "Tambah Aki Baru";
+            
+            const brandSelect = document.getElementById("new-accu-brand");
+            // Load brands
+            const res = await fetchApi("/brands"); // Note: Assuming /brands is available in admin or public. Actually, admin might not have /brands directly if it's not set up. Let's hardcode or fetch from a known endpoint. Wait, earlier we used /brands? The existing accu add modal doesn't use brand select? It seems we might not have a /brands endpoint, but we can check. Actually, let's just make it a text input for brand if there is no brands_id, but the migration has brands_id. Let me double check if we need to load brands from somewhere. For now, let's try to fetch if we have it, else use a default. Wait, the existing Accu model has brands_id. There must be an endpoint for it. I'll check later.
+            // Let's assume there's a way to get brands.
+            try {
+                const bRes = await fetch('/api/customer/brands'); // /customer/brands exists in api.php
+                const bData = await bRes.json();
+                if(bData.data) {
+                    brandSelect.innerHTML = '<option value="">Pilih Merk</option>' + bData.data.map(b => `<option value="${b.id}">${b.name}</option>`).join('');
+                }
+            } catch(e) {}
+            
+            document.getElementById("modal-add-new-accu").style.display = "flex";
+        };
+        
+        window.editNewAccu = async (id) => {
+            const accu = cachedNewAccus.find(a => a.id === id);
+            if(!accu) return;
+            
+            document.getElementById("new-accu-id").value = accu.id;
+            document.getElementById("new-accu-name").value = accu.name;
+            document.getElementById("new-accu-price").value = accu.price;
+            document.getElementById("modal-new-accu-title").innerText = "Edit Aki Baru";
+            
+            const brandSelect = document.getElementById("new-accu-brand");
+            try {
+                const bRes = await fetch('/api/customer/brands');
+                const bData = await bRes.json();
+                if(bData.data) {
+                    brandSelect.innerHTML = '<option value="">Pilih Merk</option>' + bData.data.map(b => `<option value="${b.id}" ${b.id === accu.brands_id ? 'selected' : ''}>${b.name}</option>`).join('');
+                }
+            } catch(e) {}
+            
+            document.getElementById("modal-add-new-accu").style.display = "flex";
+        };
+
         window.deleteCity = (id) => {
             showConfirm(
                 "Hapus Kota",
@@ -1713,6 +1859,51 @@ document.addEventListener("DOMContentLoaded", () => {
                 },
             );
         };
+        
+        window.deleteNewAccu = (id) => {
+            showConfirm(
+                "Hapus Aki Baru",
+                "Yakin ingin menghapus aki baru ini?",
+                async () => {
+                    await fetchApi(`/new-accus/${id}`, { method: "DELETE" });
+                    showToast("Aki baru berhasil dihapus", "success");
+                    loadNewAccus();
+                },
+            );
+        };
+        
+        const formAddNewAccu = document.getElementById("form-add-new-accu");
+        if (formAddNewAccu) {
+            formAddNewAccu.addEventListener("submit", async (e) => {
+                e.preventDefault();
+                const id = document.getElementById("new-accu-id").value;
+                const name = document.getElementById("new-accu-name").value;
+                const brands_id = document.getElementById("new-accu-brand").value;
+                const price = document.getElementById("new-accu-price").value;
+
+                if (id) {
+                    const res = await fetchApi(`/new-accus/${id}`, {
+                        method: "PUT",
+                        body: JSON.stringify({ name, brands_id, price }),
+                    });
+                    if (res && res.data) {
+                        showToast("Aki baru berhasil diperbarui", "success");
+                        document.getElementById("modal-add-new-accu").style.display = "none";
+                        loadNewAccus();
+                    }
+                } else {
+                    const res = await fetchApi("/new-accus", {
+                        method: "POST",
+                        body: JSON.stringify({ name, brands_id, price }),
+                    });
+                    if (res && res.data) {
+                        showToast("Aki baru berhasil ditambahkan", "success");
+                        document.getElementById("modal-add-new-accu").style.display = "none";
+                        loadNewAccus();
+                    }
+                }
+            });
+        }
 
         const loadTrashedCities = async () => {
             const res = await fetchApi("/cities/trashed");

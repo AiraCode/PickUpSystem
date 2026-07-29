@@ -41,7 +41,7 @@ class OrderController extends Controller
             'all' => (clone $filterCountsQuery)->count(),
         ];
 
-        $query = Order::with(['city', 'customer.bank', 'receipt.transfer']);
+        $query = Order::with(['city', 'customer.bank', 'receipt.transfer', 'newAccu']);
 
         $search = $request->input('search');
         $status = $request->input('status');
@@ -118,7 +118,7 @@ class OrderController extends Controller
 
     public function show(int $id): JsonResponse
     {
-        $order = Order::with(['city', 'customer.bank', 'receipt.accus'])->findOrFail($id);
+        $order = Order::with(['city', 'customer.bank', 'receipt.transfer', 'newAccu', 'receipt.accus'])->findOrFail($id);
 
         $orderData = $order->toArray();
         if ($order->receipt) {

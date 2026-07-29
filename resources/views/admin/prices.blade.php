@@ -83,11 +83,19 @@
     </article>
 
     <article class="admin-panel admin-table-panel" style="margin-top:20px;">
-        <div class="admin-panel__head">
-            <div>
+        <div class="admin-panel__head" style="flex-direction: column; align-items: flex-start; gap: 16px;">
+            <div style="display:flex; justify-content: space-between; width: 100%; align-items: center; flex-wrap: wrap; gap: 10px;">
                 <h3 style="font-size:16px; margin:0;">Daftar Jenis Aki (<span id="accu-total"></span>)</h3>
+                <div style="display:flex; background:#e2e8f0; border-radius:8px; padding:4px; gap:4px; width: fit-content;">
+                    <button class="admin-button" id="btn-old-accu" style="background:#fff; color:#1e293b; box-shadow:0 1px 3px rgba(0,0,0,0.1); border:none; padding:6px 16px; border-radius:6px; font-size:13px; font-weight:600;" onclick="switchAccuTab('old')">Aki Bekas (LME)</button>
+                    <button class="admin-button" id="btn-new-accu" style="background:transparent; color:#64748b; border:none; padding:6px 16px; border-radius:6px; font-size:13px; font-weight:600; box-shadow:none;" onclick="switchAccuTab('new')">Aki Baru</button>
+                </div>
             </div>
-            <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
+        </div>
+        
+        <!-- Tab Aki Bekas -->
+        <div id="tab-old-accu" style="display: block;">
+            <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin: 16px 20px;">
                 <div style="position:relative; width:240px;">
                     <input type="text" id="accu-search-input" class="admin-select"
                         style="width:100%; padding:7px 32px 7px 12px; font-size:12px; border-radius:6px; background:#fff;"
@@ -106,27 +114,72 @@
                     <svg viewBox="0 0 24 24"
                         style="width:16px; height:16px; margin-right:6px; fill:none; stroke:currentColor; stroke-width:2;">
                         <path d="M12 5v14M5 12h14"></path>
-                    </svg> Tambah Aki
+                    </svg> Tambah Aki Bekas
                 </button>
             </div>
+            <div class="admin-table-wrap">
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>Nama / Tipe Aki</th>
+                            <th>Berat Data Kering (kg)</th>
+                            <th style="width:140px; text-align:right;">Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody id="accus-tbody">
+                        <tr>
+                            <td colspan="4">
+                                <div class="admin-table-empty"><strong>Memuat data...</strong></div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
-        <div class="admin-table-wrap">
-            <table class="admin-table">
-                <thead>
-                    <tr>
-                        <th>Nama / Tipe Aki</th>
-                        <th>Berat Data Kering (kg)</th>
-                        <th style="width:140px; text-align:right;">Aksi</th>
-                    </tr>
-                </thead>
-                <tbody id="accus-tbody">
-                    <tr>
-                        <td colspan="4">
-                            <div class="admin-table-empty"><strong>Memuat data...</strong></div>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
+
+        <!-- Tab Aki Baru -->
+        <div id="tab-new-accu" style="display: none;">
+            <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin: 16px 20px;">
+                <div style="position:relative; width:240px;">
+                    <input type="text" id="new-accu-search-input" class="admin-select"
+                        style="width:100%; padding:7px 32px 7px 12px; font-size:12px; border-radius:6px; background:#fff;"
+                        placeholder="Cari nama aki baru...">
+                    <span
+                        style="position:absolute; right:10px; top:50%; transform:translateY(-50%); color:#9ca3af; pointer-events:none;">
+                        <svg viewBox="0 0 24 24"
+                            style="width:14px; height:14px; fill:none; stroke:currentColor; stroke-width:2;">
+                            <circle cx="11" cy="11" r="8" />
+                            <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                        </svg>
+                    </span>
+                </div>
+                <button class="admin-button admin-button--primary"
+                    onclick="openAddNewAccuModal()">
+                    <svg viewBox="0 0 24 24"
+                        style="width:16px; height:16px; margin-right:6px; fill:none; stroke:currentColor; stroke-width:2;">
+                        <path d="M12 5v14M5 12h14"></path>
+                    </svg> Tambah Aki Baru
+                </button>
+            </div>
+            <div class="admin-table-wrap">
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>Nama Aki</th>
+                            <th>Merk</th>
+                            <th>Harga Jual Baru (Rp)</th>
+                            <th style="width:140px; text-align:right;">Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody id="new-accus-tbody">
+                        <tr>
+                            <td colspan="4">
+                                <div class="admin-table-empty"><strong>Memuat data...</strong></div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
     </article>
 
@@ -277,6 +330,42 @@
                     <button type="button" class="admin-button admin-button--secondary"
                         onclick="document.getElementById('modal-add-accu').style.display='none'">Batal</button>
                     <button type="submit" class="admin-button admin-button--primary">Simpan Aki</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div id="modal-add-new-accu"
+        style="display:none; position:fixed; inset:0; background:rgba(0,0,0,.45); z-index:100; align-items:center; justify-content:center;">
+        <div class="admin-panel" style="width:440px; max-width:92vw;">
+            <div class="admin-panel__head">
+                <h2 id="modal-new-accu-title">Tambah Aki Baru</h2>
+            </div>
+            <form id="form-add-new-accu">
+                <input type="hidden" id="new-accu-id">
+                
+                <div style="margin-bottom:14px;">
+                    <label style="display:block; font-size:12px; font-weight:600; margin-bottom:6px; color:#4a4f59;">Nama / Tipe Aki</label>
+                    <input type="text" id="new-accu-name" class="admin-select"
+                        style="width:100%; padding:8px 10px; border-radius:6px;" placeholder="Contoh: GS Astra NS40" required>
+                </div>
+                
+                <div style="margin-bottom:14px;">
+                    <label style="display:block; font-size:12px; font-weight:600; margin-bottom:6px; color:#4a4f59;">Merk Aki</label>
+                    <select id="new-accu-brand" class="admin-select" style="width:100%; padding:8px 10px; border-radius:6px;" required>
+                        <option value="">Pilih Merk</option>
+                    </select>
+                </div>
+
+                <div style="margin-bottom:18px;">
+                    <label style="display:block; font-size:12px; font-weight:600; margin-bottom:6px; color:#4a4f59;">Harga Jual Baru (Rp)</label>
+                    <input type="number" id="new-accu-price" class="admin-select"
+                        style="width:100%; padding:8px 10px; border-radius:6px;" placeholder="Contoh: 850000" required>
+                </div>
+
+                <div style="display:flex; gap:10px; justify-content:flex-end;">
+                    <button type="button" class="admin-button admin-button--secondary"
+                        onclick="document.getElementById('modal-add-new-accu').style.display='none'">Batal</button>
+                    <button type="submit" class="admin-button admin-button--primary">Simpan Aki Baru</button>
                 </div>
             </form>
         </div>

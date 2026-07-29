@@ -153,6 +153,20 @@
                                 </div>
                             </div>
 
+                            <div class="user-delivery" style="margin-bottom: 20px;">
+                                <span class="user-checkout-label">PILIHAN TRANSAKSI</span>
+                                <label class="user-radio-card">
+                                    <input type="radio" name="order_type_selection" value="sell" checked>
+                                    <span class="user-radio-card__indicator"></span>
+                                    <span><strong>Jual Aki Bekas Saja</strong><small>Penjualan aki bekas ke Indoprima.</small></span>
+                                </label>
+                                <label class="user-radio-card">
+                                    <input type="radio" name="order_type_selection" value="trade_in">
+                                    <span class="user-radio-card__indicator"></span>
+                                    <span><strong>Trade In (Tukar Tambah)</strong><small>Tukar tambah aki bekas dengan aki baru.</small></span>
+                                </label>
+                            </div>
+
                             <div class="user-delivery" data-delivery-method>
                                 <span class="user-checkout-label">METODE PENYERAHAN AKI</span>
                                 <label class="user-radio-card is-selected">

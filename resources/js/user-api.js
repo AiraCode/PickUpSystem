@@ -974,6 +974,16 @@ document.addEventListener("DOMContentLoaded", () => {
             const deliveryMethodVal =
                 localStorage.getItem("pickup_delivery_method") || "warehouse";
 
+            const orderTypeVal = localStorage.getItem("pickup_order_type") || "sell";
+            const newAccusIdVal = parseInt(localStorage.getItem("pickup_trade_in_accu_id")) || null;
+            const paymentMethodInput = document.getElementById("payment-method-select");
+            const paymentMethodVal = paymentMethodInput ? paymentMethodInput.value : null;
+
+            if (orderTypeVal === "trade_in" && (!paymentMethodVal || paymentMethodVal === "")) {
+                showCustomAlert("Harap pilih metode pembayaran untuk Trade In.");
+                return;
+            }
+
             formDataToSubmit = {
                 name: nameVal,
                 phone_number: waVal,
@@ -997,6 +1007,9 @@ document.addEventListener("DOMContentLoaded", () => {
                 delivery_method: deliveryMethodVal,
                 items: itemsPayload,
                 ktp_base64: ktpBase64,
+                order_type: orderTypeVal,
+                new_accus_id: newAccusIdVal,
+                payment_method: paymentMethodVal,
             };
 
             if (modal) {
@@ -1040,6 +1053,20 @@ document.addEventListener("DOMContentLoaded", () => {
                             </tr>
                         `;
                     });
+
+                    if (orderTypeVal === "trade_in" && newAccusIdVal) {
+                        const newAccuName = localStorage.getItem("pickup_trade_in_accu_name") || "Aki Baru";
+                        const newAccuPrice = parseFloat(localStorage.getItem("pickup_trade_in_accu_price")) || 0;
+                        modalItemsHtml += `
+                            <tr>
+                                <td><strong>${newAccuName}</strong><br><small style="color: #ef4444; font-weight:700;">[TRADE IN] Aki Baru</small></td>
+                                <td style="text-align: center;">1 unit</td>
+                                <td style="text-align: right; color:#ef4444;">- ${rupiah(newAccuPrice)}</td>
+                                <td style="text-align: right; font-weight: 600; color: #ef4444;">- ${rupiah(newAccuPrice)}</td>
+                            </tr>
+                        `;
+                    }
+
                     modalCartItems.innerHTML = modalItemsHtml;
 
                     const elSubtotal =
@@ -1052,8 +1079,19 @@ document.addEventListener("DOMContentLoaded", () => {
                         elSubtotal.textContent = rupiah(modalSubtotal);
                     if (elFee)
                         elFee.textContent = fee === 0 ? "Gratis" : "- " + rupiah(fee);
-                    if (elTotal)
-                        elTotal.textContent = rupiah(modalSubtotal - fee);
+                    if (elTotal) {
+                        let finalTotal = modalSubtotal - fee;
+                        if (orderTypeVal === "trade_in" && newAccusIdVal) {
+                            const newAccuPrice = parseFloat(localStorage.getItem("pickup_trade_in_accu_price")) || 0;
+                            finalTotal -= newAccuPrice;
+                        }
+                        const isMinus = finalTotal < 0;
+                        elTotal.textContent = rupiah(Math.abs(finalTotal));
+                        const totalLabelEl = document.querySelector(".user-receipt-modal .user-modal-summary__total strong:first-child") || document.getElementById("modal-total-label");
+                        if (totalLabelEl) {
+                            totalLabelEl.textContent = isMinus ? "Tagihan Pembayaran" : "Total yang Anda Terima";
+                        }
+                    }
                 }
 
                 modal.hidden = false;
@@ -1582,6 +1620,30 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         }
     }
+    const savedOrderType = localStorage.getItem("pickup_order_type") || "sell";
+    document
+        .querySelectorAll('input[name="order_type_selection"]')
+        .forEach((radio) => {
+            if (radio.value === savedOrderType) {
+                radio.checked = true;
+                const card = radio.closest(".user-radio-card");
+                if (card) card.classList.add("is-selected");
+            } else {
+                const card = radio.closest(".user-radio-card");
+                if (card) card.classList.remove("is-selected");
+            }
+
+            radio.addEventListener("change", () => {
+                document
+                    .querySelectorAll('input[name="order_type_selection"]')
+                    .forEach((r) => {
+                        const card = r.closest(".user-radio-card");
+                        if (card) card.classList.toggle("is-selected", r.checked);
+                    });
+                localStorage.setItem("pickup_order_type", radio.value);
+            });
+        });
+
     document
         .querySelectorAll('input[name="delivery_method"]')
         .forEach((radio) => {
@@ -1628,6 +1690,16 @@ document.addEventListener("DOMContentLoaded", () => {
         userZipInput.value = localStorage.getItem("pickup_zip") || "";
     if (userNoteInput)
         userNoteInput.value = localStorage.getItem("pickup_address_note") || "";
+
+    if (window.location.pathname === "/identity" || window.location.pathname === "/user/identitas") {
+        const isTradeIn = localStorage.getItem("pickup_order_type") === "trade_in";
+        const paymentWrapper = document.getElementById("payment-method-wrapper");
+        const paymentSelect = document.getElementById("payment-method-select");
+        if (paymentWrapper && paymentSelect && isTradeIn) {
+            paymentWrapper.style.display = "block";
+            paymentSelect.required = true;
+        }
+    }
 
     const addressBadge = document.getElementById("user-selected-address");
     if (addressBadge && localStorage.getItem("pickup_address")) {
@@ -1940,7 +2012,17 @@ document.addEventListener("DOMContentLoaded", () => {
             document.querySelector('input[name="delivery_method"]:checked')
                 ?.value || "warehouse";
         localStorage.setItem("pickup_delivery_method", selectedDelivery);
-        window.location.href = "/user/identitas";
+        
+        const selectedOrderType = 
+            document.querySelector('input[name="order_type_selection"]:checked')
+                ?.value || "sell";
+        localStorage.setItem("pickup_order_type", selectedOrderType);
+        
+        if (selectedOrderType === "trade_in") {
+            window.location.href = "/trade-in";
+        } else {
+            window.location.href = "/user/identitas";
+        }
     });
 
     const viewBtn = document.getElementById("view-ktp-btn");
@@ -1959,5 +2041,107 @@ document.addEventListener("DOMContentLoaded", () => {
                 ktpOverlay.style.display = "none";
             }
         });
+    }
+
+    // Trade-In Logic
+    if (window.location.pathname === "/trade-in") {
+        let newAccus = [];
+        let selectedNewAccu = null;
+
+        const renderNewAccus = (data) => {
+            const grid = document.getElementById("new-accus-grid");
+            if (!grid) return;
+            grid.innerHTML = "";
+            if (data.length === 0) {
+                grid.innerHTML = '<div style="padding:40px; text-align:center; color:#64748b; font-size:14px; grid-column:1/-1;">Tidak ada aki baru yang cocok.</div>';
+                return;
+            }
+            data.forEach(accu => {
+                const card = document.createElement("div");
+                card.className = "user-product-card";
+                card.style.cursor = "pointer";
+                if (selectedNewAccu && selectedNewAccu.id === accu.id) {
+                    card.style.border = "2px solid #2563eb";
+                    card.style.boxShadow = "0 10px 25px -5px rgba(37,99,235,0.3)";
+                }
+                const priceFmt = new Intl.NumberFormat("id-ID", { style: "currency", currency: "IDR", minimumFractionDigits: 0 }).format(accu.price);
+                card.innerHTML = `
+                    <div class="user-product-card__content">
+                        <span class="user-product-card__brand">${accu.brand_relation ? accu.brand_relation.name : "Indoprima"}</span>
+                        <h3>${accu.name}</h3>
+                        <p class="user-product-card__price" style="color:#2563eb;">${priceFmt}</p>
+                    </div>
+                `;
+                card.onclick = () => {
+                    selectedNewAccu = accu;
+                    renderNewAccus(newAccus);
+                    updateTradeInSelected();
+                };
+                grid.appendChild(card);
+            });
+        };
+
+        const updateTradeInSelected = () => {
+            const container = document.getElementById("new-accu-selected");
+            const btn = document.getElementById("btn-trade-in-continue");
+            if (!container || !btn) return;
+            
+            if (selectedNewAccu) {
+                const priceFmt = new Intl.NumberFormat("id-ID", { style: "currency", currency: "IDR", minimumFractionDigits: 0 }).format(selectedNewAccu.price);
+                container.innerHTML = `
+                    <div style="text-align:left; padding:12px; background:#eff6ff; border-radius:8px; border:1px solid #bfdbfe;">
+                        <span style="font-size:11px; font-weight:700; color:#1d4ed8; text-transform:uppercase; margin-bottom:4px; display:block;">Pilihan Anda:</span>
+                        <div style="font-size:15px; font-weight:600; color:#1e3a8a; margin-bottom:4px;">${selectedNewAccu.name}</div>
+                        <div style="font-size:16px; font-weight:700; color:#2563eb;">${priceFmt}</div>
+                    </div>
+                `;
+                btn.style.opacity = "1";
+                btn.style.pointerEvents = "auto";
+            } else {
+                container.innerHTML = `
+                    <span style="display:block; font-size:24px; margin-bottom:8px;">
+                        <svg viewBox="0 0 24 24" style="width:24px; height:24px; fill:none; stroke:currentColor; stroke-width:2; margin:auto;">
+                            <rect x="2" y="7" width="20" height="15" rx="2" ry="2"/>
+                            <polyline points="17 2 12 7 7 2"/>
+                        </svg>
+                    </span>
+                    <strong>Belum ada aki baru dipilih</strong>
+                    <p>Silakan pilih 1 aki dari katalog.</p>
+                `;
+                btn.style.opacity = "0.5";
+                btn.style.pointerEvents = "none";
+            }
+        };
+
+        const initTradeIn = async () => {
+            const res = await fetchPublicApi("/new-accus");
+            if (res && res.data) {
+                newAccus = res.data;
+                renderNewAccus(newAccus);
+            }
+        };
+
+        const searchInputTradeIn = document.getElementById("new-accu-search-input");
+        if (searchInputTradeIn) {
+            searchInputTradeIn.addEventListener("input", (e) => {
+                const q = e.target.value.toLowerCase().trim();
+                const filtered = newAccus.filter(a => a.name.toLowerCase().includes(q) || (a.brand_relation && a.brand_relation.name.toLowerCase().includes(q)));
+                renderNewAccus(filtered);
+            });
+        }
+
+        const btnContinue = document.getElementById("btn-trade-in-continue");
+        if (btnContinue) {
+            btnContinue.addEventListener("click", () => {
+                if (!selectedNewAccu) return;
+                localStorage.setItem("pickup_trade_in_accu_id", selectedNewAccu.id);
+                localStorage.setItem("pickup_trade_in_accu_name", selectedNewAccu.name);
+                localStorage.setItem("pickup_trade_in_accu_price", selectedNewAccu.price);
+                localStorage.setItem("pickup_order_type", "trade_in");
+                window.location.href = "/identity";
+            });
+        }
+
+        initTradeIn();
     }
 });
