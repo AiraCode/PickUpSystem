@@ -158,7 +158,7 @@ class OrderController extends Controller
             });
 
             // Pengiriman WA (di luar DB transaction)
-            $token = env('FONNTE_TOKEN');
+            $token = config('services.fonnte.token') ?? env('FONNTE_TOKEN');
             $order = $result['order'];
             $customer = $result['customer'];
             $city = $result['city'];
@@ -210,11 +210,6 @@ class OrderController extends Controller
                 ."Untuk melihat rincian pesanan dan bukti transaksi, silakan klik tautan di bawah ini:\n"
                 ."🔗 http://pickupsystem.test/receipt?order_id={$order->id}\n\n"
                 .'Jika ada pertanyaan lebih lanjut, dapat menghubungi admin di nomor berikut 0812-3456-7891.';
-
-            $token = env('FONNTE_TOKEN');
-            $order = $result['order'];
-            $customer = $result['customer'];
-            $totalCost = $result['total_cost'];
 
             Http::withoutVerifying()
                 ->withHeaders([

@@ -64,16 +64,29 @@
                         </div>
                         <div class="user-form-grid">
                             {{-- UI upload KTP/SIM --}}
-                            <label class="user-upload-field user-upload-field--desktop-full">
-                                <input type="file" name="identity_document" accept=".png,.jpg,.jpeg">
+                            <div class="user-upload-field user-upload-field--desktop-full" id="upload-ktp-trigger" style="cursor: pointer;">
+                                <input type="file" id="ktp-file-input" name="identity_document" accept=".png,.jpg,.jpeg" style="display: none;">
                                 <span class="user-upload-field__icon"><svg viewBox="0 0 24 24" aria-hidden="true">
                                         <path d="M5 4.5h14v15H5z" />
                                         <path d="M8 15.5 10.8 12l2 2 1.7-2.2 2.5 3.7M8.5 8.5h.01" />
                                     </svg></span>
-                                <span><strong>Upload foto KTP atau SIM</strong><small>PNG/JPEG</small></span>
-                                <span class="user-upload-field__action">Pilih file</span>
-                            </label>
+                                <span><strong id="ktp-filename-label">Upload foto KTP atau SIM</strong><small>PNG/JPEG</small></span>
+                                <span class="user-upload-field__action">Pilih foto</span>
+                            </div>
                             <p id="ktp-size-hint" class="user-hint" style="display: none; color: #ef4444; margin-top: 4px; font-size: 13px;">*maksimal ukuran file 10 MB</p>
+
+                            {{-- UI upload Aki + KTP 1 Frame --}}
+                            <div class="user-upload-field user-upload-field--desktop-full" id="upload-accu-ktp-trigger" style="cursor: pointer; margin-top: 10px;">
+                                <input type="file" id="accu-ktp-file-input" name="accu_ktp_document" accept=".png,.jpg,.jpeg" style="display: none;">
+                                <span class="user-upload-field__icon"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2">
+                                        <rect x="3" y="3" width="18" height="18" rx="2" />
+                                        <circle cx="8.5" cy="8.5" r="1.5" />
+                                        <polyline points="21 15 16 10 5 21" />
+                                    </svg></span>
+                                <span><strong id="accu-ktp-filename-label">Upload foto Aki & KTP dalam 1 Frame</strong><small>PNG/JPEG</small></span>
+                                <span class="user-upload-field__action">Pilih foto</span>
+                            </div>
+                            <p id="accu-ktp-size-hint" class="user-hint" style="display: none; color: #ef4444; margin-top: 4px; font-size: 13px;">*maksimal ukuran file 10 MB</p>
 
                             {{-- UI OCR nama lengkap --}}
                             <div class="user-ocr-field user-floating-field--full" id="ocr-name-wrapper" style="display: none;">
@@ -238,6 +251,54 @@
             </div>
         </div>
     </div>
+
+<div id="modal-upload-choice" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,.6); z-index:10000; align-items:center; justify-content:center; padding: 20px;">
+    <div style="background:#fff; border-radius:16px; width:360px; max-width:100%; box-shadow: 0 10px 30px rgba(0,0,0,0.3); overflow:hidden; text-align:center; padding: 24px;">
+        <span style="font-size: 36px; display:block; margin-bottom: 8px;">📷</span>
+        <h3 style="margin:0 0 6px; font-size:17px; font-weight:700; color:#0f172a;">Metode Pengambilan Foto</h3>
+        <p style="font-size:13px; color:#64748b; margin:0 0 20px;">Pilih cara pengunggahan foto dokumen yang Anda inginkan:</p>
+        <div style="display:flex; flex-direction:column; gap:10px;">
+            <button type="button" id="btn-choice-camera" class="user-button user-button--primary" style="background:#2563eb; color:#fff; width:100%; padding:10px 16px; font-weight:600; display:flex; align-items:center; justify-content:center; gap:8px;">
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+                Ambil dari Kamera (Live Frame)
+            </button>
+            <button type="button" id="btn-choice-gallery" class="user-button user-button--secondary" style="width:100%; padding:10px 16px; font-weight:600; display:flex; align-items:center; justify-content:center; gap:8px;">
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+                Pilih dari Galeri / File
+            </button>
+            <button type="button" id="btn-choice-cancel" style="background:none; border:none; color:#94a3b8; font-size:13px; font-weight:600; cursor:pointer; margin-top:4px;">Batal</button>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Live Camera dengan Arahan Bingkai -->
+<div id="modal-live-camera" style="display:none; position:fixed; inset:0; background:#000; z-index:10001; flex-direction:column; align-items:center; justify-content:space-between; padding: 20px;">
+    <div style="width:100%; display:flex; justify-content:space-between; align-items:center; color:#fff; z-index:10;">
+        <h3 id="camera-modal-title" style="margin:0; font-size:15px; font-weight:600;">Ambil Foto Dokumen</h3>
+        <button type="button" id="btn-close-camera" style="background:none; border:none; color:#fff; font-size:24px; cursor:pointer; padding:4px;">✕</button>
+    </div>
+
+    <div style="position:relative; width:100%; max-width:480px; flex:1; display:flex; align-items:center; justify-content:center; overflow:hidden; margin:16px 0;">
+        <video id="camera-video" autoplay playsinline style="width:100%; height:100%; object-fit:cover; border-radius:12px;"></video>
+        
+        <!-- Frame Overlay (Bingkai Arahan) -->
+        <div style="position:absolute; inset:20px; border:3px dashed #3b82f6; border-radius:16px; box-shadow:0 0 0 9999px rgba(0,0,0,0.6); pointer-events:none; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center;">
+            <div style="background:rgba(37,99,235,0.85); color:#fff; padding:6px 14px; border-radius:20px; font-size:12px; font-weight:600; margin-bottom:12px;">
+                📍 Posisikan objek tepat di dalam bingkai ini
+            </div>
+            <div style="width:50px; height:50px; border:2px solid rgba(255,255,255,0.5); border-radius:50%; display:flex; align-items:center; justify-content:center; opacity:0.6;">
+                <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="#fff" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+            </div>
+        </div>
+    </div>
+
+    <div style="width:100%; max-width:480px; display:flex; justify-content:center; gap:20px; align-items:center; z-index:10; padding-bottom:10px;">
+        <button type="button" id="btn-capture-photo" style="width:64px; height:64px; border-radius:50%; background:#fff; border:4px solid #2563eb; cursor:pointer; display:flex; align-items:center; justify-content:center; box-shadow:0 4px 15px rgba(37,99,235,0.4);" title="Ambil Foto">
+            <div style="width:46px; height:46px; border-radius:50%; background:#2563eb;"></div>
+        </button>
+    </div>
+</div>
+<canvas id="camera-canvas" style="display:none;"></canvas>
 
 <div id="modal-user-alert" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,.55); z-index:10000; align-items:center; justify-content:center; padding: 20px;">
     <div style="background:#fff; border-radius:12px; width:360px; max-width:100%; box-shadow: 0 10px 25px rgba(0,0,0,0.2); overflow:hidden; border: 1px solid #e2e8f0; text-align:center; padding: 24px;">

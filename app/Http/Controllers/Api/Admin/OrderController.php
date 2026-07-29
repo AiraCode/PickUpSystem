@@ -260,6 +260,10 @@ class OrderController extends Controller
                     $message .= "Pesanan Anda (ID: #{$order->id}) telah *SELESAI*.\n\nPembayaran untuk aki Anda dapat dilihat melalui link nota. Terima kasih telah mempercayakan layanan tukar tambah aki kepada Pick Up System.
                     \n\nKami tunggu pesanan selanjutnya!
                     \n🔗 http://pickupsystem.test/receipt?order_id={$order->id}";
+
+                    if ($proofPath) {
+                        $fonnteData['url'] = url('storage/' . $proofPath);
+                    }
                 } elseif ($request->status === 'cancelled') {
                     $reason = $cancelReason ?? 'Tidak ada alasan yang diberikan.';
                     $message .= "Mohon maaf, Pesanan Anda (ID: #{$order->id}) telah *DIBATALKAN*.\n\n*Alasan Pembatalan*:\n\"{$reason}\"\n\nJika ada pertanyaan lebih lanjut atau ingin memesan ulang, dapat menghubungi admin di nomor berikut 0812-3456-7891. Terima kasih! 🙏";
@@ -267,9 +271,11 @@ class OrderController extends Controller
 
                 $fonnteData['message'] = $message;
 
+                $token = config('services.fonnte.token') ?? env('FONNTE_TOKEN');
+
                 \Illuminate\Support\Facades\Http::withoutVerifying()
                     ->withHeaders([
-                        'Authorization' => config('services.fonnte.token'),
+                        'Authorization' => $token,
                     ])->post('https://api.fonnte.com/send', $fonnteData);
             }
         } catch (\Exception $e) {

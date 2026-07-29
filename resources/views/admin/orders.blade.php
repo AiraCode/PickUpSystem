@@ -276,6 +276,15 @@
                         </label>
                         <label
                             style="display:flex; align-items:center; gap:10px; padding:10px 14px; border:2px solid #e5e7eb; border-radius:8px; cursor:pointer; transition:border-color .15s;">
+                            <input type="radio" name="order_status" value="arrived_at_warehouse"
+                                style="accent-color:#8b5cf6; width:16px; height:16px;">
+                            <div>
+                                <span style="font-weight:600; font-size:13px; color:#111318;">Sampai di Gudang</span>
+                                <span style="display:block; font-size:11px; color:#6d727c;">Aki telah diterima & sampai di gudang</span>
+                            </div>
+                        </label>
+                        <label
+                            style="display:flex; align-items:center; gap:10px; padding:10px 14px; border:2px solid #e5e7eb; border-radius:8px; cursor:pointer; transition:border-color .15s;">
                             <input type="radio" name="order_status" value="completed"
                                 style="accent-color:#10b981; width:16px; height:16px;">
                             <div>

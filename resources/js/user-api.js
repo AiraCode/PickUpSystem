@@ -85,7 +85,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 card.getAttribute("data-product-name")?.toLowerCase() || "";
             const brand =
                 card.getAttribute("data-product-brand")?.toLowerCase() || "";
-            if (name.includes(query) || brand.includes(query)) {
+            if (query.length > 0 && (name.includes(query) || brand.includes(query))) {
                 card.style.display = "";
             } else {
                 card.style.display = "none";
@@ -146,16 +146,16 @@ document.addEventListener("DOMContentLoaded", () => {
         const formatRupiah = (number) =>
             "Rp " + Number(number).toLocaleString("id-ID");
 
+        const searchQuery = searchInput?.value.toLowerCase().trim() || "";
+
         batteryList.innerHTML = accus
             .map((accu) => {
-                const beratKg = accu.berat_kering || 0;
-                const tagLabel = beratKg > 5 ? "AKI MOBIL" : "AKI MOTOR";
-                const beratInfo = beratKg > 0 ? ` (${beratKg} kg)` : "";
+                const displayStyle = (searchQuery.length > 0 && (accu.name.toLowerCase().includes(searchQuery) || accu.brand.toLowerCase().includes(searchQuery))) ? "" : "display:none;";
 
                 return `
-                <div class="user-battery-item" data-product-card data-product-name="${accu.name}" data-product-brand="${accu.brand}" data-product-price="${accu.price}" data-accu-id="${accu.id}">
+                <div class="user-battery-item" data-product-card data-product-name="${accu.name}" data-product-brand="${accu.brand}" data-product-price="${accu.price}" data-accu-id="${accu.id}" style="${displayStyle}">
                     <div class="user-battery-item__left">
-                        <h3>${accu.name}${beratInfo}</h3>
+                        <h3>${accu.name}</h3>
                         <div class="user-quantity">
                             <button type="button" data-quantity-minus aria-label="Kurangi jumlah">−</button>
                             <input type="number" value="1" min="1" max="9999" data-quantity aria-label="Jumlah ${accu.name}">
@@ -163,10 +163,6 @@ document.addEventListener("DOMContentLoaded", () => {
                         </div>
                     </div>
                     <div class="user-battery-item__right">
-                        <div class="user-battery-item__price">
-                            <span class="user-price-label">Harga:</span>
-                            <strong data-product-price-label>${accu.price > 0 ? formatRupiah(accu.price) : "Belum tersedia"}</strong>
-                        </div>
                         <button type="button" class="user-add-button" data-add-to-cart>+ Tambahkan ke Keranjang</button>
                     </div>
                 </div>`;
@@ -228,6 +224,12 @@ document.addEventListener("DOMContentLoaded", () => {
                     9999,
                     Math.max(1, Number(quantityInput?.value) || 1),
                 );
+
+                if (!window.userCart.has(name) && window.userCart.size >= 5) {
+                    showCustomAlert("Maksimal 5 jenis aki per transaksi!");
+                    return;
+                }
+
                 window.userCart.set(name, { id, name, brand, price, quantity });
                 if (typeof window.renderUserCart === "function") {
                     window.renderUserCart();
@@ -444,6 +446,153 @@ document.addEventListener("DOMContentLoaded", () => {
                 e.target.value = e.target.value.replace(/[^0-9]/g, "");
             });
         });
+
+        // UI Upload Choice & Camera Handler
+        let activeUploadTarget = "ktp"; // "ktp" atau "accu_ktp"
+        let cameraStream = null;
+
+        const uploadKtpTrigger = document.getElementById("upload-ktp-trigger");
+        const uploadAccuKtpTrigger = document.getElementById("upload-accu-ktp-trigger");
+        const modalUploadChoice = document.getElementById("modal-upload-choice");
+        const modalLiveCamera = document.getElementById("modal-live-camera");
+        const cameraVideo = document.getElementById("camera-video");
+        const cameraCanvas = document.getElementById("camera-canvas");
+
+        const btnChoiceCamera = document.getElementById("btn-choice-camera");
+        const btnChoiceGallery = document.getElementById("btn-choice-gallery");
+        const btnChoiceCancel = document.getElementById("btn-choice-cancel");
+        const btnCloseCamera = document.getElementById("btn-close-camera");
+        const btnCapturePhoto = document.getElementById("btn-capture-photo");
+
+        const ktpFileInput = document.getElementById("ktp-file-input");
+        const accuKtpFileInput = document.getElementById("accu-ktp-file-input");
+
+        const openChoiceModal = (target) => {
+            activeUploadTarget = target;
+            if (modalUploadChoice) modalUploadChoice.style.display = "flex";
+        };
+
+        uploadKtpTrigger?.addEventListener("click", () => openChoiceModal("ktp"));
+        uploadAccuKtpTrigger?.addEventListener("click", () => openChoiceModal("accu_ktp"));
+
+        btnChoiceCancel?.addEventListener("click", () => {
+            if (modalUploadChoice) modalUploadChoice.style.display = "none";
+        });
+
+        btnChoiceGallery?.addEventListener("click", () => {
+            if (modalUploadChoice) modalUploadChoice.style.display = "none";
+            if (activeUploadTarget === "ktp" && ktpFileInput) {
+                ktpFileInput.click();
+            } else if (activeUploadTarget === "accu_ktp" && accuKtpFileInput) {
+                accuKtpFileInput.click();
+            }
+        });
+
+        const stopCamera = () => {
+            if (cameraStream) {
+                cameraStream.getTracks().forEach((track) => track.stop());
+                cameraStream = null;
+            }
+            if (modalLiveCamera) modalLiveCamera.style.display = "none";
+        };
+
+        btnCloseCamera?.addEventListener("click", stopCamera);
+
+        btnChoiceCamera?.addEventListener("click", async () => {
+            if (modalUploadChoice) modalUploadChoice.style.display = "none";
+            if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+                showCustomAlert("Perangkat atau browser Anda tidak mendukung akses kamera langsung. Beralih ke pengunggahan dari galeri.");
+                if (activeUploadTarget === "ktp" && ktpFileInput) ktpFileInput.click();
+                else if (activeUploadTarget === "accu_ktp" && accuKtpFileInput) accuKtpFileInput.click();
+                return;
+            }
+
+            try {
+                // Percobaan 1: Kamera belakang (Mobile)
+                try {
+                    cameraStream = await navigator.mediaDevices.getUserMedia({
+                        video: { facingMode: "environment", width: { ideal: 1280 }, height: { ideal: 720 } },
+                        audio: false,
+                    });
+                } catch (envErr) {
+                    // Percobaan 2: Fallback ke kamera manapun yang tersedia (Laptop / Webcam)
+                    cameraStream = await navigator.mediaDevices.getUserMedia({
+                        video: true,
+                        audio: false,
+                    });
+                }
+
+                if (cameraVideo) {
+                    cameraVideo.srcObject = cameraStream;
+                }
+                const cameraTitle = document.getElementById("camera-modal-title");
+                if (cameraTitle) {
+                    cameraTitle.textContent = activeUploadTarget === "ktp" ? "Foto Dokumen KTP / SIM" : "Foto Aki & KTP (1 Frame)";
+                }
+                if (modalLiveCamera) modalLiveCamera.style.display = "flex";
+            } catch (err) {
+                let errorMsg = "Gagal mengakses kamera.";
+                if (err.name === "NotAllowedError" || err.name === "PermissionDeniedError") {
+                    errorMsg = "Izin kamera ditolak oleh browser. Silakan beri izin akses kamera di pengaturan browser Anda, atau gunakan opsi Galeri.";
+                } else if (err.name === "NotFoundError" || err.name === "DevicesNotFoundError") {
+                    errorMsg = "Kamera tidak ditemukan pada perangkat Anda. Beralih ke opsi Galeri.";
+                }
+
+                showCustomAlert(errorMsg);
+                if (activeUploadTarget === "ktp" && ktpFileInput) ktpFileInput.click();
+                else if (activeUploadTarget === "accu_ktp" && accuKtpFileInput) accuKtpFileInput.click();
+            }
+        });
+
+        btnCapturePhoto?.addEventListener("click", () => {
+            if (!cameraVideo || !cameraCanvas) return;
+            const context = cameraCanvas.getContext("2d");
+            cameraCanvas.width = cameraVideo.videoWidth || 1280;
+            cameraCanvas.height = cameraVideo.videoHeight || 720;
+            context.drawImage(cameraVideo, 0, 0, cameraCanvas.width, cameraCanvas.height);
+
+            cameraCanvas.toBlob((blob) => {
+                if (!blob) return;
+                const fileName = activeUploadTarget === "ktp" ? "ktp_camera.jpg" : "accu_ktp_camera.jpg";
+                const capturedFile = new File([blob], fileName, { type: "image/jpeg" });
+                const container = new DataTransfer();
+                container.items.add(capturedFile);
+
+                if (activeUploadTarget === "ktp" && ktpFileInput) {
+                    ktpFileInput.files = container.files;
+                    ktpFileInput.dispatchEvent(new Event("change"));
+                } else if (activeUploadTarget === "accu_ktp" && accuKtpFileInput) {
+                    accuKtpFileInput.files = container.files;
+                    accuKtpFileInput.dispatchEvent(new Event("change"));
+                }
+                stopCamera();
+            }, "image/jpeg", 0.9);
+        });
+
+        if (accuKtpFileInput) {
+            accuKtpFileInput.addEventListener("change", (e) => {
+                const file = e.target.files[0];
+                const label = document.getElementById("accu-ktp-filename-label");
+                const hint = document.getElementById("accu-ktp-size-hint");
+
+                if (!file) {
+                    if (label) label.textContent = "Upload foto Aki & KTP dalam 1 Frame";
+                    if (hint) hint.style.display = "none";
+                    return;
+                }
+
+                if (file.size > 10 * 1024 * 1024) {
+                    if (hint) hint.style.display = "block";
+                    accuKtpFileInput.value = "";
+                    if (label) label.textContent = "Upload foto Aki & KTP dalam 1 Frame";
+                    return;
+                } else {
+                    if (hint) hint.style.display = "none";
+                }
+
+                if (label) label.textContent = "✓ " + file.name;
+            });
+        }
 
         //UI OCR upload KTP/SIM
         const ktpInputNode = document.querySelector(
