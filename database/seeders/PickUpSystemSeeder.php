@@ -193,7 +193,6 @@ class PickUpSystemSeeder extends Seeder
             DB::table('accus')->insert([
                 'id' => $a['id'],
                 'name' => $a['name'],
-                'brands_id' => $a['brands_id'],
                 'berat_kering' => $a['berat_kering'],
                 'created_at' => $now,
                 'updated_at' => $now,
