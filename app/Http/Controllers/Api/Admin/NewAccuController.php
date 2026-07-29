@@ -22,8 +22,10 @@ class NewAccuController extends Controller
     {
         $validated = $request->validate([
             'brands_id' => 'required|integer|exists:brands,id',
-            'name' => 'required|string|max:45',
+            'name' => 'required|string|max:45|unique:new_accus,name',
             'price' => 'required|numeric|min:0',
+        ], [
+            'name.unique' => 'Nama aki ini sudah terdaftar. Silakan gunakan nama yang berbeda.',
         ]);
 
         $newAccu = NewAccu::create($validated);
@@ -40,8 +42,10 @@ class NewAccuController extends Controller
 
         $validated = $request->validate([
             'brands_id' => 'sometimes|integer|exists:brands,id',
-            'name' => 'sometimes|string|max:45',
+            'name' => 'sometimes|string|max:45|unique:new_accus,name,' . $id,
             'price' => 'sometimes|numeric|min:0',
+        ], [
+            'name.unique' => 'Nama aki ini sudah terdaftar. Silakan gunakan nama yang berbeda.',
         ]);
 
         $newAccu->update($validated);

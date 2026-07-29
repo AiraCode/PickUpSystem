@@ -1991,6 +1991,12 @@ document.addEventListener("DOMContentLoaded", () => {
                     formAddAccu.reset();
                     loadAccus();
                     loadTrashedAccus();
+                } else {
+                    let errMsg = res?.message || "Gagal menyimpan aki";
+                    if (res?.errors && res.errors.name) {
+                        errMsg = res.errors.name[0];
+                    }
+                    showToast(errMsg, "error");
                 }
             });
         }
@@ -2034,6 +2040,12 @@ document.addEventListener("DOMContentLoaded", () => {
                         showToast("Aki baru berhasil diperbarui", "success");
                         document.getElementById("modal-add-new-accu").style.display = "none";
                         loadNewAccus();
+                    } else {
+                        let errMsg = res?.message || "Gagal memperbarui aki baru";
+                        if (res?.errors && res.errors.name) {
+                            errMsg = res.errors.name[0];
+                        }
+                        showToast(errMsg, "error");
                     }
                 } else {
                     const res = await fetchApi("/new-accus", {
@@ -2044,6 +2056,12 @@ document.addEventListener("DOMContentLoaded", () => {
                         showToast("Aki baru berhasil ditambahkan", "success");
                         document.getElementById("modal-add-new-accu").style.display = "none";
                         loadNewAccus();
+                    } else {
+                        let errMsg = res?.message || "Gagal menyimpan aki baru";
+                        if (res?.errors && res.errors.name) {
+                            errMsg = res.errors.name[0];
+                        }
+                        showToast(errMsg, "error");
                     }
                 }
             });
