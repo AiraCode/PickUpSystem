@@ -17,8 +17,16 @@ export default defineConfig({
         tailwindcss(),
     ],
     server: {
+        host: '0.0.0.0',
         watch: {
             ignored: ['**/storage/framework/views/**'],
+        },
+        allowedHosts: ['.ngrok-free.app', '.ngrok-free.dev'],
+        hmr: {
+            // Masukkan domain ngrok kamu tanpa https://
+            host: 'noninclusive-donna-pseudoparallel.ngrok-free.dev',
+            protocol: 'wss',
+            clientPort: 443,
         },
     },
 });
