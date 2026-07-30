@@ -52,4 +52,9 @@ class Order extends Model
             ->withPivot(['quantity', 'price'])
             ->withTimestamps();
     }
+
+    public function pickupPricing(): HasOne
+    {
+        return $this->hasOne(OrderPickupPricing::class, 'orders_id');
+    }
 }

@@ -59,4 +59,8 @@ Route::prefix('admin')->group(function () {
     Route::get('/laporan', function () {
         return view('admin.reports');
     });
+
+    Route::get('/pengiriman', function () {
+        return view('admin.pickup-pricing');
+    });
 });

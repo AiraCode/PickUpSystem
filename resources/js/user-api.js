@@ -2098,7 +2098,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
-    function updatePickupFee(distance) {
+    async function updatePickupFee(distance) {
         const radioChecked = document.querySelector('input[name="delivery_method"]:checked');
         const selectedMethod = radioChecked ? radioChecked.value : (localStorage.getItem("pickup_delivery_method") || "warehouse");
 
@@ -2106,15 +2106,49 @@ document.addEventListener("DOMContentLoaded", () => {
             document.getElementById("user-pickup-fee-label") ||
             document.querySelector("[data-cart-pickup]");
 
-        if (selectedMethod === "courier") {
-            const fee = Math.max(10000, Math.round(distance * 2000));
-            localStorage.setItem("pickup_fee", fee);
-            if (pickupLabel) pickupLabel.textContent = "- " + rupiah(fee);
-            recalculateTotal(fee);
-        } else {
+        if (selectedMethod !== "courier") {
             localStorage.removeItem("pickup_fee");
             if (pickupLabel) pickupLabel.textContent = "Gratis";
             recalculateTotal(0);
+            return;
+        }
+
+        // Use stored coordinates for backend calculation
+        const lat = parseFloat(localStorage.getItem("pickup_lat")) || null;
+        const lng = parseFloat(localStorage.getItem("pickup_long")) || null;
+
+        if (!lat || !lng) {
+            if (pickupLabel) pickupLabel.textContent = "Dihitung setelah pilih lokasi";
+            return;
+        }
+
+        // Show loading state
+        if (pickupLabel) pickupLabel.textContent = "Menghitung...";
+
+        try {
+            const res = await fetch("/api/customer/calculate-pickup-fee", {
+                method: "POST",
+                headers: { "Content-Type": "application/json", "Accept": "application/json" },
+                body: JSON.stringify({ pickup_lat: lat, pickup_long: lng }),
+            });
+
+            if (res.ok) {
+                const data = await res.json();
+                const fee = data.final_pickup_fee || 0;
+                localStorage.setItem("pickup_fee", fee);
+                localStorage.setItem("pickup_route_distance_km", data.route_distance_km || 0);
+                if (pickupLabel) pickupLabel.textContent = "- " + rupiah(fee);
+                recalculateTotal(fee);
+            } else {
+                throw new Error("API error " + res.status);
+            }
+        } catch (e) {
+            // Fallback to local estimate if API fails
+            console.warn("Pickup fee API failed, using local fallback:", e);
+            const fee = Math.max(10000, Math.round(distance * 2300));
+            localStorage.setItem("pickup_fee", fee);
+            if (pickupLabel) pickupLabel.textContent = "- " + rupiah(fee);
+            recalculateTotal(fee);
         }
     }
 

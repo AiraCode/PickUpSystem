@@ -7,8 +7,10 @@ use App\Models\Accu;
 use App\Models\City;
 use App\Models\Customer;
 use App\Models\Order;
+use App\Models\OrderPickupPricing;
 use App\Models\Receipt;
 use App\Models\Setting;
+use App\Services\PickupFeeService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -17,6 +19,50 @@ use Illuminate\Support\Facades\Storage;
 
 class OrderController extends Controller
 {
+    public function __construct(protected PickupFeeService $pickupFeeService) {}
+
+    /**
+     * Calculate pickup fee dynamically from customer coordinates.
+     * Called by the frontend when the customer selects courier delivery.
+     */
+    public function calculatePickupFee(Request $request): JsonResponse
+    {
+        $request->validate([
+            'pickup_lat'  => 'required|numeric',
+            'pickup_long' => 'required|numeric',
+        ]);
+
+        $lat = (float) $request->input('pickup_lat');
+        $lng = (float) $request->input('pickup_long');
+
+        // Find nearest warehouse
+        $storages = DB::table('storages')->get();
+        if ($storages->isEmpty()) {
+            return response()->json(['final_pickup_fee' => 0, 'route_distance_km' => 0], 200);
+        }
+
+        $nearestStorage = null;
+        $minDistance = INF;
+        foreach ($storages as $s) {
+            $d = $this->haversineKm($lat, $lng, (float)$s->lat, (float)$s->long);
+            if ($d < $minDistance) {
+                $minDistance = $d;
+                $nearestStorage = $s;
+            }
+        }
+
+        $breakdown = $this->pickupFeeService->calculate(
+            $lat, $lng,
+            (float) $nearestStorage->lat,
+            (float) $nearestStorage->long
+        );
+
+        return response()->json(array_merge($breakdown, [
+            'storage_id'   => $nearestStorage->id,
+            'storage_name' => $nearestStorage->name,
+        ]));
+    }
+
     public function store(Request $request): JsonResponse
     {
         $validated = $request->validate([
@@ -121,32 +167,29 @@ class OrderController extends Controller
                     $accusPivot[$item['id']] = ['amount' => $item['quantity']];
                 }
 
-                $pickupFee = 0;
-                $lat = $validated['pickup_lat'] ?? -7.2575;
-                $lng = $validated['pickup_long'] ?? 112.7521;
+                $pickupFee      = 0;
+                $pricingBreakdown = null;
+                $lat = (float)($validated['pickup_lat']  ?? -7.2575);
+                $lng = (float)($validated['pickup_long'] ?? 112.7521);
 
                 if ($deliveryMethod === 'courier') {
                     $storages = DB::table('storages')->get();
                     if ($storages->isNotEmpty()) {
-                        $minDistance = INF;
-                        foreach ($storages as $w) {
-                            $lat1 = $lat;
-                            $lon1 = $lng;
-                            $lat2 = $w->lat;
-                            $lon2 = $w->long;
-                            $R = 6371;
-                            $dLat = deg2rad($lat2 - $lat1);
-                            $dLon = deg2rad($lon2 - $lon1);
-                            $a = sin($dLat / 2) * sin($dLat / 2) +
-                                cos(deg2rad($lat1)) * cos(deg2rad($lat2)) *
-                                sin($dLon / 2) * sin($dLon / 2);
-                            $c = 2 * atan2(sqrt($a), sqrt(1 - $a));
-                            $dist = $R * $c;
-                            if ($dist < $minDistance) {
-                                $minDistance = $dist;
-                            }
+                        // Find nearest warehouse (Haversine for selection only)
+                        $nearestStorage = null;
+                        $minDist = INF;
+                        foreach ($storages as $s) {
+                            $d = $this->haversineKm($lat, $lng, (float)$s->lat, (float)$s->long);
+                            if ($d < $minDist) { $minDist = $d; $nearestStorage = $s; }
                         }
-                        $pickupFee = max(10000, round($minDistance * 2000));
+
+                        // PickupFeeService: OSRM route distance + dynamic pricing
+                        $pricingBreakdown = $this->pickupFeeService->calculate(
+                            $lat, $lng,
+                            (float) $nearestStorage->lat,
+                            (float) $nearestStorage->long
+                        );
+                        $pickupFee = $pricingBreakdown['final_pickup_fee'];
                     }
                 }
 
@@ -219,12 +262,37 @@ class OrderController extends Controller
                     }
                 }
 
+                // Persist full pricing snapshot (locked permanently with this transaction)
+                if ($pricingBreakdown && isset($nearestStorage)) {
+                    $pricingId = (DB::table('order_pickup_pricings')->max('id') ?? 0) + 1;
+                    OrderPickupPricing::create([
+                        'id'                  => $pricingId,
+                        'orders_id'           => $orderId,
+                        'storages_id'         => $nearestStorage->id,
+                        // Configuration snapshot (never recalculated after save)
+                        'initial_fee'         => $pricingBreakdown['initial_fee'] ?? null,
+                        'distance_rate'       => $pricingBreakdown['distance_rate'] ?? null,
+                        'time_rate'           => $pricingBreakdown['time_rate'] ?? null,
+                        'demand_multiplier'   => $pricingBreakdown['demand_multiplier'] ?? 1.0,
+                        'weather_multiplier'  => $pricingBreakdown['weather_multiplier'] ?? 1.0,
+                        'traffic_multiplier'  => $pricingBreakdown['traffic_multiplier'] ?? 1.0,
+                        'event_multiplier'    => $pricingBreakdown['event_multiplier'] ?? 1.0,
+                        // Calculation results
+                        'route_distance_km'   => $pricingBreakdown['route_distance_km'],
+                        'travel_time_seconds' => $pricingBreakdown['travel_time_seconds'],
+                        'base_price'          => $pricingBreakdown['base_price'],
+                        'multiplier'          => $pricingBreakdown['multiplier'],
+                        'final_pickup_fee'    => $pricingBreakdown['final_pickup_fee'],
+                    ]);
+                }
+
+
                 return [
-                    'order' => $order,
-                    'customer' => $customer,
-                    'city' => $city,
-                    'total_cost' => $priceOwed,
-                    'new_accu_price' => $newAccuPrice,
+                    'order'         => $order,
+                    'customer'      => $customer,
+                    'city'          => $city,
+                    'total_cost'    => $priceOwed,
+                    'new_accu_price'=> $newAccuPrice,
                 ];
             });
 
@@ -353,5 +421,20 @@ class OrderController extends Controller
             'message' => 'Catatan berhasil diperbarui',
             'data' => $order,
         ]);
+    }
+
+    /**
+     * Haversine formula: straight-line distance in km.
+     * Used only for warehouse selection (nearest warehouse identification).
+     * Actual route distance for pricing is handled by PickupFeeService via OSRM.
+     */
+    private function haversineKm(float $lat1, float $lng1, float $lat2, float $lng2): float
+    {
+        $R    = 6371.0;
+        $dLat = deg2rad($lat2 - $lat1);
+        $dLng = deg2rad($lng2 - $lng1);
+        $a    = sin($dLat / 2) ** 2
+              + cos(deg2rad($lat1)) * cos(deg2rad($lat2)) * sin($dLng / 2) ** 2;
+        return $R * 2 * atan2(sqrt($a), sqrt(1 - $a));
     }
 }

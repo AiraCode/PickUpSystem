@@ -128,9 +128,12 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         let apiTarget = `${API_BASE}${endpoint}`;
-        if (endpoint.startsWith("/users")) {
-            apiTarget = `/api/public-admin${endpoint}`;
+        if (endpoint.startsWith("/users") || endpoint.startsWith("/pengiriman")) {
+            if (!token) {
+                apiTarget = `/api/public-admin${endpoint}`;
+            }
         }
+
 
         const response = await fetch(apiTarget, {
             ...options,
@@ -460,11 +463,11 @@ document.addEventListener("DOMContentLoaded", () => {
                         <td>${o.customer ? o.customer.name : "-"}</td>
                         <td>${o.city ? o.city.name : "-"}</td>
                         <td>
-                            ${o.delivery_method === 'courier' ? 
-                                '<span style="background:#dbeafe; color:#1e40af; padding:2px 8px; border-radius:12px; font-size:11px; font-weight:600;">Kurir</span>' : 
-                                (o.delivery_method === 'warehouse' ? 
-                                '<span style="background:#fef3c7; color:#92400e; padding:2px 8px; border-radius:12px; font-size:11px; font-weight:600;">Kirim Sendiri</span>' : 
-                                '<span style="color:#6b7280;">-</span>')
+                            ${o.delivery_method === 'courier' ?
+                                '<span style="background:#dbeafe; color:#1e40af; padding:2px 8px; border-radius:12px; font-size:11px; font-weight:600;">Kurir</span>' :
+                                (o.delivery_method === 'warehouse' ?
+                                    '<span style="background:#fef3c7; color:#92400e; padding:2px 8px; border-radius:12px; font-size:11px; font-weight:600;">Kirim Sendiri</span>' :
+                                    '<span style="color:#6b7280;">-</span>')
                             }
                         </td>
                         <td>${parseSafeDate(o.created_at).toLocaleDateString("id-ID")}</td>
@@ -798,19 +801,19 @@ document.addEventListener("DOMContentLoaded", () => {
                     <tr onclick="viewOrderDetail(${o.id})" style="cursor:pointer;">
                         <td style="font-weight:600; color:#3b82f6;">#${o.id}</td>
                         <td>
-                            ${o.order_type === 'trade_in' ? 
-                                '<span style="background:#fef3c7; color:#92400e; padding:2px 6px; border-radius:4px; font-size:10px; font-weight:700;">TRADE IN</span>' : 
+                            ${o.order_type === 'trade_in' ?
+                                '<span style="background:#fef3c7; color:#92400e; padding:2px 6px; border-radius:4px; font-size:10px; font-weight:700;">TRADE IN</span>' :
                                 '<span style="background:#e0e7ff; color:#3730a3; padding:2px 6px; border-radius:4px; font-size:10px; font-weight:700;">JUAL</span>'
                             }
                         </td>
                         <td style="font-weight:500;">${o.customer ? o.customer.name : "-"}</td>
                         <td>${o.city ? o.city.name : "-"}</td>
                         <td>
-                            ${o.delivery_method === 'courier' ? 
-                                '<span style="background:#dbeafe; color:#1e40af; padding:2px 8px; border-radius:12px; font-size:11px; font-weight:600;">Kurir</span>' : 
-                                (o.delivery_method === 'warehouse' ? 
-                                '<span style="background:#fef3c7; color:#92400e; padding:2px 8px; border-radius:12px; font-size:11px; font-weight:600;">Kirim Sendiri</span>' : 
-                                '<span style="color:#6b7280;">-</span>')
+                            ${o.delivery_method === 'courier' ?
+                                '<span style="background:#dbeafe; color:#1e40af; padding:2px 8px; border-radius:12px; font-size:11px; font-weight:600;">Kurir</span>' :
+                                (o.delivery_method === 'warehouse' ?
+                                    '<span style="background:#fef3c7; color:#92400e; padding:2px 8px; border-radius:12px; font-size:11px; font-weight:600;">Kirim Sendiri</span>' :
+                                    '<span style="color:#6b7280;">-</span>')
                             }
                         </td>
                         <td style="max-width:200px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${o.pickup_address || "-"}</td>
@@ -1126,8 +1129,8 @@ document.addEventListener("DOMContentLoaded", () => {
             );
             if (ktpLinkEl) {
                 if (ktpVal !== "-" && (ktpVal.includes("ktp/") || ktpVal.includes(".jpg") || ktpVal.includes(".jpeg") || ktpVal.includes(".png") || ktpVal.includes("data:image"))) {
-                    const imgUrl = ktpVal.startsWith("http") || ktpVal.startsWith("data:") 
-                        ? ktpVal 
+                    const imgUrl = ktpVal.startsWith("http") || ktpVal.startsWith("data:")
+                        ? ktpVal
                         : (ktpVal.startsWith("/") ? ktpVal : `/storage/${ktpVal}`);
                     ktpLinkEl.onclick = (e) => {
                         e.preventDefault();
@@ -1145,18 +1148,18 @@ document.addEventListener("DOMContentLoaded", () => {
             }
             document.getElementById("detail-customer-bank").innerText =
                 `${bankName} - ${c.account_number || "-"} (a.n. ${c.account_name || "-"})`;
-            document.getElementById("detail-order-type").innerHTML = o.order_type === 'trade_in' 
-                ? '<span style="background:#fef3c7; color:#92400e; padding:2px 6px; border-radius:4px; font-size:10px; font-weight:700;">TRADE IN</span>' 
+            document.getElementById("detail-order-type").innerHTML = o.order_type === 'trade_in'
+                ? '<span style="background:#fef3c7; color:#92400e; padding:2px 6px; border-radius:4px; font-size:10px; font-weight:700;">TRADE IN</span>'
                 : '<span style="background:#e0e7ff; color:#3730a3; padding:2px 6px; border-radius:4px; font-size:10px; font-weight:700;">JUAL</span>';
-            
+
             const rowNewAccu = document.getElementById("row-detail-new-accu");
             if (o.order_type === 'trade_in') {
                 rowNewAccu.style.display = "table-row";
-                document.getElementById("detail-order-new-accu").innerText = o.new_accu ? (o.new_accu.name + ' - ' + new Intl.NumberFormat("id-ID", {style: "currency", currency: "IDR", minimumFractionDigits: 0}).format(o.new_accu.price)) : "-";
+                document.getElementById("detail-order-new-accu").innerText = o.new_accu ? (o.new_accu.name + ' - ' + new Intl.NumberFormat("id-ID", { style: "currency", currency: "IDR", minimumFractionDigits: 0 }).format(o.new_accu.price)) : "-";
             } else {
                 rowNewAccu.style.display = "none";
             }
-            
+
             document.getElementById("detail-order-payment-method").innerText = o.payment_method ? (o.payment_method === 'cod' ? 'COD (Bayar di Tempat)' : (o.payment_method === 'transfer' ? 'Transfer Bank' : (o.payment_method === 'qris' ? 'QRIS' : o.payment_method.toUpperCase()))) : "-";
 
             document.getElementById("detail-order-city").innerText = o.city
@@ -1421,7 +1424,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     }
 
                     document.getElementById("detail-summary-subtotal").innerText = formatRp(subtotal);
-                    
+
                     const rowSummaryNewAccu = document.getElementById("detail-summary-row-new-accu");
                     if (currentDetailOrder.order_type === 'trade_in' && currentDetailOrder.new_accu && rowSummaryNewAccu) {
                         rowSummaryNewAccu.style.display = "table-row";
@@ -1430,8 +1433,17 @@ document.addEventListener("DOMContentLoaded", () => {
                         rowSummaryNewAccu.style.display = "none";
                     }
 
-                    document.getElementById("detail-summary-shipping").innerText = deliveryCost > 0 ? "- " + formatRp(deliveryCost) : "Gratis";
-                    
+                    // Use stored transaction snapshot if available; otherwise fall back to derived value
+                    const pickupSnapshot = currentDetailOrder.pickup_pricing;
+                    let shippingFee = 0;
+                    if (pickupSnapshot && pickupSnapshot.final_pickup_fee > 0) {
+                        shippingFee = pickupSnapshot.final_pickup_fee;
+                    } else if (deliveryCost > 0) {
+                        shippingFee = deliveryCost;
+                    }
+                    document.getElementById("detail-summary-shipping").innerText =
+                        shippingFee > 0 ? "- " + formatRp(shippingFee) : "Gratis";
+
                     const totalVal = receipt.price_owed || 0;
                     const isMinus = totalVal < 0;
                     document.getElementById("detail-summary-total").innerText = formatRp(Math.abs(totalVal));
@@ -1791,7 +1803,7 @@ document.addEventListener("DOMContentLoaded", () => {
         loadAccus();
         loadNewAccus();
         loadPriceHistory();
-        
+
         window.switchAccuTab = (tab) => {
             currentAccuTab = tab;
             if (tab === 'old') {
@@ -1800,7 +1812,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 document.getElementById('btn-old-accu').style.background = '#fff';
                 document.getElementById('btn-old-accu').style.color = '#1e293b';
                 document.getElementById('btn-old-accu').style.boxShadow = '0 1px 3px rgba(0,0,0,0.1)';
-                
+
                 document.getElementById('btn-new-accu').style.background = 'transparent';
                 document.getElementById('btn-new-accu').style.color = '#64748b';
                 document.getElementById('btn-new-accu').style.boxShadow = 'none';
@@ -1810,7 +1822,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 document.getElementById('btn-new-accu').style.background = '#fff';
                 document.getElementById('btn-new-accu').style.color = '#1e293b';
                 document.getElementById('btn-new-accu').style.boxShadow = '0 1px 3px rgba(0,0,0,0.1)';
-                
+
                 document.getElementById('btn-old-accu').style.background = 'transparent';
                 document.getElementById('btn-old-accu').style.color = '#64748b';
                 document.getElementById('btn-old-accu').style.boxShadow = 'none';
@@ -1845,7 +1857,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 renderAccus(currentFilteredAccus !== null ? currentFilteredAccus : cachedAccus);
             });
         }
-        
+
         const newAccuSearchInput = document.getElementById("new-accu-search-input");
         if (newAccuSearchInput) {
             newAccuSearchInput.addEventListener("input", (e) => {
@@ -1926,7 +1938,7 @@ document.addEventListener("DOMContentLoaded", () => {
             document.getElementById("form-add-new-accu").reset();
             document.getElementById("new-accu-id").value = "";
             document.getElementById("modal-new-accu-title").innerText = "Tambah Aki Baru";
-            
+
             const brandSelect = document.getElementById("new-accu-brand");
             // Load brands
             const res = await fetchApi("/brands"); // Note: Assuming /brands is available in admin or public. Actually, admin might not have /brands directly if it's not set up. Let's hardcode or fetch from a known endpoint. Wait, earlier we used /brands? The existing accu add modal doesn't use brand select? It seems we might not have a /brands endpoint, but we can check. Actually, let's just make it a text input for brand if there is no brands_id, but the migration has brands_id. Let me double check if we need to load brands from somewhere. For now, let's try to fetch if we have it, else use a default. Wait, the existing Accu model has brands_id. There must be an endpoint for it. I'll check later.
@@ -1934,32 +1946,32 @@ document.addEventListener("DOMContentLoaded", () => {
             try {
                 const bRes = await fetch('/api/customer/brands'); // /customer/brands exists in api.php
                 const bData = await bRes.json();
-                if(bData.data) {
+                if (bData.data) {
                     brandSelect.innerHTML = '<option value="">Pilih Merk</option>' + bData.data.map(b => `<option value="${b.id}">${b.name}</option>`).join('');
                 }
-            } catch(e) {}
-            
+            } catch (e) { }
+
             document.getElementById("modal-add-new-accu").style.display = "flex";
         };
-        
+
         window.editNewAccu = async (id) => {
             const accu = cachedNewAccus.find(a => a.id === id);
-            if(!accu) return;
-            
+            if (!accu) return;
+
             document.getElementById("new-accu-id").value = accu.id;
             document.getElementById("new-accu-name").value = accu.name;
             document.getElementById("new-accu-price").value = accu.price;
             document.getElementById("modal-new-accu-title").innerText = "Edit Aki Baru";
-            
+
             const brandSelect = document.getElementById("new-accu-brand");
             try {
                 const bRes = await fetch('/api/customer/brands');
                 const bData = await bRes.json();
-                if(bData.data) {
+                if (bData.data) {
                     brandSelect.innerHTML = '<option value="">Pilih Merk</option>' + bData.data.map(b => `<option value="${b.id}" ${b.id === accu.brands_id ? 'selected' : ''}>${b.name}</option>`).join('');
                 }
-            } catch(e) {}
-            
+            } catch (e) { }
+
             document.getElementById("modal-add-new-accu").style.display = "flex";
         };
 
@@ -1988,7 +2000,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 },
             );
         };
-        
+
         window.deleteNewAccu = (id) => {
             showConfirm(
                 "Hapus Aki Baru",
@@ -2000,7 +2012,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 },
             );
         };
-        
+
         const formAddAccu = document.getElementById("form-add-accu");
         if (formAddAccu) {
             formAddAccu.addEventListener("submit", async (e) => {
@@ -2782,3 +2794,345 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 });
+
+/* =============================================================================
+   BIAYA PENJEMPUTAN — Admin Pricing Configuration Module
+   Page: /admin/biaya-penjemputan
+============================================================================= */
+(function () {
+    "use strict";
+
+    // ── Guards ────────────────────────────────────────────────────────────────
+    const formFormula = document.getElementById("form-pricing-formula");
+    const formMultiplier = document.getElementById("form-pricing-multiplier");
+    if (!formFormula && !formMultiplier) return; // not on this page
+
+    // ── DOM refs ──────────────────────────────────────────────────────────────
+    const elInitialFee = document.getElementById("pp-initial-fee");
+    const elDistanceRate = document.getElementById("pp-distance-rate");
+    const elTimeRate = document.getElementById("pp-time-rate");
+    const elDemand = document.getElementById("pp-demand");
+    const elWeather = document.getElementById("pp-weather");
+    const elTraffic = document.getElementById("pp-traffic");
+    const elEvent = document.getElementById("pp-event");
+    const elVersionBadge = document.getElementById("pp-version-badge");
+
+    // Preview formula refs
+    const prevInitialFee = document.getElementById("prev-initial-fee");
+    const prevDistanceRate = document.getElementById("prev-distance-rate");
+    const prevTimeRate = document.getElementById("prev-time-rate");
+
+    // Live multiplier preview refs
+    const liveDemand = document.getElementById("live-demand");
+    const liveWeather = document.getElementById("live-weather");
+    const liveTraffic = document.getElementById("live-traffic");
+    const liveEvent = document.getElementById("live-event");
+    const liveTotal = document.getElementById("live-total-multiplier");
+
+    // History refs
+    const historySearch = document.getElementById("pp-history-search");
+    const historyTbody = document.getElementById("pp-history-tbody");
+    const historyPagination = document.getElementById("pp-history-pagination");
+
+    // Toast
+    const ppToast = document.getElementById("pp-toast");
+
+    // ── State ─────────────────────────────────────────────────────────────────
+    let historyCurrentPage = 1;
+    let historySearchQuery = "";
+    let historySearchTimer = null;
+
+    // Easter egg refs
+    const modalLock = document.getElementById("modal-easter-egg-lock");
+    const formAuth = document.getElementById("form-easter-egg-auth");
+    const authError = document.getElementById("easter-egg-error");
+
+    const checkEasterEggLock = () => {
+        const isUnlocked = sessionStorage.getItem("easter_egg_unlocked") === "true";
+        if (!isUnlocked) {
+            if (modalLock) modalLock.style.display = "flex";
+            return false;
+        }
+        if (modalLock) modalLock.style.display = "none";
+        return true;
+    };
+
+    if (formAuth) {
+        formAuth.addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const inputPass = document.getElementById("easter-egg-password").value;
+            try {
+                const verifyRes = await fetch("/api/public-admin/verify", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json", Accept: "application/json" },
+                    body: JSON.stringify({ secret: inputPass }),
+                });
+                const verifyData = await verifyRes.json();
+                if (verifyRes.ok && verifyData.valid) {
+                    sessionStorage.setItem("easter_egg_pass", inputPass);
+                    sessionStorage.setItem("easter_egg_unlocked", "true");
+                    if (authError) authError.style.display = "none";
+                    if (modalLock) modalLock.style.display = "none";
+                    showToast("Akses Rahasia Dibuka! Anda dapat mengatur pengiriman.", "success");
+                    loadCurrentSetting();
+                } else {
+                    if (authError) {
+                        authError.innerText = verifyData.message || "Password rahasia salah!";
+                        authError.style.display = "block";
+                    }
+                }
+            } catch (err) {
+                if (authError) {
+                    authError.innerText = "Gagal menghubungi server.";
+                    authError.style.display = "block";
+                }
+            }
+        });
+    }
+
+    // ── Utilities ─────────────────────────────────────────────────────────────
+    function formatRpLocal(val) {
+        return "Rp" + Number(val || 0).toLocaleString("id-ID");
+    }
+
+    function showToast(msg, isError = false) {
+        if (!ppToast) return;
+        ppToast.textContent = msg;
+        ppToast.style.background = isError ? "#dc2626" : "#16a34a";
+        ppToast.style.display = "block";
+        setTimeout(() => { ppToast.style.display = "none"; }, 3500);
+    }
+
+    function getAuthHeaders() {
+        const token = localStorage.getItem("admin_token");
+        return {
+            "Content-Type": "application/json",
+            "Accept": "application/json",
+            ...(token ? { "Authorization": "Bearer " + token } : {}),
+        };
+    }
+
+    // ── Load Current Setting ──────────────────────────────────────────────────
+    async function loadCurrentSetting() {
+        if (!checkEasterEggLock()) return;
+        try {
+            const data = await fetchApi("/pengiriman");
+            const s = data.setting;
+            if (!s) return;
+
+            // Populate formula fields
+            if (elInitialFee) elInitialFee.value = s.initial_fee ?? 5000;
+            if (elDistanceRate) elDistanceRate.value = s.distance_rate ?? 2300;
+            if (elTimeRate) elTimeRate.value = s.time_rate ?? 25;
+
+            // Populate multiplier fields
+            if (elDemand) elDemand.value = s.demand_multiplier ?? 1.00;
+            if (elWeather) elWeather.value = s.weather_multiplier ?? 1.00;
+            if (elTraffic) elTraffic.value = s.traffic_multiplier ?? 1.00;
+            if (elEvent) elEvent.value = s.event_multiplier ?? 1.00;
+
+            // Version badge
+            if (elVersionBadge) {
+                elVersionBadge.textContent = "Versi " + (s.pricing_version ?? 1);
+            }
+
+            updateFormulaPreview();
+            updateLiveMultiplier();
+
+            // Load history from the same response
+            renderHistory(data.history);
+        } catch (e) {
+            console.error("Pickup pricing load error:", e);
+            showToast("Gagal memuat data pengaturan.", true);
+        }
+    }
+
+    // ── Formula Preview (read-only display update) ────────────────────────────
+    function updateFormulaPreview() {
+        if (prevInitialFee) prevInitialFee.textContent = formatRpLocal(elInitialFee?.value || 5000);
+        if (prevDistanceRate) prevDistanceRate.textContent = formatRpLocal(elDistanceRate?.value || 2300) + "/km";
+        if (prevTimeRate) prevTimeRate.textContent = formatRpLocal(elTimeRate?.value || 25) + "/detik";
+    }
+
+    // ── Live Multiplier Preview ───────────────────────────────────────────────
+    function updateLiveMultiplier() {
+        const d = parseFloat(elDemand?.value || 1);
+        const w = parseFloat(elWeather?.value || 1);
+        const t = parseFloat(elTraffic?.value || 1);
+        const e = parseFloat(elEvent?.value || 1);
+        const total = (d * w * t * e).toFixed(4);
+
+        if (liveDemand) liveDemand.textContent = d.toFixed(2);
+        if (liveWeather) liveWeather.textContent = w.toFixed(2);
+        if (liveTraffic) liveTraffic.textContent = t.toFixed(2);
+        if (liveEvent) liveEvent.textContent = e.toFixed(2);
+        if (liveTotal) liveTotal.textContent = total;
+    }
+
+    // ── History Rendering ─────────────────────────────────────────────────────
+    function renderHistory(paginatedData) {
+        if (!historyTbody) return;
+        const items = paginatedData?.data || [];
+        if (items.length === 0) {
+            historyTbody.innerHTML = `<tr><td colspan="10"><div class="admin-table-empty"><strong>Belum ada riwayat perubahan.</strong></div></td></tr>`;
+            if (historyPagination) historyPagination.innerHTML = "";
+            return;
+        }
+
+        historyTbody.innerHTML = items.map(h => `
+            <tr>
+                <td style="font-size:12px; color:#6d727c; white-space:nowrap;">${formatDateLocal(h.created_at)}</td>
+                <td style="font-size:12px;">${h.created_by || "-"}</td>
+                <td style="text-align:right; font-family:monospace;">${formatRpLocal(h.initial_fee)}</td>
+                <td style="text-align:right; font-family:monospace;">${formatRpLocal(h.distance_rate)}</td>
+                <td style="text-align:right; font-family:monospace;">${formatRpLocal(h.time_rate)}</td>
+                <td style="text-align:right; font-family:monospace;">${parseFloat(h.demand_multiplier).toFixed(2)}</td>
+                <td style="text-align:right; font-family:monospace;">${parseFloat(h.weather_multiplier).toFixed(2)}</td>
+                <td style="text-align:right; font-family:monospace;">${parseFloat(h.traffic_multiplier).toFixed(2)}</td>
+                <td style="text-align:right; font-family:monospace;">${parseFloat(h.event_multiplier).toFixed(2)}</td>
+                <td style="text-align:right; font-weight:700; color:#0369a1;">${parseFloat(h.total_multiplier).toFixed(4)}</td>
+            </tr>
+        `).join("");
+
+        renderHistoryPagination(paginatedData);
+    }
+
+    function formatDateLocal(dateStr) {
+        if (!dateStr) return "-";
+        const d = new Date(dateStr);
+        return d.toLocaleDateString("id-ID", { day: "2-digit", month: "short", year: "numeric" })
+            + " " + d.toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit" });
+    }
+
+    function renderHistoryPagination(paginatedData) {
+        if (!historyPagination) return;
+        const last = paginatedData.last_page || 1;
+        const current = paginatedData.current_page || 1;
+        if (last <= 1) { historyPagination.innerHTML = ""; return; }
+
+        let html = "";
+        for (let i = 1; i <= last; i++) {
+            html += `<button onclick="ppLoadHistoryPage(${i})"
+                style="padding:6px 14px; border-radius:6px; font-size:13px; font-weight:600; cursor:pointer;
+                       border:1px solid ${i === current ? "#0369a1" : "#e2e8f0"};
+                       background:${i === current ? "#0369a1" : "#fff"};
+                       color:${i === current ? "#fff" : "#374151"};">${i}</button>`;
+        }
+        historyPagination.innerHTML = html;
+    }
+
+    // Exposed for pagination button onclick
+    window.ppLoadHistoryPage = async function (page) {
+        historyCurrentPage = page;
+        await loadHistoryPage();
+    };
+
+    async function loadHistoryPage() {
+        if (!checkEasterEggLock()) return;
+        try {
+            const params = new URLSearchParams({
+                page: historyCurrentPage,
+                per_page: 15,
+                ...(historySearchQuery ? { q: historySearchQuery } : {}),
+            });
+            const data = await fetchApi("/pengiriman/history?" + params);
+            renderHistory(data);
+        } catch (e) {
+            console.error("History load error:", e);
+            showToast("Gagal memuat riwayat.", true);
+        }
+    }
+
+    // ── Form Submissions ──────────────────────────────────────────────────────
+    async function saveSettings(payload, btnEl) {
+        if (!checkEasterEggLock()) return;
+        if (btnEl) { btnEl.disabled = true; btnEl.textContent = "Menyimpan..."; }
+        try {
+            const data = await fetchApi("/pengiriman", {
+                method: "PUT",
+                body: JSON.stringify(payload),
+            });
+            if (data.message === "Unauthenticated" || data.errors) {
+                const errMsg = data.message || Object.values(data.errors || {}).flat().join(" ");
+                showToast(errMsg || "Terjadi kesalahan.", true);
+            } else {
+                showToast(data.message || "Berhasil disimpan.");
+                await loadCurrentSetting();
+                await loadHistoryPage();
+            }
+        } catch (e) {
+            showToast("Gagal terhubung ke server.", true);
+        } finally {
+            if (btnEl) { btnEl.disabled = false; btnEl.textContent = btnEl.dataset.origText || "Simpan"; }
+        }
+    }
+
+    // ── Event Listeners ───────────────────────────────────────────────────────
+    if (formFormula) {
+        const btn = formFormula.querySelector("#btn-save-formula");
+        if (btn) btn.dataset.origText = btn.textContent;
+
+        // Live formula preview on input
+        [elInitialFee, elDistanceRate, elTimeRate].forEach(el => {
+            if (el) el.addEventListener("input", updateFormulaPreview);
+        });
+
+        formFormula.addEventListener("submit", async (e) => {
+            e.preventDefault();
+
+            // We need the current multiplier values too for a combined save
+            const payload = {
+                initial_fee: parseFloat(elInitialFee?.value || 5000),
+                distance_rate: parseFloat(elDistanceRate?.value || 2300),
+                time_rate: parseFloat(elTimeRate?.value || 25),
+                demand_multiplier: parseFloat(elDemand?.value || 1.00),
+                weather_multiplier: parseFloat(elWeather?.value || 1.00),
+                traffic_multiplier: parseFloat(elTraffic?.value || 1.00),
+                event_multiplier: parseFloat(elEvent?.value || 1.00),
+            };
+            await saveSettings(payload, btn);
+        });
+    }
+
+    if (formMultiplier) {
+        const btn = formMultiplier.querySelector("#btn-save-multiplier");
+        if (btn) btn.dataset.origText = btn.textContent;
+
+        // Live total multiplier preview on input
+        [elDemand, elWeather, elTraffic, elEvent].forEach(el => {
+            if (el) el.addEventListener("input", updateLiveMultiplier);
+        });
+
+        formMultiplier.addEventListener("submit", async (e) => {
+            e.preventDefault();
+
+            // Combined save: always include formula values alongside new multipliers
+            const payload = {
+                initial_fee: parseFloat(elInitialFee?.value || 5000),
+                distance_rate: parseFloat(elDistanceRate?.value || 2300),
+                time_rate: parseFloat(elTimeRate?.value || 25),
+                demand_multiplier: parseFloat(elDemand?.value || 1.00),
+                weather_multiplier: parseFloat(elWeather?.value || 1.00),
+                traffic_multiplier: parseFloat(elTraffic?.value || 1.00),
+                event_multiplier: parseFloat(elEvent?.value || 1.00),
+            };
+            await saveSettings(payload, btn);
+        });
+    }
+
+    // History search
+    if (historySearch) {
+        historySearch.addEventListener("input", () => {
+            clearTimeout(historySearchTimer);
+            historySearchTimer = setTimeout(async () => {
+                historySearchQuery = historySearch.value.trim();
+                historyCurrentPage = 1;
+                await loadHistoryPage();
+            }, 350);
+        });
+    }
+
+    // ── Bootstrap ─────────────────────────────────────────────────────────────
+    loadCurrentSetting();
+})();
+

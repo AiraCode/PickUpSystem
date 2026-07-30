@@ -80,6 +80,16 @@
                         </svg>
                         <span>Gudang &amp; Lokasi</span>
                     </a>
+                    {{-- <a href="{{ url('/admin/biaya-penjemputan') }}"
+                        class="admin-nav__link {{ request()->is('admin/biaya-penjemputan') ? 'is-active' : '' }}" data-nav-link
+                        data-tooltip="Biaya Penjemputan">
+                        <svg viewBox="0 0 24 24" aria-hidden="true">
+                            <circle cx="12" cy="12" r="8" />
+                            <path d="M12 8v4l2.5 2.5" />
+                            <path d="M7 3.5L4 6M17 3.5L20 6" />
+                        </svg>
+                        <span>Biaya Penjemputan</span>
+                    </a> --}}
                     <a href="{{ url('/admin/laporan') }}"
                         class="admin-nav__link {{ request()->is('admin/laporan') ? 'is-active' : '' }}" data-nav-link
                         data-tooltip="Laporan">

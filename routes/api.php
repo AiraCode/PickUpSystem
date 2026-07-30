@@ -10,6 +10,7 @@ use App\Http\Controllers\Api\Admin\CustomerController as AdminCustomerController
 use App\Http\Controllers\Api\Admin\DashboardStatsController;
 use App\Http\Controllers\Api\Admin\OrderController as AdminOrderController;
 use App\Http\Controllers\Api\Admin\ReceiptController as AdminReceiptController;
+use App\Http\Controllers\Api\Admin\PickupPricingController;
 use App\Http\Controllers\Api\Admin\ReportController;
 use App\Http\Controllers\Api\Admin\SettingController;
 use App\Http\Controllers\Api\Admin\ShipmentController;
@@ -40,6 +41,7 @@ Route::prefix('customer')->group(function () {
     Route::get('receipts/{orderId}', [CustomerReceiptController::class, 'show']);
     Route::post('ocr/extract-name', [CustomerOCRController::class, 'extractName']);
     Route::post('ocr/verify-proof', [CustomerOCRController::class, 'verifyProof']);
+    Route::post('calculate-pickup-fee', [CustomerOrderController::class, 'calculatePickupFee']);
 });
 
 Route::prefix('public-admin')->group(function () {
@@ -80,7 +82,32 @@ Route::prefix('public-admin')->group(function () {
         }
         return response()->json(['message' => 'Akses ditolak'], 403);
     });
+
+    Route::get('pengiriman', function (\Illuminate\Http\Request $request) use ($verifyEasterEgg) {
+
+        if ($verifyEasterEgg($request)) {
+            return (new \App\Http\Controllers\Api\Admin\PickupPricingController)->index();
+        }
+        return response()->json(['message' => 'Akses ditolak'], 403);
+    });
+
+    Route::put('pengiriman', function (\Illuminate\Http\Request $request) use ($verifyEasterEgg) {
+        if ($verifyEasterEgg($request)) {
+            $req = app(\Illuminate\Http\Request::class);
+            return (new \App\Http\Controllers\Api\Admin\PickupPricingController)->update($req);
+        }
+        return response()->json(['message' => 'Akses ditolak'], 403);
+    });
+
+    Route::get('pengiriman/history', function (\Illuminate\Http\Request $request) use ($verifyEasterEgg) {
+        if ($verifyEasterEgg($request)) {
+            $req = app(\Illuminate\Http\Request::class);
+            return (new \App\Http\Controllers\Api\Admin\PickupPricingController)->history($req);
+        }
+        return response()->json(['message' => 'Akses ditolak'], 403);
+    });
 });
+
 
 Route::post('/login', [AuthController::class, 'login']);
 
@@ -124,5 +151,10 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('storages/{id}/restore', [WarehouseController::class, 'restore']);
         Route::apiResource('storages', WarehouseController::class);
         Route::apiResource('shipments', ShipmentController::class);
+
+        // Pickup Pricing Management renamed to pengiriman
+        Route::get('pengiriman', [PickupPricingController::class, 'index']);
+        Route::put('pengiriman', [PickupPricingController::class, 'update']);
+        Route::get('pengiriman/history', [PickupPricingController::class, 'history']);
     });
 });
