@@ -17,23 +17,22 @@
                 <a href="/user" data-user-nav-link>Home</a>
                 <a href="/user#faq" data-user-nav-link>FAQ</a>
                 <a href="/user#hubungi-kami" data-user-nav-link>Hubungi Kami</a>
-                <div class="user-nav__language">
+                {{-- <div class="user-nav__language">
                     <button type="button" class="user-language" aria-label="Pilih bahasa">
                         <span class="is-active">ID</span>
                         <span>|</span>
                         <span>EN</span>
                     </button>
-                </div>
+                </div> --}}
             </nav>
         @endunless
-
+        {{--
         <div class="user-header__actions">
             <button type="button" class="user-language" aria-label="Pilih bahasa">
                 <span class="is-active">ID</span>
                 <span>|</span>
                 <span>EN</span>
             </button>
-        </div>
+        </div> --}}
     </div>
 </header>
-
