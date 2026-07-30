@@ -298,7 +298,7 @@ class OrderController extends Controller
             }
 
             $message .= "Untuk melihat rincian pesanan dan bukti transaksi, silakan klik tautan di bawah ini:\n"
-                ."🔗 http://pickupsystem.test/receipt?order_id={$order->id}\n\n"
+                ."🔗 http://noninclusive-donna-pseudoparallel.ngrok-free.dev/receipt?order_id={$order->id}\n\n"
                 .'Jika ada pertanyaan lebih lanjut, dapat menghubungi admin di nomor berikut 0812-3456-7891.';
 
             Http::withoutVerifying()
