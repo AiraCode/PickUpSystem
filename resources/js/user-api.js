@@ -1825,6 +1825,11 @@ document.addEventListener("DOMContentLoaded", () => {
                     localStorage.setItem("pickup_zip", zipStr);
                 }
 
+                const addressBadge = document.getElementById("user-selected-address");
+                if (addressBadge && (forceFill || !addressBadge.textContent)) {
+                    addressBadge.textContent = addressStr;
+                }
+
                 const citySelect = document.querySelector("[data-city-select]");
                 if (citySelect && cityStr) {
                     const options = Array.from(citySelect.options);
@@ -1840,6 +1845,32 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         } catch (e) {
             console.warn("Reverse geocoding failed:", e);
+        }
+    }
+
+    async function updateLocationFromMarker(lat, lng, forceFill = true) {
+        userLat = lat;
+        userLng = lng;
+        localStorage.setItem("pickup_lat", userLat);
+        localStorage.setItem("pickup_long", userLng);
+
+        const addressFields = document.getElementById("user-address-fields");
+        const latlongText = document.getElementById("user-latlong-text");
+        if (addressFields) addressFields.style.display = "block";
+        if (latlongText) {
+            latlongText.style.display = "block";
+            latlongText.innerHTML = `<strong>Koordinat Peta:</strong> ${userLat.toFixed(6)}, ${userLng.toFixed(6)}`;
+        }
+
+        if (userSelectedLat) userSelectedLat.textContent = userLat.toFixed(5);
+        if (userSelectedLng) userSelectedLng.textContent = userLng.toFixed(5);
+        if (userCoordsBadge) userCoordsBadge.style.display = "block";
+
+        await reverseGeocodeCoords(lat, lng, forceFill);
+        findAndDisplayNearestWarehouse();
+
+        if (userMap && userMarker) {
+            userMarker.setLatLng([userLat, userLng]);
         }
     }
 
@@ -2204,36 +2235,23 @@ document.addEventListener("DOMContentLoaded", () => {
         return null;
     }
 
-    async function handleAddressChange() {
-        if (!userAddressInput) return;
-        const address = userAddressInput.value.trim();
-        if (address) {
-            const geocoded = await geocodeAddress();
-            if (geocoded) {
-                userLat = geocoded.lat;
-                userLng = geocoded.lng;
-                localStorage.setItem("pickup_lat", userLat);
-                localStorage.setItem("pickup_long", userLng);
-                findAndDisplayNearestWarehouse();
-
-                if (
-                    typeof userMap !== "undefined" &&
-                    userMap &&
-                    typeof userMarker !== "undefined" &&
-                    userMarker
-                ) {
-                    userMap.setView([userLat, userLng], 16);
-                    userMarker.setLatLng([userLat, userLng]);
-                }
-            }
-        }
-    }
-
     if (userAddressInput) {
-        userAddressInput.addEventListener("blur", handleAddressChange);
+        userAddressInput.addEventListener("input", () => {
+            const val = userAddressInput.value;
+            localStorage.setItem("pickup_address", val);
+            const addressBadge = document.getElementById("user-selected-address");
+            if (addressBadge) addressBadge.textContent = val;
+        });
     }
     if (userCityInput) {
-        userCityInput.addEventListener("blur", handleAddressChange);
+        userCityInput.addEventListener("input", () => {
+            localStorage.setItem("pickup_city", userCityInput.value);
+        });
+    }
+    if (userZipInput) {
+        userZipInput.addEventListener("input", () => {
+            localStorage.setItem("pickup_zip", userZipInput.value);
+        });
     }
     btnOpenUserMap?.addEventListener("click", async () => {
         if (modalUserMap) modalUserMap.style.display = "flex";
@@ -2291,8 +2309,24 @@ document.addEventListener("DOMContentLoaded", () => {
                 userMap,
             );
 
-            userMap.on("click", (e) => {
+        if (!userMap) {
+            userMap = L.map("user-map-picker").setView([mapLat, mapLng], 16);
+            L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+                attribution: "© OpenStreetMap contributors",
+            }).addTo(userMap);
+
+            userMarker = L.marker([mapLat, mapLng], { draggable: true }).addTo(
+                userMap,
+            );
+
+            userMarker.on("dragend", async (e) => {
+                const pos = e.target.getLatLng();
+                await updateLocationFromMarker(pos.lat, pos.lng, true);
+            });
+
+            userMap.on("click", async (e) => {
                 userMarker.setLatLng(e.latlng);
+                await updateLocationFromMarker(e.latlng.lat, e.latlng.lng, true);
             });
         } else {
             userMap.setView([mapLat, mapLng], 16);
@@ -2358,6 +2392,7 @@ document.addEventListener("DOMContentLoaded", () => {
                             userMap.setView([lat, lon], 16);
                             userMarker.setLatLng([lat, lon]);
                         }
+                        await updateLocationFromMarker(lat, lon, true);
                     } else {
                         showCustomAlert(
                             "Lokasi tidak ditemukan. Cobalah hapus nomor rumah atau cari nama jalan utamanya saja, lalu geser pin secara manual.",
@@ -2395,68 +2430,14 @@ document.addEventListener("DOMContentLoaded", () => {
             btnSaveUserCoords.textContent = "Menyimpan...";
 
             const pos = userMarker.getLatLng();
-            userLat = pos.lat;
-            userLng = pos.lng;
-            localStorage.setItem("pickup_lat", userLat);
-            localStorage.setItem("pickup_long", userLng);
-
-            try {
-                const response = await fetch(
-                    `https://nominatim.openstreetmap.org/reverse?format=json&lat=${userLat}&lon=${userLng}&zoom=18&addressdetails=1`,
-                );
-                const result = await response.json();
-                if (result && result.display_name) {
-                    const mapSearchInput =
-                        document.getElementById("map-search-input");
-                    const userTypedAddress = mapSearchInput
-                        ? mapSearchInput.value.trim()
-                        : "";
-
-                    const addressStr = userTypedAddress || result.display_name;
-                    const cityStr =
-                        result.address?.city ||
-                        result.address?.town ||
-                        result.address?.village ||
-                        result.address?.county ||
-                        "";
-                    const zipStr = result.address?.postcode || "";
-
-                    if (userAddressInput) userAddressInput.value = addressStr;
-                    if (userCityInput) userCityInput.value = cityStr;
-                    if (userZipInput) userZipInput.value = zipStr;
-
-                    localStorage.setItem("pickup_address", addressStr);
-                    localStorage.setItem("pickup_city", cityStr);
-                    localStorage.setItem("pickup_zip", zipStr);
-
-                    const addressBadge = document.getElementById(
-                        "user-selected-address",
-                    );
-                    if (addressBadge) addressBadge.textContent = addressStr;
-                }
-            } catch (e) {
-                console.error("Reverse geocode failed", e);
-            }
-
-            if (userCoordsBadge) userCoordsBadge.style.display = "block";
-
-            const addressFields = document.getElementById(
-                "user-address-fields",
-            );
-            const latlongText = document.getElementById("user-latlong-text");
-            if (addressFields) addressFields.style.display = "block";
-            if (latlongText) {
-                latlongText.style.display = "block";
-                latlongText.innerHTML = `<strong>Koordinat Peta:</strong> ${userLat.toFixed(6)}, ${userLng.toFixed(6)}`;
-            }
-
-            if (modalUserMap) modalUserMap.style.display = "none";
-            findAndDisplayNearestWarehouse();
+            await updateLocationFromMarker(pos.lat, pos.lng, true);
 
             btnSaveUserCoords.disabled = false;
             btnSaveUserCoords.textContent = "Konfirmasi Lokasi";
+            if (modalUserMap) modalUserMap.style.display = "none";
         }
     });
+
     checkoutSubmitBtn?.addEventListener("click", (e) => {
         e.preventDefault();
         const cartSize = window.userCart ? window.userCart.size : 0;
