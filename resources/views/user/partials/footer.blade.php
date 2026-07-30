@@ -2,8 +2,9 @@
     <div class="user-footer__main">
         <div class="user-footer__identity">
             <a class="user-brand user-brand--footer" aria-label="One Stop Solution user">
-                <img src="{{ Vite::asset('resources/img/logo_admin2-removebg-preview.png') }}" alt="Modern Mulya Mandiri"
-                    class="admin-brand__logo" style="height: 44px; width: auto; object-fit: contain;">
+                <img src="{{ Vite::asset('resources/img/logo_admin2-removebg-preview.png') }}"
+                    alt="Modern Mulya Mandiri" class="admin-brand__logo"
+                    style="height: 44px; width: auto; object-fit: contain;">
 
                 <span class="user-brand__copy">
                     <strong>Modern Mulya Mandiri</strong>
@@ -24,12 +25,12 @@
             </div>
         </div>
 
-        <div class="user-footer__column user-footer__column--contact">
+        {{-- <div class="user-footer__column user-footer__column--contact">
             <span class="user-footer__label">HEADQUARTERS</span>
             <p>Jl. Gardu Induk PLN No. 5<br>Margomulyo, Tandes Lor, Kec. Tandes<br>Surabaya 60187 - Indonesia</p>
             <a href="tel:+62312977777">(+62-31) 2977777 (Hunting)</a>
             <a href="mailto:hrd@imligroup.com">hrd@imligroup.com</a>
-        </div>
+        </div> --}}
     </div>
     <div class="user-footer__bottom">
         <span>&copy; 2026 Modern Mulya Mandiri. All Rights Reserved.</span>

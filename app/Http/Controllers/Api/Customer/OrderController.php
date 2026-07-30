@@ -114,6 +114,9 @@ class OrderController extends Controller
                 foreach ($validated['items'] as $item) {
                     $accu = Accu::find($item['id']);
                     $beratKering = (float) ($accu->berat_kering ?? 0);
+                    if ($beratKering <= 0) {
+                        throw new \Exception("Aki {$accu->name} tidak dapat dipilih karena berat kering bernilai 0.");
+                    }
                     $price = (int) round($pricePerKg * $beratKering);
                     $subtotal += $price * $item['quantity'];
                     $accusPivot[$item['id']] = ['amount' => $item['quantity']];

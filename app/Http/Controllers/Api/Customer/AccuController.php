@@ -24,20 +24,25 @@ class AccuController extends Controller
         $kurs = (float) Setting::getValue('kurs', 16000);
         $cityPercentage = (float) ($city->percentage ?? 80.00);
 
-        $accus = $city->accus->map(function ($accu) use ($lme, $kurs, $cityPercentage) {
-            $beratKering = (float) ($accu->berat_kering ?? 0);
-            $pricePerKg = ($lme * $kurs * ($cityPercentage / 100)) / 1000.0;
-            $calculatedPrice = (int) round($pricePerKg * $beratKering);
+        $accus = $city->accus
+            ->filter(function ($accu) {
+                return (float) ($accu->berat_kering ?? 0) > 0;
+            })
+            ->values()
+            ->map(function ($accu) use ($lme, $kurs, $cityPercentage) {
+                $beratKering = (float) ($accu->berat_kering ?? 0);
+                $pricePerKg = ($lme * $kurs * ($cityPercentage / 100)) / 1000.0;
+                $calculatedPrice = (int) round($pricePerKg * $beratKering);
 
-            return [
-                'id' => $accu->id,
-                'brand' => '-',
-                'name' => $accu->name,
-                'berat_kering' => $beratKering,
-                'percentage' => $cityPercentage,
-                'price' => $calculatedPrice,
-            ];
-        });
+                return [
+                    'id' => $accu->id,
+                    'brand' => '-',
+                    'name' => $accu->name,
+                    'berat_kering' => $beratKering,
+                    'percentage' => $cityPercentage,
+                    'price' => $calculatedPrice,
+                ];
+            });
 
         return response()->json([
             'message' => 'Daftar aki dan harga di kota ' . $city->name,

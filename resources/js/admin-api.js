@@ -1551,6 +1551,21 @@ document.addEventListener("DOMContentLoaded", () => {
         let cachedNewAccus = [];
         let activeCityId = null;
         let activeCityName = "";
+        let currentAccuTab = 'old';
+        let currentFilteredAccus = null;
+        let currentFilteredNewAccus = null;
+
+        const updateAccuTotal = () => {
+            const accuTotal = document.getElementById("accu-total");
+            if (!accuTotal) return;
+            if (currentAccuTab === 'old') {
+                const list = currentFilteredAccus !== null ? currentFilteredAccus : cachedAccus;
+                accuTotal.innerText = list.length;
+            } else {
+                const list = currentFilteredNewAccus !== null ? currentFilteredNewAccus : cachedNewAccus;
+                accuTotal.innerText = list.length;
+            }
+        };
 
         const loadSettings = async () => {
             const res = await fetchApi("/settings");
@@ -1729,13 +1744,13 @@ document.addEventListener("DOMContentLoaded", () => {
             } else {
                 tbody.innerHTML = `<tr><td colspan="4"><div class="admin-table-empty"><strong>Belum ada aki</strong></div></td></tr>`;
             }
-            const accuTotal = document.getElementById("accu-total");
-            if (accuTotal) accuTotal.innerText = accus.length;
+            updateAccuTotal();
         };
 
         const loadAccus = async () => {
             const res = await fetchApi("/accus");
             cachedAccus = res.data || [];
+            currentFilteredAccus = null;
             renderAccus(cachedAccus);
         };
 
@@ -1761,11 +1776,13 @@ document.addEventListener("DOMContentLoaded", () => {
             } else {
                 tbody.innerHTML = `<tr><td colspan="4"><div class="admin-table-empty"><strong>Belum ada data aki baru</strong></div></td></tr>`;
             }
+            updateAccuTotal();
         };
 
         const loadNewAccus = async () => {
             const res = await fetchApi("/new-accus");
             cachedNewAccus = res.data || [];
+            currentFilteredNewAccus = null;
             renderNewAccus(cachedNewAccus);
         };
 
@@ -1776,6 +1793,7 @@ document.addEventListener("DOMContentLoaded", () => {
         loadPriceHistory();
         
         window.switchAccuTab = (tab) => {
+            currentAccuTab = tab;
             if (tab === 'old') {
                 document.getElementById('tab-old-accu').style.display = 'block';
                 document.getElementById('tab-new-accu').style.display = 'none';
@@ -1797,6 +1815,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 document.getElementById('btn-old-accu').style.color = '#64748b';
                 document.getElementById('btn-old-accu').style.boxShadow = 'none';
             }
+            updateAccuTotal();
         };
 
         const citySearchInput = document.getElementById("city-search-input");
@@ -1814,12 +1833,16 @@ document.addEventListener("DOMContentLoaded", () => {
         if (accuSearchInput) {
             accuSearchInput.addEventListener("input", (e) => {
                 const term = e.target.value.toLowerCase();
-                const filtered = cachedAccus.filter(
-                    (a) =>
-                        (a.brand && a.brand.toLowerCase().includes(term)) ||
-                        a.name.toLowerCase().includes(term),
-                );
-                renderAccus(filtered);
+                if (!term) {
+                    currentFilteredAccus = null;
+                } else {
+                    currentFilteredAccus = cachedAccus.filter(
+                        (a) =>
+                            (a.brand && a.brand.toLowerCase().includes(term)) ||
+                            a.name.toLowerCase().includes(term),
+                    );
+                }
+                renderAccus(currentFilteredAccus !== null ? currentFilteredAccus : cachedAccus);
             });
         }
         
@@ -1827,12 +1850,16 @@ document.addEventListener("DOMContentLoaded", () => {
         if (newAccuSearchInput) {
             newAccuSearchInput.addEventListener("input", (e) => {
                 const term = e.target.value.toLowerCase();
-                const filtered = cachedNewAccus.filter(
-                    (a) =>
-                        (a.brand && a.brand.toLowerCase().includes(term)) ||
-                        a.name.toLowerCase().includes(term),
-                );
-                renderNewAccus(filtered);
+                if (!term) {
+                    currentFilteredNewAccus = null;
+                } else {
+                    currentFilteredNewAccus = cachedNewAccus.filter(
+                        (a) =>
+                            (a.brand && a.brand.toLowerCase().includes(term)) ||
+                            a.name.toLowerCase().includes(term),
+                    );
+                }
+                renderNewAccus(currentFilteredNewAccus !== null ? currentFilteredNewAccus : cachedNewAccus);
             });
         }
 

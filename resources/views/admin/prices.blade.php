@@ -85,7 +85,7 @@
     <article class="admin-panel admin-table-panel" style="margin-top:20px;">
         <div class="admin-panel__head" style="flex-direction: column; align-items: flex-start; gap: 16px;">
             <div style="display:flex; justify-content: space-between; width: 100%; align-items: center; flex-wrap: wrap; gap: 10px;">
-                <h3 style="font-size:16px; margin:0;">Daftar Jenis Aki (<span id="accu-total"></span>)</h3>
+                <h3 style="font-size:16px; margin:0;">Daftar Jenis Aki (<span id="accu-total">0</span>)</h3>
                 <div style="display:flex; background:#e2e8f0; border-radius:8px; padding:4px; gap:4px; width: fit-content;">
                     <button class="admin-button" id="btn-old-accu" style="background:#fff; color:#1e293b; box-shadow:0 1px 3px rgba(0,0,0,0.1); border:none; padding:6px 16px; border-radius:6px; font-size:13px; font-weight:600;" onclick="switchAccuTab('old')">Aki Bekas (LME)</button>
                     <button class="admin-button" id="btn-new-accu" style="background:transparent; color:#64748b; border:none; padding:6px 16px; border-radius:6px; font-size:13px; font-weight:600; box-shadow:none;" onclick="switchAccuTab('new')">Aki Baru</button>

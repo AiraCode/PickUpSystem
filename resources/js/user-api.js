@@ -311,7 +311,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const res = await fetchPublicApi(`/cities/${cityId}/accus`);
         if (!res.data || !res.data.accus) return;
 
-        const accus = res.data.accus;
+        const accus = res.data.accus.filter((a) => Number(a.berat_kering || 0) > 0);
         renderProductCards(accus);
         if (window.userCart && window.userCart.size > 0) {
             window.userCart.forEach((item, key) => {
