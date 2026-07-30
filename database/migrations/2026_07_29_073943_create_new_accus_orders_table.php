@@ -13,7 +13,7 @@ return new class extends Migration
             $table->integer('orders_id')->index();
             $table->integer('new_accus_id')->index();
             $table->integer('quantity')->default(1);
-            $table->integer('price')->default(0); // Store price at the time of order
+            $table->integer('price')->default(0);
             $table->timestamps();
         });
     }

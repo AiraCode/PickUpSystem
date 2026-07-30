@@ -86,11 +86,7 @@ class OCRController extends Controller
 
         $cleanText = str_replace(["\r", "\n"], " ", $extractedText);
         $cleanText = strtoupper($cleanText);
-
-        // Strip .00 or ,00 decimal cents (e.g. IDR 50,000.00 -> IDR 50,000, or 50.000,00 -> 50.000)
         $cleanText = preg_replace('/(\d)[.,]00(?!\d)/', '$1', $cleanText);
-
-        // Extract numbers with or without thousands separators, including BCA's NOMINAL keyword
         preg_match_all('/(?:IDR|RP|TOTAL|BAYAR|NOMINAL)?\s*[:\.]?\s*(?:RP\.?\s*)?([0-9]{1,3}(?:[\.,][0-9]{3})+|[0-9]{3,})/i', $cleanText, $matches);
 
         $foundNominal = null;
@@ -114,7 +110,6 @@ class OCRController extends Controller
             }
         }
 
-        // Fallback search: extract any sequence of digits in raw text
         if (!$isMatch) {
             preg_match_all('/\b\d{4,10}\b/', $cleanText, $allDigits);
             if (!empty($allDigits[0])) {

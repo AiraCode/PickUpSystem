@@ -279,7 +279,6 @@ class OrderController extends Controller
                     ])->post('https://api.fonnte.com/send', $fonnteData);
             }
         } catch (\Exception $e) {
-            // Log error WA send if needed, but do not interrupt the flow
             \Illuminate\Support\Facades\Log::error('Gagal mengirim WA update status: ' . $e->getMessage());
         }
 

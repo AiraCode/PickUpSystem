@@ -48,47 +48,4 @@ class CustomerController extends Controller
             'data' => $customer,
         ]);
     }
-
-    /*
-    public function verifyKtp(Request $request): JsonResponse
-    {
-        $request->validate([
-            'ktp_image' => 'required|image|mimes:jpeg,png,jpg|max:4096',
-            'expected_name' => 'required|string',
-        ]);
-
-        $expectedName = strtoupper(trim($request->expected_name));
-        $ktpFile = $request->file('ktp_image');
-
-        // Kirim ke API OCR.space (gratis)
-        $response = Http::attach(
-            'file', file_get_contents($ktpFile), $ktpFile->getClientOriginalName()
-        )->post('https://api.ocr.space/parse/image', [
-            'apikey' => 'helloworld', // Ganti key gratis dari ocr.space jika error limit
-            'language' => 'eng',
-            'isOverlayRequired' => false,
-        ]);
-
-        $result = $response->json();
-        $extractedText = '';
-
-        if (!empty($result['ParsedResults'])) {
-            $extractedText = strtoupper($result['ParsedResults'][0]['ParsedText']);
-        }
-
-        // Cek kesamaan nama (harus sama persis 100%)
-        $isMatch = strpos($extractedText, $expectedName) !== false;
-
-        // Catatan: Kalau mau  pakai sistem kemiripan teks (misal 80% mirip),
-        // similar_text($expectedName, $extractedText, $percent);
-        // $isMatch = $percent >= 80;
-
-        return response()->json([
-            'message' => 'Proses verifikasi KTP selesai',
-            'is_match' => $isMatch,
-            'expected_name' => $expectedName,
-            'extracted_text' => $extractedText,
-        ]);
-    }
-    */
 }

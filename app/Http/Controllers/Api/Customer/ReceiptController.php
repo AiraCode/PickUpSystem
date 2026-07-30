@@ -22,7 +22,6 @@ class ReceiptController extends Controller
 
         $receiptData = null;
         if ($order->receipt) {
-            // Calculate price dynamically using LME formula
             $lme = (float) \App\Models\Setting::getValue('lme', 2100);
             $kurs = (float) \App\Models\Setting::getValue('kurs', 16000);
             $city = $order->city;
@@ -61,7 +60,7 @@ class ReceiptController extends Controller
                 'transfer' => $transfer,
             ];
         }
-        
+
         $newAccusFormatted = [];
         $newAccusSubtotal = 0;
         if ($order->newAccusItems && $order->newAccusItems->count() > 0) {
@@ -77,22 +76,19 @@ class ReceiptController extends Controller
                 $newAccusSubtotal += $sub;
             }
         } elseif ($order->newAccu) {
-             // Fallback for older single-item data
-             $sub = $order->newAccu->price;
-             $newAccusFormatted[] = [
-                  'id' => $order->newAccu->id,
-                  'name' => $order->newAccu->name,
-                  'amount' => 1,
-                  'price' => $order->newAccu->price,
-                  'subtotal' => $sub,
-             ];
-             $newAccusSubtotal += $sub;
+            $sub = $order->newAccu->price;
+            $newAccusFormatted[] = [
+                'id' => $order->newAccu->id,
+                'name' => $order->newAccu->name,
+                'amount' => 1,
+                'price' => $order->newAccu->price,
+                'subtotal' => $sub,
+            ];
+            $newAccusSubtotal += $sub;
         }
 
         $pickupFee = 0;
         if ($receiptData) {
-            // price_owed = rejectSubtotal - pickupFee - newAccusSubtotal
-            // pickupFee = rejectSubtotal - newAccusSubtotal - price_owed
             $calculatedPickupFee = $rejectSubtotal - $newAccusSubtotal - $order->receipt->price_owed;
             $pickupFee = max(0, $calculatedPickupFee);
         }

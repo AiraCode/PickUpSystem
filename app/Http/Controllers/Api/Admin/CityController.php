@@ -40,7 +40,6 @@ class CityController extends Controller
         $data['percentage'] = $request->input('percentage', 80.00);
         $city = City::create($data);
 
-        // Attach all existing Accus to the new city
         $accuIds = Accu::pluck('id')->toArray();
         if (!empty($accuIds)) {
             $city->accus()->syncWithoutDetaching($accuIds);

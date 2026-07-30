@@ -50,16 +50,15 @@ class OrderController extends Controller
         ]);
 
         try {
-            // Simpan transaksi DB ke dalam variabel $result
             $result = DB::transaction(function () use ($validated, $request) {
-                $ktpPath = $validated['ktp'] ?? '3578'.rand(1000000000, 9999999999);
+                $ktpPath = $validated['ktp'] ?? '3578' . rand(1000000000, 9999999999);
                 if (! empty($validated['ktp_base64'])) {
                     if (preg_match('/^data:image\/(\w+);base64,/', $validated['ktp_base64'], $type)) {
                         $data = substr($validated['ktp_base64'], strpos($validated['ktp_base64'], ',') + 1);
                         $type = strtolower($type[1]);
                         if (in_array($type, ['jpg', 'jpeg', 'png'])) {
                             $data = base64_decode($data);
-                            $filename = 'ktp/'.uniqid().'.'.$type;
+                            $filename = 'ktp/' . uniqid() . '.' . $type;
                             Storage::disk('public')->put($filename, $data);
                             $ktpPath = substr($filename, 0, 45);
                         }
@@ -151,7 +150,6 @@ class OrderController extends Controller
                     }
                 }
 
-                // Kalkulasi harga owe/receive
                 $newAccuPrice = 0;
                 $newAccusPivotData = [];
                 if ($orderType === 'trade_in' && !empty($validated['new_accus_items'])) {
@@ -168,15 +166,12 @@ class OrderController extends Controller
                     }
                 }
 
-                // Jika sell: price_owed = uang yg didapat customer (perusahaan hutang ke customer).
-                // Jika trade_in: price_owed = (uang aki bekas - fee) - harga aki baru. 
-                // Jika negatif berarti customer yang hutang ke perusahaan.
                 $priceOwed = $subtotal - $pickupFee - $newAccuPrice;
 
                 $receiptId = (DB::table('receipts')->max('id') ?? 0) + 1;
                 $receipt = Receipt::create([
                     'id' => $receiptId,
-                    'receipt_number' => 'REC-'.date('Ymd').'-'.str_pad($orderId, 4, '0', STR_PAD_LEFT),
+                    'receipt_number' => 'REC-' . date('Ymd') . '-' . str_pad($orderId, 4, '0', STR_PAD_LEFT),
                     'date' => now(),
                     'status' => 'unpaid',
                     'price_received' => 0,
@@ -185,10 +180,7 @@ class OrderController extends Controller
                     'orders_id' => $orderId,
                 ]);
 
-                // Sync pivot
                 $receipt->accus()->sync($accusPivot);
-                
-                // Insert new accus orders pivot
                 if (!empty($newAccusPivotData)) {
                     foreach ($newAccusPivotData as $pivotRow) {
                         DB::table('new_accus_orders')->insert([
@@ -208,7 +200,7 @@ class OrderController extends Controller
                         $tType = strtolower($type[1]);
                         if (in_array($tType, ['jpg', 'jpeg', 'png'])) {
                             $tData = base64_decode($tData);
-                            $tFilename = 'transfers/'.uniqid().'.'.$tType;
+                            $tFilename = 'transfers/' . uniqid() . '.' . $tType;
                             Storage::disk('public')->put($tFilename, $tData);
 
                             $transferId = (DB::table('transfers')->max('id') ?? 0) + 1;
@@ -231,41 +223,37 @@ class OrderController extends Controller
                     'order' => $order,
                     'customer' => $customer,
                     'city' => $city,
-                    'total_cost' => $priceOwed, // can be negative
+                    'total_cost' => $priceOwed,
                     'new_accu_price' => $newAccuPrice,
                 ];
             });
 
-            // Pengiriman WA (di luar DB transaction)
             $token = config('services.fonnte.token') ?? env('FONNTE_TOKEN');
             $order = $result['order'];
             $customer = $result['customer'];
             $city = $result['city'];
             $totalCost = $result['total_cost'];
-
-            // Menentukan Timezone berdasarkan Kota Pelanggan
             $cityName = strtolower($city->name ?? '');
 
             $witaCities = ['denpasar', 'badung', 'gianyar', 'singaraja', 'mataram', 'kupang', 'banjarmasin', 'balikpapan', 'samarinda', 'tarakan', 'makassar', 'manado', 'palu', 'kendari', 'gorontalo', 'mamuju', 'bali', 'lombok'];
             $witCities = ['ambon', 'ternate', 'jayapura', 'sorong', 'manokwari', 'merauke', 'timika', 'papua', 'maluku'];
 
-            $timezone = 'Asia/Jakarta'; // Default WIB
+            $timezone = 'Asia/Jakarta';
 
             foreach ($witaCities as $wita) {
                 if (str_contains($cityName, $wita)) {
-                    $timezone = 'Asia/Makassar'; // WITA
+                    $timezone = 'Asia/Makassar';
                     break;
                 }
             }
 
             foreach ($witCities as $wit) {
                 if (str_contains($cityName, $wit)) {
-                    $timezone = 'Asia/Jayapura'; // WIT
+                    $timezone = 'Asia/Jayapura';
                     break;
                 }
             }
 
-            // Dapatkan jam sesuai timezone kota pelanggan
             $date = new \DateTime('now', new \DateTimeZone($timezone));
             $hour = (int) $date->format('H');
 
@@ -280,16 +268,16 @@ class OrderController extends Controller
             }
 
             $customerName = $customer->name ?? 'Kak';
-            
+
             $isCustomerPaying = $totalCost < 0;
             $formattedTotal = number_format(abs($totalCost), 0, ',', '.');
-            
+
             $orderTypeMsg = $order->order_type === 'trade_in' ? 'Tukar Tambah Aki' : 'Penjualan Aki Bekas';
 
             $message = "Halo {$customerName}, {$greeting}! 😊\n\n"
-                ."Pesanan *{$orderTypeMsg}* Anda telah berhasil kami terima dengan rincian sebagai berikut:\n\n"
-                ."🔹 *ID Pesanan*: #{$order->id}\n";
-                
+                . "Pesanan *{$orderTypeMsg}* Anda telah berhasil kami terima dengan rincian sebagai berikut:\n\n"
+                . "🔹 *ID Pesanan*: #{$order->id}\n";
+
             if ($order->order_type === 'trade_in') {
                 if ($isCustomerPaying) {
                     $message .= "🔹 *Total Tagihan Anda*: Rp {$formattedTotal} (" . strtoupper($order->payment_method) . ")\n\n";
@@ -301,8 +289,8 @@ class OrderController extends Controller
             }
 
             $message .= "Untuk melihat rincian pesanan dan bukti transaksi, silakan klik tautan di bawah ini:\n"
-                ."🔗 http://noninclusive-donna-pseudoparallel.ngrok-free.dev/receipt?order_id={$order->id}\n\n"
-                .'Jika ada pertanyaan lebih lanjut, dapat menghubungi admin di nomor berikut 0812-3456-7891.';
+                . "🔗 http://noninclusive-donna-pseudoparallel.ngrok-free.dev/receipt?order_id={$order->id}\n\n"
+                . 'Jika ada pertanyaan lebih lanjut, dapat menghubungi admin di nomor berikut 0812-3456-7891.';
 
             Http::withoutVerifying()
                 ->withHeaders([
@@ -322,7 +310,7 @@ class OrderController extends Controller
             ], 201);
         } catch (\Exception $e) {
             return response()->json([
-                'message' => 'Terjadi kesalahan saat membuat pesanan: '.$e->getMessage(),
+                'message' => 'Terjadi kesalahan saat membuat pesanan: ' . $e->getMessage(),
             ], 500);
         }
     }

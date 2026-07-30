@@ -6,13 +6,9 @@ use Illuminate\Database\Eloquent\Model;
 
 class PriceHistory extends Model
 {
-    // Keep both variants in fillable to be tolerant of existing DB column name (LME) vs code (lme)
     protected $fillable = ['type', 'label', 'old_value', 'new_value', 'lme', 'LME'];
-
-    // Ensure the normalized accessor 'lme' is included when model is serialized to array/JSON
     protected $appends = ['lme'];
 
-    // Provide a normalized attribute 'lme' for code/frontend convenience
     public function getLmeAttribute()
     {
         // prefer numeric return
@@ -27,7 +23,6 @@ class PriceHistory extends Model
 
     public function setLmeAttribute($value)
     {
-        // Prefer writing to the existing DB column name if present
         if (array_key_exists('LME', $this->attributes)) {
             $this->attributes['LME'] = $value;
         } else {

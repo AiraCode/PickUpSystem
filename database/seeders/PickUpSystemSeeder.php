@@ -60,7 +60,6 @@ class PickUpSystemSeeder extends Seeder
 
         $now = Carbon::now();
 
-        // 1. Kota (9 Area Service)
         $citiesData = [
             ['id' => 1, 'name' => 'Jakarta', 'lat' => -6.2088, 'long' => 106.8456, 'percentage' => 82.5],
             ['id' => 2, 'name' => 'Surabaya', 'lat' => -7.2575, 'long' => 112.7521, 'percentage' => 85.0],
@@ -82,7 +81,6 @@ class PickUpSystemSeeder extends Seeder
             ]);
         }
 
-        // 2. Brands (8 Brands)
         $brandsData = ['GS Astra', 'Yuasa', 'Incoe', 'Delkor', 'Amaron', 'Bosch', 'Rocket', 'Massiv'];
         foreach ($brandsData as $idx => $bName) {
             DB::table('brands')->insert([
@@ -93,14 +91,12 @@ class PickUpSystemSeeder extends Seeder
             ]);
         }
 
-        // 0. Settings
         DB::table('settings')->truncate();
         DB::table('settings')->insert([
             ['key' => 'lme', 'value' => '2100', 'created_at' => $now, 'updated_at' => $now],
             ['key' => 'kurs', 'value' => '16000', 'created_at' => $now, 'updated_at' => $now],
         ]);
 
-        // 3. Accus (12 Tipe Aki dengan berat_kering dalam kg)
         $accusData = [
             ['id' => 1, 'name' => 'N50', 'brands_id' => 1, 'berat_kering' => 11.80],
             ['id' => 2, 'name' => 'N50Z', 'brands_id' => 1, 'berat_kering' => 13.30],
@@ -199,7 +195,6 @@ class PickUpSystemSeeder extends Seeder
             ]);
         }
 
-        // 4. Hubungan Aki per Kota (cities_has_accus)
         $cityAccuRows = [];
         foreach ($citiesData as $c) {
             foreach ($accusData as $a) {
@@ -213,7 +208,6 @@ class PickUpSystemSeeder extends Seeder
         }
         DB::table('cities_has_accus')->insert($cityAccuRows);
 
-        // 5. Admin Users
         $usersData = [
             ['id' => 1, 'name' => 'Admin Test', 'password' => Hash::make('password123')],
             ['id' => 2, 'name' => 'Admin Utama', 'password' => Hash::make('password123')],
@@ -231,7 +225,6 @@ class PickUpSystemSeeder extends Seeder
             ]);
         }
 
-        // 6. Banks
         $banksData = ['BCA', 'Mandiri', 'BNI', 'BRI', 'CIMB Niaga'];
         foreach ($banksData as $idx => $bName) {
             DB::table('banks')->insert([
@@ -242,7 +235,6 @@ class PickUpSystemSeeder extends Seeder
             ]);
         }
 
-        // 7. Gudang / Storages
         $storagesData = [
             ['id' => 1, 'name' => 'Gudang Pusat Jakarta', 'address' => 'Jl. Merdeka Raya No. 45, Jakarta', 'lat' => -6.1751, 'long' => 106.8272],
             ['id' => 2, 'name' => 'Gudang Surabaya Rungkut', 'address' => 'Kawasan Industri Rungkut, Surabaya', 'lat' => -7.3294, 'long' => 112.7661],
@@ -261,8 +253,7 @@ class PickUpSystemSeeder extends Seeder
             ]);
         }
 
-        // 8. Generate 2.537 Dummy Transactions (Spread across 2024, 2025, 2026)
-        $totalTransactions = 2537; // Diubah sesuai permintaan menjadi 2537 data
+        $totalTransactions = 2537;
 
         $firstNames = ['Agus', 'Budi', 'Candra', 'Dewi', 'Eko', 'Fajar', 'Gita', 'Hendra', 'Irfan', 'Joko', 'Kartika', 'Lestari', 'Mega', 'Novi', 'Oscar', 'Pratama', 'Rian', 'Sari', 'Taufik', 'Utami', 'Vina', 'Wawan', 'Yudi', 'Zainal'];
         $lastNames = ['Santoso', 'Wijaya', 'Pratama', 'Hidayat', 'Kusuma', 'Saputra', 'Laksana', 'Nugroho', 'Wibowo', 'Firmansyah', 'Suryono', 'Utomo', 'Subagyo', 'Gunawan', 'Setiawan'];
@@ -289,7 +280,6 @@ class PickUpSystemSeeder extends Seeder
             $streetNum = rand(1, 199);
             $pickupAddr = "$street No. $streetNum, {$cityObj['name']}";
 
-            // Random Date Generation across 2024 (35%), 2025 (45%), 2026 (20%)
             $yearRoll = rand(1, 100);
             if ($yearRoll <= 35) {
                 $year = 2024;
@@ -299,7 +289,7 @@ class PickUpSystemSeeder extends Seeder
                 $month = rand(1, 12);
             } else {
                 $year = 2026;
-                $month = rand(1, 7); // Jan - Jul 2026
+                $month = rand(1, 7);
             }
             $day = rand(1, 28);
             $hour = rand(8, 20);
@@ -333,10 +323,9 @@ class PickUpSystemSeeder extends Seeder
             $status = $statuses[array_rand($statuses)];
             $cancelReason = ($status === 'cancelled') ? 'Customer membatalkan pesanan (ganti pikiran)' : null;
 
-            // LOGIKA BARU: Tentukan apakah dijemput kurir (80% kemungkinan) atau antar sendiri (20%)
             $isCourierPickup = rand(1, 100) <= 80;
             $deliveryMethod = $isCourierPickup ? 'courier' : 'warehouse';
-            $pickupFee = $isCourierPickup ? 10000 : 0; // Biaya 10.000 jika dijemput kurir
+            $pickupFee = $isCourierPickup ? 10000 : 0;
 
             $ordersBatch[] = [
                 'id' => $i,
@@ -353,7 +342,6 @@ class PickUpSystemSeeder extends Seeder
                 'updated_at' => $updatedAt,
             ];
 
-            // Pick 1 to 2 random distinct accus
             $accuKeys = array_rand($accusData, rand(1, 2));
             if (! is_array($accuKeys)) {
                 $accuKeys = [$accuKeys];
@@ -373,8 +361,6 @@ class PickUpSystemSeeder extends Seeder
                 $accuItem2 = null;
             }
 
-            // Hitung total bersih yang dibayarkan ke customer (Total Harga Aki - Biaya Jemput)
-            // Gunakan max() agar nilai tidak negatif jika terjadi anomali harga aki di bawah 10rb
             $totalAmount = (int) max(0, $totalAccuPrice - $pickupFee);
 
             $receiptStatus = ($status === 'completed') ? 'PAID' : (($status === 'cancelled') ? 'CANCELLED' : 'UNPAID');
@@ -435,7 +421,7 @@ class PickUpSystemSeeder extends Seeder
                         'id' => $transferIdCounter++,
                         'receipts_id' => $i,
                         'users_id' => rand(1, count($usersData)),
-                        'amount' => (float) $totalAmount, // Nominal transfer sudah otomatis terpotong 10.000 jika kurir
+                        'amount' => (float) $totalAmount,
                         'transfer_date' => $receivedDate ?? $updatedAt,
                         'status' => 'COMPLETED',
                         'proof_image' => 'img/default-accu.png',
@@ -445,7 +431,6 @@ class PickUpSystemSeeder extends Seeder
                 }
             }
 
-            // Insert in chunks of 250 records to keep memory clean and fast
             if (count($customersBatch) >= 250) {
                 DB::table('customers')->insert($customersBatch);
                 DB::table('orders')->insert($ordersBatch);
@@ -467,7 +452,6 @@ class PickUpSystemSeeder extends Seeder
             }
         }
 
-        // Insert remaining rows
         if (! empty($customersBatch)) {
             DB::table('customers')->insert($customersBatch);
             DB::table('orders')->insert($ordersBatch);

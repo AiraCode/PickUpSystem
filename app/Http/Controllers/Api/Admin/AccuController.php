@@ -33,7 +33,6 @@ class AccuController extends Controller
             $trashed->restore();
             $trashed->update(['berat_kering' => $validated['berat_kering']]);
 
-            // Ensure attached to all cities
             $cityIds = City::pluck('id')->toArray();
             $trashed->cities()->syncWithoutDetaching($cityIds);
 
@@ -51,7 +50,6 @@ class AccuController extends Controller
 
         $accu = Accu::create($data);
 
-        // Automatically attach to ALL existing cities
         $cityIds = City::pluck('id')->toArray();
         if (!empty($cityIds)) {
             $accu->cities()->syncWithoutDetaching($cityIds);
