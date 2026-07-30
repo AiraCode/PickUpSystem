@@ -11,7 +11,7 @@
                     <small>One Stop Solution</small>
                 </span>
             </a>
-            <p>Modern Mulya Mandiri — One Stop Solution</p>
+
             {{-- <div class="user-footer__social">
                 <span>CONNECT WITH US</span>
                 <a href="https://www.instagram.com/imli_official/" target="_blank" rel="noopener noreferrer"
