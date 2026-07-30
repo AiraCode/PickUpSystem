@@ -297,42 +297,41 @@
         @include('user.partials.footer')
     </div>
     <div id="modal-user-map"
-        style="display:none; position:fixed; inset:0; background:rgba(0,0,0,.55); z-index:9999; align-items:center; justify-content:center; padding: 20px;">
-        <div
-            style="background:#fff; border-radius:12px; width:520px; max-width:100%; box-shadow: 0 10px 25px rgba(0,0,0,0.2); overflow:hidden; border: 1px solid #e2e8f0;">
+        style="display:none; position:fixed; inset:0; background:rgba(0,0,0,.55); z-index:9999; align-items:center; justify-content:center; padding: 12px;">
+        <div class="user-map-modal-dialog"
+            style="background:#fff; border-radius:12px; width:520px; max-width:95vw; max-height:92vh; display:flex; flex-direction:column; box-shadow: 0 10px 25px rgba(0,0,0,0.2); overflow:hidden; border: 1px solid #e2e8f0;">
             <div
-                style="padding: 16px 20px; border-bottom:1px solid #e2e8f0; display:flex; justify-content:space-between; align-items:center; background:#f8fafc;">
+                style="padding: 12px 16px; border-bottom:1px solid #e2e8f0; display:flex; justify-content:space-between; align-items:center; background:#f8fafc; flex-shrink:0;">
                 <h3 style="margin:0; font-size:15px; font-weight:700; color:#1e293b;">📍 Tentukan Lokasi Anda</h3>
                 <button type="button" style="border:none; background:none; font-size:18px; cursor:pointer; color:#64748b;"
                     onclick="document.getElementById('modal-user-map').style.display='none'">✕</button>
             </div>
             <div
-                style="padding: 12px 20px; font-size:12px; background:#fff; border-bottom:1px solid #e2e8f0; display:flex; gap:8px; align-items:center;">
+                style="padding: 10px 14px; font-size:12px; background:#fff; border-bottom:1px solid #e2e8f0; display:flex; gap:6px; align-items:center; flex-wrap:wrap; flex-shrink:0;">
                 <input type="text" id="map-search-input" placeholder="Cari alamat lengkap Anda..."
-                    style="flex:1; padding:8px 12px; border:1px solid #cbd5e1; border-radius:6px; font-size:13px;">
+                    style="flex:1; min-width:130px; padding:6px 10px; border:1px solid #cbd5e1; border-radius:6px; font-size:12px;">
                 <button type="button" id="btn-map-search" class="user-button user-button--primary"
-                    style="padding:8px 16px; border-radius:6px;">Cari</button>
+                    style="padding:6px 12px; border-radius:6px; font-size:12px;">Cari</button>
                 <button type="button" id="btn-detect-current-location" class="user-button user-button--secondary"
                     title="Gunakan Lokasi GPS Perangkat Saat Ini"
-                    style="padding:8px 12px; border-radius:6px; font-size:12px; white-space:nowrap; display:inline-flex; align-items:center; gap:4px;">
+                    style="padding:6px 10px; border-radius:6px; font-size:11px; white-space:nowrap; display:inline-flex; align-items:center; gap:4px;">
                     🎯 Deteksi Lokasi
                 </button>
             </div>
             <div
-                style="padding: 8px 20px; font-size:11px; color:#64748b; background:#f8fafc; border-bottom:1px solid #e2e8f0; line-height: 1.4;">
+                style="padding: 6px 14px; font-size:10px; color:#64748b; background:#f8fafc; border-bottom:1px solid #e2e8f0; line-height: 1.3; flex-shrink:0;">
                 *Apabila pin belum tepat di rumah Anda, mohon bantuannya untuk menggeser pin ke lokasi yang pas.<br>
-                <span style="color: #94a3b8;">(Alamat yang diketik akan otomatis tersimpan sebagai alamat
-                    pengiriman)</span>
+                <span style="color: #94a3b8;">(Alamat yang diketik akan otomatis tersimpan sebagai alamat pengiriman)</span>
             </div>
             <div id="map-geo-notice"
-                style="display:none; padding: 8px 20px; font-size:12px; border-bottom:1px solid #e2e8f0; line-height: 1.4;"></div>
-            <div id="user-map-picker" style="width:100%; height:320px; background:#e5e7eb;"></div>
+                style="display:none; padding: 6px 14px; font-size:11px; border-bottom:1px solid #e2e8f0; line-height: 1.3; flex-shrink:0;"></div>
+            <div id="user-map-picker" style="width:100%; flex:1; min-height:220px; height:280px; max-height:45vh; background:#e5e7eb;"></div>
             <div
-                style="padding: 14px 20px; display:flex; justify-content:flex-end; gap:10px; border-top:1px solid #e2e8f0; background:#f8fafc;">
+                style="padding: 10px 16px; display:flex; justify-content:flex-end; gap:10px; border-top:1px solid #e2e8f0; background:#f8fafc; flex-shrink:0;">
                 <button type="button" class="user-button user-button--secondary"
-                    onclick="document.getElementById('modal-user-map').style.display='none'">Batal</button>
+                    onclick="document.getElementById('modal-user-map').style.display='none'" style="padding:6px 14px; font-size:12px;">Batal</button>
                 <button type="button" id="btn-save-user-coords" class="user-button user-button--primary"
-                    style="background:#2563eb; color:#fff;">Konfirmasi Lokasi</button>
+                    style="background:#2563eb; color:#fff; padding:6px 14px; font-size:12px;">Konfirmasi Lokasi</button>
             </div>
         </div>
     </div>

@@ -1460,17 +1460,17 @@ body.user-shell textarea:focus-visible {
     background: #e5e8ed;
     border-top: 0;
     margin-top: -1px;
-    padding: 20px 40px 0;
+    padding: 12px 30px 0;
 }
 
 .user-footer__main {
     display: grid;
     grid-template-columns: 1fr;
-    gap: 16px;
+    gap: 6px;
 
     max-width: 1120px;
     margin: 0 auto;
-    padding-bottom: 14px;
+    padding-bottom: 4px;
 }
 
 .user-footer__identity {
@@ -1498,10 +1498,10 @@ body.user-shell textarea:focus-visible {
 }
 
 .user-footer__identity>p {
-    margin-top: 6px;
+    margin-top: 2px;
     color: var(--user-muted);
-    font-size: 15px;
-    line-height: 1.6;
+    font-size: 13px;
+    line-height: 1.3;
 }
 
 .user-footer__social {
@@ -1577,12 +1577,12 @@ body.user-shell textarea:focus-visible {
     max-width: 1120px;
     margin: 0 auto;
 
-    padding: 10px 0;
+    padding: 6px 0;
 
     border-top: 1px solid #d4d9e1;
 
     color: var(--user-muted);
-    font-size: 12px;
+    font-size: 11px;
 }
 
 .user-footer__bottom a {
@@ -2673,11 +2673,11 @@ body.user-shell textarea:focus-visible {
 
     .user-header__inner {
         height: auto;
-        min-height: 80px;
-        padding-top: 10px;
-        padding-bottom: 10px;
-        padding-left: 18px;
-        padding-right: 18px;
+        min-height: 48px;
+        padding-top: 4px;
+        padding-bottom: 4px;
+        padding-left: 14px;
+        padding-right: 14px;
         overflow: visible;
     }
 
@@ -2686,18 +2686,18 @@ body.user-shell textarea:focus-visible {
     }
 
     .user-brand img {
-        height: 80px !important;
-        max-height: 80px !important;
+        height: 38px !important;
+        max-height: 38px !important;
         object-fit: contain;
     }
 
     .user-brand__mark {
-        width: 36px;
-        height: 36px;
+        width: 30px;
+        height: 30px;
     }
 
     .user-brand__copy strong {
-        font-size: 12px;
+        font-size: 11px;
     }
 
     .user-brand__copy small {
@@ -2706,29 +2706,29 @@ body.user-shell textarea:focus-visible {
 
     .user-header__cta {
         font-size: 10px;
-        padding: 11px 12px;
+        padding: 6px 10px;
     }
 
     .user-hero,
     .user-hero__content {
-        min-height: 700px;
+        min-height: 520px;
     }
 
     .user-hero__content {
-        padding: 118px 18px 65px;
+        padding: 70px 14px 40px;
     }
 
     .user-hero h1 {
-        font-size: clamp(38px, 12vw, 58px);
-        margin-top: 23px;
+        font-size: clamp(30px, 10vw, 46px);
+        margin-top: 12px;
     }
 
     .user-hero__copy>p {
-        font-size: 15px;
+        font-size: 14px;
     }
 
     .user-section {
-        padding: 76px 0;
+        padding: 40px 0;
     }
 
     .user-section-heading--split,
@@ -2736,22 +2736,56 @@ body.user-shell textarea:focus-visible {
         display: flex;
         flex-direction: column;
         align-items: flex-start;
-        gap: 29px;
+        gap: 16px;
     }
 
     .user-process-grid,
     .user-product-grid {
         grid-template-columns: 1fr;
-        margin-top: 38px;
+        margin-top: 20px;
     }
 
     .user-process-card {
-        min-height: 210px;
+        min-height: 160px;
     }
 
     .user-catalog-toolbar {
+        top: 48px;
         flex-direction: column;
         align-items: flex-start;
+        gap: 6px;
+        margin-bottom: 12px;
+        padding-top: 6px;
+        padding-bottom: 8px;
+        margin-top: -6px;
+    }
+
+    .user-catalog-toolbar .user-field {
+        gap: 2px;
+        width: 100%;
+    }
+
+    .user-catalog-toolbar .user-field > span {
+        font-size: 10px;
+        letter-spacing: 0.08em;
+        margin-bottom: 2px;
+    }
+
+    .user-catalog-toolbar select,
+    .user-catalog-toolbar input {
+        height: 36px !important;
+        font-size: 12px !important;
+        padding: 0 10px !important;
+        min-width: 100% !important;
+        border-radius: 6px !important;
+    }
+
+    .user-catalog-notice {
+        padding: 4px 8px;
+        font-size: 10px;
+        line-height: 1.3;
+        border-radius: 6px;
+        margin-top: 2px;
     }
 
     .user-catalog-toolbar__status {
@@ -2790,22 +2824,22 @@ body.user-shell textarea:focus-visible {
     }
 
     .user-footer {
-        padding: 16px 18px 0;
+        padding: 8px 14px 0;
     }
 
     .user-footer__main {
         display: flex;
         flex-direction: column;
-        gap: 12px;
-        padding-bottom: 12px;
+        gap: 4px;
+        padding-bottom: 4px;
     }
 
     .user-footer__bottom {
         display: flex;
         flex-direction: column;
         align-items: flex-start;
-        gap: 6px;
-        padding: 8px 0;
+        gap: 4px;
+        padding: 4px 0;
     }
 
     .user-flow-hero {

@@ -1854,69 +1854,85 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         if ("geolocation" in navigator) {
-            navigator.geolocation.getCurrentPosition(
-                async (position) => {
-                    const lat = position.coords.latitude;
-                    const lng = position.coords.longitude;
-                    userLat = lat;
-                    userLng = lng;
-                    localStorage.setItem("pickup_lat", userLat);
-                    localStorage.setItem("pickup_long", userLng);
+            const handleSuccess = async (position) => {
+                const lat = position.coords.latitude;
+                const lng = position.coords.longitude;
+                userLat = lat;
+                userLng = lng;
+                localStorage.setItem("pickup_lat", userLat);
+                localStorage.setItem("pickup_long", userLng);
 
-                    const addressFields = document.getElementById("user-address-fields");
-                    const latlongText = document.getElementById("user-latlong-text");
-                    if (addressFields) addressFields.style.display = "block";
-                    if (latlongText) {
-                        latlongText.style.display = "block";
-                        latlongText.innerHTML = `<strong>Koordinat Peta:</strong> ${userLat.toFixed(6)}, ${userLng.toFixed(6)}`;
-                    }
+                const addressFields = document.getElementById("user-address-fields");
+                const latlongText = document.getElementById("user-latlong-text");
+                if (addressFields) addressFields.style.display = "block";
+                if (latlongText) {
+                    latlongText.style.display = "block";
+                    latlongText.innerHTML = `<strong>Koordinat Peta:</strong> ${userLat.toFixed(6)}, ${userLng.toFixed(6)}`;
+                }
 
-                    if (userSelectedLat) userSelectedLat.textContent = userLat.toFixed(5);
-                    if (userSelectedLng) userSelectedLng.textContent = userLng.toFixed(5);
-                    if (userCoordsBadge) userCoordsBadge.style.display = "block";
+                if (userSelectedLat) userSelectedLat.textContent = userLat.toFixed(5);
+                if (userSelectedLng) userSelectedLng.textContent = userLng.toFixed(5);
+                if (userCoordsBadge) userCoordsBadge.style.display = "block";
 
-                    await reverseGeocodeCoords(lat, lng, forceFill);
-                    findAndDisplayNearestWarehouse();
+                await reverseGeocodeCoords(lat, lng, forceFill);
+                findAndDisplayNearestWarehouse();
 
-                    if (userMap && userMarker) {
-                        userMap.setView([userLat, userLng], 16);
-                        userMarker.setLatLng([userLat, userLng]);
-                        setTimeout(() => {
-                            if (userMap) userMap.invalidateSize();
-                        }, 200);
-                    }
+                if (userMap && userMarker) {
+                    userMap.setView([userLat, userLng], 16);
+                    userMarker.setLatLng([userLat, userLng]);
+                    setTimeout(() => {
+                        if (userMap) userMap.invalidateSize();
+                    }, 250);
+                }
 
-                    if (noticeEl) {
-                        noticeEl.style.display = "block";
-                        noticeEl.style.background = "#f0fdf4";
-                        noticeEl.style.color = "#166534";
-                        noticeEl.style.borderColor = "#bbf7d0";
-                        noticeEl.innerHTML = "✅ Lokasi berhasil dideteksi dari GPS perangkat.";
-                        setTimeout(() => {
-                            if (noticeEl && noticeEl.innerHTML.includes("berhasil")) {
-                                noticeEl.style.display = "none";
-                            }
-                        }, 4000);
-                    }
-
-                    if (typeof onComplete === "function") onComplete(true);
-                },
-                (err) => {
-                    console.warn("Geolocation request failed or denied:", err.message);
-                    if (noticeEl) {
-                        noticeEl.style.display = "block";
-                        noticeEl.style.background = "#fff7ed";
-                        noticeEl.style.color = "#9a3412";
-                        noticeEl.style.borderColor = "#fed7aa";
-                        if (err.code === err.PERMISSION_DENIED) {
-                            noticeEl.innerHTML = "ℹ️ Izin lokasi tidak diberikan. Anda dapat menentukan atau mencari lokasi secara manual di peta.";
-                        } else {
-                            noticeEl.innerHTML = "ℹ️ Lokasi perangkat tidak dapat diperoleh. Anda dapat menentukan atau mencari lokasi secara manual di peta.";
+                if (noticeEl) {
+                    noticeEl.style.display = "block";
+                    noticeEl.style.background = "#f0fdf4";
+                    noticeEl.style.color = "#166534";
+                    noticeEl.style.borderColor = "#bbf7d0";
+                    noticeEl.innerHTML = "✅ Lokasi berhasil dideteksi dari GPS perangkat.";
+                    setTimeout(() => {
+                        if (noticeEl && noticeEl.innerHTML.includes("berhasil")) {
+                            noticeEl.style.display = "none";
                         }
+                    }, 4000);
+                }
+
+                if (typeof onComplete === "function") onComplete(true);
+            };
+
+            const handleError = (err) => {
+                console.warn("Geolocation request failed or denied:", err.message);
+                if (noticeEl) {
+                    noticeEl.style.display = "block";
+                    noticeEl.style.background = "#fff7ed";
+                    noticeEl.style.color = "#9a3412";
+                    noticeEl.style.borderColor = "#fed7aa";
+                    if (err.code === err.PERMISSION_DENIED) {
+                        noticeEl.innerHTML = "ℹ️ Izin lokasi tidak diberikan. Anda dapat menentukan lokasi secara manual di peta.";
+                    } else {
+                        noticeEl.innerHTML = "ℹ️ Lokasi perangkat tidak dapat diperoleh. Anda dapat menentukan lokasi secara manual di peta.";
                     }
-                    if (typeof onComplete === "function") onComplete(false);
+                }
+                if (typeof onComplete === "function") onComplete(false);
+            };
+
+            // First attempt with high accuracy
+            navigator.geolocation.getCurrentPosition(
+                handleSuccess,
+                (err) => {
+                    if (err.code !== err.PERMISSION_DENIED) {
+                        // Fallback attempt with standard accuracy
+                        navigator.geolocation.getCurrentPosition(
+                            handleSuccess,
+                            handleError,
+                            { enableHighAccuracy: false, timeout: 8000, maximumAge: 300000 }
+                        );
+                    } else {
+                        handleError(err);
+                    }
                 },
-                { enableHighAccuracy: true, timeout: 10000, maximumAge: 60000 }
+                { enableHighAccuracy: true, timeout: 6000, maximumAge: 60000 }
             );
         } else {
             if (noticeEl) {
@@ -2222,9 +2238,11 @@ document.addEventListener("DOMContentLoaded", () => {
     btnOpenUserMap?.addEventListener("click", async () => {
         if (modalUserMap) modalUserMap.style.display = "flex";
 
-        const openMapAndDetect = async () => {
+        // Request location permission immediately on click gesture
+        requestDeviceLocation(true);
+
+        const openMap = async () => {
             await initPickerMap();
-            requestDeviceLocation(true);
         };
 
         if (typeof L === "undefined") {
@@ -2238,10 +2256,10 @@ document.addEventListener("DOMContentLoaded", () => {
             document.head.appendChild(script);
 
             script.onload = async () => {
-                await openMapAndDetect();
+                await openMap();
             };
         } else {
-            await openMapAndDetect();
+            await openMap();
         }
     });
 
