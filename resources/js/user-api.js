@@ -2409,11 +2409,13 @@ document.addEventListener("DOMContentLoaded", () => {
                     if (results && results.length > 0) {
                         const lat = parseFloat(results[0].lat);
                         const lon = parseFloat(results[0].lon);
+                        const fullSearchAddress = results[0].display_name || null;
+
                         if (userMap && userMarker) {
                             userMap.setView([lat, lon], 16);
                             userMarker.setLatLng([lat, lon]);
                         }
-                        await updateLocationFromMarker(lat, lon, true);
+                        await updateLocationFromMarker(lat, lon, true, fullSearchAddress);
                     } else {
                         showCustomAlert(
                             "Lokasi tidak ditemukan. Cobalah hapus nomor rumah atau cari nama jalan utamanya saja, lalu geser pin secara manual.",
