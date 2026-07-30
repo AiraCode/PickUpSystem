@@ -110,7 +110,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 card.style.display = "none";
             }
         });
-        
+
         const hintEl = document.getElementById("search-hint-placeholder");
         if (hintEl) {
             hintEl.style.display = query.length === 0 ? "block" : "none";
@@ -192,7 +192,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 </div>`;
             })
             .join("");
-            
+
         let hintHtml = `<div id="search-hint-placeholder" style="text-align:center; padding: 40px 20px; color: #64748b; ${searchQuery.length === 0 ? '' : 'display:none;'}">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:48px;height:48px;margin:0 auto 12px;display:block;opacity:0.4;">
                         <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
@@ -200,7 +200,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     <strong>Silakan mencari jenis aki terlebih dahulu.</strong>
                     <p style="font-size:13px;">Ketikkan jenis aki pada kolom pencarian di atas.</p>
                 </div>`;
-                
+
         batteryList.innerHTML = hintHtml + cardsHtml;
         bindProductCardEvents();
         if (typeof window.updateProductCardButtons === "function") {
@@ -282,14 +282,14 @@ document.addEventListener("DOMContentLoaded", () => {
                     addButton.setAttribute("data-is-animating", "true");
                     const originalText = "Update jumlah keranjang";
                     addButton.textContent = "✓ Jumlah telah diupdate";
-                    addButton.style.backgroundColor = "#e04b4b"; 
+                    addButton.style.backgroundColor = "#e04b4b";
                     addButton.style.borderColor = "#e04b4b";
                     addButton.style.color = "#fff";
-                    
+
                     if (addButton.dataset.animTimeoutId) {
                         clearTimeout(Number(addButton.dataset.animTimeoutId));
                     }
-                    
+
                     const timeoutId = setTimeout(() => {
                         addButton.setAttribute("data-is-animating", "false");
                         if (window.userCart.has(name)) {
@@ -299,7 +299,7 @@ document.addEventListener("DOMContentLoaded", () => {
                         addButton.style.borderColor = "";
                         addButton.style.color = "";
                     }, 1500);
-                    
+
                     addButton.dataset.animTimeoutId = timeoutId.toString();
                 }
             });
@@ -384,7 +384,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 e.target.setSelectionRange(start, end);
             });
         }
-        
+
         const manualNameInputEl = identityForm.querySelector(
             'input[name="manual_full_name"]',
         );
@@ -467,10 +467,10 @@ document.addEventListener("DOMContentLoaded", () => {
                     bankName.toLowerCase().includes(k.toLowerCase()),
                 )
                     ? bankRules[
-                          Object.keys(bankRules).find((k) =>
-                              bankName.toLowerCase().includes(k.toLowerCase()),
-                          )
-                      ]
+                    Object.keys(bankRules).find((k) =>
+                        bankName.toLowerCase().includes(k.toLowerCase()),
+                    )
+                    ]
                     : { min: 5, max: 30, msg: "minimal 5 digit" };
 
                 accountNumberInput.disabled = false;
@@ -788,7 +788,7 @@ document.addEventListener("DOMContentLoaded", () => {
                             manualWrapper.style.display = "block";
                             const manualInput = manualWrapper.querySelector('input');
                             if (manualInput) manualInput.required = true;
-                            
+
                             const ocrInput = document.querySelector('input[name="full_name"]');
                             if (ocrInput) ocrInput.required = false;
                         }
@@ -1042,228 +1042,228 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 let nameVal =
                     form.querySelector('input[name="full_name"]')?.value.trim() ||
-                "";
-            const manualWrapper = document.getElementById("manual-name-wrapper");
-            const manualInput = form.querySelector('input[name="manual_full_name"]');
-            if (manualWrapper && manualWrapper.style.display !== "none" && manualInput && manualInput.value.trim() !== "") {
-                nameVal = manualInput.value.trim();
-            }
+                    "";
+                const manualWrapper = document.getElementById("manual-name-wrapper");
+                const manualInput = form.querySelector('input[name="manual_full_name"]');
+                if (manualWrapper && manualWrapper.style.display !== "none" && manualInput && manualInput.value.trim() !== "") {
+                    nameVal = manualInput.value.trim();
+                }
 
-            const holderVal =
-                form
-                    .querySelector('input[name="account_holder"]')
-                    ?.value.trim() || "";
-            const numberVal =
-                form
-                    .querySelector('input[name="account_number"]')
-                    ?.value.trim() || "";
-            const waVal =
-                form.querySelector('input[name="whatsapp"]')?.value.trim() ||
-                "";
+                const holderVal =
+                    form
+                        .querySelector('input[name="account_holder"]')
+                        ?.value.trim() || "";
+                const numberVal =
+                    form
+                        .querySelector('input[name="account_number"]')
+                        ?.value.trim() || "";
+                const waVal =
+                    form.querySelector('input[name="whatsapp"]')?.value.trim() ||
+                    "";
 
-            //Validasi OCR nama
-            if (!nameVal) {
-                showCustomAlert(
-                    "Harap upload foto KTP atau SIM terlebih dahulu agar nama dapat diekstrak otomatis.",
-                );
-                return;
-            }
-            const namePattern = /^[a-zA-Z\s.,]+$/;
-            if (!namePattern.test(holderVal)) {
-                showCustomAlert(
-                    "Nama pemilik rekening hanya boleh berisi huruf, spasi, titik, dan koma!",
-                );
-                return;
-            }
-            const numberPattern = /^[0-9]+$/;
-            if (!numberPattern.test(numberVal)) {
-                showCustomAlert("Nomor rekening hanya boleh berisi angka!");
-                return;
-            }
-            if (!numberPattern.test(waVal)) {
-                showCustomAlert("Nomor WhatsApp hanya boleh berisi angka!");
-                return;
-            }
-            //Validasi nama KTP harus sama dengan nama pemilik rekening (mengabaikan gelar)
-            const stripTitles = (str) => {
-                let s = str.toLowerCase();
-                // Gabungkan gelar yang sering terpisah spasi akibat OCR (misal "s. psi" -> "spsi")
-                s = s.replace(/\b(s|m)\b\.?\s+(psi|pd|kom|si|t|e|h|s)\b/g, "$1$2");
-                s = s.replace(/\ba\b\.?\s+md\b/g, "amd");
-                s = s.replace(/\bamd\b\.?\s+kep\b/g, "amdkep");
-                
-                // Hapus titik agar gelar seperti "s.psi" menyatu jadi "spsi"
-                s = s.replace(/\./g, "");
-                
-                // Pisahkan string berdasarkan karakter non-alfabet (spasi, koma, strip, dll)
-                let words = s.split(/[^a-z]+/);
-                
-                const titles = ['spsi', 'spd', 'skom', 'msi', 'prof', 'dr', 'amd', 'kep', 'amdkep', 'st', 'se', 'sh', 'ir', 'dra', 'drs', 'h', 'hj', 'ss', 'mkom', 'mpd', 'ssi', 'sst'];
-                
-                return words.filter(w => !titles.includes(w)).join('');
-            };
-            const cleanNameVal = stripTitles(nameVal);
-            const cleanHolderVal = stripTitles(holderVal);
-            if (
-                cleanNameVal !== cleanHolderVal
-            ) {
-                showCustomAlert(
-                    "Nama pada KTP/SIM tidak sesuai dengan nama pemilik rekening! Pastikan kedua nama identik untuk mencegah identitas ganda (Gelar akademik diabaikan).",
-                );
-                return;
-            }
-            const ktpInput = form.querySelector(
-                'input[name="identity_document"]',
-            );
-            const accuKtpInputNode = document.getElementById("accu-ktp-file-input");
-            
-            let ktpFile = ktpInput && ktpInput.files ? ktpInput.files[0] : null;
-            if (!ktpFile && accuKtpInputNode && accuKtpInputNode.files) {
-                ktpFile = accuKtpInputNode.files[0];
-            }
-
-            if (!ktpFile) {
-                showCustomAlert("Harap upload foto identitas Anda.");
-                return;
-            }
-            let ktpBase64 = null;
-            try {
-                ktpBase64 = await new Promise((resolve, reject) => {
-                    const reader = new FileReader();
-                    reader.onload = (ev) => resolve(ev.target.result);
-                    reader.onerror = (err) => reject(err);
-                    reader.readAsDataURL(ktpFile);
-                });
-            } catch (err) {
-                showCustomAlert("Gagal membaca file gambar.");
-                return;
-            }
-
-            const cityId = localStorage.getItem("pickup_city_id") || 1;
-            const addressInput =
-                document.querySelector('textarea[name="address"]') ||
-                form.querySelector('input[name="full_name"]');
-
-            const savedCartItems = JSON.parse(
-                localStorage.getItem("pickup_cart") || "[]",
-            );
-            const itemsPayload = savedCartItems.map((item) => ({
-                id: parseInt(item.id) || 1,
-                quantity: parseInt(item.quantity) || 1,
-            }));
-            const deliveryMethodVal =
-                localStorage.getItem("pickup_delivery_method") || "warehouse";
-
-            const orderTypeVal = localStorage.getItem("pickup_order_type") || "sell";
-            const newAccusIdVal = parseInt(localStorage.getItem("pickup_trade_in_accu_id")) || null;
-
-            let rejectSubtotal = 0;
-            savedCartItems.forEach(item => {
-                rejectSubtotal += (parseFloat(item.price) || 0) * (parseInt(item.quantity) || 1);
-            });
-            let modalNewAccuTotal = 0;
-            const savedTradeInCart = orderTypeVal === "trade_in" ? JSON.parse(localStorage.getItem("pickup_trade_in_cart") || "[]") : [];
-            savedTradeInCart.forEach(item => {
-                modalNewAccuTotal += (parseFloat(item.price) || 0) * (parseInt(item.quantity) || 1);
-            });
-            const fee = Number(localStorage.getItem("pickup_fee")) || 0;
-            const netDiff = (rejectSubtotal - fee) - modalNewAccuTotal;
-            const userMustPay = orderTypeVal === "trade_in" && netDiff < 0;
-
-            const transferInput = document.getElementById("transfer-proof-input");
-            
-            if (userMustPay) {
-                if (!transferInput || !transferInput.files || !transferInput.files[0]) {
-                    showCustomAlert("Harap upload bukti transfer untuk pembayaran kekurangan Trade In.");
+                //Validasi OCR nama
+                if (!nameVal) {
+                    showCustomAlert(
+                        "Harap upload foto KTP atau SIM terlebih dahulu agar nama dapat diekstrak otomatis.",
+                    );
                     return;
                 }
-            }
+                const namePattern = /^[a-zA-Z\s.,]+$/;
+                if (!namePattern.test(holderVal)) {
+                    showCustomAlert(
+                        "Nama pemilik rekening hanya boleh berisi huruf, spasi, titik, dan koma!",
+                    );
+                    return;
+                }
+                const numberPattern = /^[0-9]+$/;
+                if (!numberPattern.test(numberVal)) {
+                    showCustomAlert("Nomor rekening hanya boleh berisi angka!");
+                    return;
+                }
+                if (!numberPattern.test(waVal)) {
+                    showCustomAlert("Nomor WhatsApp hanya boleh berisi angka!");
+                    return;
+                }
+                //Validasi nama KTP harus sama dengan nama pemilik rekening (mengabaikan gelar)
+                const stripTitles = (str) => {
+                    let s = str.toLowerCase();
+                    // Gabungkan gelar yang sering terpisah spasi akibat OCR (misal "s. psi" -> "spsi")
+                    s = s.replace(/\b(s|m)\b\.?\s+(psi|pd|kom|si|t|e|h|s)\b/g, "$1$2");
+                    s = s.replace(/\ba\b\.?\s+md\b/g, "amd");
+                    s = s.replace(/\bamd\b\.?\s+kep\b/g, "amdkep");
 
-            let transferProofBase64 = null;
-            if (transferInput && transferInput.files && transferInput.files[0]) {
+                    // Hapus titik agar gelar seperti "s.psi" menyatu jadi "spsi"
+                    s = s.replace(/\./g, "");
+
+                    // Pisahkan string berdasarkan karakter non-alfabet (spasi, koma, strip, dll)
+                    let words = s.split(/[^a-z]+/);
+
+                    const titles = ['spsi', 'spd', 'skom', 'msi', 'prof', 'dr', 'amd', 'kep', 'amdkep', 'st', 'se', 'sh', 'ir', 'dra', 'drs', 'h', 'hj', 'ss', 'mkom', 'mpd', 'ssi', 'sst'];
+
+                    return words.filter(w => !titles.includes(w)).join('');
+                };
+                const cleanNameVal = stripTitles(nameVal);
+                const cleanHolderVal = stripTitles(holderVal);
+                if (
+                    cleanNameVal !== cleanHolderVal
+                ) {
+                    showCustomAlert(
+                        "Nama pada KTP/SIM tidak sesuai dengan nama pemilik rekening! Pastikan kedua nama identik untuk mencegah identitas ganda (Gelar akademik diabaikan).",
+                    );
+                    return;
+                }
+                const ktpInput = form.querySelector(
+                    'input[name="identity_document"]',
+                );
+                const accuKtpInputNode = document.getElementById("accu-ktp-file-input");
+
+                let ktpFile = ktpInput && ktpInput.files ? ktpInput.files[0] : null;
+                if (!ktpFile && accuKtpInputNode && accuKtpInputNode.files) {
+                    ktpFile = accuKtpInputNode.files[0];
+                }
+
+                if (!ktpFile) {
+                    showCustomAlert("Harap upload foto identitas Anda.");
+                    return;
+                }
+                let ktpBase64 = null;
                 try {
-                    transferProofBase64 = await new Promise((resolve, reject) => {
-                        const r = new FileReader();
-                        r.onload = (ev) => resolve(ev.target.result);
-                        r.onerror = (err) => reject(err);
-                        r.readAsDataURL(transferInput.files[0]);
+                    ktpBase64 = await new Promise((resolve, reject) => {
+                        const reader = new FileReader();
+                        reader.onload = (ev) => resolve(ev.target.result);
+                        reader.onerror = (err) => reject(err);
+                        reader.readAsDataURL(ktpFile);
                     });
-                } catch (e) {
-                    console.error("Gagal membaca bukti transfer:", e);
+                } catch (err) {
+                    showCustomAlert("Gagal membaca file gambar.");
+                    return;
                 }
-            }
 
-            const flagReasons = [];
-            if (manualWrapper && manualWrapper.style.display !== "none") {
-                flagReasons.push("Nama diisi manual karena OCR KTP gagal > 3x");
-            }
+                const cityId = localStorage.getItem("pickup_city_id") || 1;
+                const addressInput =
+                    document.querySelector('textarea[name="address"]') ||
+                    form.querySelector('input[name="full_name"]');
 
-            const finalFlag = flagReasons.length > 0 ? 0 : 1;
-            const finalReason = flagReasons.length > 0 ? flagReasons.join(" | ") : null;
+                const savedCartItems = JSON.parse(
+                    localStorage.getItem("pickup_cart") || "[]",
+                );
+                const itemsPayload = savedCartItems.map((item) => ({
+                    id: parseInt(item.id) || 1,
+                    quantity: parseInt(item.quantity) || 1,
+                }));
+                const deliveryMethodVal =
+                    localStorage.getItem("pickup_delivery_method") || "warehouse";
 
-            formDataToSubmit = {
-                name: nameVal,
-                phone_number: waVal,
-                address:
-                    localStorage.getItem("pickup_address") ||
-                    nameVal + " - Surabaya",
-                address_note: localStorage.getItem("pickup_address_note") || "",
-                banks_id: bankSelect ? parseInt(bankSelect.value) || 1 : 1,
-                account_name: holderVal,
-                account_number: numberVal,
-                cities_id: parseInt(cityId) || 1,
-                pickup_address:
-                    localStorage.getItem("pickup_address") ||
-                    "Jl. Raya Utama No. 12",
-                pickup_address_note:
-                    localStorage.getItem("pickup_address_note") || "",
-                pickup_lat:
-                    parseFloat(localStorage.getItem("pickup_lat")) || -7.2575,
-                pickup_long:
-                    parseFloat(localStorage.getItem("pickup_long")) || 112.7521,
-                delivery_method: deliveryMethodVal,
-                items: itemsPayload,
-                ktp_base64: ktpBase64,
-                transfer_proof_base64: transferProofBase64,
-                flag: finalFlag,
-                flag_reason: finalReason,
-                order_type: orderTypeVal,
-                new_accus_id: newAccusIdVal,
-                new_accus_items: savedTradeInCart,
-            };
+                const orderTypeVal = localStorage.getItem("pickup_order_type") || "sell";
+                const newAccusIdVal = parseInt(localStorage.getItem("pickup_trade_in_accu_id")) || null;
 
-            if (modal) {
-                const elNama = document.getElementById("summary-nama");
-                const elWa = document.getElementById("summary-wa");
-                const elBank = document.getElementById("summary-bank");
-                const elAlamat = document.getElementById("summary-alamat");
-                const elCatatan = document.getElementById("summary-catatan");
+                let rejectSubtotal = 0;
+                savedCartItems.forEach(item => {
+                    rejectSubtotal += (parseFloat(item.price) || 0) * (parseInt(item.quantity) || 1);
+                });
+                let modalNewAccuTotal = 0;
+                const savedTradeInCart = orderTypeVal === "trade_in" ? JSON.parse(localStorage.getItem("pickup_trade_in_cart") || "[]") : [];
+                savedTradeInCart.forEach(item => {
+                    modalNewAccuTotal += (parseFloat(item.price) || 0) * (parseInt(item.quantity) || 1);
+                });
+                const fee = Number(localStorage.getItem("pickup_fee")) || 0;
+                const netDiff = (rejectSubtotal - fee) - modalNewAccuTotal;
+                const userMustPay = orderTypeVal === "trade_in" && netDiff < 0;
 
-                if (elNama) elNama.textContent = nameVal;
-                if (elWa) elWa.textContent = waVal;
-                if (elBank) {
-                    const bankText = bankSelect
-                        ? bankSelect.options[bankSelect.selectedIndex]?.text
-                        : "";
-                    elBank.textContent = `${bankText} - ${numberVal} (a.n ${holderVal})`;
+                const transferInput = document.getElementById("transfer-proof-input");
+
+                if (userMustPay) {
+                    if (!transferInput || !transferInput.files || !transferInput.files[0]) {
+                        showCustomAlert("Harap upload bukti transfer untuk pembayaran kekurangan Trade In.");
+                        return;
+                    }
                 }
-                if (elAlamat)
-                    elAlamat.textContent = formDataToSubmit.pickup_address;
-                if (elCatatan)
-                    elCatatan.textContent =
-                        formDataToSubmit.pickup_address_note || "-";
 
-                // UI ringkasan aki di modal
-                const modalCartItems = document.getElementById("modal-cart-items");
-                if (modalCartItems) {
-                    let modalItemsHtml = "";
-                    let modalSubtotal = 0;
-                    savedCartItems.forEach((item) => {
-                        const qty = parseInt(item.quantity) || 1;
-                        const price = parseFloat(item.price) || 0;
-                        const sub = qty * price;
-                        modalSubtotal += sub;
-                        modalItemsHtml += `
+                let transferProofBase64 = null;
+                if (transferInput && transferInput.files && transferInput.files[0]) {
+                    try {
+                        transferProofBase64 = await new Promise((resolve, reject) => {
+                            const r = new FileReader();
+                            r.onload = (ev) => resolve(ev.target.result);
+                            r.onerror = (err) => reject(err);
+                            r.readAsDataURL(transferInput.files[0]);
+                        });
+                    } catch (e) {
+                        console.error("Gagal membaca bukti transfer:", e);
+                    }
+                }
+
+                const flagReasons = [];
+                if (manualWrapper && manualWrapper.style.display !== "none") {
+                    flagReasons.push("Nama diisi manual karena OCR KTP gagal > 3x");
+                }
+
+                const finalFlag = flagReasons.length > 0 ? 0 : 1;
+                const finalReason = flagReasons.length > 0 ? flagReasons.join(" | ") : null;
+
+                formDataToSubmit = {
+                    name: nameVal,
+                    phone_number: waVal,
+                    address:
+                        localStorage.getItem("pickup_address") ||
+                        nameVal + " - Surabaya",
+                    address_note: localStorage.getItem("pickup_address_note") || "",
+                    banks_id: bankSelect ? parseInt(bankSelect.value) || 1 : 1,
+                    account_name: holderVal,
+                    account_number: numberVal,
+                    cities_id: parseInt(cityId) || 1,
+                    pickup_address:
+                        localStorage.getItem("pickup_address") ||
+                        "Jl. Raya Utama No. 12",
+                    pickup_address_note:
+                        localStorage.getItem("pickup_address_note") || "",
+                    pickup_lat:
+                        parseFloat(localStorage.getItem("pickup_lat")) || -7.2575,
+                    pickup_long:
+                        parseFloat(localStorage.getItem("pickup_long")) || 112.7521,
+                    delivery_method: deliveryMethodVal,
+                    items: itemsPayload,
+                    ktp_base64: ktpBase64,
+                    transfer_proof_base64: transferProofBase64,
+                    flag: finalFlag,
+                    flag_reason: finalReason,
+                    order_type: orderTypeVal,
+                    new_accus_id: newAccusIdVal,
+                    new_accus_items: savedTradeInCart,
+                };
+
+                if (modal) {
+                    const elNama = document.getElementById("summary-nama");
+                    const elWa = document.getElementById("summary-wa");
+                    const elBank = document.getElementById("summary-bank");
+                    const elAlamat = document.getElementById("summary-alamat");
+                    const elCatatan = document.getElementById("summary-catatan");
+
+                    if (elNama) elNama.textContent = nameVal;
+                    if (elWa) elWa.textContent = waVal;
+                    if (elBank) {
+                        const bankText = bankSelect
+                            ? bankSelect.options[bankSelect.selectedIndex]?.text
+                            : "";
+                        elBank.textContent = `${bankText} - ${numberVal} (a.n ${holderVal})`;
+                    }
+                    if (elAlamat)
+                        elAlamat.textContent = formDataToSubmit.pickup_address;
+                    if (elCatatan)
+                        elCatatan.textContent =
+                            formDataToSubmit.pickup_address_note || "-";
+
+                    // UI ringkasan aki di modal
+                    const modalCartItems = document.getElementById("modal-cart-items");
+                    if (modalCartItems) {
+                        let modalItemsHtml = "";
+                        let modalSubtotal = 0;
+                        savedCartItems.forEach((item) => {
+                            const qty = parseInt(item.quantity) || 1;
+                            const price = parseFloat(item.price) || 0;
+                            const sub = qty * price;
+                            modalSubtotal += sub;
+                            modalItemsHtml += `
                             <tr>
                                 <td><strong>${item.name}</strong><br><small style="color: #64748b;">(Aki Reject)</small></td>
                                 <td style="text-align: center;">${qty} unit</td>
@@ -1271,17 +1271,17 @@ document.addEventListener("DOMContentLoaded", () => {
                                 <td style="text-align: right; font-weight: 600; color: #10b981;">+ ${rupiah(sub)}</td>
                             </tr>
                         `;
-                    });
+                        });
 
-                    let modalNewAccuTotal = 0;
-                    const savedTradeInCart = JSON.parse(localStorage.getItem("pickup_trade_in_cart") || "[]");
-                    if (orderTypeVal === "trade_in" && savedTradeInCart.length > 0) {
-                        savedTradeInCart.forEach(item => {
-                            const qty = parseInt(item.quantity) || 1;
-                            const price = parseFloat(item.price) || 0;
-                            const sub = qty * price;
-                            modalNewAccuTotal += sub;
-                            modalItemsHtml += `
+                        let modalNewAccuTotal = 0;
+                        const savedTradeInCart = JSON.parse(localStorage.getItem("pickup_trade_in_cart") || "[]");
+                        if (orderTypeVal === "trade_in" && savedTradeInCart.length > 0) {
+                            savedTradeInCart.forEach(item => {
+                                const qty = parseInt(item.quantity) || 1;
+                                const price = parseFloat(item.price) || 0;
+                                const sub = qty * price;
+                                modalNewAccuTotal += sub;
+                                modalItemsHtml += `
                                 <tr>
                                     <td><strong>${item.name}</strong><br><small style="color: #2563eb; font-weight:700;">[AKI BARU - TRADE IN]</small></td>
                                     <td style="text-align: center;">${qty} unit</td>
@@ -1289,48 +1289,48 @@ document.addEventListener("DOMContentLoaded", () => {
                                     <td style="text-align: right; font-weight: 600; color: #ef4444;">- ${rupiah(sub)}</td>
                                 </tr>
                             `;
-                        });
-                    }
+                            });
+                        }
 
-                    modalCartItems.innerHTML = modalItemsHtml;
+                        modalCartItems.innerHTML = modalItemsHtml;
 
-                    const elSubtotal = document.getElementById("modal-subtotal");
-                    const elFee = document.getElementById("modal-fee");
-                    const elTotal = document.getElementById("modal-total");
-                    const totalLabelEl = document.getElementById("modal-total-label");
-                    const fee = Number(localStorage.getItem("pickup_fee")) || 0;
+                        const elSubtotal = document.getElementById("modal-subtotal");
+                        const elFee = document.getElementById("modal-fee");
+                        const elTotal = document.getElementById("modal-total");
+                        const totalLabelEl = document.getElementById("modal-total-label");
+                        const fee = Number(localStorage.getItem("pickup_fee")) || 0;
 
-                    if (elSubtotal) elSubtotal.textContent = rupiah(modalSubtotal);
-                    if (elFee) elFee.textContent = fee === 0 ? "Gratis" : "- " + rupiah(fee);
+                        if (elSubtotal) elSubtotal.textContent = rupiah(modalSubtotal);
+                        if (elFee) elFee.textContent = fee === 0 ? "Gratis" : "- " + rupiah(fee);
 
-                    if (elTotal) {
-                        if (orderTypeVal === "trade_in") {
-                            const net = modalSubtotal - fee - modalNewAccuTotal;
-                            const isMinus = net < 0;
-                            elTotal.textContent = rupiah(Math.abs(net));
-                            if (isMinus) {
-                                elTotal.style.color = "#dc2626";
-                                if (totalLabelEl) totalLabelEl.textContent = "Kekurangan Biaya (Dibayar Pembeli)";
+                        if (elTotal) {
+                            if (orderTypeVal === "trade_in") {
+                                const net = modalSubtotal - fee - modalNewAccuTotal;
+                                const isMinus = net < 0;
+                                elTotal.textContent = rupiah(Math.abs(net));
+                                if (isMinus) {
+                                    elTotal.style.color = "#dc2626";
+                                    if (totalLabelEl) totalLabelEl.textContent = "Kekurangan Biaya (Dibayar Pembeli)";
+                                } else {
+                                    elTotal.style.color = "#10b981";
+                                    if (totalLabelEl) totalLabelEl.textContent = "Kelebihan Saldo (Dibayar MMM ke Penjual)";
+                                }
                             } else {
-                                elTotal.style.color = "#10b981";
-                                if (totalLabelEl) totalLabelEl.textContent = "Kelebihan Saldo (Dibayar MMM ke Penjual)";
+                                const net = modalSubtotal - fee;
+                                elTotal.textContent = rupiah(net);
+                                elTotal.style.color = "var(--user-blue)";
+                                if (totalLabelEl) totalLabelEl.textContent = "Total Penjualan (Dibayar ke Penjual)";
                             }
-                        } else {
-                            const net = modalSubtotal - fee;
-                            elTotal.textContent = rupiah(net);
-                            elTotal.style.color = "var(--user-blue)";
-                            if (totalLabelEl) totalLabelEl.textContent = "Total Penjualan (Dibayar ke Penjual)";
                         }
                     }
-                }
 
-                modal.hidden = false;
-                document.body.classList.add("overflow-hidden");
-            } else {
-                submitOrder(formDataToSubmit);
-            }
-        });
-    }
+                    modal.hidden = false;
+                    document.body.classList.add("overflow-hidden");
+                } else {
+                    submitOrder(formDataToSubmit);
+                }
+            });
+        }
 
         const btnModalConfirmSubmit = document.getElementById("btn-modal-confirm-submit");
         if (btnModalConfirmSubmit) {
@@ -1499,7 +1499,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     itemsList.forEach((item) => {
                         subtotal += item.subtotal || 0;
                     });
-                    
+
                     const isTradeIn = o.order_type === "trade_in";
                     let newAccuSubtotal = 0;
                     if (isTradeIn && o.new_accus_items) {
@@ -1510,14 +1510,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
                     const totalCost = receipt.price_owed || subtotal;
                     let deliveryCost = o.pickup_fee !== undefined ? o.pickup_fee : 0;
-                    
+
                     if (o.pickup_fee === undefined) {
                         deliveryCost = subtotal - totalCost;
                         if (deliveryCost < 0) {
                             deliveryCost = Math.abs(deliveryCost);
                         }
                     }
-                    
+
                     const orderDeliveryMethod =
                         o.delivery_method || "warehouse";
                     const isCourier = orderDeliveryMethod === "courier";
@@ -1650,7 +1650,7 @@ document.addEventListener("DOMContentLoaded", () => {
                                 </tr>
                             `).join("");
                         }
-                        
+
                         const newAccusList = o.new_accus_items || [];
                         if (newAccusList.length > 0) {
                             html += `<tr><td colspan="4" style="background:#eff6ff; font-size:12px; font-weight:700; color:#1d4ed8; padding:8px 12px; text-transform:uppercase;">Aki Baru (Trade In)</td></tr>`;
@@ -1663,11 +1663,11 @@ document.addEventListener("DOMContentLoaded", () => {
                                 </tr>
                             `).join("");
                         }
-                        
+
                         if (itemsList.length === 0 && newAccusList.length === 0) {
                             html = '<tr><td colspan="4"><div class="user-receipt__empty"><strong>Detail aki belum tersedia</strong><span>Item akan muncul setelah transaksi terhubung.</span></div></td></tr>';
                         }
-                        
+
                         tableBody.innerHTML = html;
                     }
                     const summaryBlocks = receiptContainer.querySelector(
@@ -1676,13 +1676,13 @@ document.addEventListener("DOMContentLoaded", () => {
                     if (summaryBlocks) {
                         const divs = summaryBlocks.querySelectorAll("div");
                         let divIndex = 0;
-                        
+
                         if (divs[divIndex]) {
                             divs[divIndex].querySelector("span").textContent = "Subtotal Aki Reject";
                             divs[divIndex].querySelector("strong").textContent = rupiah(subtotal);
                             divIndex++;
                         }
-                        
+
                         if (isTradeIn && o.new_accus_items && o.new_accus_items.length > 0) {
                             // Find where to insert New Battery Subtotal (before Pickup Fee)
                             const newAccuDiv = document.createElement("div");
@@ -2017,9 +2017,9 @@ document.addEventListener("DOMContentLoaded", () => {
         const a =
             Math.sin(dLat / 2) * Math.sin(dLat / 2) +
             Math.cos((lat1 * Math.PI) / 180) *
-                Math.cos((lat2 * Math.PI) / 180) *
-                Math.sin(dLon / 2) *
-                Math.sin(dLon / 2);
+            Math.cos((lat2 * Math.PI) / 180) *
+            Math.sin(dLon / 2) *
+            Math.sin(dLon / 2);
         const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
         return R * c;
     }
@@ -2101,7 +2101,7 @@ document.addEventListener("DOMContentLoaded", () => {
     function updatePickupFee(distance) {
         const radioChecked = document.querySelector('input[name="delivery_method"]:checked');
         const selectedMethod = radioChecked ? radioChecked.value : (localStorage.getItem("pickup_delivery_method") || "warehouse");
-        
+
         const pickupLabel =
             document.getElementById("user-pickup-fee-label") ||
             document.querySelector("[data-cart-pickup]");
@@ -2330,92 +2330,90 @@ document.addEventListener("DOMContentLoaded", () => {
                 userMap,
             );
 
-        if (!userMap) {
-            userMap = L.map("user-map-picker").setView([mapLat, mapLng], 16);
-            L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-                attribution: "© OpenStreetMap contributors",
-            }).addTo(userMap);
+            if (!userMap) {
+                userMap = L.map("user-map-picker").setView([mapLat, mapLng], 16);
+                L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+                    attribution: "© OpenStreetMap contributors",
+                }).addTo(userMap);
 
-            userMarker = L.marker([mapLat, mapLng], { draggable: true }).addTo(
-                userMap,
-            );
+                userMarker = L.marker([mapLat, mapLng], { draggable: true }).addTo(
+                    userMap,
+                );
 
-            userMarker.on("dragend", async (e) => {
-                const pos = e.target.getLatLng();
-                await updateLocationFromMarker(pos.lat, pos.lng, true);
-            });
+                userMarker.on("dragend", async (e) => {
+                    const pos = e.target.getLatLng();
+                    await updateLocationFromMarker(pos.lat, pos.lng, true);
+                });
 
-            userMap.on("click", async (e) => {
-                userMarker.setLatLng(e.latlng);
-                await updateLocationFromMarker(e.latlng.lat, e.latlng.lng, true);
-            });
-        } else {
-            userMap.setView([mapLat, mapLng], 16);
-            userMarker.setLatLng([mapLat, mapLng]);
-            setTimeout(() => {
-                userMap.invalidateSize();
-            }, 200);
-        }
-        const mapSearchInput = document.getElementById("map-search-input");
-        const btnMapSearch = document.getElementById("btn-map-search");
-        if (
-            btnMapSearch &&
-            mapSearchInput &&
-            !btnMapSearch.hasAttribute("data-bound")
-        ) {
-            btnMapSearch.setAttribute("data-bound", "true");
-            btnMapSearch.addEventListener("click", async () => {
-                const query = mapSearchInput.value.trim();
-                if (!query) return;
-                const oldText = btnMapSearch.textContent;
-                btnMapSearch.textContent = "...";
+                userMap.on("click", async (e) => {
+                    userMarker.setLatLng(e.latlng);
+                    await updateLocationFromMarker(e.latlng.lat, e.latlng.lng, true);
+                });
+            } else {
+                userMap.setView([mapLat, mapLng], 16);
+                userMarker.setLatLng([mapLat, mapLng]);
+                setTimeout(() => {
+                    userMap.invalidateSize();
+                }, 200);
+            }
+            const mapSearchInput = document.getElementById("map-search-input");
+            const btnMapSearch = document.getElementById("btn-map-search");
+            if (
+                btnMapSearch &&
+                mapSearchInput &&
+                !btnMapSearch.hasAttribute("data-bound")
+            ) {
+                btnMapSearch.setAttribute("data-bound", "true");
+                btnMapSearch.addEventListener("click", async () => {
+                    const query = mapSearchInput.value.trim();
+                    if (!query) return;
+                    const oldText = btnMapSearch.textContent;
+                    btnMapSearch.textContent = "...";
 
-                const performSearch = async (q) => {
-                    const res = await fetch(
-                        `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(q)}&limit=1&countrycodes=id`,
-                    );
-                    return await res.json();
-                };
+                    const performSearch = async (q) => {
+                        const res = await fetch(
+                            `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(q)}&limit=1&countrycodes=id`,
+                        );
+                        return await res.json();
+                    };
 
-                try {
-                    let results = await performSearch(
-                        `${query}, ${selectedCityName || "Surabaya"}`,
-                    );
+                    try {
+                        let results = await performSearch(
+                            `${query}, ${selectedCityName || "Surabaya"}`,
+                        );
 
-                    if (!results || results.length === 0) {
-                        results = await performSearch(query);
-                    }
+                        if (!results || results.length === 0) {
+                            results = await performSearch(query);
+                        }
 
-                    if (!results || results.length === 0) {
-                        let simplified = query
-                            .replace(
-                                /(no\.|nomor|blok|kav\.|kavling)\s*[a-z0-9-]+/gi,
-                                "",
-                            )
-                            .trim();
-                        simplified = simplified
-                            .replace(/\s+\d+[a-z]*$/i, "")
-                            .trim();
-                        if (simplified && simplified !== query) {
-                            results = await performSearch(
-                                `${simplified}, ${selectedCityName || "Surabaya"}`,
-                            );
-                            if (!results || results.length === 0) {
-                                results = await performSearch(simplified);
+                        if (!results || results.length === 0) {
+                            let simplified = query
+                                .replace(
+                                    /(no\.|nomor|blok|kav\.|kavling)\s*[a-z0-9-]+/gi,
+                                    "",
+                                )
+                                .trim();
+                            simplified = simplified
+                                .replace(/\s+\d+[a-z]*$/i, "")
+                                .trim();
+                            if (simplified && simplified !== query) {
+                                results = await performSearch(
+                                    `${simplified}, ${selectedCityName || "Surabaya"}`,
+                                );
+                                if (!results || results.length === 0) {
+                                    results = await performSearch(simplified);
+                                }
                             }
                         }
-                    }
 
                     if (results && results.length > 0) {
                         const lat = parseFloat(results[0].lat);
                         const lon = parseFloat(results[0].lon);
-                        const fullSearchAddress = results[0].display_name || null;
-
                         if (userMap && userMarker) {
                             userMap.setView([lat, lon], 16);
                             userMarker.setLatLng([lat, lon]);
                         }
-                        await updateLocationFromMarker(lat, lon, true, fullSearchAddress);
+                        await updateLocationFromMarker(lat, lon, true);
                     } else {
                         showCustomAlert(
                             "Lokasi tidak ditemukan. Cobalah hapus nomor rumah atau cari nama jalan utamanya saja, lalu geser pin secara manual.",
@@ -2434,144 +2432,144 @@ document.addEventListener("DOMContentLoaded", () => {
             });
         }
 
-        const btnDetectLocation = document.getElementById("btn-detect-current-location");
-        if (btnDetectLocation && !btnDetectLocation.hasAttribute("data-bound")) {
-            btnDetectLocation.setAttribute("data-bound", "true");
-            btnDetectLocation.addEventListener("click", () => {
-                const oldText = btnDetectLocation.textContent;
-                btnDetectLocation.textContent = "⏳ Meminta Lokasi...";
-                requestDeviceLocation(true);
-                setTimeout(() => {
-                    btnDetectLocation.textContent = oldText;
-                }, 2500);
+            const btnDetectLocation = document.getElementById("btn-detect-current-location");
+            if (btnDetectLocation && !btnDetectLocation.hasAttribute("data-bound")) {
+                btnDetectLocation.setAttribute("data-bound", "true");
+                btnDetectLocation.addEventListener("click", () => {
+                    const oldText = btnDetectLocation.textContent;
+                    btnDetectLocation.textContent = "⏳ Meminta Lokasi...";
+                    requestDeviceLocation(true);
+                    setTimeout(() => {
+                        btnDetectLocation.textContent = oldText;
+                    }, 2500);
+                });
+            }
+        }
+        btnSaveUserCoords?.addEventListener("click", async () => {
+            if (userMarker) {
+                btnSaveUserCoords.disabled = true;
+                btnSaveUserCoords.textContent = "Menyimpan...";
+
+                const pos = userMarker.getLatLng();
+                await updateLocationFromMarker(pos.lat, pos.lng, true);
+
+                btnSaveUserCoords.disabled = false;
+                btnSaveUserCoords.textContent = "Konfirmasi Lokasi";
+                if (modalUserMap) modalUserMap.style.display = "none";
+            }
+        });
+
+        checkoutSubmitBtn?.addEventListener("click", (e) => {
+            e.preventDefault();
+            const cartSize = window.userCart ? window.userCart.size : 0;
+            if (cartSize === 0) {
+                showCustomAlert(
+                    "Keranjang belanja kosong! Silakan tambahkan minimal satu aki ke keranjang sebelum melanjutkan.",
+                );
+                return;
+            }
+            const address = userAddressInput ? userAddressInput.value.trim() : "";
+            const city = userCityInput ? userCityInput.value.trim() : "";
+            const zip = userZipInput ? userZipInput.value.trim() : "";
+
+            if (!address || !city) {
+                showCustomAlert(
+                    "Harap tentukan lokasi Anda melalui peta terlebih dahulu.",
+                );
+                return;
+            }
+            if (!userLat || !userLng) {
+                showCustomAlert(
+                    "Harap tentukan lokasi koordinat Anda di peta dengan menekan tombol peta.",
+                );
+                return;
+            }
+            localStorage.setItem("pickup_address", address);
+            localStorage.setItem("pickup_city", city);
+            localStorage.setItem("pickup_zip", zip);
+            const note = userNoteInput ? userNoteInput.value.trim() : "";
+            localStorage.setItem("pickup_address_note", note);
+            localStorage.setItem(
+                "pickup_cart",
+                JSON.stringify(Array.from(window.userCart.values())),
+            );
+            const selectedDelivery =
+                document.querySelector('input[name="delivery_method"]:checked')
+                    ?.value || "warehouse";
+            localStorage.setItem("pickup_delivery_method", selectedDelivery);
+
+            const selectedOrderType =
+                document.querySelector('input[name="order_type_selection"]:checked')
+                    ?.value || "sell";
+            localStorage.setItem("pickup_order_type", selectedOrderType);
+
+            if (selectedOrderType === "trade_in") {
+                window.location.href = "/trade-in";
+            } else {
+                window.location.href = "/user/identitas";
+            }
+        });
+
+        const viewBtn = document.getElementById("view-ktp-btn");
+        const ktpOverlay = document.getElementById("ktp-overlay");
+        const closeOverlay = document.getElementById("close-ktp-overlay");
+        if (viewBtn && ktpOverlay && closeOverlay) {
+            viewBtn.addEventListener("click", (e) => {
+                e.preventDefault();
+                ktpOverlay.style.display = "flex";
+            });
+            closeOverlay.addEventListener("click", () => {
+                ktpOverlay.style.display = "none";
+            });
+            ktpOverlay.addEventListener("click", (e) => {
+                if (e.target === ktpOverlay) {
+                    ktpOverlay.style.display = "none";
+                }
             });
         }
-    }
-    btnSaveUserCoords?.addEventListener("click", async () => {
-        if (userMarker) {
-            btnSaveUserCoords.disabled = true;
-            btnSaveUserCoords.textContent = "Menyimpan...";
 
-            const pos = userMarker.getLatLng();
-            await updateLocationFromMarker(pos.lat, pos.lng, true);
-
-            btnSaveUserCoords.disabled = false;
-            btnSaveUserCoords.textContent = "Konfirmasi Lokasi";
-            if (modalUserMap) modalUserMap.style.display = "none";
-        }
-    });
-
-    checkoutSubmitBtn?.addEventListener("click", (e) => {
-        e.preventDefault();
-        const cartSize = window.userCart ? window.userCart.size : 0;
-        if (cartSize === 0) {
-            showCustomAlert(
-                "Keranjang belanja kosong! Silakan tambahkan minimal satu aki ke keranjang sebelum melanjutkan.",
-            );
-            return;
-        }
-        const address = userAddressInput ? userAddressInput.value.trim() : "";
-        const city = userCityInput ? userCityInput.value.trim() : "";
-        const zip = userZipInput ? userZipInput.value.trim() : "";
-
-        if (!address || !city) {
-            showCustomAlert(
-                "Harap tentukan lokasi Anda melalui peta terlebih dahulu.",
-            );
-            return;
-        }
-        if (!userLat || !userLng) {
-            showCustomAlert(
-                "Harap tentukan lokasi koordinat Anda di peta dengan menekan tombol peta.",
-            );
-            return;
-        }
-        localStorage.setItem("pickup_address", address);
-        localStorage.setItem("pickup_city", city);
-        localStorage.setItem("pickup_zip", zip);
-        const note = userNoteInput ? userNoteInput.value.trim() : "";
-        localStorage.setItem("pickup_address_note", note);
-        localStorage.setItem(
-            "pickup_cart",
-            JSON.stringify(Array.from(window.userCart.values())),
-        );
-        const selectedDelivery =
-            document.querySelector('input[name="delivery_method"]:checked')
-                ?.value || "warehouse";
-        localStorage.setItem("pickup_delivery_method", selectedDelivery);
-        
-        const selectedOrderType = 
-            document.querySelector('input[name="order_type_selection"]:checked')
-                ?.value || "sell";
-        localStorage.setItem("pickup_order_type", selectedOrderType);
-        
-        if (selectedOrderType === "trade_in") {
-            window.location.href = "/trade-in";
-        } else {
-            window.location.href = "/user/identitas";
-        }
-    });
-
-    const viewBtn = document.getElementById("view-ktp-btn");
-    const ktpOverlay = document.getElementById("ktp-overlay");
-    const closeOverlay = document.getElementById("close-ktp-overlay");
-    if (viewBtn && ktpOverlay && closeOverlay) {
-        viewBtn.addEventListener("click", (e) => {
-            e.preventDefault();
-            ktpOverlay.style.display = "flex";
-        });
-        closeOverlay.addEventListener("click", () => {
-            ktpOverlay.style.display = "none";
-        });
-        ktpOverlay.addEventListener("click", (e) => {
-            if (e.target === ktpOverlay) {
-                ktpOverlay.style.display = "none";
+        // Trade-In Logic
+        if (window.location.pathname === "/trade-in") {
+            if (localStorage.getItem("pickup_order_type") !== "trade_in") {
+                localStorage.removeItem("pickup_trade_in_cart");
+                localStorage.removeItem("pickup_cart");
             }
-        });
-    }
+            let newAccus = [];
+            let tradeInCart = JSON.parse(localStorage.getItem("pickup_trade_in_cart") || "[]");
 
-    // Trade-In Logic
-    if (window.location.pathname === "/trade-in") {
-        if (localStorage.getItem("pickup_order_type") !== "trade_in") {
-            localStorage.removeItem("pickup_trade_in_cart");
-            localStorage.removeItem("pickup_cart");
-        }
-        let newAccus = [];
-        let tradeInCart = JSON.parse(localStorage.getItem("pickup_trade_in_cart") || "[]");
+            const getCartItem = (id) => tradeInCart.find(i => i.id === id);
 
-        const getCartItem = (id) => tradeInCart.find(i => i.id === id);
+            const renderNewAccus = (data, searchVal = "") => {
+                const grid = document.getElementById("new-accus-grid");
+                if (!grid) return;
+                grid.innerHTML = "";
 
-        const renderNewAccus = (data, searchVal = "") => {
-            const grid = document.getElementById("new-accus-grid");
-            if (!grid) return;
-            grid.innerHTML = "";
-
-            if (!searchVal || searchVal.trim() === "") {
-                grid.innerHTML = '<div style="padding:40px; text-align:center; color:#64748b; font-size:14px; grid-column:1/-1; background:#f8fafc; border:1px dashed #cbd5e1; border-radius:12px;">Silakan ketik jenis aki baru pada kolom pencarian di atas (contoh: N50, NS40, dll) untuk melihat katalog.</div>';
-                return;
-            }
-
-            if (data.length === 0) {
-                grid.innerHTML = '<div style="padding:40px; text-align:center; color:#64748b; font-size:14px; grid-column:1/-1;">Tidak ada aki baru yang cocok dengan kata kunci pencarian.</div>';
-                return;
-            }
-            data.forEach(accu => {
-                const existing = getCartItem(accu.id);
-                const currentQty = existing ? existing.quantity : 1;
-                const inCart = !!existing;
-
-                const card = document.createElement("div");
-                card.className = "user-product-card";
-                card.style.padding = "28px 32px";
-                card.style.borderRadius = "12px";
-                card.style.background = "#ffffff";
-                card.style.marginBottom = "12px";
-                card.style.border = inCart ? "2px solid #2563eb" : "1px solid #e2e8f0";
-                if (inCart) {
-                    card.style.boxShadow = "0 10px 25px -5px rgba(37,99,235,0.2)";
+                if (!searchVal || searchVal.trim() === "") {
+                    grid.innerHTML = '<div style="padding:40px; text-align:center; color:#64748b; font-size:14px; grid-column:1/-1; background:#f8fafc; border:1px dashed #cbd5e1; border-radius:12px;">Silakan ketik jenis aki baru pada kolom pencarian di atas (contoh: N50, NS40, dll) untuk melihat katalog.</div>';
+                    return;
                 }
 
-                card.innerHTML = `
+                if (data.length === 0) {
+                    grid.innerHTML = '<div style="padding:40px; text-align:center; color:#64748b; font-size:14px; grid-column:1/-1;">Tidak ada aki baru yang cocok dengan kata kunci pencarian.</div>';
+                    return;
+                }
+                data.forEach(accu => {
+                    const existing = getCartItem(accu.id);
+                    const currentQty = existing ? existing.quantity : 1;
+                    const inCart = !!existing;
+
+                    const card = document.createElement("div");
+                    card.className = "user-product-card";
+                    card.style.padding = "28px 32px";
+                    card.style.borderRadius = "12px";
+                    card.style.background = "#ffffff";
+                    card.style.marginBottom = "12px";
+                    card.style.border = inCart ? "2px solid #2563eb" : "1px solid #e2e8f0";
+                    if (inCart) {
+                        card.style.boxShadow = "0 10px 25px -5px rgba(37,99,235,0.2)";
+                    }
+
+                    card.innerHTML = `
                     <div class="user-product-card__content" style="width:100%; box-sizing:border-box;">
                         <h3 style="margin-top:0; margin-bottom:6px; font-size:16px;">${accu.name}</h3>
                         <p class="user-product-card__price" style="color:#2563eb; margin-bottom:14px; font-size:16px; font-weight:700;">${rupiah(accu.price)}</p>
@@ -2591,129 +2589,129 @@ document.addEventListener("DOMContentLoaded", () => {
                     </div>
                 `;
 
-                let qtyCounter = currentQty;
-                const qtyValEl = card.querySelector(".qty-val");
-                const btnMinus = card.querySelector(".btn-qty-minus");
-                const btnPlus = card.querySelector(".btn-qty-plus");
-                const btnToggle = card.querySelector(".btn-toggle-cart");
-                const btnDelete = card.querySelector(".btn-delete-cart");
+                    let qtyCounter = currentQty;
+                    const qtyValEl = card.querySelector(".qty-val");
+                    const btnMinus = card.querySelector(".btn-qty-minus");
+                    const btnPlus = card.querySelector(".btn-qty-plus");
+                    const btnToggle = card.querySelector(".btn-toggle-cart");
+                    const btnDelete = card.querySelector(".btn-delete-cart");
 
-                btnMinus.onclick = (e) => {
-                    e.stopPropagation();
-                    if (qtyCounter > 1) {
-                        qtyCounter--;
-                        qtyValEl.textContent = qtyCounter;
-                    }
-                };
-
-                btnPlus.onclick = (e) => {
-                    e.stopPropagation();
-                    qtyCounter++;
-                    qtyValEl.textContent = qtyCounter;
-                };
-
-                btnToggle.onclick = (e) => {
-                    e.stopPropagation();
-                    const idx = tradeInCart.findIndex(i => i.id === accu.id);
-                    if (idx >= 0) {
-                        tradeInCart[idx].quantity = qtyCounter;
-                        btnToggle.textContent = "Jumlah telah diupdate!";
-                        btnToggle.style.backgroundColor = "#10b981";
-                        btnToggle.style.color = "#fff";
-                        btnToggle.style.borderColor = "#10b981";
-                        setTimeout(() => {
-                            localStorage.setItem("pickup_trade_in_cart", JSON.stringify(tradeInCart));
-                            const currentSearch = document.getElementById("new-accu-search-input")?.value.toLowerCase().trim() || "";
-                            renderNewAccus(newAccus.filter(a => a.name.toLowerCase().includes(currentSearch)), currentSearch);
-                            updateTradeInSelected();
-                        }, 1000);
-                        return;
-                    } else {
-                        tradeInCart.push({
-                            id: accu.id,
-                            name: accu.name,
-                            price: accu.price,
-                            quantity: qtyCounter
-                        });
-                    }
-                    localStorage.setItem("pickup_trade_in_cart", JSON.stringify(tradeInCart));
-                    const currentSearch = document.getElementById("new-accu-search-input")?.value.toLowerCase().trim() || "";
-                    renderNewAccus(newAccus.filter(a => a.name.toLowerCase().includes(currentSearch)), currentSearch);
-                    updateTradeInSelected();
-                };
-
-                if (btnDelete) {
-                    btnDelete.onclick = (e) => {
+                    btnMinus.onclick = (e) => {
                         e.stopPropagation();
-                        tradeInCart = tradeInCart.filter(i => i.id !== accu.id);
+                        if (qtyCounter > 1) {
+                            qtyCounter--;
+                            qtyValEl.textContent = qtyCounter;
+                        }
+                    };
+
+                    btnPlus.onclick = (e) => {
+                        e.stopPropagation();
+                        qtyCounter++;
+                        qtyValEl.textContent = qtyCounter;
+                    };
+
+                    btnToggle.onclick = (e) => {
+                        e.stopPropagation();
+                        const idx = tradeInCart.findIndex(i => i.id === accu.id);
+                        if (idx >= 0) {
+                            tradeInCart[idx].quantity = qtyCounter;
+                            btnToggle.textContent = "Jumlah telah diupdate!";
+                            btnToggle.style.backgroundColor = "#10b981";
+                            btnToggle.style.color = "#fff";
+                            btnToggle.style.borderColor = "#10b981";
+                            setTimeout(() => {
+                                localStorage.setItem("pickup_trade_in_cart", JSON.stringify(tradeInCart));
+                                const currentSearch = document.getElementById("new-accu-search-input")?.value.toLowerCase().trim() || "";
+                                renderNewAccus(newAccus.filter(a => a.name.toLowerCase().includes(currentSearch)), currentSearch);
+                                updateTradeInSelected();
+                            }, 1000);
+                            return;
+                        } else {
+                            tradeInCart.push({
+                                id: accu.id,
+                                name: accu.name,
+                                price: accu.price,
+                                quantity: qtyCounter
+                            });
+                        }
                         localStorage.setItem("pickup_trade_in_cart", JSON.stringify(tradeInCart));
                         const currentSearch = document.getElementById("new-accu-search-input")?.value.toLowerCase().trim() || "";
                         renderNewAccus(newAccus.filter(a => a.name.toLowerCase().includes(currentSearch)), currentSearch);
                         updateTradeInSelected();
                     };
+
+                    if (btnDelete) {
+                        btnDelete.onclick = (e) => {
+                            e.stopPropagation();
+                            tradeInCart = tradeInCart.filter(i => i.id !== accu.id);
+                            localStorage.setItem("pickup_trade_in_cart", JSON.stringify(tradeInCart));
+                            const currentSearch = document.getElementById("new-accu-search-input")?.value.toLowerCase().trim() || "";
+                            renderNewAccus(newAccus.filter(a => a.name.toLowerCase().includes(currentSearch)), currentSearch);
+                            updateTradeInSelected();
+                        };
+                    }
+
+                    grid.appendChild(card);
+                });
+            };
+
+            const showDeleteConfirmModal = (msg, onConfirm) => {
+                const modal = document.getElementById("modal-delete-confirm");
+                const msgEl = document.getElementById("delete-confirm-message");
+                const btnCancel = document.getElementById("btn-cancel-delete");
+                const btnAction = document.getElementById("btn-action-delete");
+
+                if (!modal) {
+                    if (confirm(msg)) onConfirm();
+                    return;
                 }
 
-                grid.appendChild(card);
-            });
-        };
+                if (msgEl) msgEl.textContent = msg;
+                modal.style.display = "flex";
 
-        const showDeleteConfirmModal = (msg, onConfirm) => {
-            const modal = document.getElementById("modal-delete-confirm");
-            const msgEl = document.getElementById("delete-confirm-message");
-            const btnCancel = document.getElementById("btn-cancel-delete");
-            const btnAction = document.getElementById("btn-action-delete");
+                const handleCancel = () => {
+                    modal.style.display = "none";
+                    cleanup();
+                };
+                const handleAction = () => {
+                    modal.style.display = "none";
+                    onConfirm();
+                    cleanup();
+                };
+                const cleanup = () => {
+                    if (btnCancel) btnCancel.removeEventListener("click", handleCancel);
+                    if (btnAction) btnAction.removeEventListener("click", handleAction);
+                };
 
-            if (!modal) {
-                if (confirm(msg)) onConfirm();
-                return;
-            }
-
-            if (msgEl) msgEl.textContent = msg;
-            modal.style.display = "flex";
-
-            const handleCancel = () => {
-                modal.style.display = "none";
-                cleanup();
-            };
-            const handleAction = () => {
-                modal.style.display = "none";
-                onConfirm();
-                cleanup();
-            };
-            const cleanup = () => {
-                if (btnCancel) btnCancel.removeEventListener("click", handleCancel);
-                if (btnAction) btnAction.removeEventListener("click", handleAction);
+                if (btnCancel) btnCancel.addEventListener("click", handleCancel);
+                if (btnAction) btnAction.addEventListener("click", handleAction);
             };
 
-            if (btnCancel) btnCancel.addEventListener("click", handleCancel);
-            if (btnAction) btnAction.addEventListener("click", handleAction);
-        };
+            const updateTradeInSelected = () => {
+                const container = document.getElementById("new-accu-selected");
+                const btn = document.getElementById("btn-trade-in-continue");
+                const rejectContainer = document.getElementById("reject-accu-summary");
+                const netSummary = document.getElementById("trade-in-net-summary");
+                if (!container || !btn) return;
 
-        const updateTradeInSelected = () => {
-            const container = document.getElementById("new-accu-selected");
-            const btn = document.getElementById("btn-trade-in-continue");
-            const rejectContainer = document.getElementById("reject-accu-summary");
-            const netSummary = document.getElementById("trade-in-net-summary");
-            if (!container || !btn) return;
+                let savedCart = JSON.parse(localStorage.getItem("pickup_cart") || "[]");
+                let rejectSubtotal = 0;
 
-            let savedCart = JSON.parse(localStorage.getItem("pickup_cart") || "[]");
-            let rejectSubtotal = 0;
-
-            if (rejectContainer) {
-                if (savedCart.length > 0) {
-                    let itemsHtml = savedCart.map((item, idx) => {
-                        const sub = item.price * item.quantity;
-                        rejectSubtotal += sub;
-                        return `<div style="display:flex; justify-content:space-between; align-items:center; font-size:12px; margin-bottom:6px; color:#475569;">
+                if (rejectContainer) {
+                    if (savedCart.length > 0) {
+                        let itemsHtml = savedCart.map((item, idx) => {
+                            const sub = item.price * item.quantity;
+                            rejectSubtotal += sub;
+                            return `<div style="display:flex; justify-content:space-between; align-items:center; font-size:12px; margin-bottom:6px; color:#475569;">
                             <span>${item.name} (${item.quantity} unit)</span>
                             <div style="display:flex; align-items:center; gap:8px;">
                                 <span style="font-weight:600; color:#0f172a;">${rupiah(sub)}</span>
                                 <button type="button" class="btn-delete-reject-item" data-index="${idx}" style="background:none; border:none; color:#ef4444; cursor:pointer; padding:0 2px; font-weight:700; font-size:13px;" title="Hapus aki reject">🗑️</button>
                             </div>
                         </div>`;
-                    }).join("");
+                        }).join("");
 
-                    rejectContainer.innerHTML = `
+                        rejectContainer.innerHTML = `
                         <div style="padding:12px; background:#f8fafc; border-radius:8px; border:1px solid #e2e8f0; margin-bottom:14px;">
                             <span style="font-size:11px; font-weight:700; color:#64748b; text-transform:uppercase; margin-bottom:6px; display:block;">Aki Reject Pilihan Anda:</span>
                             ${itemsHtml}
@@ -2724,45 +2722,45 @@ document.addEventListener("DOMContentLoaded", () => {
                         </div>
                     `;
 
-                    rejectContainer.querySelectorAll(".btn-delete-reject-item").forEach(btnEl => {
-                        btnEl.onclick = (e) => {
-                            e.stopPropagation();
-                            const itemIndex = parseInt(btnEl.getAttribute("data-index"));
-                            showDeleteConfirmModal("Apakah Anda yakin ingin menghapus aki ini dari pilihan?", () => {
-                                const removedItem = savedCart[itemIndex];
-                                savedCart.splice(itemIndex, 1);
-                                localStorage.setItem("pickup_cart", JSON.stringify(savedCart));
-                                if (window.userCart && removedItem) {
-                                    window.userCart.delete(removedItem.name);
-                                }
-                                updateTradeInSelected();
-                            });
-                        };
-                    });
-                } else {
-                    rejectContainer.innerHTML = `
+                        rejectContainer.querySelectorAll(".btn-delete-reject-item").forEach(btnEl => {
+                            btnEl.onclick = (e) => {
+                                e.stopPropagation();
+                                const itemIndex = parseInt(btnEl.getAttribute("data-index"));
+                                showDeleteConfirmModal("Apakah Anda yakin ingin menghapus aki ini dari pilihan?", () => {
+                                    const removedItem = savedCart[itemIndex];
+                                    savedCart.splice(itemIndex, 1);
+                                    localStorage.setItem("pickup_cart", JSON.stringify(savedCart));
+                                    if (window.userCart && removedItem) {
+                                        window.userCart.delete(removedItem.name);
+                                    }
+                                    updateTradeInSelected();
+                                });
+                            };
+                        });
+                    } else {
+                        rejectContainer.innerHTML = `
                         <div style="padding:10px 12px; background:#fff7ed; border-radius:8px; border:1px solid #fed7aa; color:#c2410c; font-size:12px; margin-bottom:14px;">
                             <strong>Belum ada aki reject dipilih.</strong> <a href="/user" style="color:#ea580c; text-decoration:underline; font-weight:600;">Pilih di katalog landing</a>.
                         </div>
                     `;
+                    }
                 }
-            }
 
-            let newAccuSubtotal = 0;
-            if (tradeInCart.length > 0) {
-                let itemsHtml = tradeInCart.map((item, idx) => {
-                    const sub = item.price * item.quantity;
-                    newAccuSubtotal += sub;
-                    return `<div style="display:flex; justify-content:space-between; align-items:center; font-size:12px; margin-bottom:6px; color:#1e3a8a;">
+                let newAccuSubtotal = 0;
+                if (tradeInCart.length > 0) {
+                    let itemsHtml = tradeInCart.map((item, idx) => {
+                        const sub = item.price * item.quantity;
+                        newAccuSubtotal += sub;
+                        return `<div style="display:flex; justify-content:space-between; align-items:center; font-size:12px; margin-bottom:6px; color:#1e3a8a;">
                         <span>${item.name} (${item.quantity} unit)</span>
                         <div style="display:flex; align-items:center; gap:8px;">
                             <span style="font-weight:600; color:#2563eb;">${rupiah(sub)}</span>
                             <button type="button" class="btn-delete-new-item" data-id="${item.id}" style="background:none; border:none; color:#ef4444; cursor:pointer; padding:0 2px; font-weight:700; font-size:13px;" title="Hapus aki baru">🗑️</button>
                         </div>
                     </div>`;
-                }).join("");
+                    }).join("");
 
-                container.innerHTML = `
+                    container.innerHTML = `
                     <div style="text-align:left; padding:12px; background:#eff6ff; border-radius:8px; border:1px solid #bfdbfe;">
                         <span style="font-size:11px; font-weight:700; color:#1d4ed8; text-transform:uppercase; margin-bottom:6px; display:block;">Aki Baru Pilihan Anda:</span>
                         ${itemsHtml}
@@ -2773,43 +2771,43 @@ document.addEventListener("DOMContentLoaded", () => {
                     </div>
                 `;
 
-                container.querySelectorAll(".btn-delete-new-item").forEach(btnEl => {
-                    btnEl.onclick = (e) => {
-                        e.stopPropagation();
-                        const itemId = parseInt(btnEl.getAttribute("data-id"));
-                        showDeleteConfirmModal("Apakah Anda yakin ingin menghapus aki ini dari pilihan?", () => {
-                            tradeInCart = tradeInCart.filter(i => i.id !== itemId);
-                            localStorage.setItem("pickup_trade_in_cart", JSON.stringify(tradeInCart));
-                            const currentSearch = document.getElementById("new-accu-search-input")?.value.toLowerCase().trim() || "";
-                            renderNewAccus(newAccus.filter(a => a.name.toLowerCase().includes(currentSearch)), currentSearch);
-                            updateTradeInSelected();
-                        });
-                    };
-                });
+                    container.querySelectorAll(".btn-delete-new-item").forEach(btnEl => {
+                        btnEl.onclick = (e) => {
+                            e.stopPropagation();
+                            const itemId = parseInt(btnEl.getAttribute("data-id"));
+                            showDeleteConfirmModal("Apakah Anda yakin ingin menghapus aki ini dari pilihan?", () => {
+                                tradeInCart = tradeInCart.filter(i => i.id !== itemId);
+                                localStorage.setItem("pickup_trade_in_cart", JSON.stringify(tradeInCart));
+                                const currentSearch = document.getElementById("new-accu-search-input")?.value.toLowerCase().trim() || "";
+                                renderNewAccus(newAccus.filter(a => a.name.toLowerCase().includes(currentSearch)), currentSearch);
+                                updateTradeInSelected();
+                            });
+                        };
+                    });
 
-                btn.style.opacity = "1";
-                btn.style.pointerEvents = "auto";
+                    btn.style.opacity = "1";
+                    btn.style.pointerEvents = "auto";
 
-                if (netSummary) {
-                    const diff = newAccuSubtotal - rejectSubtotal;
-                    if (diff >= 0) {
-                        netSummary.innerHTML = `
+                    if (netSummary) {
+                        const diff = newAccuSubtotal - rejectSubtotal;
+                        if (diff >= 0) {
+                            netSummary.innerHTML = `
                             <div style="display:flex; justify-content:space-between; margin-top:14px; padding-top:10px; border-top:1px solid #e2e8f0; font-size:13px;">
                                 <strong>Estimasi Biaya Tambah:</strong>
                                 <strong style="color:#2563eb; font-size:15px;">${rupiah(diff)}</strong>
                             </div>
                         `;
-                    } else {
-                        netSummary.innerHTML = `
+                        } else {
+                            netSummary.innerHTML = `
                             <div style="display:flex; justify-content:space-between; margin-top:14px; padding-top:10px; border-top:1px solid #e2e8f0; font-size:13px;">
                                 <strong>Estimasi Uang Diterima:</strong>
                                 <strong style="color:#10b981; font-size:15px;">${rupiah(Math.abs(diff))}</strong>
                             </div>
                         `;
+                        }
                     }
-                }
-            } else {
-                container.innerHTML = `
+                } else {
+                    container.innerHTML = `
                     <div style="padding: 20px 16px; text-align: center; color: #64748b; background: #f8fafc; border: 1px dashed #cbd5e1; border-radius: 10px;">
                         <span style="display:block; font-size:24px; margin-bottom:6px;">
                             <svg viewBox="0 0 24 24" style="width:24px; height:24px; fill:none; stroke:currentColor; stroke-width:2; margin:auto; color:#94a3b8;">
@@ -2821,66 +2819,67 @@ document.addEventListener("DOMContentLoaded", () => {
                         <p style="font-size:12px; color:#64748b; margin:4px 0 0;">Silakan pilih minimal 1 aki dari katalog.</p>
                     </div>
                 `;
-                btn.style.opacity = "0.5";
-                btn.style.pointerEvents = "none";
-                if (netSummary) netSummary.innerHTML = "";
-            }
+                    btn.style.opacity = "0.5";
+                    btn.style.pointerEvents = "none";
+                    if (netSummary) netSummary.innerHTML = "";
+                }
 
-            if (savedCart.length === 0 && tradeInCart.length === 0) {
-                if (rejectContainer) {
-                    rejectContainer.innerHTML = `
+                if (savedCart.length === 0 && tradeInCart.length === 0) {
+                    if (rejectContainer) {
+                        rejectContainer.innerHTML = `
                         <div style="padding:20px 16px; text-align:center; color:#64748b; background:#f8fafc; border:1px dashed #cbd5e1; border-radius:12px; margin-bottom:14px;">
                             <strong style="color:#1e293b; font-size:13px; display:block; margin-bottom:4px;">Belum ada aki yang dipilih.</strong>
                             <p style="font-size:12px; margin:0; line-height:1.4; color:#64748b;">Silakan pilih aki reject dan aki baru untuk mulai menghitung estimasi biaya.</p>
                         </div>
                     `;
+                    }
                 }
-            }
-        };
+            };
 
-        const initTradeIn = async () => {
-            updateTradeInSelected();
-            const res = await fetchPublicApi("/new-accus");
-            if (res && res.data) {
-                newAccus = res.data;
-                renderNewAccus(newAccus, "");
-            }
-        };
+            const initTradeIn = async () => {
+                updateTradeInSelected();
+                const res = await fetchPublicApi("/new-accus");
+                if (res && res.data) {
+                    newAccus = res.data;
+                    renderNewAccus(newAccus, "");
+                }
+            };
 
-        const searchInputTradeIn = document.getElementById("new-accu-search-input");
-        if (searchInputTradeIn) {
-            searchInputTradeIn.addEventListener("input", (e) => {
-                const q = e.target.value.toLowerCase().trim();
-                const filtered = newAccus.filter(a => a.name.toLowerCase().includes(q) || (a.brand_relation && a.brand_relation.name.toLowerCase().includes(q)));
-                renderNewAccus(filtered, q);
-            });
+            const searchInputTradeIn = document.getElementById("new-accu-search-input");
+            if (searchInputTradeIn) {
+                searchInputTradeIn.addEventListener("input", (e) => {
+                    const q = e.target.value.toLowerCase().trim();
+                    const filtered = newAccus.filter(a => a.name.toLowerCase().includes(q) || (a.brand_relation && a.brand_relation.name.toLowerCase().includes(q)));
+                    renderNewAccus(filtered, q);
+                });
+            }
+
+            const btnContinue = document.getElementById("btn-trade-in-continue");
+            if (btnContinue) {
+                btnContinue.addEventListener("click", () => {
+                    if (tradeInCart.length === 0) return;
+                    const firstItem = tradeInCart[0];
+                    localStorage.setItem("pickup_trade_in_accu_id", firstItem.id);
+                    localStorage.setItem("pickup_trade_in_accu_name", firstItem.name);
+                    localStorage.setItem("pickup_trade_in_accu_price", firstItem.price);
+                    localStorage.setItem("pickup_trade_in_cart", JSON.stringify(tradeInCart));
+                    localStorage.setItem("pickup_order_type", "trade_in");
+                    window.location.href = "/identity";
+                });
+            }
+
+            initTradeIn();
         }
 
-        const btnContinue = document.getElementById("btn-trade-in-continue");
-        if (btnContinue) {
-            btnContinue.addEventListener("click", () => {
-                if (tradeInCart.length === 0) return;
-                const firstItem = tradeInCart[0];
-                localStorage.setItem("pickup_trade_in_accu_id", firstItem.id);
-                localStorage.setItem("pickup_trade_in_accu_name", firstItem.name);
-                localStorage.setItem("pickup_trade_in_accu_price", firstItem.price);
-                localStorage.setItem("pickup_trade_in_cart", JSON.stringify(tradeInCart));
-                localStorage.setItem("pickup_order_type", "trade_in");
-                window.location.href = "/identity";
-            });
+        // Hero Slideshow Rotator
+        const slides = document.querySelectorAll(".hero-slide");
+        if (slides.length > 1) {
+            let currentSlide = 0;
+            setInterval(() => {
+                slides[currentSlide].classList.remove("is-active");
+                currentSlide = (currentSlide + 1) % slides.length;
+                slides[currentSlide].classList.add("is-active");
+            }, 5000);
         }
-
-        initTradeIn();
-    }
-
-    // Hero Slideshow Rotator
-    const slides = document.querySelectorAll(".hero-slide");
-    if (slides.length > 1) {
-        let currentSlide = 0;
-        setInterval(() => {
-            slides[currentSlide].classList.remove("is-active");
-            currentSlide = (currentSlide + 1) % slides.length;
-            slides[currentSlide].classList.add("is-active");
-        }, 5000);
     }
 });
