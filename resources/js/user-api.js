@@ -1499,12 +1499,23 @@ document.addEventListener("DOMContentLoaded", () => {
                     itemsList.forEach((item) => {
                         subtotal += item.subtotal || 0;
                     });
-                    const totalCost = receipt.price_owed || subtotal;
-                    let deliveryCost = subtotal - totalCost;
                     
-                    // Handle old orders where totalCost (price_owed) was computed incorrectly as > subtotal
-                    if (deliveryCost < 0) {
-                        deliveryCost = Math.abs(deliveryCost);
+                    const isTradeIn = o.order_type === "trade_in";
+                    let newAccuSubtotal = 0;
+                    if (isTradeIn && o.new_accus_items) {
+                        o.new_accus_items.forEach((item) => {
+                            newAccuSubtotal += item.subtotal || 0;
+                        });
+                    }
+
+                    const totalCost = receipt.price_owed || subtotal;
+                    let deliveryCost = o.pickup_fee !== undefined ? o.pickup_fee : 0;
+                    
+                    if (o.pickup_fee === undefined) {
+                        deliveryCost = subtotal - totalCost;
+                        if (deliveryCost < 0) {
+                            deliveryCost = Math.abs(deliveryCost);
+                        }
                     }
                     
                     const orderDeliveryMethod =
@@ -1664,21 +1675,50 @@ document.addEventListener("DOMContentLoaded", () => {
                     );
                     if (summaryBlocks) {
                         const divs = summaryBlocks.querySelectorAll("div");
-                        if (divs[0])
-                            divs[0].querySelector("strong").textContent =
-                                rupiah(subtotal);
-                        if (divs[1])
-                            divs[1].querySelector("strong").textContent =
+                        let divIndex = 0;
+                        
+                        if (divs[divIndex]) {
+                            divs[divIndex].querySelector("span").textContent = "Subtotal Aki Reject";
+                            divs[divIndex].querySelector("strong").textContent = rupiah(subtotal);
+                            divIndex++;
+                        }
+                        
+                        if (isTradeIn && o.new_accus_items && o.new_accus_items.length > 0) {
+                            // Find where to insert New Battery Subtotal (before Pickup Fee)
+                            const newAccuDiv = document.createElement("div");
+                            newAccuDiv.innerHTML = `<span>Subtotal Aki Baru</span><strong>- ${rupiah(newAccuSubtotal)}</strong>`;
+                            summaryBlocks.insertBefore(newAccuDiv, divs[divIndex]);
+                            // Also insert Trade In Adjustment if applicable
+                            const diff = newAccuSubtotal - subtotal;
+                            const tradeInAdjDiv = document.createElement("div");
+                            if (diff > 0) {
+                                tradeInAdjDiv.innerHTML = `<span>Estimasi Biaya Tambah</span><strong>${rupiah(diff)}</strong>`;
+                            } else {
+                                tradeInAdjDiv.innerHTML = `<span>Estimasi Uang Diterima</span><strong>${rupiah(Math.abs(diff))}</strong>`;
+                            }
+                            summaryBlocks.insertBefore(tradeInAdjDiv, divs[divIndex]);
+                        }
+
+                        if (divs[divIndex]) {
+                            divs[divIndex].querySelector("strong").textContent =
                                 deliveryCost > 0
                                     ? "- " + rupiah(deliveryCost)
                                     : "Gratis";
+                            divIndex++;
+                        }
 
                         const grandTotalElement =
                             receiptContainer.querySelector(
                                 ".user-receipt__grand-total strong",
                             );
                         if (grandTotalElement) {
-                            grandTotalElement.textContent = rupiah(totalCost);
+                            if (isTradeIn) {
+                                grandTotalElement.textContent = totalCost < 0 ? `+ ${rupiah(Math.abs(totalCost))}` : rupiah(totalCost);
+                                const gLabel = receiptContainer.querySelector(".user-receipt__grand-total span");
+                                if (gLabel) gLabel.textContent = totalCost < 0 ? "Total Pembayaran" : "Total Diterima";
+                            } else {
+                                grandTotalElement.textContent = rupiah(totalCost);
+                            }
                         }
                     }
                     const proofSection = document.querySelector(

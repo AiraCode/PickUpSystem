@@ -62,7 +62,8 @@
                     <div class="user-catalog-toolbar">
                         <label class="user-field user-field--search" for="new-accu-search-input" style="flex:1;">
                             <span>CARI JENIS AKI BARU</span>
-                            <input type="text" id="new-accu-search-input" placeholder="Cari jenis aki (NX100, NS40, dll)...">
+                            <input type="text" id="new-accu-search-input" placeholder="Cari jenis aki (NX100, NS40, dll)..."
+                                style="padding: 10px 14px; border: 1px solid #94a3b8; border-radius: 8px; font-size: 13px; width: 100%; height: 44px; box-sizing: border-box; outline-color: #2563eb;">
                         </label>
                     </div>
 

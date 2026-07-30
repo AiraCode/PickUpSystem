@@ -203,7 +203,7 @@
 
     <div class="user-modal" data-identity-modal hidden>
         <div class="user-modal__backdrop" data-modal-close></div>
-        <div class="user-modal__dialog" role="dialog" aria-modal="true" aria-labelledby="identity-modal-title" style="max-width: 800px; width: 95vw;">
+        <div class="user-modal__dialog" role="dialog" aria-modal="true" aria-labelledby="identity-modal-title" style="max-width: 800px; width: 95vw; max-height: 90vh; overflow-y: auto;">
             <button type="button" class="user-modal__close" data-modal-close aria-label="Tutup konfirmasi">×</button>
             <span class="user-modal__icon"><svg viewBox="0 0 24 24" aria-hidden="true">
                     <path d="M5 12.5 9.5 17 19 7.5" />

@@ -29,6 +29,7 @@ class ReceiptController extends Controller
             $cityPercentage = (float) ($city->percentage ?? 80.00);
             $pricePerKg = ($lme * $kurs * ($cityPercentage / 100)) / 1000.0;
 
+            $rejectSubtotal = 0;
             $formattedAccus = [];
             foreach ($order->receipt->accus as $accu) {
                 $beratKering = (float) ($accu->berat_kering ?? 0);
@@ -44,6 +45,7 @@ class ReceiptController extends Controller
                     'price' => $calculatedPrice,
                     'subtotal' => $calculatedPrice * $accu->pivot->amount,
                 ];
+                $rejectSubtotal += ($calculatedPrice * $accu->pivot->amount);
             }
 
             $transfer = \Illuminate\Support\Facades\DB::table('transfers')->where('receipts_id', $order->receipt->id)->first();
@@ -61,25 +63,38 @@ class ReceiptController extends Controller
         }
         
         $newAccusFormatted = [];
+        $newAccusSubtotal = 0;
         if ($order->newAccusItems && $order->newAccusItems->count() > 0) {
             foreach ($order->newAccusItems as $item) {
+                $sub = $item->pivot->price * $item->pivot->quantity;
                 $newAccusFormatted[] = [
                     'id' => $item->id,
                     'name' => $item->name,
                     'amount' => $item->pivot->quantity,
                     'price' => $item->pivot->price,
-                    'subtotal' => $item->pivot->price * $item->pivot->quantity,
+                    'subtotal' => $sub,
                 ];
+                $newAccusSubtotal += $sub;
             }
         } elseif ($order->newAccu) {
              // Fallback for older single-item data
+             $sub = $order->newAccu->price;
              $newAccusFormatted[] = [
                   'id' => $order->newAccu->id,
                   'name' => $order->newAccu->name,
                   'amount' => 1,
                   'price' => $order->newAccu->price,
-                  'subtotal' => $order->newAccu->price,
+                  'subtotal' => $sub,
              ];
+             $newAccusSubtotal += $sub;
+        }
+
+        $pickupFee = 0;
+        if ($receiptData) {
+            // price_owed = rejectSubtotal - pickupFee - newAccusSubtotal
+            // pickupFee = rejectSubtotal - newAccusSubtotal - price_owed
+            $calculatedPickupFee = $rejectSubtotal - $newAccusSubtotal - $order->receipt->price_owed;
+            $pickupFee = max(0, $calculatedPickupFee);
         }
 
         return response()->json([
@@ -98,6 +113,7 @@ class ReceiptController extends Controller
                 'pickup_address' => $order->pickup_address,
                 'pickup_address_note' => $order->pickup_address_note,
                 'cancel_reason' => $order->cancel_reason,
+                'pickup_fee' => $pickupFee,
                 'receipt' => $receiptData,
             ],
         ]);
