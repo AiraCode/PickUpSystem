@@ -324,6 +324,8 @@
                 <span style="color: #94a3b8;">(Alamat yang diketik akan otomatis tersimpan sebagai alamat
                     pengiriman)</span>
             </div>
+            <div id="map-geo-notice"
+                style="display:none; padding: 8px 20px; font-size:12px; border-bottom:1px solid #e2e8f0; line-height: 1.4;"></div>
             <div id="user-map-picker" style="width:100%; height:320px; background:#e5e7eb;"></div>
             <div
                 style="padding: 14px 20px; display:flex; justify-content:flex-end; gap:10px; border-top:1px solid #e2e8f0; background:#f8fafc;">

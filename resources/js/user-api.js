@@ -1843,7 +1843,16 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
-    function requestDeviceLocation(forceFill = false) {
+    function requestDeviceLocation(forceFill = false, onComplete = null) {
+        const noticeEl = document.getElementById("map-geo-notice");
+        if (noticeEl) {
+            noticeEl.style.display = "block";
+            noticeEl.style.background = "#eff6ff";
+            noticeEl.style.color = "#1e40af";
+            noticeEl.style.borderColor = "#bfdbfe";
+            noticeEl.innerHTML = "📡 Meminta izin lokasi perangkat...";
+        }
+
         if ("geolocation" in navigator) {
             navigator.geolocation.getCurrentPosition(
                 async (position) => {
@@ -1862,19 +1871,62 @@ document.addEventListener("DOMContentLoaded", () => {
                         latlongText.innerHTML = `<strong>Koordinat Peta:</strong> ${userLat.toFixed(6)}, ${userLng.toFixed(6)}`;
                     }
 
+                    if (userSelectedLat) userSelectedLat.textContent = userLat.toFixed(5);
+                    if (userSelectedLng) userSelectedLng.textContent = userLng.toFixed(5);
+                    if (userCoordsBadge) userCoordsBadge.style.display = "block";
+
                     await reverseGeocodeCoords(lat, lng, forceFill);
                     findAndDisplayNearestWarehouse();
 
                     if (userMap && userMarker) {
                         userMap.setView([userLat, userLng], 16);
                         userMarker.setLatLng([userLat, userLng]);
+                        setTimeout(() => {
+                            if (userMap) userMap.invalidateSize();
+                        }, 200);
                     }
+
+                    if (noticeEl) {
+                        noticeEl.style.display = "block";
+                        noticeEl.style.background = "#f0fdf4";
+                        noticeEl.style.color = "#166534";
+                        noticeEl.style.borderColor = "#bbf7d0";
+                        noticeEl.innerHTML = "✅ Lokasi berhasil dideteksi dari GPS perangkat.";
+                        setTimeout(() => {
+                            if (noticeEl && noticeEl.innerHTML.includes("berhasil")) {
+                                noticeEl.style.display = "none";
+                            }
+                        }, 4000);
+                    }
+
+                    if (typeof onComplete === "function") onComplete(true);
                 },
                 (err) => {
                     console.warn("Geolocation request failed or denied:", err.message);
+                    if (noticeEl) {
+                        noticeEl.style.display = "block";
+                        noticeEl.style.background = "#fff7ed";
+                        noticeEl.style.color = "#9a3412";
+                        noticeEl.style.borderColor = "#fed7aa";
+                        if (err.code === err.PERMISSION_DENIED) {
+                            noticeEl.innerHTML = "ℹ️ Izin lokasi tidak diberikan. Anda dapat menentukan atau mencari lokasi secara manual di peta.";
+                        } else {
+                            noticeEl.innerHTML = "ℹ️ Lokasi perangkat tidak dapat diperoleh. Anda dapat menentukan atau mencari lokasi secara manual di peta.";
+                        }
+                    }
+                    if (typeof onComplete === "function") onComplete(false);
                 },
                 { enableHighAccuracy: true, timeout: 10000, maximumAge: 60000 }
             );
+        } else {
+            if (noticeEl) {
+                noticeEl.style.display = "block";
+                noticeEl.style.background = "#fff7ed";
+                noticeEl.style.color = "#9a3412";
+                noticeEl.style.borderColor = "#fed7aa";
+                noticeEl.innerHTML = "ℹ️ Peramban tidak mendukung geolokasi. Silakan tentukan lokasi secara manual.";
+            }
+            if (typeof onComplete === "function") onComplete(false);
         }
     }
 
@@ -1887,9 +1939,6 @@ document.addEventListener("DOMContentLoaded", () => {
             latlongText.innerHTML = `<strong>Koordinat Peta:</strong> ${userLat.toFixed(6)}, ${userLng.toFixed(6)}`;
         }
     }
-
-    // Auto-request device location on page load
-    requestDeviceLocation(!userLat || !userLng);
     let userMap = null;
     let userMarker = null;
     let warehousesList = [];
@@ -2072,9 +2121,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
 
                 if (selectedMethod === "courier") {
-                    if (!userLat || !userLng) {
-                        requestDeviceLocation(true);
-                    } else {
+                    if (userLat && userLng) {
                         findAndDisplayNearestWarehouse();
                     }
                 }
@@ -2174,6 +2221,12 @@ document.addEventListener("DOMContentLoaded", () => {
     }
     btnOpenUserMap?.addEventListener("click", async () => {
         if (modalUserMap) modalUserMap.style.display = "flex";
+
+        const openMapAndDetect = async () => {
+            await initPickerMap();
+            requestDeviceLocation(true);
+        };
+
         if (typeof L === "undefined") {
             const link = document.createElement("link");
             link.rel = "stylesheet";
@@ -2185,10 +2238,10 @@ document.addEventListener("DOMContentLoaded", () => {
             document.head.appendChild(script);
 
             script.onload = async () => {
-                await initPickerMap();
+                await openMapAndDetect();
             };
         } else {
-            await initPickerMap();
+            await openMapAndDetect();
         }
     });
 
