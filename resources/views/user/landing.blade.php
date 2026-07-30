@@ -8,9 +8,12 @@
             <section class="user-hero">
                 <div class="user-hero__media" aria-label="Area gambar hero">
                     <div class="hero-slideshow">
-                        <div class="hero-slide is-active" style="background-image: url('{{ asset('img/Aki_GS_Hijau-removebg-preview.png') }}');"></div>
-                        <div class="hero-slide" style="background-image: url('{{ asset('img/Aki_GS_Putih-removebg-preview.png') }}');"></div>
-                        <div class="hero-slide" style="background-image: url('{{ asset('img/Aki_Yuasa-removebg-preview.png') }}');"></div>
+                        <div class="hero-slide is-active"
+                            style="background-image: url('{{ asset('img/Aki_GS_Hijau-removebg-preview.png') }}');"></div>
+                        <div class="hero-slide"
+                            style="background-image: url('{{ asset('img/Aki_GS_Putih-removebg-preview.png') }}');"></div>
+                        <div class="hero-slide"
+                            style="background-image: url('{{ asset('img/Aki_Yuasa-removebg-preview.png') }}');"></div>
                     </div>
                     <span class="user-hero__overlay" aria-hidden="true"></span>
                 </div>
@@ -80,7 +83,8 @@
                     <div class="user-section-heading">
                         <span class="user-kicker">KATALOG AKI</span>
                         <h2>Harga jual aki terbaik<br><em>se-Indonesia.</em></h2>
-                        <p style="max-width: none; font-size: 16px;">Pilih kota untuk menampilkan data yang terhubung pada sistem.</p>
+                        <p style="max-width: none; font-size: 16px;">Pilih kota untuk menampilkan data yang terhubung pada
+                            sistem.</p>
                     </div>
 
                     <div class="user-catalog-toolbar">
@@ -156,25 +160,26 @@
                                 </div>
                             </div>
 
-                            <div class="user-delivery" style="margin-bottom: 20px;">
+                            {{-- <div class="user-delivery" style="margin-bottom: 20px;">
                                 <span class="user-checkout-label">PILIHAN TRANSAKSI</span>
                                 <label class="user-radio-card">
                                     <input type="radio" name="order_type_selection" value="sell" checked>
                                     <span class="user-radio-card__indicator"></span>
-                                    <span><strong>Jual Aki Reject Saja</strong><small>Penjualan aki reject ke Modern Mulya Mandiri.</small></span>
+                                    <span><strong>Jual Aki Reject Saja</strong><small>Penjualan aki reject ke Modern Mulya
+                                            Mandiri.</small></span>
                                 </label>
                                 <label class="user-radio-card">
                                     <input type="radio" name="order_type_selection" value="trade_in">
                                     <span class="user-radio-card__indicator"></span>
-                                    <span><strong>Trade In (Tukar Tambah)</strong><small>Tukar tambah aki reject dengan aki baru.</small></span>
+                                    <span><strong>Trade In (Tukar Tambah)</strong><small>Tukar tambah aki reject dengan aki
+                                            baru.</small></span>
                                 </label>
-                            </div>
+                            </div> --}}
 
                             <div class="user-delivery" data-delivery-method>
                                 <span class="user-checkout-label">METODE PENYERAHAN AKI</span>
                                 <label class="user-radio-card is-selected">
-                                    <input type="radio" name="delivery_method" value="warehouse" checked
-                                        data-pickup-method>
+                                    <input type="radio" name="delivery_method" value="warehouse" checked data-pickup-method>
                                     <span class="user-radio-card__indicator"></span>
                                     <span><strong>Antar ke gudang</strong><small>Rekomendasi gudang terdekat ·
                                             biaya layanan gratis.</small></span>
@@ -218,7 +223,8 @@
                                     lokasi presisi penjemputan.</p>
                                 <div id="user-address-fields" style="display:none;">
                                     <label class="user-floating-field">
-                                        <textarea rows="3" placeholder=" " id="user-address-input" name="address"></textarea><span>Alamat lengkap</span>
+                                        <textarea rows="3" placeholder=" " id="user-address-input"
+                                            name="address"></textarea><span>Alamat lengkap</span>
                                     </label>
                                     <div class="user-address__row">
                                         <label class="user-floating-field"><input type="text" placeholder=" "
@@ -228,7 +234,8 @@
                                     </div>
                                 </div>
                                 <label class="user-floating-field" style="margin-top: 10px;">
-                                    <textarea rows="2" placeholder=" " id="user-note-input" name="note"></textarea><span>Tambahkan catatan (cth: pagar cokelat)</span>
+                                    <textarea rows="2" placeholder=" " id="user-note-input"
+                                        name="note"></textarea><span>Tambahkan catatan (cth: pagar cokelat)</span>
                                 </label>
                                 <button type="button" id="btn-open-user-map"
                                     class="user-button user-button--secondary user-button--full"
@@ -253,8 +260,8 @@
                             </div>
 
                             <button type="button" id="checkout-submit-btn"
-                                class="user-button user-button--primary user-button--full"
-                                style="margin-top: 20px;">Lanjut <span aria-hidden="true">→</span></button>
+                                class="user-button user-button--primary user-button--full" style="margin-top: 20px;">Lanjut
+                                <span aria-hidden="true">→</span></button>
                         </aside>
                     </div>
                 </div>
@@ -296,8 +303,7 @@
             <div
                 style="padding: 16px 20px; border-bottom:1px solid #e2e8f0; display:flex; justify-content:space-between; align-items:center; background:#f8fafc;">
                 <h3 style="margin:0; font-size:15px; font-weight:700; color:#1e293b;">📍 Tentukan Lokasi Anda</h3>
-                <button type="button"
-                    style="border:none; background:none; font-size:18px; cursor:pointer; color:#64748b;"
+                <button type="button" style="border:none; background:none; font-size:18px; cursor:pointer; color:#64748b;"
                     onclick="document.getElementById('modal-user-map').style.display='none'">✕</button>
             </div>
             <div
