@@ -1794,6 +1794,90 @@ document.addEventListener("DOMContentLoaded", () => {
     let userLat = parseFloat(localStorage.getItem("pickup_lat")) || null;
     let userLng = parseFloat(localStorage.getItem("pickup_long")) || null;
 
+    async function reverseGeocodeCoords(lat, lng, forceFill = false) {
+        try {
+            const response = await fetch(
+                `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&zoom=18&addressdetails=1`
+            );
+            const result = await response.json();
+            if (result && result.display_name) {
+                const addressStr = result.display_name;
+                const cityStr =
+                    result.address?.city ||
+                    result.address?.town ||
+                    result.address?.city_district ||
+                    result.address?.village ||
+                    result.address?.county ||
+                    result.address?.state ||
+                    "";
+                const zipStr = result.address?.postcode || "";
+
+                if (userAddressInput && (!userAddressInput.value || forceFill)) {
+                    userAddressInput.value = addressStr;
+                    localStorage.setItem("pickup_address", addressStr);
+                }
+                if (userCityInput && (!userCityInput.value || forceFill)) {
+                    userCityInput.value = cityStr;
+                    localStorage.setItem("pickup_city", cityStr);
+                }
+                if (userZipInput && (!userZipInput.value || forceFill)) {
+                    userZipInput.value = zipStr;
+                    localStorage.setItem("pickup_zip", zipStr);
+                }
+
+                const citySelect = document.querySelector("[data-city-select]");
+                if (citySelect && cityStr) {
+                    const options = Array.from(citySelect.options);
+                    const matchedOpt = options.find((opt) =>
+                        cityStr.toLowerCase().includes(opt.text.toLowerCase()) ||
+                        opt.text.toLowerCase().includes(cityStr.toLowerCase())
+                    );
+                    if (matchedOpt && (!citySelect.value || citySelect.value === "")) {
+                        citySelect.value = matchedOpt.value;
+                        citySelect.dispatchEvent(new Event("change"));
+                    }
+                }
+            }
+        } catch (e) {
+            console.warn("Reverse geocoding failed:", e);
+        }
+    }
+
+    function requestDeviceLocation(forceFill = false) {
+        if ("geolocation" in navigator) {
+            navigator.geolocation.getCurrentPosition(
+                async (position) => {
+                    const lat = position.coords.latitude;
+                    const lng = position.coords.longitude;
+                    userLat = lat;
+                    userLng = lng;
+                    localStorage.setItem("pickup_lat", userLat);
+                    localStorage.setItem("pickup_long", userLng);
+
+                    const addressFields = document.getElementById("user-address-fields");
+                    const latlongText = document.getElementById("user-latlong-text");
+                    if (addressFields) addressFields.style.display = "block";
+                    if (latlongText) {
+                        latlongText.style.display = "block";
+                        latlongText.innerHTML = `<strong>Koordinat Peta:</strong> ${userLat.toFixed(6)}, ${userLng.toFixed(6)}`;
+                    }
+
+                    await reverseGeocodeCoords(lat, lng, forceFill);
+                    findAndDisplayNearestWarehouse();
+
+                    if (userMap && userMarker) {
+                        userMap.setView([userLat, userLng], 16);
+                        userMarker.setLatLng([userLat, userLng]);
+                    }
+                },
+                (err) => {
+                    console.warn("Geolocation request failed or denied:", err.message);
+                },
+                { enableHighAccuracy: true, timeout: 10000, maximumAge: 60000 }
+            );
+        }
+    }
+
     if (userLat && userLng) {
         const addressFields = document.getElementById("user-address-fields");
         const latlongText = document.getElementById("user-latlong-text");
@@ -1803,6 +1887,9 @@ document.addEventListener("DOMContentLoaded", () => {
             latlongText.innerHTML = `<strong>Koordinat Peta:</strong> ${userLat.toFixed(6)}, ${userLng.toFixed(6)}`;
         }
     }
+
+    // Auto-request device location on page load
+    requestDeviceLocation(!userLat || !userLng);
     let userMap = null;
     let userMarker = null;
     let warehousesList = [];
@@ -1984,8 +2071,12 @@ document.addEventListener("DOMContentLoaded", () => {
                     pickupWarning.style.display = selectedMethod === "courier" ? "block" : "none";
                 }
 
-                if (selectedMethod === "courier" && btnOpenUserMap) {
-                    btnOpenUserMap.click();
+                if (selectedMethod === "courier") {
+                    if (!userLat || !userLng) {
+                        requestDeviceLocation(true);
+                    } else {
+                        findAndDisplayNearestWarehouse();
+                    }
                 }
             });
         });
@@ -2211,6 +2302,19 @@ document.addEventListener("DOMContentLoaded", () => {
                     e.preventDefault();
                     btnMapSearch.click();
                 }
+            });
+        }
+
+        const btnDetectLocation = document.getElementById("btn-detect-current-location");
+        if (btnDetectLocation && !btnDetectLocation.hasAttribute("data-bound")) {
+            btnDetectLocation.setAttribute("data-bound", "true");
+            btnDetectLocation.addEventListener("click", () => {
+                const oldText = btnDetectLocation.textContent;
+                btnDetectLocation.textContent = "⏳ Meminta Lokasi...";
+                requestDeviceLocation(true);
+                setTimeout(() => {
+                    btnDetectLocation.textContent = oldText;
+                }, 2500);
             });
         }
     }

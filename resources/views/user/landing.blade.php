@@ -245,7 +245,7 @@
                                         <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
                                         <circle cx="12" cy="10" r="3" />
                                     </svg>
-                                    <span>Pilih Lokasi Tepat di Peta (Wajib)</span>
+                                    <span>Lihat / Ubah Lokasi Presisi di Peta</span>
                                 </button>
                                 <div id="user-latlong-text"
                                     style="display:none; font-size: 11px; color: #475569; margin-top: 8px;"></div>
@@ -307,11 +307,16 @@
                     onclick="document.getElementById('modal-user-map').style.display='none'">✕</button>
             </div>
             <div
-                style="padding: 12px 20px; font-size:12px; background:#fff; border-bottom:1px solid #e2e8f0; display:flex; gap:8px;">
+                style="padding: 12px 20px; font-size:12px; background:#fff; border-bottom:1px solid #e2e8f0; display:flex; gap:8px; align-items:center;">
                 <input type="text" id="map-search-input" placeholder="Cari alamat lengkap Anda..."
                     style="flex:1; padding:8px 12px; border:1px solid #cbd5e1; border-radius:6px; font-size:13px;">
                 <button type="button" id="btn-map-search" class="user-button user-button--primary"
                     style="padding:8px 16px; border-radius:6px;">Cari</button>
+                <button type="button" id="btn-detect-current-location" class="user-button user-button--secondary"
+                    title="Gunakan Lokasi GPS Perangkat Saat Ini"
+                    style="padding:8px 12px; border-radius:6px; font-size:12px; white-space:nowrap; display:inline-flex; align-items:center; gap:4px;">
+                    🎯 Deteksi Lokasi
+                </button>
             </div>
             <div
                 style="padding: 8px 20px; font-size:11px; color:#64748b; background:#f8fafc; border-bottom:1px solid #e2e8f0; line-height: 1.4;">
