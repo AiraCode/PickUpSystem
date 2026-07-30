@@ -1794,61 +1794,82 @@ document.addEventListener("DOMContentLoaded", () => {
     let userLat = parseFloat(localStorage.getItem("pickup_lat")) || null;
     let userLng = parseFloat(localStorage.getItem("pickup_long")) || null;
 
-    async function reverseGeocodeCoords(lat, lng, forceFill = false) {
-        try {
+    async function reverseGeocodeCoords(lat, lng, forceFill = false, fallbackDisplayName = null) {
+        const fetchReverse = async () => {
             const response = await fetch(
                 `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&zoom=18&addressdetails=1`
             );
-            const result = await response.json();
-            if (result && result.display_name) {
-                const addressStr = result.display_name;
-                const cityStr =
-                    result.address?.city ||
-                    result.address?.town ||
-                    result.address?.city_district ||
-                    result.address?.village ||
-                    result.address?.county ||
-                    result.address?.state ||
-                    "";
-                const zipStr = result.address?.postcode || "";
+            if (!response.ok) throw new Error("HTTP error " + response.status);
+            return await response.json();
+        };
 
-                if (userAddressInput && (!userAddressInput.value || forceFill)) {
-                    userAddressInput.value = addressStr;
-                    localStorage.setItem("pickup_address", addressStr);
-                }
-                if (userCityInput && (!userCityInput.value || forceFill)) {
-                    userCityInput.value = cityStr;
-                    localStorage.setItem("pickup_city", cityStr);
-                }
-                if (userZipInput && (!userZipInput.value || forceFill)) {
-                    userZipInput.value = zipStr;
-                    localStorage.setItem("pickup_zip", zipStr);
-                }
+        let result = null;
+        try {
+            result = await fetchReverse();
+        } catch (e) {
+            console.warn("First reverse geocode attempt failed, retrying in 600ms...", e);
+            try {
+                await new Promise((resolve) => setTimeout(resolve, 600));
+                result = await fetchReverse();
+            } catch (retryErr) {
+                console.warn("Retry reverse geocode failed:", retryErr);
+            }
+        }
 
-                const addressBadge = document.getElementById("user-selected-address");
-                if (addressBadge && (forceFill || !addressBadge.textContent)) {
-                    addressBadge.textContent = addressStr;
-                }
+        let addressStr = "";
+        let cityStr = "";
+        let zipStr = "";
 
-                const citySelect = document.querySelector("[data-city-select]");
-                if (citySelect && cityStr) {
-                    const options = Array.from(citySelect.options);
-                    const matchedOpt = options.find((opt) =>
-                        cityStr.toLowerCase().includes(opt.text.toLowerCase()) ||
-                        opt.text.toLowerCase().includes(cityStr.toLowerCase())
-                    );
-                    if (matchedOpt && (!citySelect.value || citySelect.value === "")) {
-                        citySelect.value = matchedOpt.value;
-                        citySelect.dispatchEvent(new Event("change"));
-                    }
+        if (result && result.display_name) {
+            addressStr = result.display_name;
+            cityStr =
+                result.address?.city ||
+                result.address?.town ||
+                result.address?.city_district ||
+                result.address?.village ||
+                result.address?.county ||
+                result.address?.state ||
+                "";
+            zipStr = result.address?.postcode || "";
+        } else if (fallbackDisplayName) {
+            addressStr = fallbackDisplayName;
+        }
+
+        if (addressStr) {
+            if (userAddressInput && (!userAddressInput.value || forceFill)) {
+                userAddressInput.value = addressStr;
+                localStorage.setItem("pickup_address", addressStr);
+            }
+            if (userCityInput && (!userCityInput.value || forceFill)) {
+                if (cityStr) userCityInput.value = cityStr;
+                localStorage.setItem("pickup_city", userCityInput.value || cityStr);
+            }
+            if (userZipInput && (!userZipInput.value || forceFill)) {
+                if (zipStr) userZipInput.value = zipStr;
+                localStorage.setItem("pickup_zip", userZipInput.value || zipStr);
+            }
+
+            const addressBadge = document.getElementById("user-selected-address");
+            if (addressBadge && (forceFill || !addressBadge.textContent)) {
+                addressBadge.textContent = addressStr;
+            }
+
+            const citySelect = document.querySelector("[data-city-select]");
+            if (citySelect && cityStr) {
+                const options = Array.from(citySelect.options);
+                const matchedOpt = options.find((opt) =>
+                    cityStr.toLowerCase().includes(opt.text.toLowerCase()) ||
+                    opt.text.toLowerCase().includes(cityStr.toLowerCase())
+                );
+                if (matchedOpt && (!citySelect.value || citySelect.value === "")) {
+                    citySelect.value = matchedOpt.value;
+                    citySelect.dispatchEvent(new Event("change"));
                 }
             }
-        } catch (e) {
-            console.warn("Reverse geocoding failed:", e);
         }
     }
 
-    async function updateLocationFromMarker(lat, lng, forceFill = true) {
+    async function updateLocationFromMarker(lat, lng, forceFill = true, fallbackDisplayName = null) {
         userLat = lat;
         userLng = lng;
         localStorage.setItem("pickup_lat", userLat);
@@ -1866,7 +1887,7 @@ document.addEventListener("DOMContentLoaded", () => {
         if (userSelectedLng) userSelectedLng.textContent = userLng.toFixed(5);
         if (userCoordsBadge) userCoordsBadge.style.display = "block";
 
-        await reverseGeocodeCoords(lat, lng, forceFill);
+        await reverseGeocodeCoords(lat, lng, forceFill, fallbackDisplayName);
         findAndDisplayNearestWarehouse();
 
         if (userMap && userMarker) {
@@ -2388,11 +2409,13 @@ document.addEventListener("DOMContentLoaded", () => {
                     if (results && results.length > 0) {
                         const lat = parseFloat(results[0].lat);
                         const lon = parseFloat(results[0].lon);
+                        const fullSearchAddress = results[0].display_name || null;
+
                         if (userMap && userMarker) {
                             userMap.setView([lat, lon], 16);
                             userMarker.setLatLng([lat, lon]);
                         }
-                        await updateLocationFromMarker(lat, lon, true);
+                        await updateLocationFromMarker(lat, lon, true, fullSearchAddress);
                     } else {
                         showCustomAlert(
                             "Lokasi tidak ditemukan. Cobalah hapus nomor rumah atau cari nama jalan utamanya saja, lalu geser pin secara manual.",
