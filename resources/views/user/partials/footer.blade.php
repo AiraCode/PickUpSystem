@@ -12,7 +12,7 @@
                 </span>
             </a>
             <p>Modern Mulya Mandiri — One Stop Solution</p>
-            <div class="user-footer__social">
+            {{-- <div class="user-footer__social">
                 <span>CONNECT WITH US</span>
                 <a href="https://www.instagram.com/imli_official/" target="_blank" rel="noopener noreferrer"
                     aria-label="Instagram Modern Mulya Mandiri">
@@ -22,7 +22,7 @@
                         <path d="M17.2 6.8h.01" />
                     </svg>
                 </a>
-            </div>
+            </div> --}}
         </div>
 
         {{-- <div class="user-footer__column user-footer__column--contact">
