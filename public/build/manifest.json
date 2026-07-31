@@ -1,0 +1,81 @@
+{
+  "_fonts-C9MNnjVw.css": {
+    "file": "assets/fonts-C9MNnjVw.css",
+    "src": "_fonts-C9MNnjVw.css"
+  },
+  "_instrument-sans-400-normal-D1W7dsQl.woff": {
+    "file": "assets/instrument-sans-400-normal-D1W7dsQl.woff",
+    "src": "_instrument-sans-400-normal-D1W7dsQl.woff"
+  },
+  "_instrument-sans-400-normal-DRC__1Mx.woff2": {
+    "file": "assets/instrument-sans-400-normal-DRC__1Mx.woff2",
+    "src": "_instrument-sans-400-normal-DRC__1Mx.woff2"
+  },
+  "_instrument-sans-500-normal-Dk9ku72i.woff2": {
+    "file": "assets/instrument-sans-500-normal-Dk9ku72i.woff2",
+    "src": "_instrument-sans-500-normal-Dk9ku72i.woff2"
+  },
+  "_instrument-sans-500-normal-Z6ESRlEs.woff": {
+    "file": "assets/instrument-sans-500-normal-Z6ESRlEs.woff",
+    "src": "_instrument-sans-500-normal-Z6ESRlEs.woff"
+  },
+  "_instrument-sans-600-normal-B7fBEWYG.woff2": {
+    "file": "assets/instrument-sans-600-normal-B7fBEWYG.woff2",
+    "src": "_instrument-sans-600-normal-B7fBEWYG.woff2"
+  },
+  "_instrument-sans-600-normal-B9e8oLYv.woff": {
+    "file": "assets/instrument-sans-600-normal-B9e8oLYv.woff",
+    "src": "_instrument-sans-600-normal-B9e8oLYv.woff"
+  },
+  "resources/css/app.css": {
+    "file": "assets/app-moaMBxv6.css",
+    "name": "app",
+    "names": [
+      "app.css"
+    ],
+    "src": "resources/css/app.css",
+    "isEntry": true
+  },
+  "resources/img/Aki_Yuasa-removebg-preview.png": {
+    "file": "assets/Aki_Yuasa-removebg-preview-CjjKnV-k.png",
+    "src": "resources/img/Aki_Yuasa-removebg-preview.png"
+  },
+  "resources/img/Logo_user-removebg-preview.png": {
+    "file": "assets/Logo_user-removebg-preview-CPILr9Sg.png",
+    "src": "resources/img/Logo_user-removebg-preview.png"
+  },
+  "resources/img/img_aki.png": {
+    "file": "assets/img_aki-DWKAy-ct.png",
+    "src": "resources/img/img_aki.png"
+  },
+  "resources/img/indoprima_logo.png": {
+    "file": "assets/indoprima_logo-DkF_bLVd.png",
+    "src": "resources/img/indoprima_logo.png"
+  },
+  "resources/img/logo_admin1-removebg-preview.png": {
+    "file": "assets/logo_admin1-removebg-preview-e1sfzfGJ.png",
+    "src": "resources/img/logo_admin1-removebg-preview.png"
+  },
+  "resources/img/logo_admin2-removebg-preview.png": {
+    "file": "assets/logo_admin2-removebg-preview-BVj0x8P0.png",
+    "src": "resources/img/logo_admin2-removebg-preview.png"
+  },
+  "resources/js/admin-api.js": {
+    "file": "assets/admin-api-BDKMeRBY.js",
+    "name": "admin-api",
+    "src": "resources/js/admin-api.js",
+    "isEntry": true
+  },
+  "resources/js/app.js": {
+    "file": "assets/app-BYFRwZch.js",
+    "name": "app",
+    "src": "resources/js/app.js",
+    "isEntry": true
+  },
+  "resources/js/user-api.js": {
+    "file": "assets/user-api-B3uYWqZc.js",
+    "name": "user-api",
+    "src": "resources/js/user-api.js",
+    "isEntry": true
+  }
+}
