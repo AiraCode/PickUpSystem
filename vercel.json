@@ -17,20 +17,15 @@
     ],
     "routes": [
         {
-            "src": "/build/(.*)",
-            "dest": "/build/$1"
-        },
-        {
-            "src": "/(css|js|images|img|fonts|favicon.ico)(.*)",
-            "dest": "/$1$2"
-        },
-        {
             "src": "/api/(.*)",
             "dest": "/api/index.php"
         },
         {
-            "src": "/((?!api/).*)",
-            "dest": "/api/index.php"
+            "handle": "filesystem"
+        },
+        {
+            "src": "/(.*)",
+            "dest": "/index.html"
         }
     ]
 }
