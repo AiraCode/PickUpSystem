@@ -25,11 +25,11 @@
             "dest": "/$1$2"
         },
         {
-            "src": "/(.*)",
+            "src": "/api/(.*)",
             "dest": "/api/index.php"
         },
         {
-            "src": "/api/(.*)",
+            "src": "/(.*)",
             "dest": "/api/index.php"
         }
     ]

@@ -1,5 +1,27 @@
 <?php
 
+// ==========================================
+// FIX ROUTING VERCEL
+// ==========================================
+if (isset($_SERVER['REQUEST_URI'])) {
+    $uri = $_SERVER['REQUEST_URI'];
+
+    // Potong prefix /api/index.php jika Vercel menambahkannya secara otomatis
+    if (strpos($uri, '/api/index.php') === 0) {
+        $uri = substr($uri, 14);
+    }
+
+    // Pastikan URI tidak kosong dan selalu diawali '/'
+    if (empty($uri)) {
+        $uri = '/';
+    } elseif ($uri[0] !== '/') {
+        $uri = '/' . $uri;
+    }
+
+    $_SERVER['REQUEST_URI'] = $uri;
+}
+// ==========================================
+
 $tmpStorage = '/tmp/storage';
 $directories = [
     $tmpStorage . '/framework/views',
