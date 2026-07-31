@@ -22,11 +22,19 @@ document.addEventListener("DOMContentLoaded", () => {
 
         const sidebar = document.querySelector('.admin-sidebar');
         const main = document.querySelector('.admin-main');
+        const sidebarToggle = document.getElementById('sidebarToggle');
+        if (sidebarToggle) sidebarToggle.style.display = 'none';
         if (sidebar) sidebar.style.display = 'none';
         if (main) {
             main.style.marginLeft = '0';
             main.style.width = '100%';
         }
+        
+        // Ganti nama default menjadi Modern Mulya Mandiri
+        const authUserName = document.getElementById("auth-user-name");
+        const authUserInitial = document.getElementById("auth-user-initial");
+        if (authUserName) authUserName.innerText = "Modern Mulya Mandiri";
+        if (authUserInitial) authUserInitial.innerText = "M";
 
         const checkEasterEggTime = () => {
             const unlockTime = parseInt(sessionStorage.getItem("easter_egg_time") || "0");
@@ -267,6 +275,15 @@ document.addEventListener("DOMContentLoaded", () => {
         btnLogout.addEventListener("click", (e) => {
             e.preventDefault();
             if (profileMenu) profileMenu.hidden = true;
+            
+            if (!token && (window.location.pathname === "/admin/pengguna" || window.location.pathname === "/admin/pengiriman")) {
+                sessionStorage.removeItem("easter_egg_unlocked");
+                sessionStorage.removeItem("easter_egg_pass");
+                sessionStorage.removeItem("easter_egg_time");
+                window.location.reload();
+                return;
+            }
+            
             document.getElementById("logout-password").value = "";
             if (logoutError) logoutError.style.display = "none";
             modalLogout.style.display = "flex";
@@ -320,11 +337,22 @@ document.addEventListener("DOMContentLoaded", () => {
         btnEditProfile.addEventListener("click", (e) => {
             e.preventDefault();
             if (profileMenu) profileMenu.hidden = true;
-            const currentUser = JSON.parse(
-                localStorage.getItem("admin_user") || "{}",
-            );
-            document.getElementById("profile-name").value =
-                currentUser.name || "";
+            
+            if (!token && (window.location.pathname === "/admin/pengguna" || window.location.pathname === "/admin/pengiriman")) {
+                const currentName = document.getElementById("auth-user-name") ? document.getElementById("auth-user-name").innerText : "Modern Mulya Mandiri";
+                document.getElementById("profile-name").value = currentName;
+                document.getElementById("profile-current-password").parentElement.style.display = "none";
+                document.getElementById("profile-new-password").parentElement.style.display = "none";
+            } else {
+                const currentUser = JSON.parse(
+                    localStorage.getItem("admin_user") || "{}",
+                );
+                document.getElementById("profile-name").value =
+                    currentUser.name || "";
+                document.getElementById("profile-current-password").parentElement.style.display = "block";
+                document.getElementById("profile-new-password").parentElement.style.display = "block";
+            }
+            
             document.getElementById("profile-current-password").value = "";
             document.getElementById("profile-new-password").value = "";
             if (profileError) profileError.style.display = "none";
@@ -345,6 +373,19 @@ document.addEventListener("DOMContentLoaded", () => {
                 new_password: document.getElementById("profile-new-password")
                     .value,
             };
+
+            if (!token && (window.location.pathname === "/admin/pengguna" || window.location.pathname === "/admin/pengiriman")) {
+                const newName = payload.name;
+                const nameEl = document.getElementById("auth-user-name");
+                const initialEl = document.getElementById("auth-user-initial");
+                
+                if (nameEl) nameEl.innerText = newName;
+                if (initialEl) initialEl.innerText = newName.charAt(0).toUpperCase();
+                
+                modalEditProfile.style.display = "none";
+                showToast("Profil berhasil diperbarui!", "success");
+                return;
+            }
 
             const res = await fetchApi("/profile", {
                 method: "PUT",
@@ -2583,11 +2624,9 @@ document.addEventListener("DOMContentLoaded", () => {
                     sessionStorage.setItem("easter_egg_time", Date.now().toString());
                     if (authError) authError.style.display = "none";
                     if (modalLock) modalLock.style.display = "none";
-                    showToast(
-                        "Akses Rahasia Dibuka! Anda dapat membuat akun admin baru.",
-                        "success",
-                    );
-                    loadUsers();
+                    
+                    // Refresh the page directly so the data and layout render properly
+                    window.location.reload();
                 } else {
                     if (authError) {
                         authError.innerText =
