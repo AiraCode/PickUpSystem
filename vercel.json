@@ -1,9 +1,15 @@
 {
     "version": 2,
-    "framework": null,
-    "buildCommand": "npm install && npm run build",
+    "buildCommand": "npm run build",
     "outputDirectory": "public",
     "builds": [
+        {
+            "src": "package.json",
+            "use": "@vercel/static-build",
+            "config": {
+                "distDir": "public"
+            }
+        },
         {
             "src": "api/index.php",
             "use": "vercel-php"
@@ -13,13 +19,6 @@
         {
             "src": "/build/(.*)",
             "dest": "/build/$1"
-        },
-        {
-            "src": "/(css|js|images|img|favicon.ico)(.*)",
-            "dest": "/$1$2"
-        },
-        {
-            "handle": "filesystem"
         },
         {
             "src": "/(.*)",
