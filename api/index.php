@@ -1,31 +1,31 @@
 <?php
 
-$tmpStorage = '/tmp/storage';
-$directories = [
-    $tmpStorage . '/framework/views',
-    $tmpStorage . '/framework/cache/data',
-    $tmpStorage . '/framework/sessions',
-    $tmpStorage . '/logs',
-    $tmpStorage . '/bootstrap/cache',
-];
+use Illuminate\Http\Request;
 
-foreach ($directories as $dir) {
-    if (!is_dir($dir)) {
-        mkdir($dir, 0755, true);
-    }
+define('LARAVEL_START', microtime(true));
+
+// Load Composer Autoloader
+require __DIR__ . '/../vendor/autoload.php';
+
+// Bootstrap Laravel
+$app = require_once __DIR__ . '/../bootstrap/app.php';
+
+// Fix Request URI untuk Vercel Serverless Function
+if (isset($_SERVER['REQUEST_URI'])) {
+    $_SERVER['SCRIPT_NAME'] = '/index.php';
+    $_SERVER['SCRIPT_FILENAME'] = __DIR__ . '/index.php';
 }
 
-$_ENV['APP_STORAGE_PATH'] = $tmpStorage;
-putenv("APP_STORAGE_PATH={$tmpStorage}");
-
-$_ENV['APP_CONFIG_CACHE'] = $tmpStorage . '/bootstrap/cache/config.php';
-$_ENV['APP_SERVICES_CACHE'] = $tmpStorage . '/bootstrap/cache/services.php';
-$_ENV['APP_PACKAGES_CACHE'] = $tmpStorage . '/bootstrap/cache/packages.php';
-$_ENV['APP_ROUTES_CACHE'] = $tmpStorage . '/bootstrap/cache/routes.php';
-$_ENV['VIEW_COMPILED_PATH'] = $tmpStorage . '/framework/views';
-
+// Force HTTPS
 if (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https') {
     $_SERVER['HTTPS'] = 'on';
 }
 
-require __DIR__ . '/../public/index.php';
+// Tangani Request
+$kernel = $app->make(Illuminate\Contracts\Http\Kernel::class);
+
+$response = $kernel->handle(
+    $request = Request::capture()
+)->send();
+
+$kernel->terminate($request, $response);
