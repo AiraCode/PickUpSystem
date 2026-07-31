@@ -11,7 +11,7 @@
             }
         },
         {
-            "src": "api/index.php",
+            "src": "api_core/index.php",
             "use": "vercel-php"
         }
     ],
@@ -26,11 +26,7 @@
         },
         {
             "src": "/(.*)",
-            "dest": "/api/index.php"
-        },
-        {
-            "src": "/api/(.*)",
-            "dest": "/api/index.php"
+            "dest": "/api_core/index.php"
         }
     ]
 }

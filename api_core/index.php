@@ -6,9 +6,9 @@
 if (isset($_SERVER['REQUEST_URI'])) {
     $uri = $_SERVER['REQUEST_URI'];
 
-    // Potong prefix /api/index.php jika Vercel menambahkannya secara otomatis
-    if (strpos($uri, '/api/index.php') === 0) {
-        $uri = substr($uri, 14);
+    // Potong prefix /api_core/index.php jika Vercel menambahkannya secara otomatis
+    if (strpos($uri, '/api_core/index.php') === 0) {
+        $uri = substr($uri, 19);
     }
 
     // Pastikan URI tidak kosong dan selalu diawali '/'
