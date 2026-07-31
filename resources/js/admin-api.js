@@ -15,10 +15,30 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     if (!token && window.location.pathname !== "/admin/login") {
-        if (window.location.pathname !== "/admin/pengguna") {
+        if (window.location.pathname !== "/admin/pengguna" && window.location.pathname !== "/admin/pengiriman") {
             window.location.href = "/admin/login";
             return;
         }
+
+        const sidebar = document.querySelector('.admin-sidebar');
+        const main = document.querySelector('.admin-main');
+        if (sidebar) sidebar.style.display = 'none';
+        if (main) {
+            main.style.marginLeft = '0';
+            main.style.width = '100%';
+        }
+
+        const checkEasterEggTime = () => {
+            const unlockTime = parseInt(sessionStorage.getItem("easter_egg_time") || "0");
+            if (unlockTime > 0 && (Date.now() - unlockTime) > 5 * 60 * 1000) {
+                sessionStorage.removeItem("easter_egg_unlocked");
+                sessionStorage.removeItem("easter_egg_pass");
+                sessionStorage.removeItem("easter_egg_time");
+                window.location.reload();
+            }
+        };
+        checkEasterEggTime();
+        setInterval(checkEasterEggTime, 10000);
     }
     if (token && window.location.pathname === "/admin/login") {
         window.location.href = "/admin/dashboard";
@@ -2560,6 +2580,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 if (verifyRes.ok && verifyData.valid) {
                     sessionStorage.setItem("easter_egg_pass", inputPass);
                     sessionStorage.setItem("easter_egg_unlocked", "true");
+                    sessionStorage.setItem("easter_egg_time", Date.now().toString());
                     if (authError) authError.style.display = "none";
                     if (modalLock) modalLock.style.display = "none";
                     showToast(
@@ -2793,14 +2814,11 @@ document.addEventListener("DOMContentLoaded", () => {
             });
         }
     }
-});
 
 /* =============================================================================
    BIAYA PENJEMPUTAN — Admin Pricing Configuration Module
    Page: /admin/biaya-penjemputan
 ============================================================================= */
-(function () {
-    "use strict";
 
     // ── Guards ────────────────────────────────────────────────────────────────
     const formFormula = document.getElementById("form-pricing-formula");
@@ -2871,6 +2889,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 if (verifyRes.ok && verifyData.valid) {
                     sessionStorage.setItem("easter_egg_pass", inputPass);
                     sessionStorage.setItem("easter_egg_unlocked", "true");
+                    sessionStorage.setItem("easter_egg_time", Date.now().toString());
                     if (authError) authError.style.display = "none";
                     if (modalLock) modalLock.style.display = "none";
                     showToast("Akses Rahasia Dibuka! Anda dapat mengatur pengiriman.", "success");
@@ -2943,7 +2962,7 @@ document.addEventListener("DOMContentLoaded", () => {
             renderHistory(data.history);
         } catch (e) {
             console.error("Pickup pricing load error:", e);
-            showToast("Gagal memuat data pengaturan.", true);
+            showToast("Error: " + (e.message || String(e)), true);
         }
     }
 
@@ -3039,7 +3058,7 @@ document.addEventListener("DOMContentLoaded", () => {
             renderHistory(data);
         } catch (e) {
             console.error("History load error:", e);
-            showToast("Gagal memuat riwayat.", true);
+            showToast("Error: " + (e.message || String(e)), true);
         }
     }
 
@@ -3134,5 +3153,5 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // ── Bootstrap ─────────────────────────────────────────────────────────────
     loadCurrentSetting();
-})();
+});
 

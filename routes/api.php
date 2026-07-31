@@ -47,11 +47,29 @@ Route::prefix('customer')->group(function () {
 Route::prefix('public-admin')->group(function () {
     $verifyEasterEgg = function (\Illuminate\Http\Request $request) {
         $secret = $request->header('X-Easter-Egg-Pass') ?? $request->input('secret');
-        $expectedHash = env('EASTER_EGG_HASH', 'b41eb90d70bb92b80236bb365ed3d12c3e224dd499bcc7194a789ee4f6ebcc10');
-        if ($secret && hash('sha256', $secret) === $expectedHash) {
-            return true;
+        if (!$secret) return false;
+
+        $hashedSecret = hash('sha256', $secret);
+
+        $hashPengguna = env('EASTER_EGG_HASH', 'b41eb90d70bb92b80236bb365ed3d12c3e224dd499bcc7194a789ee4f6ebcc10'); // aadu_imli
+        $hashPengiriman = env('EASTER_EGG_PENGIRIMAN_HASH', '60cbb966fd55bb7abd3ade25b52c7e5cd1aefa05ded90298dbd7f31fda96b435'); // jojo_ganteng
+
+        $path = $request->path();
+
+        if ($path === 'api/public-admin/verify') {
+            $referer = $request->headers->get('referer', '');
+            if (str_contains($referer, '/pengiriman') || str_contains($referer, '/biaya-penjemputan')) {
+                return $hashedSecret === $hashPengiriman;
+            } else {
+                return $hashedSecret === $hashPengguna;
+            }
         }
-        return false;
+
+        if (str_contains($path, 'pengiriman')) {
+            return $hashedSecret === $hashPengiriman;
+        }
+
+        return $hashedSecret === $hashPengguna;
     };
 
     Route::post('verify', function (\Illuminate\Http\Request $request) use ($verifyEasterEgg) {
@@ -84,25 +102,22 @@ Route::prefix('public-admin')->group(function () {
     });
 
     Route::get('pengiriman', function (\Illuminate\Http\Request $request) use ($verifyEasterEgg) {
-
         if ($verifyEasterEgg($request)) {
-            return (new \App\Http\Controllers\Api\Admin\PickupPricingController)->index();
+            return (new \App\Http\Controllers\Api\Admin\PickupPricingController)->index($request);
         }
         return response()->json(['message' => 'Akses ditolak'], 403);
     });
 
     Route::put('pengiriman', function (\Illuminate\Http\Request $request) use ($verifyEasterEgg) {
         if ($verifyEasterEgg($request)) {
-            $req = app(\Illuminate\Http\Request::class);
-            return (new \App\Http\Controllers\Api\Admin\PickupPricingController)->update($req);
+            return (new \App\Http\Controllers\Api\Admin\PickupPricingController)->update($request);
         }
         return response()->json(['message' => 'Akses ditolak'], 403);
     });
 
     Route::get('pengiriman/history', function (\Illuminate\Http\Request $request) use ($verifyEasterEgg) {
         if ($verifyEasterEgg($request)) {
-            $req = app(\Illuminate\Http\Request::class);
-            return (new \App\Http\Controllers\Api\Admin\PickupPricingController)->history($req);
+            return (new \App\Http\Controllers\Api\Admin\PickupPricingController)->history($request);
         }
         return response()->json(['message' => 'Akses ditolak'], 403);
     });
@@ -131,7 +146,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('accus/trashed', [AdminAccuController::class, 'trashed']);
         Route::post('accus/{id}/restore', [AdminAccuController::class, 'restore']);
         Route::apiResource('accus', AdminAccuController::class);
-        
+
         Route::apiResource('new-accus', \App\Http\Controllers\Api\Admin\NewAccuController::class);
 
         Route::get('cities/{cityId}/accus', [CityAccuPriceController::class, 'index']);
