@@ -6,17 +6,17 @@
     "builds": [
         {
             "src": "api/index.php",
-            "use": "vercel-php"
+            "use": "@vercel/php"
         }
     ],
     "routes": [
         {
             "src": "/build/(.*)",
-            "dest": "/public/build/$1"
+            "dest": "/build/$1"
         },
         {
             "src": "/(css|js|images|img|favicon.ico)(.*)",
-            "dest": "/public/$1$2"
+            "dest": "/$1$2"
         },
         {
             "src": "/(.*)",
