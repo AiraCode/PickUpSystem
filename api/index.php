@@ -24,4 +24,8 @@ $_ENV['APP_PACKAGES_CACHE'] = $tmpStorage . '/bootstrap/cache/packages.php';
 $_ENV['APP_ROUTES_CACHE'] = $tmpStorage . '/bootstrap/cache/routes.php';
 $_ENV['VIEW_COMPILED_PATH'] = $tmpStorage . '/framework/views';
 
+if (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https') {
+    $_SERVER['HTTPS'] = 'on';
+}
+
 require __DIR__ . '/../public/index.php';
