@@ -11,9 +11,32 @@ use Illuminate\Http\Request;
 
 class CityController extends Controller
 {
-    public function index(): JsonResponse
+    public function index(Request $request): JsonResponse
     {
-        $cities = City::all();
+        $query = City::query();
+        if ($request->filled('search')) {
+            $search = $request->input('search');
+            $query->where('name', 'like', "%{$search}%");
+        }
+
+        if ($request->filled('per_page')) {
+            $perPage = (int) $request->input('per_page', 20);
+            $paginated = $query->paginate($perPage);
+            return response()->json([
+                'message' => 'Daftar kota berhasil diambil',
+                'data' => $paginated->items(),
+                'pagination' => [
+                    'current_page' => $paginated->currentPage(),
+                    'last_page' => $paginated->lastPage(),
+                    'per_page' => $paginated->perPage(),
+                    'total' => $paginated->total(),
+                    'from' => $paginated->firstItem(),
+                    'to' => $paginated->lastItem(),
+                ],
+            ]);
+        }
+
+        $cities = $query->get();
 
         return response()->json([
             'message' => 'Daftar kota berhasil diambil',

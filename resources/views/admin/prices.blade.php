@@ -46,6 +46,11 @@
                 <h2>Area Layanan (Kota)</h2>
             </div>
             <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
+                <select id="cities-per-page" class="admin-select" style="padding: 6px 10px; font-size:12px; border-radius:6px; background:#fff;">
+                    <option value="5">5 / hal</option>
+                    <option value="20" selected>20 / hal</option>
+                    <option value="50">50 / hal</option>
+                </select>
                 <div style="position:relative; width:240px;">
                     <input type="text" id="city-search-input" class="admin-select"
                         style="width:100%; padding:7px 32px 7px 12px; font-size:12px; border-radius:6px; background:#fff;"
@@ -80,6 +85,7 @@
                 </tbody>
             </table>
         </div>
+        <div id="cities-pagination" style="display:flex; justify-content:space-between; align-items:center; padding:12px 16px; border-top:1px solid #e5e7eb;"></div>
     </article>
 
     <article class="admin-panel admin-table-panel" style="margin-top:20px;">
@@ -96,6 +102,11 @@
         <!-- Tab Aki Bekas -->
         <div id="tab-old-accu" style="display: block;">
             <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin: 16px 20px;">
+                <select id="accus-per-page" class="admin-select" style="padding: 6px 10px; font-size:12px; border-radius:6px; background:#fff;">
+                    <option value="5">5 / hal</option>
+                    <option value="20" selected>20 / hal</option>
+                    <option value="50">50 / hal</option>
+                </select>
                 <div style="position:relative; width:240px;">
                     <input type="text" id="accu-search-input" class="admin-select"
                         style="width:100%; padding:7px 32px 7px 12px; font-size:12px; border-radius:6px; background:#fff;"
@@ -135,11 +146,17 @@
                     </tbody>
                 </table>
             </div>
+            <div id="accus-pagination" style="display:flex; justify-content:space-between; align-items:center; padding:12px 16px; border-top:1px solid #e5e7eb;"></div>
         </div>
 
         <!-- Tab Aki Baru -->
         <div id="tab-new-accu" style="display: none;">
             <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin: 16px 20px;">
+                <select id="new-accus-per-page" class="admin-select" style="padding: 6px 10px; font-size:12px; border-radius:6px; background:#fff;">
+                    <option value="5">5 / hal</option>
+                    <option value="20" selected>20 / hal</option>
+                    <option value="50">50 / hal</option>
+                </select>
                 <div style="position:relative; width:240px;">
                     <input type="text" id="new-accu-search-input" class="admin-select"
                         style="width:100%; padding:7px 32px 7px 12px; font-size:12px; border-radius:6px; background:#fff;"
@@ -180,6 +197,7 @@
                     </tbody>
                 </table>
             </div>
+            <div id="new-accus-pagination" style="display:flex; justify-content:space-between; align-items:center; padding:12px 16px; border-top:1px solid #e5e7eb;"></div>
         </div>
     </article>
 
@@ -189,6 +207,13 @@
                 <h2>Riwayat Perubahan Parameter</h2>
                 <p style="font-size:12px; color:#6d727c; margin-top:2px;">Catatan log historis perubahan LME, Kurs, dan
                     persentase kota.</p>
+            </div>
+            <div style="display:flex; align-items:center; gap:10px;">
+                <select id="price-history-per-page" class="admin-select" style="padding: 6px 10px; font-size:12px; border-radius:6px; background:#fff;">
+                    <option value="5">5 / hal</option>
+                    <option value="20" selected>20 / hal</option>
+                    <option value="50">50 / hal</option>
+                </select>
             </div>
         </div>
         <div class="admin-table-wrap">
@@ -209,6 +234,7 @@
                 </tbody>
             </table>
         </div>
+        <div id="price-history-pagination" style="display:flex; justify-content:space-between; align-items:center; padding:12px 16px; border-top:1px solid #e5e7eb;"></div>
     </article>
 
     <div id="modal-view-city-prices"

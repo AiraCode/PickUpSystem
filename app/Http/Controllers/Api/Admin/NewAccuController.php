@@ -9,9 +9,34 @@ use Illuminate\Http\Request;
 
 class NewAccuController extends Controller
 {
-    public function index(): JsonResponse
+    public function index(Request $request): JsonResponse
     {
-        $newAccus = NewAccu::with('brandRelation')->get();
+        $query = NewAccu::with('brandRelation');
+
+        if ($request->filled('search')) {
+            $search = $request->input('search');
+            $query->where('name', 'like', "%{$search}%");
+        }
+
+        if ($request->filled('per_page')) {
+            $perPage = (int) $request->input('per_page', 20);
+            $paginated = $query->paginate($perPage);
+            return response()->json([
+                'message' => 'Daftar aki baru berhasil diambil',
+                'data' => $paginated->items(),
+                'pagination' => [
+                    'current_page' => $paginated->currentPage(),
+                    'last_page' => $paginated->lastPage(),
+                    'per_page' => $paginated->perPage(),
+                    'total' => $paginated->total(),
+                    'from' => $paginated->firstItem(),
+                    'to' => $paginated->lastItem(),
+                ],
+            ]);
+        }
+
+        $newAccus = $query->get();
+
         return response()->json([
             'message' => 'Daftar aki baru berhasil diambil',
             'data' => $newAccus,

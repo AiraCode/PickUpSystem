@@ -105,6 +105,25 @@ class OrderController extends Controller
         $sort = $request->input('sort', 'desc');
         $sortDir = strtolower($sort) === 'asc' ? 'asc' : 'desc';
 
+        if ($request->filled('per_page')) {
+            $perPage = (int) $request->input('per_page', 20);
+            $paginated = $query->orderBy('created_at', $sortDir)->paginate($perPage);
+            return response()->json([
+                'message' => 'Daftar order berhasil diambil',
+                'counts' => $statusCounts,
+                'current_status' => $status ?? ($search ? 'all' : 'pending'),
+                'data' => $paginated->items(),
+                'pagination' => [
+                    'current_page' => $paginated->currentPage(),
+                    'last_page' => $paginated->lastPage(),
+                    'per_page' => $paginated->perPage(),
+                    'total' => $paginated->total(),
+                    'from' => $paginated->firstItem(),
+                    'to' => $paginated->lastItem(),
+                ],
+            ]);
+        }
+
         $limit = ($status === 'all' || !empty($search) || $request->filled('bank_id') || $request->filled('date_start')) ? 150 : 200;
         $orders = $query->orderBy('created_at', $sortDir)->take($limit)->get();
 

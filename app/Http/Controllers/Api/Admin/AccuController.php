@@ -9,12 +9,37 @@ use App\Models\Accu;
 use App\Models\Brand;
 use App\Models\City;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 
 class AccuController extends Controller
 {
-    public function index(): JsonResponse
+    public function index(Request $request): JsonResponse
     {
-        $accus = Accu::all();
+        $query = Accu::query();
+
+        if ($request->filled('search')) {
+            $search = $request->input('search');
+            $query->where('name', 'like', "%{$search}%");
+        }
+
+        if ($request->filled('per_page')) {
+            $perPage = (int) $request->input('per_page', 20);
+            $paginated = $query->paginate($perPage);
+            return response()->json([
+                'message' => 'Daftar accu berhasil diambil',
+                'data' => $paginated->items(),
+                'pagination' => [
+                    'current_page' => $paginated->currentPage(),
+                    'last_page' => $paginated->lastPage(),
+                    'per_page' => $paginated->perPage(),
+                    'total' => $paginated->total(),
+                    'from' => $paginated->firstItem(),
+                    'to' => $paginated->lastItem(),
+                ],
+            ]);
+        }
+
+        $accus = $query->get();
 
         return response()->json([
             'message' => 'Daftar accu berhasil diambil',

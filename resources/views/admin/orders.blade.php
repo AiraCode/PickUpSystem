@@ -110,6 +110,11 @@
             </div>
 
             <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
+                <select id="orders-per-page" class="admin-select" style="padding: 6px 10px; font-size:12px; border-radius:6px; background:#fff;">
+                    <option value="5">5 / hal</option>
+                    <option value="20" selected>20 / hal</option>
+                    <option value="50">50 / hal</option>
+                </select>
                 <div style="position:relative; width:260px;">
                     <input type="text" id="order-search-input" class="admin-select"
                         style="width:100%; padding:7px 32px 7px 12px; font-size:12px; border-radius:6px; background:#fff;"
@@ -171,6 +176,7 @@
                 </tbody>
             </table>
         </div>
+        <div id="orders-pagination" style="display:flex; justify-content:space-between; align-items:center; padding:12px 16px; border-top:1px solid #e5e7eb;"></div>
     </article>
 
     <div id="modal-shopee-filter"

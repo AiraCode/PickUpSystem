@@ -57,9 +57,28 @@ class SettingController extends Controller
         ]);
     }
 
-    public function history(): JsonResponse
+    public function history(Request $request): JsonResponse
     {
-        $history = PriceHistory::orderBy('created_at', 'desc')->take(50)->get();
+        $query = PriceHistory::orderBy('created_at', 'desc');
+
+        if ($request->filled('per_page')) {
+            $perPage = (int) $request->input('per_page', 20);
+            $paginated = $query->paginate($perPage);
+            return response()->json([
+                'message' => 'Riwayat perubahan harga berhasil diambil',
+                'data' => $paginated->items(),
+                'pagination' => [
+                    'current_page' => $paginated->currentPage(),
+                    'last_page' => $paginated->lastPage(),
+                    'per_page' => $paginated->perPage(),
+                    'total' => $paginated->total(),
+                    'from' => $paginated->firstItem(),
+                    'to' => $paginated->lastItem(),
+                ],
+            ]);
+        }
+
+        $history = $query->take(50)->get();
 
         return response()->json([
             'message' => 'Riwayat perubahan harga berhasil diambil',

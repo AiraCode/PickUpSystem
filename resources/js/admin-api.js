@@ -761,7 +761,71 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
             }
         };
+
+        function renderGeneralPagination(pagination, containerId, onClickFnName) {
+            const container = document.getElementById(containerId);
+            if (!container) return;
+
+            if (!pagination || pagination.last_page <= 1) {
+                container.innerHTML = "";
+                return;
+            }
+
+            const current = pagination.current_page || 1;
+            const last = pagination.last_page || 1;
+            const total = pagination.total || 0;
+            const from = pagination.from || 0;
+            const to = pagination.to || 0;
+
+            let html = `
+                <div style="font-size:12px; color:#64748b;">
+                    Menampilkan <strong>${from}</strong> - <strong>${to}</strong> dari <strong>${total}</strong> data
+                </div>
+                <div style="display:flex; gap:4px; align-items:center;">
+            `;
+
+            if (current > 1) {
+                html += `<button type="button" onclick="${onClickFnName}(${current - 1})" class="admin-button admin-button--secondary" style="height:28px; padding:0 8px; font-size:11px;">&laquo; Prev</button>`;
+            } else {
+                html += `<button type="button" disabled class="admin-button admin-button--secondary" style="height:28px; padding:0 8px; font-size:11px; opacity:0.5; cursor:not-allowed;">&laquo; Prev</button>`;
+            }
+
+            for (let i = 1; i <= last; i++) {
+                if (i === 1 || i === last || (i >= current - 1 && i <= current + 1)) {
+                    const isActive = i === current;
+                    html += `<button type="button" onclick="${onClickFnName}(${i})" style="height:28px; min-width:28px; padding:0 6px; border-radius:6px; font-size:11px; font-weight:600; cursor:pointer; border:1px solid ${isActive ? '#2563eb' : '#d1d5db'}; background:${isActive ? '#2563eb' : '#fff'}; color:${isActive ? '#fff' : '#374151'};">${i}</button>`;
+                } else if (i === current - 2 || i === current + 2) {
+                    html += `<span style="align-self:center; color:#9ca3af; font-size:11px; padding:0 2px;">...</span>`;
+                }
+            }
+
+            if (current < last) {
+                html += `<button type="button" onclick="${onClickFnName}(${current + 1})" class="admin-button admin-button--secondary" style="height:28px; padding:0 8px; font-size:11px;">Next &raquo;</button>`;
+            } else {
+                html += `<button type="button" disabled class="admin-button admin-button--secondary" style="height:28px; padding:0 8px; font-size:11px; opacity:0.5; cursor:not-allowed;">Next &raquo;</button>`;
+            }
+
+            html += `</div>`;
+            container.innerHTML = html;
+        }
+
         let cachedOrders = [];
+        let ordersPage = 1;
+        let ordersPerPage = 20;
+
+        window.changeOrdersPage = (page) => {
+            ordersPage = page;
+            loadOrders();
+        };
+
+        const selectOrdersPerPage = document.getElementById("orders-per-page");
+        if (selectOrdersPerPage) {
+            selectOrdersPerPage.addEventListener("change", (e) => {
+                ordersPerPage = parseInt(e.target.value);
+                ordersPage = 1;
+                loadOrders();
+            });
+        }
 
         const loadOrders = async () => {
             const tbody = document.getElementById("orders-tbody");
@@ -781,6 +845,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 queryParams.push(`date_start=${dateStartFilter}`);
             if (dateEndFilter) queryParams.push(`date_end=${dateEndFilter}`);
             if (sortOrder) queryParams.push(`sort=${sortOrder}`);
+            queryParams.push(`page=${ordersPage}`);
+            queryParams.push(`per_page=${ordersPerPage}`);
 
             const url = `/orders?${queryParams.join("&")}`;
             const res = await fetchApi(url);
@@ -894,11 +960,16 @@ document.addEventListener("DOMContentLoaded", () => {
             } else {
                 tbody.innerHTML = `<tr><td colspan="8"><div class="admin-table-empty"><strong>Tidak ada pesanan ditemukan</strong></div></td></tr>`;
             }
+
+            if (res.pagination) {
+                renderGeneralPagination(res.pagination, "orders-pagination", "changeOrdersPage");
+            }
         };
 
         window.switchOrderTab = (status) => {
             activeStatus = status;
             searchQuery = "";
+            ordersPage = 1;
             if (searchInput) searchInput.value = "";
 
             const isDark =
@@ -1650,9 +1721,26 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         };
 
+        let priceHistoryPage = 1;
+        let priceHistoryPerPage = 20;
+
+        window.changePriceHistoryPage = (page) => {
+            priceHistoryPage = page;
+            loadPriceHistory();
+        };
+
+        const selectPriceHistoryPerPage = document.getElementById("price-history-per-page");
+        if (selectPriceHistoryPerPage) {
+            selectPriceHistoryPerPage.addEventListener("change", (e) => {
+                priceHistoryPerPage = parseInt(e.target.value);
+                priceHistoryPage = 1;
+                loadPriceHistory();
+            });
+        }
+
         const loadPriceHistory = async () => {
             try {
-                const res = await fetchApi("/price-histories");
+                const res = await fetchApi(`/price-histories?page=${priceHistoryPage}&per_page=${priceHistoryPerPage}`);
                 const tbody = document.getElementById("price-history-tbody");
                 if (!tbody) return;
 
@@ -1699,6 +1787,10 @@ document.addEventListener("DOMContentLoaded", () => {
                         .join("");
                 } else {
                     tbody.innerHTML = `<tr><td colspan="3"><div class="admin-table-empty">Belum ada riwayat perubahan parameter</div></td></tr>`;
+                }
+
+                if (res?.pagination) {
+                    renderGeneralPagination(res.pagination, "price-history-pagination", "changePriceHistoryPage");
                 }
             } catch (error) {
                 console.error("Gagal merender price history:", error);
@@ -1793,10 +1885,32 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         };
 
+        let citiesPage = 1;
+        let citiesPerPage = 20;
+        window.changeCitiesPage = (page) => {
+            citiesPage = page;
+            loadCities();
+        };
+
+        const selectCitiesPerPage = document.getElementById("cities-per-page");
+        if (selectCitiesPerPage) {
+            selectCitiesPerPage.addEventListener("change", (e) => {
+                citiesPerPage = parseInt(e.target.value);
+                citiesPage = 1;
+                loadCities();
+            });
+        }
+
         const loadCities = async () => {
-            const res = await fetchApi("/cities");
+            const searchVal = document.getElementById("city-search-input")?.value || "";
+            let url = `/cities?page=${citiesPage}&per_page=${citiesPerPage}`;
+            if (searchVal) url += `&search=${encodeURIComponent(searchVal)}`;
+            const res = await fetchApi(url);
             cachedCities = res.data || [];
             renderCities(cachedCities);
+            if (res.pagination) {
+                renderGeneralPagination(res.pagination, "cities-pagination", "changeCitiesPage");
+            }
         };
 
         const renderAccus = (accus) => {
@@ -1820,11 +1934,33 @@ document.addEventListener("DOMContentLoaded", () => {
             updateAccuTotal();
         };
 
+        let accusPage = 1;
+        let accusPerPage = 20;
+        window.changeAccusPage = (page) => {
+            accusPage = page;
+            loadAccus();
+        };
+
+        const selectAccusPerPage = document.getElementById("accus-per-page");
+        if (selectAccusPerPage) {
+            selectAccusPerPage.addEventListener("change", (e) => {
+                accusPerPage = parseInt(e.target.value);
+                accusPage = 1;
+                loadAccus();
+            });
+        }
+
         const loadAccus = async () => {
-            const res = await fetchApi("/accus");
+            const searchVal = document.getElementById("accu-search-input")?.value || "";
+            let url = `/accus?page=${accusPage}&per_page=${accusPerPage}`;
+            if (searchVal) url += `&search=${encodeURIComponent(searchVal)}`;
+            const res = await fetchApi(url);
             cachedAccus = res.data || [];
             currentFilteredAccus = null;
             renderAccus(cachedAccus);
+            if (res.pagination) {
+                renderGeneralPagination(res.pagination, "accus-pagination", "changeAccusPage");
+            }
         };
 
         const renderNewAccus = (accus) => {
@@ -1852,11 +1988,33 @@ document.addEventListener("DOMContentLoaded", () => {
             updateAccuTotal();
         };
 
+        let newAccusPage = 1;
+        let newAccusPerPage = 20;
+        window.changeNewAccusPage = (page) => {
+            newAccusPage = page;
+            loadNewAccus();
+        };
+
+        const selectNewAccusPerPage = document.getElementById("new-accus-per-page");
+        if (selectNewAccusPerPage) {
+            selectNewAccusPerPage.addEventListener("change", (e) => {
+                newAccusPerPage = parseInt(e.target.value);
+                newAccusPage = 1;
+                loadNewAccus();
+            });
+        }
+
         const loadNewAccus = async () => {
-            const res = await fetchApi("/new-accus");
+            const searchVal = document.getElementById("new-accu-search-input")?.value || "";
+            let url = `/new-accus?page=${newAccusPage}&per_page=${newAccusPerPage}`;
+            if (searchVal) url += `&search=${encodeURIComponent(searchVal)}`;
+            const res = await fetchApi(url);
             cachedNewAccus = res.data || [];
             currentFilteredNewAccus = null;
             renderNewAccus(cachedNewAccus);
+            if (res.pagination) {
+                renderGeneralPagination(res.pagination, "new-accus-pagination", "changeNewAccusPage");
+            }
         };
 
         loadSettings();
@@ -1893,46 +2051,37 @@ document.addEventListener("DOMContentLoaded", () => {
 
         const citySearchInput = document.getElementById("city-search-input");
         if (citySearchInput) {
-            citySearchInput.addEventListener("input", (e) => {
-                const term = e.target.value.toLowerCase();
-                const filtered = cachedCities.filter((c) =>
-                    c.name.toLowerCase().includes(term),
-                );
-                renderCities(filtered);
+            let debounceTimer;
+            citySearchInput.addEventListener("input", () => {
+                clearTimeout(debounceTimer);
+                debounceTimer = setTimeout(() => {
+                    citiesPage = 1;
+                    loadCities();
+                }, 300);
             });
         }
 
         const accuSearchInput = document.getElementById("accu-search-input");
         if (accuSearchInput) {
-            accuSearchInput.addEventListener("input", (e) => {
-                const term = e.target.value.toLowerCase();
-                if (!term) {
-                    currentFilteredAccus = null;
-                } else {
-                    currentFilteredAccus = cachedAccus.filter(
-                        (a) =>
-                            (a.brand && a.brand.toLowerCase().includes(term)) ||
-                            a.name.toLowerCase().includes(term),
-                    );
-                }
-                renderAccus(currentFilteredAccus !== null ? currentFilteredAccus : cachedAccus);
+            let debounceTimer;
+            accuSearchInput.addEventListener("input", () => {
+                clearTimeout(debounceTimer);
+                debounceTimer = setTimeout(() => {
+                    accusPage = 1;
+                    loadAccus();
+                }, 300);
             });
         }
 
         const newAccuSearchInput = document.getElementById("new-accu-search-input");
         if (newAccuSearchInput) {
-            newAccuSearchInput.addEventListener("input", (e) => {
-                const term = e.target.value.toLowerCase();
-                if (!term) {
-                    currentFilteredNewAccus = null;
-                } else {
-                    currentFilteredNewAccus = cachedNewAccus.filter(
-                        (a) =>
-                            (a.brand && a.brand.toLowerCase().includes(term)) ||
-                            a.name.toLowerCase().includes(term),
-                    );
-                }
-                renderNewAccus(currentFilteredNewAccus !== null ? currentFilteredNewAccus : cachedNewAccus);
+            let debounceTimer;
+            newAccuSearchInput.addEventListener("input", () => {
+                clearTimeout(debounceTimer);
+                debounceTimer = setTimeout(() => {
+                    newAccusPage = 1;
+                    loadNewAccus();
+                }, 300);
             });
         }
 
