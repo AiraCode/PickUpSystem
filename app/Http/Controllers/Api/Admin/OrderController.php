@@ -278,7 +278,7 @@ class OrderController extends Controller
                 } elseif ($request->status === 'completed') {
                     $message .= "Pesanan Anda (ID: #{$order->id}) telah *SELESAI*.\n\nPembayaran untuk aki Anda dapat dilihat melalui link nota. Terima kasih telah mempercayakan layanan tukar tambah aki kepada Pick Up System.
                     \n\nKami tunggu pesanan selanjutnya!
-                    \n🔗 https://noninclusive-donna-pseudoparallel.ngrok-free.dev/receipt?order_id={$order->id}";
+                    \n🔗 https://www.onestopsolution.my.id/receipt?order_id={$order->id}";
 
                     if ($proofPath) {
                         $fonnteData['url'] = url('storage/' . $proofPath);

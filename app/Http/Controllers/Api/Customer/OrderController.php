@@ -52,7 +52,8 @@ class OrderController extends Controller
         }
 
         $breakdown = $this->pickupFeeService->calculate(
-            $lat, $lng,
+            $lat,
+            $lng,
             (float) $nearestStorage->lat,
             (float) $nearestStorage->long
         );
@@ -180,12 +181,16 @@ class OrderController extends Controller
                         $minDist = INF;
                         foreach ($storages as $s) {
                             $d = $this->haversineKm($lat, $lng, (float)$s->lat, (float)$s->long);
-                            if ($d < $minDist) { $minDist = $d; $nearestStorage = $s; }
+                            if ($d < $minDist) {
+                                $minDist = $d;
+                                $nearestStorage = $s;
+                            }
                         }
 
                         // PickupFeeService: OSRM route distance + dynamic pricing
                         $pricingBreakdown = $this->pickupFeeService->calculate(
-                            $lat, $lng,
+                            $lat,
+                            $lng,
                             (float) $nearestStorage->lat,
                             (float) $nearestStorage->long
                         );
@@ -292,7 +297,7 @@ class OrderController extends Controller
                     'customer'      => $customer,
                     'city'          => $city,
                     'total_cost'    => $priceOwed,
-                    'new_accu_price'=> $newAccuPrice,
+                    'new_accu_price' => $newAccuPrice,
                 ];
             });
 
@@ -357,7 +362,7 @@ class OrderController extends Controller
             }
 
             $message .= "Untuk melihat rincian pesanan dan bukti transaksi, silakan klik tautan di bawah ini:\n"
-                . "🔗 http://noninclusive-donna-pseudoparallel.ngrok-free.dev/receipt?order_id={$order->id}\n\n"
+                . "🔗 https://www.onestopsolution.my.id/receipt?order_id={$order->id}\n\n"
                 . 'Jika ada pertanyaan lebih lanjut, dapat menghubungi admin di nomor berikut 0812-3456-7891.';
 
             Http::withoutVerifying()
@@ -434,7 +439,7 @@ class OrderController extends Controller
         $dLat = deg2rad($lat2 - $lat1);
         $dLng = deg2rad($lng2 - $lng1);
         $a    = sin($dLat / 2) ** 2
-              + cos(deg2rad($lat1)) * cos(deg2rad($lat2)) * sin($dLng / 2) ** 2;
+            + cos(deg2rad($lat1)) * cos(deg2rad($lat2)) * sin($dLng / 2) ** 2;
         return $R * 2 * atan2(sqrt($a), sqrt(1 - $a));
     }
 }
