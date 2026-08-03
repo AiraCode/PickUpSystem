@@ -326,11 +326,15 @@
             if (themeText) {
                 themeText.textContent = isDark ? 'Mode Terang' : 'Mode Gelap';
             }
-            if (typeof window.switchOrderTab === 'function' && typeof activeStatus !== 'undefined') {
-                window.switchOrderTab(activeStatus);
+            if (typeof window.updateOrderTabAppearance === 'function') {
+                window.updateOrderTabAppearance();
             }
-            if (typeof window.loadReportAnalytic === 'function') {
-                window.loadReportAnalytic();
+            if (typeof window.__renderGeneralPagination === 'function' && window.__adminPaginationState) {
+                Object.entries(window.__adminPaginationState).forEach(([containerId, state]) => {
+                    if (document.getElementById(containerId)) {
+                        window.__renderGeneralPagination(state.pagination, containerId, state.onClickFnName);
+                    }
+                });
             }
         }
 

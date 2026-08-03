@@ -652,30 +652,6 @@
             opacity: 1;
         }
 
-        #card-status-pending.active::after {
-            background: #f59e0b !important;
-            box-shadow: 0 0 8px rgba(245, 158, 11, 0.8);
-        }
-
-        #card-status-processing.active::after {
-            background: #2563eb !important;
-            box-shadow: 0 0 8px rgba(37, 99, 235, 0.8);
-        }
-
-        #card-status-completed.active::after {
-            background: #10b981 !important;
-            box-shadow: 0 0 8px rgba(16, 185, 129, 0.8);
-        }
-
-        #card-status-cancelled.active::after {
-            background: #dc2626 !important;
-            box-shadow: 0 0 8px rgba(220, 38, 38, 0.8);
-        }
-
-        #card-status-all.active::after {
-            background: #4b5563 !important;
-            box-shadow: 0 0 8px rgba(75, 85, 99, 0.8);
-        }
     </style>
 
     <script>

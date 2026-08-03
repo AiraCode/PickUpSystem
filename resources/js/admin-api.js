@@ -4,16 +4,6 @@ document.addEventListener("DOMContentLoaded", () => {
     const user = JSON.parse(localStorage.getItem("admin_user") || "null");
     const themeToggleBtn = document.querySelector(".admin-theme-toggle-foot");
 
-    if (themeToggleBtn) {
-        themeToggleBtn.addEventListener("click", () => {
-            // Beri sedikit jeda 50ms agar sistem internal web kamu selesai menyimpan preference tema,
-            // baru kemudian halaman di-refresh otomatis agar semua komponen langsung berubah.
-            setTimeout(() => {
-                location.reload();
-            }, 50);
-        });
-    }
-
     if (!token && window.location.pathname !== "/admin/login") {
         if (window.location.pathname !== "/admin/pengguna" && window.location.pathname !== "/admin/pengiriman") {
             window.location.href = "/admin/login";
@@ -765,12 +755,14 @@ document.addEventListener("DOMContentLoaded", () => {
         function renderGeneralPagination(pagination, containerId, onClickFnName) {
             const container = document.getElementById(containerId);
             if (!container) return;
-
             if (!pagination || pagination.last_page <= 1) {
                 container.innerHTML = "";
+                window.__adminPaginationState = window.__adminPaginationState || {};
+                delete window.__adminPaginationState[containerId];
                 return;
             }
 
+            const isDark = document.documentElement.classList.contains("admin-dark-mode");
             const current = pagination.current_page || 1;
             const last = pagination.last_page || 1;
             const total = pagination.total || 0;
@@ -778,37 +770,43 @@ document.addEventListener("DOMContentLoaded", () => {
             const to = pagination.to || 0;
 
             let html = `
-                <div style="font-size:12px; color:#64748b;">
+                <div style="font-size:12px; color:${isDark ? '#cbd5e1' : '#64748b'};">
                     Menampilkan <strong>${from}</strong> - <strong>${to}</strong> dari <strong>${total}</strong> data
                 </div>
                 <div style="display:flex; gap:4px; align-items:center;">
             `;
 
+            const prevNextBase = isDark
+                ? "background:#0f172a; border:1px solid #334155; color:#e2e8f0;"
+                : "background:#fff; border:1px solid #d1d5db; color:#374151;";
+
             if (current > 1) {
-                html += `<button type="button" onclick="${onClickFnName}(${current - 1})" class="admin-button admin-button--secondary" style="height:28px; padding:0 8px; font-size:11px;">&laquo; Prev</button>`;
+                html += `<button type="button" onclick="${onClickFnName}(${current - 1})" class="admin-button admin-button--secondary" style="height:28px; padding:0 8px; font-size:11px; ${prevNextBase}">&laquo; Prev</button>`;
             } else {
-                html += `<button type="button" disabled class="admin-button admin-button--secondary" style="height:28px; padding:0 8px; font-size:11px; opacity:0.5; cursor:not-allowed;">&laquo; Prev</button>`;
+                html += `<button type="button" disabled class="admin-button admin-button--secondary" style="height:28px; padding:0 8px; font-size:11px; opacity:0.5; cursor:not-allowed; ${prevNextBase}">&laquo; Prev</button>`;
             }
 
             for (let i = 1; i <= last; i++) {
                 if (i === 1 || i === last || (i >= current - 1 && i <= current + 1)) {
                     const isActive = i === current;
-                    html += `<button type="button" onclick="${onClickFnName}(${i})" style="height:28px; min-width:28px; padding:0 6px; border-radius:6px; font-size:11px; font-weight:600; cursor:pointer; border:1px solid ${isActive ? '#2563eb' : '#d1d5db'}; background:${isActive ? '#2563eb' : '#fff'}; color:${isActive ? '#fff' : '#374151'};">${i}</button>`;
+                    html += `<button type="button" onclick="${onClickFnName}(${i})" style="height:28px; min-width:28px; padding:0 6px; border-radius:6px; font-size:11px; font-weight:600; cursor:pointer; border:1px solid ${isActive ? (isDark ? '#60a5fa' : '#2563eb') : (isDark ? '#334155' : '#d1d5db')}; background:${isActive ? (isDark ? '#1d4ed8' : '#2563eb') : (isDark ? '#0f172a' : '#fff')}; color:${isActive ? '#fff' : (isDark ? '#e2e8f0' : '#374151')};">${i}</button>`;
                 } else if (i === current - 2 || i === current + 2) {
-                    html += `<span style="align-self:center; color:#9ca3af; font-size:11px; padding:0 2px;">...</span>`;
+                    html += `<span style="align-self:center; color:${isDark ? '#94a3b8' : '#9ca3af'}; font-size:11px; padding:0 2px;">...</span>`;
                 }
             }
 
             if (current < last) {
-                html += `<button type="button" onclick="${onClickFnName}(${current + 1})" class="admin-button admin-button--secondary" style="height:28px; padding:0 8px; font-size:11px;">Next &raquo;</button>`;
+                html += `<button type="button" onclick="${onClickFnName}(${current + 1})" class="admin-button admin-button--secondary" style="height:28px; padding:0 8px; font-size:11px; ${prevNextBase}">Next &raquo;</button>`;
             } else {
-                html += `<button type="button" disabled class="admin-button admin-button--secondary" style="height:28px; padding:0 8px; font-size:11px; opacity:0.5; cursor:not-allowed;">Next &raquo;</button>`;
+                html += `<button type="button" disabled class="admin-button admin-button--secondary" style="height:28px; padding:0 8px; font-size:11px; opacity:0.5; cursor:not-allowed; ${prevNextBase}">Next &raquo;</button>`;
             }
 
             html += `</div>`;
             container.innerHTML = html;
+            window.__adminPaginationState = window.__adminPaginationState || {};
+            window.__adminPaginationState[containerId] = { pagination, onClickFnName };
         }
-
+        window.__renderGeneralPagination = renderGeneralPagination;
         let cachedOrders = [];
         let ordersPage = 1;
         let ordersPerPage = 20;
@@ -966,12 +964,9 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         };
 
-        window.switchOrderTab = (status) => {
-            activeStatus = status;
-            searchQuery = "";
-            ordersPage = 1;
-            if (searchInput) searchInput.value = "";
-
+        window.__adminCurrentStatus = "pending";
+        window.updateOrderTabAppearance = () => {
+            const currentStatus = window.__adminCurrentStatus || "pending";
             const isDark =
                 document.documentElement.classList.contains("admin-dark-mode");
 
@@ -981,7 +976,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 card.style.background = isDark ? "#1e293b" : "#ffffff";
             });
 
-            const activeCard = document.getElementById(`card-status-${status}`);
+            const activeCard = document.getElementById(`card-status-${currentStatus}`);
             if (activeCard) {
                 activeCard.classList.add("active");
                 const cardColors = isDark
@@ -1014,14 +1009,22 @@ document.addEventListener("DOMContentLoaded", () => {
                         cancelled: { border: "#ef4444", bg: "#fef2f2" },
                         all: { border: "#6b7280", bg: "#f9fafb" },
                     };
-                const c = cardColors[status] || {
+                const c = cardColors[currentStatus] || {
                     border: "#3b82f6",
                     bg: "#eff6ff",
                 };
                 activeCard.style.borderColor = c.border;
                 activeCard.style.background = c.bg;
             }
+        };
 
+        window.switchOrderTab = (status) => {
+            activeStatus = status;
+            window.__adminCurrentStatus = status;
+            searchQuery = "";
+            ordersPage = 1;
+            if (searchInput) searchInput.value = "";
+            window.updateOrderTabAppearance();
             loadOrders();
         };
 

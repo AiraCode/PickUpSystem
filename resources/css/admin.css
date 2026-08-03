@@ -328,7 +328,7 @@ select:focus-visible {
     padding: 24px 8px 18px;
 }
 
-.admin-sidebar.collapsed ~ .admin-main {
+.admin-sidebar.collapsed~.admin-main {
     margin-left: 112px;
 }
 
@@ -1112,7 +1112,7 @@ select:focus-visible {
     width: 17px;
 }
 
-.admin-quick-link > span:nth-child(2) {
+.admin-quick-link>span:nth-child(2) {
     display: flex;
     flex: 1;
     flex-direction: column;
@@ -1634,6 +1634,23 @@ html.admin-dark-mode .admin-panel__head h3 {
     border-bottom-color: #334155;
 }
 
+html.admin-dark-mode #card-status-pending {
+    color: #ffff !important;
+    border: "#f59e0b",
+}
+
+html.admin-dark-mode .admin-panel .admin-stat-card .order-status-tab #card-status-processing {
+    color: #ffff !important;
+}
+
+html.admin-dark-mode #card-status-completed {
+    color: #22c55e !important;
+}
+
+html.admin-dark-mode #card-status-cancelled {
+    color: #f87171 !important;
+}
+
 html.admin-dark-mode .admin-stat-card__number,
 html.admin-dark-mode .admin-stat-card__value,
 html.admin-dark-mode #report-stat-sales,
@@ -1732,6 +1749,7 @@ html.admin-dark-mode #modal-view-city-prices h2 {
 html.admin-dark-mode #modal-view-city-prices form {
     background: #0f172a !important;
 }
+
 html.admin-dark-mode #modal-view-city-prices label {
     color: #94a3b8 !important;
 }
@@ -1758,8 +1776,7 @@ html.admin-dark-mode #modal-detail-order td[id^="detail-"] {
 }
 
 html.admin-dark-mode .leaflet-tile {
-    filter: brightness(0.6) invert(1) contrast(3) hue-rotate(200deg)
-        saturate(0.3) brightness(0.7);
+    filter: brightness(0.6) invert(1) contrast(3) hue-rotate(200deg) saturate(0.3) brightness(0.7);
 }
 
 html.admin-dark-mode .leaflet-container {
@@ -1843,7 +1860,9 @@ html.admin-dark-mode #modal-update-order .admin-dropzone {
     background: #0f172a !important;
     border: 1px dashed #334155 !important;
     color: #f1f5f9 !important;
-}/* ========================================================
+}
+
+/* ========================================================
    PERBAIKAN DARK MODE UNTUK MODAL RINCIAN HARGA 
    ======================================================== */
 html.admin-dark-mode #modal-order-summary .admin-panel {
@@ -1975,6 +1994,7 @@ html.admin-dark-mode .admin-table tbody tr:hover {
     background-color: #1e293b;
     box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
 }
+
 /* ========================================================
    END DYNAMIC TABLE HOVER EFFECT
    ======================================================== */
@@ -1983,6 +2003,7 @@ html.admin-dark-mode .admin-table tbody tr:hover {
 .card-all-count {
     color: #111827;
 }
+
 .card-all-small {
     color: #6b7280;
 }
@@ -1991,6 +2012,7 @@ html.admin-dark-mode .card-all-title,
 html.admin-dark-mode .card-all-count {
     color: #ffffff;
 }
+
 html.admin-dark-mode .card-all-small {
     color: #d1d5db;
 }
