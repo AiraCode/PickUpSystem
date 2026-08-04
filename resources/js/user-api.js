@@ -1118,22 +1118,33 @@ document.addEventListener("DOMContentLoaded", () => {
                 const accuKtpInputNode = document.getElementById("accu-ktp-file-input");
 
                 let ktpFile = ktpInput && ktpInput.files ? ktpInput.files[0] : null;
-                if (!ktpFile && accuKtpInputNode && accuKtpInputNode.files) {
-                    ktpFile = accuKtpInputNode.files[0];
-                }
+                let accuKtpFile = accuKtpInputNode && accuKtpInputNode.files ? accuKtpInputNode.files[0] : null;
 
-                if (!ktpFile) {
+                if (!ktpFile && !accuKtpFile) {
                     showCustomAlert("Harap upload foto identitas Anda.");
                     return;
                 }
+                
                 let ktpBase64 = null;
+                let accuKtpBase64 = null;
+                
                 try {
-                    ktpBase64 = await new Promise((resolve, reject) => {
-                        const reader = new FileReader();
-                        reader.onload = (ev) => resolve(ev.target.result);
-                        reader.onerror = (err) => reject(err);
-                        reader.readAsDataURL(ktpFile);
-                    });
+                    if (ktpFile) {
+                        ktpBase64 = await new Promise((resolve, reject) => {
+                            const reader = new FileReader();
+                            reader.onload = (ev) => resolve(ev.target.result);
+                            reader.onerror = (err) => reject(err);
+                            reader.readAsDataURL(ktpFile);
+                        });
+                    }
+                    if (accuKtpFile) {
+                        accuKtpBase64 = await new Promise((resolve, reject) => {
+                            const reader = new FileReader();
+                            reader.onload = (ev) => resolve(ev.target.result);
+                            reader.onerror = (err) => reject(err);
+                            reader.readAsDataURL(accuKtpFile);
+                        });
+                    }
                 } catch (err) {
                     showCustomAlert("Gagal membaca file gambar.");
                     return;
@@ -1224,6 +1235,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     delivery_method: deliveryMethodVal,
                     items: itemsPayload,
                     ktp_base64: ktpBase64,
+                    accu_ktp_base64: accuKtpBase64,
                     transfer_proof_base64: transferProofBase64,
                     flag: finalFlag,
                     flag_reason: finalReason,

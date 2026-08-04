@@ -76,6 +76,7 @@ class OrderController extends Controller
             'address_note' => 'nullable|string|max:500',
             'ktp' => 'nullable|string|max:45',
             'ktp_base64' => 'nullable|string',
+            'accu_ktp_base64' => 'nullable|string',
             'transfer_proof_base64' => 'nullable|string',
             'flag' => 'nullable|integer|in:0,1',
             'flag_reason' => 'nullable|string|max:500',
@@ -108,6 +109,20 @@ class OrderController extends Controller
                             $filename = 'ktp/' . uniqid() . '.' . $type;
                             Storage::disk('public')->put($filename, $data);
                             $ktpPath = substr($filename, 0, 45);
+                        }
+                    }
+                }
+
+                $accuKtpPath = null;
+                if (! empty($validated['accu_ktp_base64'])) {
+                    if (preg_match('/^data:image\/(\w+);base64,/', $validated['accu_ktp_base64'], $type)) {
+                        $data = substr($validated['accu_ktp_base64'], strpos($validated['accu_ktp_base64'], ',') + 1);
+                        $type = strtolower($type[1]);
+                        if (in_array($type, ['jpg', 'jpeg', 'png'])) {
+                            $data = base64_decode($data);
+                            $filename = 'accu_ktp/' . uniqid() . '.' . $type;
+                            Storage::disk('public')->put($filename, $data);
+                            $accuKtpPath = substr($filename, 0, 45);
                         }
                     }
                 }
@@ -147,6 +162,7 @@ class OrderController extends Controller
                     'order_type' => $orderType,
                     'new_accus_id' => $orderType === 'trade_in' ? ($validated['new_accus_id'] ?? null) : null,
                     'payment_method' => $orderType === 'trade_in' ? ($validated['payment_method'] ?? null) : null,
+                    'accu_ktp' => $accuKtpPath,
                 ]);
 
                 $lme = (float) Setting::getValue('lme', 2100);

@@ -24,6 +24,7 @@ class Order extends Model
         'order_type',
         'new_accus_id',
         'payment_method',
+        'accu_ktp',
     ];
 
     public function newAccu(): BelongsTo

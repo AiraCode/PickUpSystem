@@ -1366,6 +1366,42 @@ document.addEventListener("DOMContentLoaded", () => {
                     ktpLinkEl.onclick = null;
                 }
             }
+            const accuKtpVal = o.accu_ktp || "-";
+            const accuKtpEl = document.getElementById("detail-customer-accu-ktp");
+            if (accuKtpEl) accuKtpEl.innerText = accuKtpVal;
+            const accuKtpLinkEl = document.getElementById(
+                "detail-customer-accu-ktp-link",
+            );
+            if (accuKtpLinkEl) {
+                if (
+                    accuKtpVal !== "-" &&
+                    (accuKtpVal.includes("ktp/") ||
+                        accuKtpVal.includes("accu_ktp/") ||
+                        accuKtpVal.includes(".jpg") ||
+                        accuKtpVal.includes(".jpeg") ||
+                        accuKtpVal.includes(".png") ||
+                        accuKtpVal.includes("data:image"))
+                ) {
+                    const imgUrl =
+                        accuKtpVal.startsWith("http") || accuKtpVal.startsWith("data:")
+                            ? accuKtpVal
+                            : accuKtpVal.startsWith("/")
+                              ? accuKtpVal
+                              : `/storage/${accuKtpVal}`;
+                    accuKtpLinkEl.onclick = (e) => {
+                        e.preventDefault();
+                        if (typeof openImageViewer === "function") {
+                            openImageViewer(imgUrl);
+                        } else {
+                            window.open(imgUrl, "_blank");
+                        }
+                    };
+                    accuKtpLinkEl.style.display = "inline-flex";
+                } else {
+                    accuKtpLinkEl.style.display = "none";
+                    accuKtpLinkEl.onclick = null;
+                }
+            }
             document.getElementById("detail-customer-bank").innerText =
                 `${bankName} - ${c.account_number || "-"} (a.n. ${c.account_name || "-"})`;
             document.getElementById("detail-order-type").innerHTML =
