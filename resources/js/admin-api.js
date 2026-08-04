@@ -5,21 +5,24 @@ document.addEventListener("DOMContentLoaded", () => {
     const themeToggleBtn = document.querySelector(".admin-theme-toggle-foot");
 
     if (!token && window.location.pathname !== "/admin/login") {
-        if (window.location.pathname !== "/admin/pengguna" && window.location.pathname !== "/admin/pengiriman") {
+        if (
+            window.location.pathname !== "/admin/pengguna" &&
+            window.location.pathname !== "/admin/pengiriman"
+        ) {
             window.location.href = "/admin/login";
             return;
         }
 
-        const sidebar = document.querySelector('.admin-sidebar');
-        const main = document.querySelector('.admin-main');
-        const sidebarToggle = document.getElementById('sidebarToggle');
-        if (sidebarToggle) sidebarToggle.style.display = 'none';
-        if (sidebar) sidebar.style.display = 'none';
+        const sidebar = document.querySelector(".admin-sidebar");
+        const main = document.querySelector(".admin-main");
+        const sidebarToggle = document.getElementById("sidebarToggle");
+        if (sidebarToggle) sidebarToggle.style.display = "none";
+        if (sidebar) sidebar.style.display = "none";
         if (main) {
-            main.style.marginLeft = '0';
-            main.style.width = '100%';
+            main.style.marginLeft = "0";
+            main.style.width = "100%";
         }
-        
+
         // Ganti nama default menjadi Modern Mulya Mandiri
         const authUserName = document.getElementById("auth-user-name");
         const authUserInitial = document.getElementById("auth-user-initial");
@@ -27,8 +30,10 @@ document.addEventListener("DOMContentLoaded", () => {
         if (authUserInitial) authUserInitial.innerText = "M";
 
         const checkEasterEggTime = () => {
-            const unlockTime = parseInt(sessionStorage.getItem("easter_egg_time") || "0");
-            if (unlockTime > 0 && (Date.now() - unlockTime) > 5 * 60 * 1000) {
+            const unlockTime = parseInt(
+                sessionStorage.getItem("easter_egg_time") || "0",
+            );
+            if (unlockTime > 0 && Date.now() - unlockTime > 5 * 60 * 1000) {
                 sessionStorage.removeItem("easter_egg_unlocked");
                 sessionStorage.removeItem("easter_egg_pass");
                 sessionStorage.removeItem("easter_egg_time");
@@ -146,12 +151,14 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         let apiTarget = `${API_BASE}${endpoint}`;
-        if (endpoint.startsWith("/users") || endpoint.startsWith("/pengiriman")) {
+        if (
+            endpoint.startsWith("/users") ||
+            endpoint.startsWith("/pengiriman")
+        ) {
             if (!token) {
                 apiTarget = `/api/public-admin${endpoint}`;
             }
         }
-
 
         const response = await fetch(apiTarget, {
             ...options,
@@ -228,26 +235,26 @@ document.addEventListener("DOMContentLoaded", () => {
             document.documentElement.classList.contains("admin-dark-mode");
         const colors = isDark
             ? {
-                pending: { bg: "rgba(245, 158, 11, 0.25)", color: "#fbbf24" },
-                processing: {
-                    bg: "rgba(59, 130, 246, 0.25)",
-                    color: "#60a5fa",
-                },
-                completed: {
-                    bg: "rgba(16, 185, 129, 0.25)",
-                    color: "#34d399",
-                },
-                cancelled: {
-                    bg: "rgba(239, 68, 68, 0.25)",
-                    color: "#f87171",
-                },
-            }
+                  pending: { bg: "rgba(245, 158, 11, 0.25)", color: "#fbbf24" },
+                  processing: {
+                      bg: "rgba(59, 130, 246, 0.25)",
+                      color: "#60a5fa",
+                  },
+                  completed: {
+                      bg: "rgba(16, 185, 129, 0.25)",
+                      color: "#34d399",
+                  },
+                  cancelled: {
+                      bg: "rgba(239, 68, 68, 0.25)",
+                      color: "#f87171",
+                  },
+              }
             : {
-                pending: { bg: "#fef3c7", color: "#92400e" },
-                processing: { bg: "#dbeafe", color: "#1e40af" },
-                completed: { bg: "#d1fae5", color: "#065f46" },
-                cancelled: { bg: "#fee2e2", color: "#991b1b" },
-            };
+                  pending: { bg: "#fef3c7", color: "#92400e" },
+                  processing: { bg: "#dbeafe", color: "#1e40af" },
+                  completed: { bg: "#d1fae5", color: "#065f46" },
+                  cancelled: { bg: "#fee2e2", color: "#991b1b" },
+              };
         const c =
             colors[status] ||
             (isDark
@@ -265,15 +272,19 @@ document.addEventListener("DOMContentLoaded", () => {
         btnLogout.addEventListener("click", (e) => {
             e.preventDefault();
             if (profileMenu) profileMenu.hidden = true;
-            
-            if (!token && (window.location.pathname === "/admin/pengguna" || window.location.pathname === "/admin/pengiriman")) {
+
+            if (
+                !token &&
+                (window.location.pathname === "/admin/pengguna" ||
+                    window.location.pathname === "/admin/pengiriman")
+            ) {
                 sessionStorage.removeItem("easter_egg_unlocked");
                 sessionStorage.removeItem("easter_egg_pass");
                 sessionStorage.removeItem("easter_egg_time");
                 window.location.reload();
                 return;
             }
-            
+
             document.getElementById("logout-password").value = "";
             if (logoutError) logoutError.style.display = "none";
             modalLogout.style.display = "flex";
@@ -327,22 +338,36 @@ document.addEventListener("DOMContentLoaded", () => {
         btnEditProfile.addEventListener("click", (e) => {
             e.preventDefault();
             if (profileMenu) profileMenu.hidden = true;
-            
-            if (!token && (window.location.pathname === "/admin/pengguna" || window.location.pathname === "/admin/pengiriman")) {
-                const currentName = document.getElementById("auth-user-name") ? document.getElementById("auth-user-name").innerText : "Modern Mulya Mandiri";
+
+            if (
+                !token &&
+                (window.location.pathname === "/admin/pengguna" ||
+                    window.location.pathname === "/admin/pengiriman")
+            ) {
+                const currentName = document.getElementById("auth-user-name")
+                    ? document.getElementById("auth-user-name").innerText
+                    : "Modern Mulya Mandiri";
                 document.getElementById("profile-name").value = currentName;
-                document.getElementById("profile-current-password").parentElement.style.display = "none";
-                document.getElementById("profile-new-password").parentElement.style.display = "none";
+                document.getElementById(
+                    "profile-current-password",
+                ).parentElement.style.display = "none";
+                document.getElementById(
+                    "profile-new-password",
+                ).parentElement.style.display = "none";
             } else {
                 const currentUser = JSON.parse(
                     localStorage.getItem("admin_user") || "{}",
                 );
                 document.getElementById("profile-name").value =
                     currentUser.name || "";
-                document.getElementById("profile-current-password").parentElement.style.display = "block";
-                document.getElementById("profile-new-password").parentElement.style.display = "block";
+                document.getElementById(
+                    "profile-current-password",
+                ).parentElement.style.display = "block";
+                document.getElementById(
+                    "profile-new-password",
+                ).parentElement.style.display = "block";
             }
-            
+
             document.getElementById("profile-current-password").value = "";
             document.getElementById("profile-new-password").value = "";
             if (profileError) profileError.style.display = "none";
@@ -364,14 +389,19 @@ document.addEventListener("DOMContentLoaded", () => {
                     .value,
             };
 
-            if (!token && (window.location.pathname === "/admin/pengguna" || window.location.pathname === "/admin/pengiriman")) {
+            if (
+                !token &&
+                (window.location.pathname === "/admin/pengguna" ||
+                    window.location.pathname === "/admin/pengiriman")
+            ) {
                 const newName = payload.name;
                 const nameEl = document.getElementById("auth-user-name");
                 const initialEl = document.getElementById("auth-user-initial");
-                
+
                 if (nameEl) nameEl.innerText = newName;
-                if (initialEl) initialEl.innerText = newName.charAt(0).toUpperCase();
-                
+                if (initialEl)
+                    initialEl.innerText = newName.charAt(0).toUpperCase();
+
                 modalEditProfile.style.display = "none";
                 showToast("Profil berhasil diperbarui!", "success");
                 return;
@@ -514,11 +544,12 @@ document.addEventListener("DOMContentLoaded", () => {
                         <td>${o.customer ? o.customer.name : "-"}</td>
                         <td>${o.city ? o.city.name : "-"}</td>
                         <td>
-                            ${o.delivery_method === 'courier' ?
-                                '<span style="background:#dbeafe; color:#1e40af; padding:2px 8px; border-radius:12px; font-size:11px; font-weight:600;">Kurir</span>' :
-                                (o.delivery_method === 'warehouse' ?
-                                    '<span style="background:#fef3c7; color:#92400e; padding:2px 8px; border-radius:12px; font-size:11px; font-weight:600;">Kirim Sendiri</span>' :
-                                    '<span style="color:#6b7280;">-</span>')
+                            ${
+                                o.delivery_method === "courier"
+                                    ? '<span style="background:#dbeafe; color:#1e40af; padding:2px 8px; border-radius:12px; font-size:11px; font-weight:600;">Kurir</span>'
+                                    : o.delivery_method === "warehouse"
+                                      ? '<span style="background:#fef3c7; color:#92400e; padding:2px 8px; border-radius:12px; font-size:11px; font-weight:600;">Kirim Sendiri</span>'
+                                      : '<span style="color:#6b7280;">-</span>'
                             }
                         </td>
                         <td>${parseSafeDate(o.created_at).toLocaleDateString("id-ID")}</td>
@@ -752,17 +783,23 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         };
 
-        function renderGeneralPagination(pagination, containerId, onClickFnName) {
+        function renderGeneralPagination(
+            pagination,
+            containerId,
+            onClickFnName,
+        ) {
             const container = document.getElementById(containerId);
             if (!container) return;
             if (!pagination || pagination.last_page <= 1) {
                 container.innerHTML = "";
-                window.__adminPaginationState = window.__adminPaginationState || {};
+                window.__adminPaginationState =
+                    window.__adminPaginationState || {};
                 delete window.__adminPaginationState[containerId];
                 return;
             }
 
-            const isDark = document.documentElement.classList.contains("admin-dark-mode");
+            const isDark =
+                document.documentElement.classList.contains("admin-dark-mode");
             const current = pagination.current_page || 1;
             const last = pagination.last_page || 1;
             const total = pagination.total || 0;
@@ -770,7 +807,7 @@ document.addEventListener("DOMContentLoaded", () => {
             const to = pagination.to || 0;
 
             let html = `
-                <div style="font-size:12px; color:${isDark ? '#cbd5e1' : '#64748b'};">
+                <div style="font-size:12px; color:${isDark ? "#cbd5e1" : "#64748b"};">
                     Menampilkan <strong>${from}</strong> - <strong>${to}</strong> dari <strong>${total}</strong> data
                 </div>
                 <div style="display:flex; gap:4px; align-items:center;">
@@ -787,11 +824,15 @@ document.addEventListener("DOMContentLoaded", () => {
             }
 
             for (let i = 1; i <= last; i++) {
-                if (i === 1 || i === last || (i >= current - 1 && i <= current + 1)) {
+                if (
+                    i === 1 ||
+                    i === last ||
+                    (i >= current - 1 && i <= current + 1)
+                ) {
                     const isActive = i === current;
-                    html += `<button type="button" onclick="${onClickFnName}(${i})" style="height:28px; min-width:28px; padding:0 6px; border-radius:6px; font-size:11px; font-weight:600; cursor:pointer; border:1px solid ${isActive ? (isDark ? '#60a5fa' : '#2563eb') : (isDark ? '#334155' : '#d1d5db')}; background:${isActive ? (isDark ? '#1d4ed8' : '#2563eb') : (isDark ? '#0f172a' : '#fff')}; color:${isActive ? '#fff' : (isDark ? '#e2e8f0' : '#374151')};">${i}</button>`;
+                    html += `<button type="button" onclick="${onClickFnName}(${i})" style="height:28px; min-width:28px; padding:0 6px; border-radius:6px; font-size:11px; font-weight:600; cursor:pointer; border:1px solid ${isActive ? (isDark ? "#60a5fa" : "#2563eb") : isDark ? "#334155" : "#d1d5db"}; background:${isActive ? (isDark ? "#1d4ed8" : "#2563eb") : isDark ? "#0f172a" : "#fff"}; color:${isActive ? "#fff" : isDark ? "#e2e8f0" : "#374151"};">${i}</button>`;
                 } else if (i === current - 2 || i === current + 2) {
-                    html += `<span style="align-self:center; color:${isDark ? '#94a3b8' : '#9ca3af'}; font-size:11px; padding:0 2px;">...</span>`;
+                    html += `<span style="align-self:center; color:${isDark ? "#94a3b8" : "#9ca3af"}; font-size:11px; padding:0 2px;">...</span>`;
                 }
             }
 
@@ -804,7 +845,10 @@ document.addEventListener("DOMContentLoaded", () => {
             html += `</div>`;
             container.innerHTML = html;
             window.__adminPaginationState = window.__adminPaginationState || {};
-            window.__adminPaginationState[containerId] = { pagination, onClickFnName };
+            window.__adminPaginationState[containerId] = {
+                pagination,
+                onClickFnName,
+            };
         }
         window.__renderGeneralPagination = renderGeneralPagination;
         let cachedOrders = [];
@@ -926,19 +970,21 @@ document.addEventListener("DOMContentLoaded", () => {
                     <tr onclick="viewOrderDetail(${o.id})" style="cursor:pointer;">
                         <td style="font-weight:600; color:#3b82f6;">#${o.id}</td>
                         <td>
-                            ${o.order_type === 'trade_in' ?
-                                '<span style="background:#fef3c7; color:#92400e; padding:2px 6px; border-radius:4px; font-size:10px; font-weight:700;">TRADE IN</span>' :
-                                '<span style="background:#e0e7ff; color:#3730a3; padding:2px 6px; border-radius:4px; font-size:10px; font-weight:700;">JUAL</span>'
+                            ${
+                                o.order_type === "trade_in"
+                                    ? '<span style="background:#fef3c7; color:#92400e; padding:2px 6px; border-radius:4px; font-size:10px; font-weight:700;">TRADE IN</span>'
+                                    : '<span style="background:#e0e7ff; color:#3730a3; padding:2px 6px; border-radius:4px; font-size:10px; font-weight:700;">JUAL</span>'
                             }
                         </td>
                         <td style="font-weight:500;">${o.customer ? o.customer.name : "-"}</td>
                         <td>${o.city ? o.city.name : "-"}</td>
                         <td>
-                            ${o.delivery_method === 'courier' ?
-                                '<span style="background:#dbeafe; color:#1e40af; padding:2px 8px; border-radius:12px; font-size:11px; font-weight:600;">Kurir</span>' :
-                                (o.delivery_method === 'warehouse' ?
-                                    '<span style="background:#fef3c7; color:#92400e; padding:2px 8px; border-radius:12px; font-size:11px; font-weight:600;">Kirim Sendiri</span>' :
-                                    '<span style="color:#6b7280;">-</span>')
+                            ${
+                                o.delivery_method === "courier"
+                                    ? '<span style="background:#dbeafe; color:#1e40af; padding:2px 8px; border-radius:12px; font-size:11px; font-weight:600;">Kurir</span>'
+                                    : o.delivery_method === "warehouse"
+                                      ? '<span style="background:#fef3c7; color:#92400e; padding:2px 8px; border-radius:12px; font-size:11px; font-weight:600;">Kirim Sendiri</span>'
+                                      : '<span style="color:#6b7280;">-</span>'
                             }
                         </td>
                         <td style="max-width:200px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${o.pickup_address || "-"}</td>
@@ -960,7 +1006,11 @@ document.addEventListener("DOMContentLoaded", () => {
             }
 
             if (res.pagination) {
-                renderGeneralPagination(res.pagination, "orders-pagination", "changeOrdersPage");
+                renderGeneralPagination(
+                    res.pagination,
+                    "orders-pagination",
+                    "changeOrdersPage",
+                );
             }
         };
 
@@ -976,39 +1026,41 @@ document.addEventListener("DOMContentLoaded", () => {
                 card.style.background = isDark ? "#1e293b" : "#ffffff";
             });
 
-            const activeCard = document.getElementById(`card-status-${currentStatus}`);
+            const activeCard = document.getElementById(
+                `card-status-${currentStatus}`,
+            );
             if (activeCard) {
                 activeCard.classList.add("active");
                 const cardColors = isDark
                     ? {
-                        pending: {
-                            border: "#f59e0b",
-                            bg: "rgba(245, 158, 11, 0.18)",
-                        },
-                        processing: {
-                            border: "#3b82f6",
-                            bg: "rgba(59, 130, 246, 0.18)",
-                        },
-                        completed: {
-                            border: "#10b981",
-                            bg: "rgba(16, 185, 129, 0.18)",
-                        },
-                        cancelled: {
-                            border: "#ef4444",
-                            bg: "rgba(239, 68, 68, 0.18)",
-                        },
-                        all: {
-                            border: "#94a3b8",
-                            bg: "rgba(148, 163, 184, 0.18)",
-                        },
-                    }
+                          pending: {
+                              border: "#f59e0b",
+                              bg: "rgba(245, 158, 11, 0.18)",
+                          },
+                          processing: {
+                              border: "#3b82f6",
+                              bg: "rgba(59, 130, 246, 0.18)",
+                          },
+                          completed: {
+                              border: "#10b981",
+                              bg: "rgba(16, 185, 129, 0.18)",
+                          },
+                          cancelled: {
+                              border: "#ef4444",
+                              bg: "rgba(239, 68, 68, 0.18)",
+                          },
+                          all: {
+                              border: "#94a3b8",
+                              bg: "rgba(148, 163, 184, 0.18)",
+                          },
+                      }
                     : {
-                        pending: { border: "#f59e0b", bg: "#fffbeb" },
-                        processing: { border: "#3b82f6", bg: "#eff6ff" },
-                        completed: { border: "#10b981", bg: "#ecfdf5" },
-                        cancelled: { border: "#ef4444", bg: "#fef2f2" },
-                        all: { border: "#6b7280", bg: "#f9fafb" },
-                    };
+                          pending: { border: "#f59e0b", bg: "#fffbeb" },
+                          processing: { border: "#3b82f6", bg: "#eff6ff" },
+                          completed: { border: "#10b981", bg: "#ecfdf5" },
+                          cancelled: { border: "#ef4444", bg: "#fef2f2" },
+                          all: { border: "#6b7280", bg: "#f9fafb" },
+                      };
                 const c = cardColors[currentStatus] || {
                     border: "#3b82f6",
                     bg: "#eff6ff",
@@ -1121,7 +1173,7 @@ document.addEventListener("DOMContentLoaded", () => {
         loadOrders();
 
         window.editOrderStatus = (id, currentStatus) => {
-            const order = cachedOrders.find(o => o.id === id);
+            const order = cachedOrders.find((o) => o.id === id);
             document.getElementById("update-order-id").value = id;
             if (orderUpdateError) orderUpdateError.style.display = "none";
 
@@ -1134,11 +1186,23 @@ document.addEventListener("DOMContentLoaded", () => {
                 allowedOptions = [
                     "pending",
                     "processing",
+                    "arrived_at_warehouse",
                     "completed",
                     "cancelled",
                 ];
             } else if (currentStatus === "processing") {
-                allowedOptions = ["processing", "completed", "cancelled"];
+                allowedOptions = [
+                    "processing",
+                    "arrived_at_warehouse",
+                    "completed",
+                    "cancelled",
+                ];
+            } else if (currentStatus === "arrived_at_warehouse") {
+                allowedOptions = [
+                    "arrived_at_warehouse",
+                    "completed",
+                    "cancelled",
+                ];
             } else if (currentStatus === "completed") {
                 allowedOptions = ["completed"];
             } else if (currentStatus === "cancelled") {
@@ -1184,15 +1248,26 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 if (uploadArea) uploadArea.style.display = "none";
                 if (proofViewArea) proofViewArea.style.display = "block";
-                if (linkViewProof && order && order.receipt && order.receipt.transfer && order.receipt.transfer.proof_image) {
+                if (
+                    linkViewProof &&
+                    order &&
+                    order.receipt &&
+                    order.receipt.transfer &&
+                    order.receipt.transfer.proof_image
+                ) {
                     linkViewProof.onclick = (e) => {
                         e.preventDefault();
-                        openImageViewer('/storage/' + order.receipt.transfer.proof_image);
+                        openImageViewer(
+                            "/storage/" + order.receipt.transfer.proof_image,
+                        );
                     };
                 } else if (linkViewProof) {
                     linkViewProof.onclick = (e) => {
                         e.preventDefault();
-                        showToast("Bukti pembayaran tidak ditemukan", "warning");
+                        showToast(
+                            "Bukti pembayaran tidak ditemukan",
+                            "warning",
+                        );
                     };
                 }
             } else {
@@ -1263,16 +1338,26 @@ document.addEventListener("DOMContentLoaded", () => {
                 "detail-customer-ktp-link",
             );
             if (ktpLinkEl) {
-                if (ktpVal !== "-" && (ktpVal.includes("ktp/") || ktpVal.includes(".jpg") || ktpVal.includes(".jpeg") || ktpVal.includes(".png") || ktpVal.includes("data:image"))) {
-                    const imgUrl = ktpVal.startsWith("http") || ktpVal.startsWith("data:")
-                        ? ktpVal
-                        : (ktpVal.startsWith("/") ? ktpVal : `/storage/${ktpVal}`);
+                if (
+                    ktpVal !== "-" &&
+                    (ktpVal.includes("ktp/") ||
+                        ktpVal.includes(".jpg") ||
+                        ktpVal.includes(".jpeg") ||
+                        ktpVal.includes(".png") ||
+                        ktpVal.includes("data:image"))
+                ) {
+                    const imgUrl =
+                        ktpVal.startsWith("http") || ktpVal.startsWith("data:")
+                            ? ktpVal
+                            : ktpVal.startsWith("/")
+                              ? ktpVal
+                              : `/storage/${ktpVal}`;
                     ktpLinkEl.onclick = (e) => {
                         e.preventDefault();
-                        if (typeof openImageViewer === 'function') {
+                        if (typeof openImageViewer === "function") {
                             openImageViewer(imgUrl);
                         } else {
-                            window.open(imgUrl, '_blank');
+                            window.open(imgUrl, "_blank");
                         }
                     };
                     ktpLinkEl.style.display = "inline-flex";
@@ -1283,19 +1368,38 @@ document.addEventListener("DOMContentLoaded", () => {
             }
             document.getElementById("detail-customer-bank").innerText =
                 `${bankName} - ${c.account_number || "-"} (a.n. ${c.account_name || "-"})`;
-            document.getElementById("detail-order-type").innerHTML = o.order_type === 'trade_in'
-                ? '<span style="background:#fef3c7; color:#92400e; padding:2px 6px; border-radius:4px; font-size:10px; font-weight:700;">TRADE IN</span>'
-                : '<span style="background:#e0e7ff; color:#3730a3; padding:2px 6px; border-radius:4px; font-size:10px; font-weight:700;">JUAL</span>';
+            document.getElementById("detail-order-type").innerHTML =
+                o.order_type === "trade_in"
+                    ? '<span style="background:#fef3c7; color:#92400e; padding:2px 6px; border-radius:4px; font-size:10px; font-weight:700;">TRADE IN</span>'
+                    : '<span style="background:#e0e7ff; color:#3730a3; padding:2px 6px; border-radius:4px; font-size:10px; font-weight:700;">JUAL</span>';
 
             const rowNewAccu = document.getElementById("row-detail-new-accu");
-            if (o.order_type === 'trade_in') {
+            if (o.order_type === "trade_in") {
                 rowNewAccu.style.display = "table-row";
-                document.getElementById("detail-order-new-accu").innerText = o.new_accu ? (o.new_accu.name + ' - ' + new Intl.NumberFormat("id-ID", { style: "currency", currency: "IDR", minimumFractionDigits: 0 }).format(o.new_accu.price)) : "-";
+                document.getElementById("detail-order-new-accu").innerText =
+                    o.new_accu
+                        ? o.new_accu.name +
+                          " - " +
+                          new Intl.NumberFormat("id-ID", {
+                              style: "currency",
+                              currency: "IDR",
+                              minimumFractionDigits: 0,
+                          }).format(o.new_accu.price)
+                        : "-";
             } else {
                 rowNewAccu.style.display = "none";
             }
 
-            document.getElementById("detail-order-payment-method").innerText = o.payment_method ? (o.payment_method === 'cod' ? 'COD (Bayar di Tempat)' : (o.payment_method === 'transfer' ? 'Transfer Bank' : (o.payment_method === 'qris' ? 'QRIS' : o.payment_method.toUpperCase()))) : "-";
+            document.getElementById("detail-order-payment-method").innerText =
+                o.payment_method
+                    ? o.payment_method === "cod"
+                        ? "COD (Bayar di Tempat)"
+                        : o.payment_method === "transfer"
+                          ? "Transfer Bank"
+                          : o.payment_method === "qris"
+                            ? "QRIS"
+                            : o.payment_method.toUpperCase()
+                    : "-";
 
             document.getElementById("detail-order-city").innerText = o.city
                 ? o.city.name
@@ -1304,8 +1408,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 o.delivery_method === "courier"
                     ? "Kurir PickUpSystem"
                     : o.delivery_method === "warehouse"
-                        ? "Kirim Sendiri (Gudang)"
-                        : o.delivery_method || "-";
+                      ? "Kirim Sendiri (Gudang)"
+                      : o.delivery_method || "-";
             const deliveryMethodEl = document.getElementById(
                 "detail-order-delivery-method",
             );
@@ -1322,10 +1426,14 @@ document.addEventListener("DOMContentLoaded", () => {
                     o.updated_at,
                 ).toLocaleString("id-ID");
             }
-            const flagContainer = document.getElementById("detail-flag-container");
+            const flagContainer = document.getElementById(
+                "detail-flag-container",
+            );
             if (flagContainer) {
                 if (c && c.flag === 0) {
-                    const reason = c.flag_reason || "Catatan verifikasi manual oleh sistem";
+                    const reason =
+                        c.flag_reason ||
+                        "Catatan verifikasi manual oleh sistem";
                     flagContainer.style.display = "block";
                     flagContainer.innerHTML = `
                         <div style="background:#fef2f2; border:1px solid #fecaca; border-radius:8px; padding:12px 14px; display:flex; align-items:center; justify-content:space-between; gap:12px;">
@@ -1339,36 +1447,45 @@ document.addEventListener("DOMContentLoaded", () => {
                         </div>
                     `;
 
-                    const btnClearFlag = document.getElementById("btn-clear-customer-flag");
+                    const btnClearFlag = document.getElementById(
+                        "btn-clear-customer-flag",
+                    );
                     if (btnClearFlag) {
                         btnClearFlag.onclick = async () => {
                             btnClearFlag.disabled = true;
                             btnClearFlag.textContent = "Memproses...";
                             try {
-                                const res = await fetch(`${API_BASE}/customers/${c.id}/flag`, {
-                                    method: "PUT",
-                                    headers: {
-                                        "Content-Type": "application/json",
-                                        Accept: "application/json",
-                                        Authorization: `Bearer ${token}`,
+                                const res = await fetch(
+                                    `${API_BASE}/customers/${c.id}/flag`,
+                                    {
+                                        method: "PUT",
+                                        headers: {
+                                            "Content-Type": "application/json",
+                                            Accept: "application/json",
+                                            Authorization: `Bearer ${token}`,
+                                        },
+                                        body: JSON.stringify({ flag: 1 }),
                                     },
-                                    body: JSON.stringify({ flag: 1 }),
-                                });
+                                );
                                 if (res.ok) {
                                     c.flag = 1;
                                     c.flag_reason = null;
                                     flagContainer.style.display = "none";
-                                    alert("Status pelanggan telah diubah menjadi Aman (Flag 1).");
+                                    alert(
+                                        "Status pelanggan telah diubah menjadi Aman (Flag 1).",
+                                    );
                                 } else {
                                     alert("Gagal mengubah status flag.");
                                     btnClearFlag.disabled = false;
-                                    btnClearFlag.textContent = "✓ Bebaskan Flag (Set Safe)";
+                                    btnClearFlag.textContent =
+                                        "✓ Bebaskan Flag (Set Safe)";
                                 }
                             } catch (err) {
                                 console.error(err);
                                 alert("Terjadi kesalahan.");
                                 btnClearFlag.disabled = false;
-                                btnClearFlag.textContent = "✓ Bebaskan Flag (Set Safe)";
+                                btnClearFlag.textContent =
+                                    "✓ Bebaskan Flag (Set Safe)";
                             }
                         };
                     }
@@ -1393,41 +1510,61 @@ document.addEventListener("DOMContentLoaded", () => {
                     o.pickup_address_note || "-";
             }
 
-            const transferContainer = document.getElementById("container-detail-transfer-proof");
-            const transferImg = document.getElementById("detail-transfer-proof-img");
-            const btnZoomTransfer = document.getElementById("btn-zoom-transfer-proof");
-            const btnDownloadTransfer = document.getElementById("btn-download-transfer-proof");
+            const transferContainer = document.getElementById(
+                "container-detail-transfer-proof",
+            );
+            const transferImg = document.getElementById(
+                "detail-transfer-proof-img",
+            );
+            const btnZoomTransfer = document.getElementById(
+                "btn-zoom-transfer-proof",
+            );
+            const btnDownloadTransfer = document.getElementById(
+                "btn-download-transfer-proof",
+            );
 
-            if (o.order_type === "trade_in" && o.receipt && o.receipt.transfer && o.receipt.transfer.proof_image) {
+            if (
+                o.order_type === "trade_in" &&
+                o.receipt &&
+                o.receipt.transfer &&
+                o.receipt.transfer.proof_image
+            ) {
                 const imgPath = o.receipt.transfer.proof_image;
-                const imgUrl = imgPath.startsWith("http") || imgPath.startsWith("data:")
-                    ? imgPath
-                    : (imgPath.startsWith("/") ? imgPath : `/storage/${imgPath}`);
+                const imgUrl =
+                    imgPath.startsWith("http") || imgPath.startsWith("data:")
+                        ? imgPath
+                        : imgPath.startsWith("/")
+                          ? imgPath
+                          : `/storage/${imgPath}`;
 
                 if (transferImg) transferImg.src = imgUrl;
                 if (btnDownloadTransfer) {
                     btnDownloadTransfer.href = imgUrl;
-                    btnDownloadTransfer.setAttribute("download", `bukti_transfer_order_${o.id}.jpg`);
+                    btnDownloadTransfer.setAttribute(
+                        "download",
+                        `bukti_transfer_order_${o.id}.jpg`,
+                    );
                 }
                 if (btnZoomTransfer) {
                     btnZoomTransfer.onclick = () => {
-                        if (typeof window.openImageViewer === 'function') {
+                        if (typeof window.openImageViewer === "function") {
                             window.openImageViewer(imgUrl);
                         } else {
-                            window.open(imgUrl, '_blank');
+                            window.open(imgUrl, "_blank");
                         }
                     };
                 }
                 if (transferImg) {
                     transferImg.onclick = () => {
-                        if (typeof window.openImageViewer === 'function') {
+                        if (typeof window.openImageViewer === "function") {
                             window.openImageViewer(imgUrl);
                         } else {
-                            window.open(imgUrl, '_blank');
+                            window.open(imgUrl, "_blank");
                         }
                     };
                 }
-                if (transferContainer) transferContainer.style.display = "block";
+                if (transferContainer)
+                    transferContainer.style.display = "block";
             } else {
                 if (transferContainer) transferContainer.style.display = "none";
             }
@@ -1551,19 +1688,33 @@ document.addEventListener("DOMContentLoaded", () => {
                     tbody.innerHTML = itemsHtml;
 
                     let deliveryCost = 0;
-                    if (currentDetailOrder.order_type === 'trade_in') {
-                        const newAccuPrice = currentDetailOrder.new_accu ? currentDetailOrder.new_accu.price : 0;
-                        deliveryCost = subtotal - newAccuPrice - (receipt.price_owed || 0);
+                    if (currentDetailOrder.order_type === "trade_in") {
+                        const newAccuPrice = currentDetailOrder.new_accu
+                            ? currentDetailOrder.new_accu.price
+                            : 0;
+                        deliveryCost =
+                            subtotal - newAccuPrice - (receipt.price_owed || 0);
                     } else {
                         deliveryCost = subtotal - (receipt.price_owed || 0);
                     }
 
-                    document.getElementById("detail-summary-subtotal").innerText = formatRp(subtotal);
+                    document.getElementById(
+                        "detail-summary-subtotal",
+                    ).innerText = formatRp(subtotal);
 
-                    const rowSummaryNewAccu = document.getElementById("detail-summary-row-new-accu");
-                    if (currentDetailOrder.order_type === 'trade_in' && currentDetailOrder.new_accu && rowSummaryNewAccu) {
+                    const rowSummaryNewAccu = document.getElementById(
+                        "detail-summary-row-new-accu",
+                    );
+                    if (
+                        currentDetailOrder.order_type === "trade_in" &&
+                        currentDetailOrder.new_accu &&
+                        rowSummaryNewAccu
+                    ) {
                         rowSummaryNewAccu.style.display = "table-row";
-                        document.getElementById("detail-summary-new-accu").innerText = "- " + formatRp(currentDetailOrder.new_accu.price);
+                        document.getElementById(
+                            "detail-summary-new-accu",
+                        ).innerText =
+                            "- " + formatRp(currentDetailOrder.new_accu.price);
                     } else if (rowSummaryNewAccu) {
                         rowSummaryNewAccu.style.display = "none";
                     }
@@ -1576,15 +1727,24 @@ document.addEventListener("DOMContentLoaded", () => {
                     } else if (deliveryCost > 0) {
                         shippingFee = deliveryCost;
                     }
-                    document.getElementById("detail-summary-shipping").innerText =
-                        shippingFee > 0 ? "- " + formatRp(shippingFee) : "Gratis";
+                    document.getElementById(
+                        "detail-summary-shipping",
+                    ).innerText =
+                        shippingFee > 0
+                            ? "- " + formatRp(shippingFee)
+                            : "Gratis";
 
                     const totalVal = receipt.price_owed || 0;
                     const isMinus = totalVal < 0;
-                    document.getElementById("detail-summary-total").innerText = formatRp(Math.abs(totalVal));
-                    const totalLabel = document.getElementById("detail-summary-total-label");
+                    document.getElementById("detail-summary-total").innerText =
+                        formatRp(Math.abs(totalVal));
+                    const totalLabel = document.getElementById(
+                        "detail-summary-total-label",
+                    );
                     if (totalLabel) {
-                        totalLabel.innerText = isMinus ? "Total Tagihan (Customer Bayar)" : "Total Dibayar ke Customer";
+                        totalLabel.innerText = isMinus
+                            ? "Total Tagihan (Customer Bayar)"
+                            : "Total Dibayar ke Customer";
                     }
                 }
 
@@ -1698,18 +1858,24 @@ document.addEventListener("DOMContentLoaded", () => {
         let cachedNewAccus = [];
         let activeCityId = null;
         let activeCityName = "";
-        let currentAccuTab = 'old';
+        let currentAccuTab = "old";
         let currentFilteredAccus = null;
         let currentFilteredNewAccus = null;
 
         const updateAccuTotal = () => {
             const accuTotal = document.getElementById("accu-total");
             if (!accuTotal) return;
-            if (currentAccuTab === 'old') {
-                const list = currentFilteredAccus !== null ? currentFilteredAccus : cachedAccus;
+            if (currentAccuTab === "old") {
+                const list =
+                    currentFilteredAccus !== null
+                        ? currentFilteredAccus
+                        : cachedAccus;
                 accuTotal.innerText = list.length;
             } else {
-                const list = currentFilteredNewAccus !== null ? currentFilteredNewAccus : cachedNewAccus;
+                const list =
+                    currentFilteredNewAccus !== null
+                        ? currentFilteredNewAccus
+                        : cachedNewAccus;
                 accuTotal.innerText = list.length;
             }
         };
@@ -1732,7 +1898,9 @@ document.addEventListener("DOMContentLoaded", () => {
             loadPriceHistory();
         };
 
-        const selectPriceHistoryPerPage = document.getElementById("price-history-per-page");
+        const selectPriceHistoryPerPage = document.getElementById(
+            "price-history-per-page",
+        );
         if (selectPriceHistoryPerPage) {
             selectPriceHistoryPerPage.addEventListener("change", (e) => {
                 priceHistoryPerPage = parseInt(e.target.value);
@@ -1743,7 +1911,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
         const loadPriceHistory = async () => {
             try {
-                const res = await fetchApi(`/price-histories?page=${priceHistoryPage}&per_page=${priceHistoryPerPage}`);
+                const res = await fetchApi(
+                    `/price-histories?page=${priceHistoryPage}&per_page=${priceHistoryPerPage}`,
+                );
                 const tbody = document.getElementById("price-history-tbody");
                 if (!tbody) return;
 
@@ -1770,15 +1940,21 @@ document.addEventListener("DOMContentLoaded", () => {
 
                             // 2. Kolom LME (Mengambil dari h.lme atau h.LME)
                             const lmeVal = h.lme ?? h.LME ?? null;
-                            const lmeStr = lmeVal !== null
-                                ? parseFloat(lmeVal).toLocaleString("id-ID") + " USD/Ton"
-                                : "-";
+                            const lmeStr =
+                                lmeVal !== null
+                                    ? parseFloat(lmeVal).toLocaleString(
+                                          "id-ID",
+                                      ) + " USD/Ton"
+                                    : "-";
 
                             // 3. Kolom KURS (Mengambil dari h.new_value)
                             const kursVal = h.new_value ?? null;
-                            const kursStr = kursVal !== null
-                                ? parseFloat(kursVal).toLocaleString("id-ID") + " IDR/USD"
-                                : "-";
+                            const kursStr =
+                                kursVal !== null
+                                    ? parseFloat(kursVal).toLocaleString(
+                                          "id-ID",
+                                      ) + " IDR/USD"
+                                    : "-";
 
                             return `
                         <tr>
@@ -1793,7 +1969,11 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
 
                 if (res?.pagination) {
-                    renderGeneralPagination(res.pagination, "price-history-pagination", "changePriceHistoryPage");
+                    renderGeneralPagination(
+                        res.pagination,
+                        "price-history-pagination",
+                        "changePriceHistoryPage",
+                    );
                 }
             } catch (error) {
                 console.error("Gagal merender price history:", error);
@@ -1905,14 +2085,19 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         const loadCities = async () => {
-            const searchVal = document.getElementById("city-search-input")?.value || "";
+            const searchVal =
+                document.getElementById("city-search-input")?.value || "";
             let url = `/cities?page=${citiesPage}&per_page=${citiesPerPage}`;
             if (searchVal) url += `&search=${encodeURIComponent(searchVal)}`;
             const res = await fetchApi(url);
             cachedCities = res.data || [];
             renderCities(cachedCities);
             if (res.pagination) {
-                renderGeneralPagination(res.pagination, "cities-pagination", "changeCitiesPage");
+                renderGeneralPagination(
+                    res.pagination,
+                    "cities-pagination",
+                    "changeCitiesPage",
+                );
             }
         };
 
@@ -1954,7 +2139,8 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         const loadAccus = async () => {
-            const searchVal = document.getElementById("accu-search-input")?.value || "";
+            const searchVal =
+                document.getElementById("accu-search-input")?.value || "";
             let url = `/accus?page=${accusPage}&per_page=${accusPerPage}`;
             if (searchVal) url += `&search=${encodeURIComponent(searchVal)}`;
             const res = await fetchApi(url);
@@ -1962,7 +2148,11 @@ document.addEventListener("DOMContentLoaded", () => {
             currentFilteredAccus = null;
             renderAccus(cachedAccus);
             if (res.pagination) {
-                renderGeneralPagination(res.pagination, "accus-pagination", "changeAccusPage");
+                renderGeneralPagination(
+                    res.pagination,
+                    "accus-pagination",
+                    "changeAccusPage",
+                );
             }
         };
 
@@ -1974,7 +2164,7 @@ document.addEventListener("DOMContentLoaded", () => {
                         (a) => `
                     <tr>
                         <td>${a.name}</td>
-                        <td>${a.brand || '-'}</td>
+                        <td>${a.brand || "-"}</td>
                         <td style="font-weight:700; color:#10b981;">${rupiah(a.price)}</td>
                         <td style="text-align:right;">
                             <div style="display:flex; gap:6px; justify-content:flex-end;">
@@ -1998,7 +2188,8 @@ document.addEventListener("DOMContentLoaded", () => {
             loadNewAccus();
         };
 
-        const selectNewAccusPerPage = document.getElementById("new-accus-per-page");
+        const selectNewAccusPerPage =
+            document.getElementById("new-accus-per-page");
         if (selectNewAccusPerPage) {
             selectNewAccusPerPage.addEventListener("change", (e) => {
                 newAccusPerPage = parseInt(e.target.value);
@@ -2008,7 +2199,8 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         const loadNewAccus = async () => {
-            const searchVal = document.getElementById("new-accu-search-input")?.value || "";
+            const searchVal =
+                document.getElementById("new-accu-search-input")?.value || "";
             let url = `/new-accus?page=${newAccusPage}&per_page=${newAccusPerPage}`;
             if (searchVal) url += `&search=${encodeURIComponent(searchVal)}`;
             const res = await fetchApi(url);
@@ -2016,7 +2208,11 @@ document.addEventListener("DOMContentLoaded", () => {
             currentFilteredNewAccus = null;
             renderNewAccus(cachedNewAccus);
             if (res.pagination) {
-                renderGeneralPagination(res.pagination, "new-accus-pagination", "changeNewAccusPage");
+                renderGeneralPagination(
+                    res.pagination,
+                    "new-accus-pagination",
+                    "changeNewAccusPage",
+                );
             }
         };
 
@@ -2028,26 +2224,34 @@ document.addEventListener("DOMContentLoaded", () => {
 
         window.switchAccuTab = (tab) => {
             currentAccuTab = tab;
-            if (tab === 'old') {
-                document.getElementById('tab-old-accu').style.display = 'block';
-                document.getElementById('tab-new-accu').style.display = 'none';
-                document.getElementById('btn-old-accu').style.background = '#fff';
-                document.getElementById('btn-old-accu').style.color = '#1e293b';
-                document.getElementById('btn-old-accu').style.boxShadow = '0 1px 3px rgba(0,0,0,0.1)';
+            if (tab === "old") {
+                document.getElementById("tab-old-accu").style.display = "block";
+                document.getElementById("tab-new-accu").style.display = "none";
+                document.getElementById("btn-old-accu").style.background =
+                    "#fff";
+                document.getElementById("btn-old-accu").style.color = "#1e293b";
+                document.getElementById("btn-old-accu").style.boxShadow =
+                    "0 1px 3px rgba(0,0,0,0.1)";
 
-                document.getElementById('btn-new-accu').style.background = 'transparent';
-                document.getElementById('btn-new-accu').style.color = '#64748b';
-                document.getElementById('btn-new-accu').style.boxShadow = 'none';
+                document.getElementById("btn-new-accu").style.background =
+                    "transparent";
+                document.getElementById("btn-new-accu").style.color = "#64748b";
+                document.getElementById("btn-new-accu").style.boxShadow =
+                    "none";
             } else {
-                document.getElementById('tab-old-accu').style.display = 'none';
-                document.getElementById('tab-new-accu').style.display = 'block';
-                document.getElementById('btn-new-accu').style.background = '#fff';
-                document.getElementById('btn-new-accu').style.color = '#1e293b';
-                document.getElementById('btn-new-accu').style.boxShadow = '0 1px 3px rgba(0,0,0,0.1)';
+                document.getElementById("tab-old-accu").style.display = "none";
+                document.getElementById("tab-new-accu").style.display = "block";
+                document.getElementById("btn-new-accu").style.background =
+                    "#fff";
+                document.getElementById("btn-new-accu").style.color = "#1e293b";
+                document.getElementById("btn-new-accu").style.boxShadow =
+                    "0 1px 3px rgba(0,0,0,0.1)";
 
-                document.getElementById('btn-old-accu').style.background = 'transparent';
-                document.getElementById('btn-old-accu').style.color = '#64748b';
-                document.getElementById('btn-old-accu').style.boxShadow = 'none';
+                document.getElementById("btn-old-accu").style.background =
+                    "transparent";
+                document.getElementById("btn-old-accu").style.color = "#64748b";
+                document.getElementById("btn-old-accu").style.boxShadow =
+                    "none";
             }
             updateAccuTotal();
         };
@@ -2076,7 +2280,9 @@ document.addEventListener("DOMContentLoaded", () => {
             });
         }
 
-        const newAccuSearchInput = document.getElementById("new-accu-search-input");
+        const newAccuSearchInput = document.getElementById(
+            "new-accu-search-input",
+        );
         if (newAccuSearchInput) {
             let debounceTimer;
             newAccuSearchInput.addEventListener("input", () => {
@@ -2150,42 +2356,60 @@ document.addEventListener("DOMContentLoaded", () => {
         window.openAddNewAccuModal = async () => {
             document.getElementById("form-add-new-accu").reset();
             document.getElementById("new-accu-id").value = "";
-            document.getElementById("modal-new-accu-title").innerText = "Tambah Aki Baru";
+            document.getElementById("modal-new-accu-title").innerText =
+                "Tambah Aki Baru";
 
             const brandSelect = document.getElementById("new-accu-brand");
             // Load brands
             const res = await fetchApi("/brands"); // Note: Assuming /brands is available in admin or public. Actually, admin might not have /brands directly if it's not set up. Let's hardcode or fetch from a known endpoint. Wait, earlier we used /brands? The existing accu add modal doesn't use brand select? It seems we might not have a /brands endpoint, but we can check. Actually, let's just make it a text input for brand if there is no brands_id, but the migration has brands_id. Let me double check if we need to load brands from somewhere. For now, let's try to fetch if we have it, else use a default. Wait, the existing Accu model has brands_id. There must be an endpoint for it. I'll check later.
             // Let's assume there's a way to get brands.
             try {
-                const bRes = await fetch('/api/customer/brands'); // /customer/brands exists in api.php
+                const bRes = await fetch("/api/customer/brands"); // /customer/brands exists in api.php
                 const bData = await bRes.json();
                 if (bData.data) {
-                    brandSelect.innerHTML = '<option value="">Pilih Merk</option>' + bData.data.map(b => `<option value="${b.id}">${b.name}</option>`).join('');
+                    brandSelect.innerHTML =
+                        '<option value="">Pilih Merk</option>' +
+                        bData.data
+                            .map(
+                                (b) =>
+                                    `<option value="${b.id}">${b.name}</option>`,
+                            )
+                            .join("");
                 }
-            } catch (e) { }
+            } catch (e) {}
 
-            document.getElementById("modal-add-new-accu").style.display = "flex";
+            document.getElementById("modal-add-new-accu").style.display =
+                "flex";
         };
 
         window.editNewAccu = async (id) => {
-            const accu = cachedNewAccus.find(a => a.id === id);
+            const accu = cachedNewAccus.find((a) => a.id === id);
             if (!accu) return;
 
             document.getElementById("new-accu-id").value = accu.id;
             document.getElementById("new-accu-name").value = accu.name;
             document.getElementById("new-accu-price").value = accu.price;
-            document.getElementById("modal-new-accu-title").innerText = "Edit Aki Baru";
+            document.getElementById("modal-new-accu-title").innerText =
+                "Edit Aki Baru";
 
             const brandSelect = document.getElementById("new-accu-brand");
             try {
-                const bRes = await fetch('/api/customer/brands');
+                const bRes = await fetch("/api/customer/brands");
                 const bData = await bRes.json();
                 if (bData.data) {
-                    brandSelect.innerHTML = '<option value="">Pilih Merk</option>' + bData.data.map(b => `<option value="${b.id}" ${b.id === accu.brands_id ? 'selected' : ''}>${b.name}</option>`).join('');
+                    brandSelect.innerHTML =
+                        '<option value="">Pilih Merk</option>' +
+                        bData.data
+                            .map(
+                                (b) =>
+                                    `<option value="${b.id}" ${b.id === accu.brands_id ? "selected" : ""}>${b.name}</option>`,
+                            )
+                            .join("");
                 }
-            } catch (e) { }
+            } catch (e) {}
 
-            document.getElementById("modal-add-new-accu").style.display = "flex";
+            document.getElementById("modal-add-new-accu").style.display =
+                "flex";
         };
 
         window.deleteCity = (id) => {
@@ -2231,15 +2455,21 @@ document.addEventListener("DOMContentLoaded", () => {
             formAddAccu.addEventListener("submit", async (e) => {
                 e.preventDefault();
                 const name = document.getElementById("accu-name").value;
-                const berat_kering = document.getElementById("accu-berat-kering").value;
+                const berat_kering =
+                    document.getElementById("accu-berat-kering").value;
 
                 const res = await fetchApi("/accus", {
                     method: "POST",
-                    body: JSON.stringify({ brand: "Modern Mulya Mandiri", name, berat_kering }),
+                    body: JSON.stringify({
+                        brand: "Modern Mulya Mandiri",
+                        name,
+                        berat_kering,
+                    }),
                 });
                 if (res && res.data) {
                     showToast("Aki reject berhasil ditambahkan", "success");
-                    document.getElementById("modal-add-accu").style.display = "none";
+                    document.getElementById("modal-add-accu").style.display =
+                        "none";
                     formAddAccu.reset();
                     loadAccus();
                     loadTrashedAccus();
@@ -2258,7 +2488,8 @@ document.addEventListener("DOMContentLoaded", () => {
             formAddCity.addEventListener("submit", async (e) => {
                 e.preventDefault();
                 const name = document.getElementById("city-name").value;
-                const percentage = document.getElementById("city-percentage").value;
+                const percentage =
+                    document.getElementById("city-percentage").value;
 
                 const res = await fetchApi("/cities", {
                     method: "POST",
@@ -2266,7 +2497,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 });
                 if (res && res.data) {
                     showToast("Kota berhasil ditambahkan", "success");
-                    document.getElementById("modal-add-city").style.display = "none";
+                    document.getElementById("modal-add-city").style.display =
+                        "none";
                     formAddCity.reset();
                     loadCities();
                     loadTrashedCities();
@@ -2280,7 +2512,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 e.preventDefault();
                 const id = document.getElementById("new-accu-id").value;
                 const name = document.getElementById("new-accu-name").value;
-                const brands_id = document.getElementById("new-accu-brand").value;
+                const brands_id =
+                    document.getElementById("new-accu-brand").value;
                 const price = document.getElementById("new-accu-price").value;
 
                 if (id) {
@@ -2290,10 +2523,13 @@ document.addEventListener("DOMContentLoaded", () => {
                     });
                     if (res && res.data) {
                         showToast("Aki baru berhasil diperbarui", "success");
-                        document.getElementById("modal-add-new-accu").style.display = "none";
+                        document.getElementById(
+                            "modal-add-new-accu",
+                        ).style.display = "none";
                         loadNewAccus();
                     } else {
-                        let errMsg = res?.message || "Gagal memperbarui aki baru";
+                        let errMsg =
+                            res?.message || "Gagal memperbarui aki baru";
                         if (res?.errors && res.errors.name) {
                             errMsg = res.errors.name[0];
                         }
@@ -2306,7 +2542,9 @@ document.addEventListener("DOMContentLoaded", () => {
                     });
                     if (res && res.data) {
                         showToast("Aki baru berhasil ditambahkan", "success");
-                        document.getElementById("modal-add-new-accu").style.display = "none";
+                        document.getElementById(
+                            "modal-add-new-accu",
+                        ).style.display = "none";
                         loadNewAccus();
                     } else {
                         let errMsg = res?.message || "Gagal menyimpan aki baru";
@@ -2456,9 +2694,9 @@ document.addEventListener("DOMContentLoaded", () => {
                 } else {
                     showToast(
                         res.message ||
-                        (res.errors && res.errors.name
-                            ? res.errors.name[0]
-                            : "Gagal menambahkan kota"),
+                            (res.errors && res.errors.name
+                                ? res.errors.name[0]
+                                : "Gagal menambahkan kota"),
                         "error",
                     );
                 }
@@ -2731,7 +2969,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 } else {
                     showToast(
                         res.message ||
-                        "Password admin salah / Gagal menghapus gudang",
+                            "Password admin salah / Gagal menghapus gudang",
                         "error",
                     );
                 }
@@ -2773,10 +3011,13 @@ document.addEventListener("DOMContentLoaded", () => {
                 if (verifyRes.ok && verifyData.valid) {
                     sessionStorage.setItem("easter_egg_pass", inputPass);
                     sessionStorage.setItem("easter_egg_unlocked", "true");
-                    sessionStorage.setItem("easter_egg_time", Date.now().toString());
+                    sessionStorage.setItem(
+                        "easter_egg_time",
+                        Date.now().toString(),
+                    );
                     if (authError) authError.style.display = "none";
                     if (modalLock) modalLock.style.display = "none";
-                    
+
                     // Refresh the page directly so the data and layout render properly
                     window.location.reload();
                 } else {
@@ -2936,11 +3177,11 @@ document.addEventListener("DOMContentLoaded", () => {
                                 m.revenue > 0
                                     ? m.revenue >= 1000000000
                                         ? (m.revenue / 1000000000).toFixed(1) +
-                                        "M"
+                                          "M"
                                         : m.revenue >= 1000000
-                                            ? (m.revenue / 1000000).toFixed(0) +
+                                          ? (m.revenue / 1000000).toFixed(0) +
                                             "jt"
-                                            : (m.revenue / 1000).toFixed(0) + "k"
+                                          : (m.revenue / 1000).toFixed(0) + "k"
                                     : "0";
 
                             return `
@@ -3006,7 +3247,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
-/* =============================================================================
+    /* =============================================================================
    BIAYA PENJEMPUTAN — Admin Pricing Configuration Module
    Page: /admin/biaya-penjemputan
 ============================================================================= */
@@ -3057,7 +3298,8 @@ document.addEventListener("DOMContentLoaded", () => {
     const authError = document.getElementById("easter-egg-error");
 
     const checkEasterEggLock = () => {
-        const isUnlocked = sessionStorage.getItem("easter_egg_unlocked") === "true";
+        const isUnlocked =
+            sessionStorage.getItem("easter_egg_unlocked") === "true";
         if (!isUnlocked) {
             if (modalLock) modalLock.style.display = "flex";
             return false;
@@ -3069,25 +3311,37 @@ document.addEventListener("DOMContentLoaded", () => {
     if (formAuth) {
         formAuth.addEventListener("submit", async (e) => {
             e.preventDefault();
-            const inputPass = document.getElementById("easter-egg-password").value;
+            const inputPass = document.getElementById(
+                "easter-egg-password",
+            ).value;
             try {
                 const verifyRes = await fetch("/api/public-admin/verify", {
                     method: "POST",
-                    headers: { "Content-Type": "application/json", Accept: "application/json" },
+                    headers: {
+                        "Content-Type": "application/json",
+                        Accept: "application/json",
+                    },
                     body: JSON.stringify({ secret: inputPass }),
                 });
                 const verifyData = await verifyRes.json();
                 if (verifyRes.ok && verifyData.valid) {
                     sessionStorage.setItem("easter_egg_pass", inputPass);
                     sessionStorage.setItem("easter_egg_unlocked", "true");
-                    sessionStorage.setItem("easter_egg_time", Date.now().toString());
+                    sessionStorage.setItem(
+                        "easter_egg_time",
+                        Date.now().toString(),
+                    );
                     if (authError) authError.style.display = "none";
                     if (modalLock) modalLock.style.display = "none";
-                    showToast("Akses Rahasia Dibuka! Anda dapat mengatur pengiriman.", "success");
+                    showToast(
+                        "Akses Rahasia Dibuka! Anda dapat mengatur pengiriman.",
+                        "success",
+                    );
                     loadCurrentSetting();
                 } else {
                     if (authError) {
-                        authError.innerText = verifyData.message || "Password rahasia salah!";
+                        authError.innerText =
+                            verifyData.message || "Password rahasia salah!";
                         authError.style.display = "block";
                     }
                 }
@@ -3110,15 +3364,17 @@ document.addEventListener("DOMContentLoaded", () => {
         ppToast.textContent = msg;
         ppToast.style.background = isError ? "#dc2626" : "#16a34a";
         ppToast.style.display = "block";
-        setTimeout(() => { ppToast.style.display = "none"; }, 3500);
+        setTimeout(() => {
+            ppToast.style.display = "none";
+        }, 3500);
     }
 
     function getAuthHeaders() {
         const token = localStorage.getItem("admin_token");
         return {
             "Content-Type": "application/json",
-            "Accept": "application/json",
-            ...(token ? { "Authorization": "Bearer " + token } : {}),
+            Accept: "application/json",
+            ...(token ? { Authorization: "Bearer " + token } : {}),
         };
     }
 
@@ -3136,14 +3392,15 @@ document.addEventListener("DOMContentLoaded", () => {
             if (elTimeRate) elTimeRate.value = s.time_rate ?? 25;
 
             // Populate multiplier fields
-            if (elDemand) elDemand.value = s.demand_multiplier ?? 1.00;
-            if (elWeather) elWeather.value = s.weather_multiplier ?? 1.00;
-            if (elTraffic) elTraffic.value = s.traffic_multiplier ?? 1.00;
-            if (elEvent) elEvent.value = s.event_multiplier ?? 1.00;
+            if (elDemand) elDemand.value = s.demand_multiplier ?? 1.0;
+            if (elWeather) elWeather.value = s.weather_multiplier ?? 1.0;
+            if (elTraffic) elTraffic.value = s.traffic_multiplier ?? 1.0;
+            if (elEvent) elEvent.value = s.event_multiplier ?? 1.0;
 
             // Version badge
             if (elVersionBadge) {
-                elVersionBadge.textContent = "Versi " + (s.pricing_version ?? 1);
+                elVersionBadge.textContent =
+                    "Versi " + (s.pricing_version ?? 1);
             }
 
             updateFormulaPreview();
@@ -3159,9 +3416,16 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // ── Formula Preview (read-only display update) ────────────────────────────
     function updateFormulaPreview() {
-        if (prevInitialFee) prevInitialFee.textContent = formatRpLocal(elInitialFee?.value || 5000);
-        if (prevDistanceRate) prevDistanceRate.textContent = formatRpLocal(elDistanceRate?.value || 2300) + "/km";
-        if (prevTimeRate) prevTimeRate.textContent = formatRpLocal(elTimeRate?.value || 25) + "/detik";
+        if (prevInitialFee)
+            prevInitialFee.textContent = formatRpLocal(
+                elInitialFee?.value || 5000,
+            );
+        if (prevDistanceRate)
+            prevDistanceRate.textContent =
+                formatRpLocal(elDistanceRate?.value || 2300) + "/km";
+        if (prevTimeRate)
+            prevTimeRate.textContent =
+                formatRpLocal(elTimeRate?.value || 25) + "/detik";
     }
 
     // ── Live Multiplier Preview ───────────────────────────────────────────────
@@ -3189,7 +3453,9 @@ document.addEventListener("DOMContentLoaded", () => {
             return;
         }
 
-        historyTbody.innerHTML = items.map(h => `
+        historyTbody.innerHTML = items
+            .map(
+                (h) => `
             <tr>
                 <td style="font-size:12px; color:#6d727c; white-space:nowrap;">${formatDateLocal(h.created_at)}</td>
                 <td style="font-size:12px;">${h.created_by || "-"}</td>
@@ -3202,7 +3468,9 @@ document.addEventListener("DOMContentLoaded", () => {
                 <td style="text-align:right; font-family:monospace;">${parseFloat(h.event_multiplier).toFixed(2)}</td>
                 <td style="text-align:right; font-weight:700; color:#0369a1;">${parseFloat(h.total_multiplier).toFixed(4)}</td>
             </tr>
-        `).join("");
+        `,
+            )
+            .join("");
 
         renderHistoryPagination(paginatedData);
     }
@@ -3210,15 +3478,28 @@ document.addEventListener("DOMContentLoaded", () => {
     function formatDateLocal(dateStr) {
         if (!dateStr) return "-";
         const d = new Date(dateStr);
-        return d.toLocaleDateString("id-ID", { day: "2-digit", month: "short", year: "numeric" })
-            + " " + d.toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit" });
+        return (
+            d.toLocaleDateString("id-ID", {
+                day: "2-digit",
+                month: "short",
+                year: "numeric",
+            }) +
+            " " +
+            d.toLocaleTimeString("id-ID", {
+                hour: "2-digit",
+                minute: "2-digit",
+            })
+        );
     }
 
     function renderHistoryPagination(paginatedData) {
         if (!historyPagination) return;
         const last = paginatedData.last_page || 1;
         const current = paginatedData.current_page || 1;
-        if (last <= 1) { historyPagination.innerHTML = ""; return; }
+        if (last <= 1) {
+            historyPagination.innerHTML = "";
+            return;
+        }
 
         let html = "";
         for (let i = 1; i <= last; i++) {
@@ -3256,14 +3537,21 @@ document.addEventListener("DOMContentLoaded", () => {
     // ── Form Submissions ──────────────────────────────────────────────────────
     async function saveSettings(payload, btnEl) {
         if (!checkEasterEggLock()) return;
-        if (btnEl) { btnEl.disabled = true; btnEl.textContent = "Menyimpan..."; }
+        if (btnEl) {
+            btnEl.disabled = true;
+            btnEl.textContent = "Menyimpan...";
+        }
         try {
             const data = await fetchApi("/pengiriman", {
                 method: "PUT",
                 body: JSON.stringify(payload),
             });
             if (data.message === "Unauthenticated" || data.errors) {
-                const errMsg = data.message || Object.values(data.errors || {}).flat().join(" ");
+                const errMsg =
+                    data.message ||
+                    Object.values(data.errors || {})
+                        .flat()
+                        .join(" ");
                 showToast(errMsg || "Terjadi kesalahan.", true);
             } else {
                 showToast(data.message || "Berhasil disimpan.");
@@ -3273,7 +3561,10 @@ document.addEventListener("DOMContentLoaded", () => {
         } catch (e) {
             showToast("Gagal terhubung ke server.", true);
         } finally {
-            if (btnEl) { btnEl.disabled = false; btnEl.textContent = btnEl.dataset.origText || "Simpan"; }
+            if (btnEl) {
+                btnEl.disabled = false;
+                btnEl.textContent = btnEl.dataset.origText || "Simpan";
+            }
         }
     }
 
@@ -3283,7 +3574,7 @@ document.addEventListener("DOMContentLoaded", () => {
         if (btn) btn.dataset.origText = btn.textContent;
 
         // Live formula preview on input
-        [elInitialFee, elDistanceRate, elTimeRate].forEach(el => {
+        [elInitialFee, elDistanceRate, elTimeRate].forEach((el) => {
             if (el) el.addEventListener("input", updateFormulaPreview);
         });
 
@@ -3295,10 +3586,10 @@ document.addEventListener("DOMContentLoaded", () => {
                 initial_fee: parseFloat(elInitialFee?.value || 5000),
                 distance_rate: parseFloat(elDistanceRate?.value || 2300),
                 time_rate: parseFloat(elTimeRate?.value || 25),
-                demand_multiplier: parseFloat(elDemand?.value || 1.00),
-                weather_multiplier: parseFloat(elWeather?.value || 1.00),
-                traffic_multiplier: parseFloat(elTraffic?.value || 1.00),
-                event_multiplier: parseFloat(elEvent?.value || 1.00),
+                demand_multiplier: parseFloat(elDemand?.value || 1.0),
+                weather_multiplier: parseFloat(elWeather?.value || 1.0),
+                traffic_multiplier: parseFloat(elTraffic?.value || 1.0),
+                event_multiplier: parseFloat(elEvent?.value || 1.0),
             };
             await saveSettings(payload, btn);
         });
@@ -3309,7 +3600,7 @@ document.addEventListener("DOMContentLoaded", () => {
         if (btn) btn.dataset.origText = btn.textContent;
 
         // Live total multiplier preview on input
-        [elDemand, elWeather, elTraffic, elEvent].forEach(el => {
+        [elDemand, elWeather, elTraffic, elEvent].forEach((el) => {
             if (el) el.addEventListener("input", updateLiveMultiplier);
         });
 
@@ -3321,10 +3612,10 @@ document.addEventListener("DOMContentLoaded", () => {
                 initial_fee: parseFloat(elInitialFee?.value || 5000),
                 distance_rate: parseFloat(elDistanceRate?.value || 2300),
                 time_rate: parseFloat(elTimeRate?.value || 25),
-                demand_multiplier: parseFloat(elDemand?.value || 1.00),
-                weather_multiplier: parseFloat(elWeather?.value || 1.00),
-                traffic_multiplier: parseFloat(elTraffic?.value || 1.00),
-                event_multiplier: parseFloat(elEvent?.value || 1.00),
+                demand_multiplier: parseFloat(elDemand?.value || 1.0),
+                weather_multiplier: parseFloat(elWeather?.value || 1.0),
+                traffic_multiplier: parseFloat(elTraffic?.value || 1.0),
+                event_multiplier: parseFloat(elEvent?.value || 1.0),
             };
             await saveSettings(payload, btn);
         });
@@ -3345,4 +3636,3 @@ document.addEventListener("DOMContentLoaded", () => {
     // ── Bootstrap ─────────────────────────────────────────────────────────────
     loadCurrentSetting();
 });
-
