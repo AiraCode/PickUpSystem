@@ -160,10 +160,12 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         }
 
-        const response = await fetch(apiTarget, {
+        const finalOptions = {
+            cache: "no-store",
             ...options,
             headers,
-        });
+        };
+        const response = await fetch(apiTarget, finalOptions);
         if (response.status === 401 && token) {
             localStorage.removeItem("admin_token");
             localStorage.removeItem("admin_user");
@@ -3105,11 +3107,27 @@ document.addEventListener("DOMContentLoaded", () => {
                 payload.id = idVal
                     ? idVal
                     : Math.floor(Math.random() * 1000000);
+                const errorEl = document.getElementById("add-user-error");
+                if (errorEl) errorEl.style.display = "none";
+
                 const res = await fetchApi("/users", {
                     method: "POST",
                     body: JSON.stringify(payload),
                 });
-                if (res && (res.data || res.message)) {
+                
+                if (res && res.errors) {
+                    let errMsg = res.message || "Gagal validasi data";
+                    const firstKey = Object.keys(res.errors)[0];
+                    if (firstKey && res.errors[firstKey][0]) {
+                        errMsg = res.errors[firstKey][0];
+                    }
+                    if (errorEl) {
+                        errorEl.innerText = errMsg;
+                        errorEl.style.display = "block";
+                    } else {
+                        showToast(errMsg, "error");
+                    }
+                } else if (res && (res.data || res.message)) {
                     document.getElementById("modal-add-user").style.display =
                         "none";
                     document.getElementById("form-add-user").reset();

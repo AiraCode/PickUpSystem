@@ -36,6 +36,7 @@
     <div class="admin-panel" style="width:420px;">
         <div class="admin-panel__head"><h2>Tambah Staf Admin</h2></div>
         <form id="form-add-user">
+            <div id="add-user-error" style="display:none; color:#ba1b2b; font-size:12px; margin-bottom:16px; font-weight:600; background:#fee2e2; padding:8px 12px; border-radius:6px;"></div>
             <div style="margin-bottom:16px;">
                 <label style="display:block; font-size:12px; font-weight:600; margin-bottom:6px; color:#4a4f59;">ID (opsional)</label>
                 <input type="number" id="user-id" class="admin-select" style="width:100%; padding:8px 10px; border-radius:6px;">
