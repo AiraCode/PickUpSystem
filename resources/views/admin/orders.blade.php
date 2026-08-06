@@ -46,6 +46,24 @@
             <small style="color:#93c5fd; font-size:11px;">Sedang dijemput</small>
         </article>
 
+        <article id="card-status-arrived_at_warehouse" class="admin-panel admin-stat-card order-status-tab"
+            onclick="switchOrderTab('arrived_at_warehouse')" style="cursor:pointer; border:2px solid #e5e7eb; transition:all 0.2s;">
+            <div class="admin-stat-card__head" style="margin-bottom:6px;">
+                <span class="admin-stat-card__icon"
+                    style="background:#f3e8ff; color:#7e22ce; padding:6px; border-radius:6px;">
+                    <svg viewBox="0 0 24 24"
+                        style="width:20px; height:20px; fill:none; stroke:currentColor; stroke-width:2;">
+                        <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" />
+                        <polyline points="3.27 6.96 12 12.01 20.73 6.96" />
+                        <line x1="12" y1="22.08" x2="12" y2="12" />
+                    </svg>
+                </span>
+            </div>
+            <p style="margin:0; font-size:12px; color:#9333ea; font-weight:600;">Sampai Gudang</p>
+            <strong id="count-arrived_at_warehouse" style="font-size:22px; color:#7e22ce;">0</strong>
+            <small style="color:#a855f7; font-size:11px;">Barang diterima gudang</small>
+        </article>
+
         <article id="card-status-completed" class="admin-panel admin-stat-card order-status-tab"
             onclick="switchOrderTab('completed')" style="cursor:pointer; border:2px solid #e5e7eb; transition:all 0.2s;">
             <div class="admin-stat-card__head" style="margin-bottom:6px;">
@@ -110,7 +128,8 @@
             </div>
 
             <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
-                <select id="orders-per-page" class="admin-select" style="padding: 6px 10px; font-size:12px; border-radius:6px; background:#fff;">
+                <select id="orders-per-page" class="admin-select"
+                    style="padding: 6px 10px; font-size:12px; border-radius:6px; background:#fff;">
                     <option value="5">5 / hal</option>
                     <option value="20" selected>20 / hal</option>
                     <option value="50">50 / hal</option>
@@ -176,7 +195,9 @@
                 </tbody>
             </table>
         </div>
-        <div id="orders-pagination" style="display:flex; justify-content:space-between; align-items:center; padding:12px 16px; border-top:1px solid #e5e7eb;"></div>
+        <div id="orders-pagination"
+            style="display:flex; justify-content:space-between; align-items:center; padding:12px 16px; border-top:1px solid #e5e7eb;">
+        </div>
     </article>
 
     <div id="modal-shopee-filter"
@@ -240,8 +261,10 @@
 
                 <div
                     style="display:flex; gap:10px; justify-content:flex-end; border-top:1px solid #e5e7eb; padding-top:14px;">
-                    <button type="button" id="btn-reset-shopee-filter" class="admin-button admin-button--secondary">Reset Filter</button>
-                    <button type="submit" class="admin-button admin-button--primary" style="background:#2563eb;">Terapkan Filter</button>
+                    <button type="button" id="btn-reset-shopee-filter" class="admin-button admin-button--secondary">Reset
+                        Filter</button>
+                    <button type="submit" class="admin-button admin-button--primary" style="background:#2563eb;">Terapkan
+                        Filter</button>
                 </div>
             </form>
         </div>
@@ -320,7 +343,7 @@
                         placeholder="Contoh: Barang tidak sesuai / Customer membatalkan">
                 </div>
 
-                <div style="margin-bottom:18px;">
+                <div id="container-proof-upload" style="display:none; margin-bottom:18px;">
                     <label id="proof-label"
                         style="display:block; font-size:12px; font-weight:600; margin-bottom:6px; color:#4a4f59;">Bukti
                         Pembayaran / Penyerahan</label>
@@ -504,17 +527,34 @@
                     </table>
                 </div>
 
-                <div id="container-detail-transfer-proof" style="display:none; margin-top:16px; border-top:1px solid #e5e7eb; padding-top:14px;">
-                    <h3 style="font-size:14px; margin-bottom:10px; color:#111318;">Bukti Transfer Pelanggan (Tukar Tambah)</h3>
-                    <div style="display:flex; align-items:center; gap:16px; background:#f8fafc; padding:14px; border-radius:8px; border:1px solid #e2e8f0;">
-                        <img id="detail-transfer-proof-img" src="" alt="Bukti Transfer" style="width:90px; height:90px; object-fit:cover; border-radius:8px; border:1px solid #cbd5e1; cursor:pointer;">
+                <div id="container-detail-transfer-proof"
+                    style="display:none; margin-top:16px; border-top:1px solid #e5e7eb; padding-top:14px;">
+                    <h3 style="font-size:14px; margin-bottom:10px; color:#111318;">Bukti Transfer Pelanggan (Tukar Tambah)
+                    </h3>
+                    <div
+                        style="display:flex; align-items:center; gap:16px; background:#f8fafc; padding:14px; border-radius:8px; border:1px solid #e2e8f0;">
+                        <img id="detail-transfer-proof-img" src="" alt="Bukti Transfer"
+                            style="width:90px; height:90px; object-fit:cover; border-radius:8px; border:1px solid #cbd5e1; cursor:pointer;">
                         <div style="display:flex; flex-direction:column; gap:8px;">
-                            <button type="button" id="btn-zoom-transfer-proof" class="admin-button admin-button--secondary" style="height:32px; font-size:12px; display:inline-flex; align-items:center; gap:6px;">
-                                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg>
+                            <button type="button" id="btn-zoom-transfer-proof" class="admin-button admin-button--secondary"
+                                style="height:32px; font-size:12px; display:inline-flex; align-items:center; gap:6px;">
+                                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor"
+                                    stroke-width="2">
+                                    <circle cx="11" cy="11" r="8" />
+                                    <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                                    <line x1="11" y1="8" x2="11" y2="14" />
+                                    <line x1="8" y1="11" x2="14" y2="11" />
+                                </svg>
                                 <span>Zoom Gambar</span>
                             </button>
-                            <a id="btn-download-transfer-proof" href="#" download class="admin-button admin-button--primary" style="height:32px; font-size:12px; display:inline-flex; align-items:center; gap:6px; text-decoration:none; background:#2563eb;">
-                                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                            <a id="btn-download-transfer-proof" href="#" download class="admin-button admin-button--primary"
+                                style="height:32px; font-size:12px; display:inline-flex; align-items:center; gap:6px; text-decoration:none; background:#2563eb;">
+                                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor"
+                                    stroke-width="2">
+                                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                                    <polyline points="7 10 12 15 17 10" />
+                                    <line x1="12" y1="15" x2="12" y2="3" />
+                                </svg>
                                 <span>Download Gambar</span>
                             </a>
                         </div>
@@ -528,11 +568,23 @@
     <div id="modal-order-summary"
         style="display:none; position:fixed; inset:0; background:rgba(0,0,0,.65); z-index:160; align-items:center; justify-content:center;">
         <div class="admin-panel" style="width:600px; max-width:95vw; max-height:90vh; overflow-y:auto; color: #fff;">
-            <div class="admin-panel__head" style="align-items: flex-start;">
+            <div class="admin-panel__head" style="align-items: center; justify-content: space-between;">
                 <h2 style="color: #fff;">Rincian Harga</h2>
-                <button type="button" class="admin-button admin-button--primary"
-                    style="padding: 6px 12px; height: 34px; white-space: nowrap; flex-shrink: 0; background-color: #2563eb; color: #fff; border-color: #2563eb;"
-                    onclick="document.getElementById('modal-order-summary').style.display='none'">Tutup Rincian</button>
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <!-- Yellow Circle for Edit -->
+                    <button type="button" id="btn-open-edit-order-items" title="Edit Item Aki Pesanan Ini"
+                        style="width: 28px; height: 28px; border-radius: 50%; background: #eab308; border: none; color: #fff; display: inline-flex; align-items: center; justify-content: center; cursor: pointer; transition: transform 0.15s; font-size: 13px; font-weight: bold; box-shadow: 0 2px 6px rgba(234,179,8,0.4);"
+                        onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
+                        ✏️
+                    </button>
+                    <!-- Red Circle for Close -->
+                    <button type="button" title="Tutup Rincian"
+                        onclick="document.getElementById('modal-order-summary').style.display='none'"
+                        style="width: 28px; height: 28px; border-radius: 50%; background: #ef4444; border: none; color: #fff; display: inline-flex; align-items: center; justify-content: center; cursor: pointer; transition: transform 0.15s; font-size: 12px; font-weight: bold; box-shadow: 0 2px 6px rgba(239,68,68,0.4);"
+                        onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
+                        ✕
+                    </button>
+                </div>
             </div>
             <div style="padding-bottom:20px;">
                 <div style="overflow-x:auto; width:100%; margin-bottom:16px;">
@@ -665,7 +717,6 @@
             transform: translateX(-50%) scale(1);
             opacity: 1;
         }
-
     </style>
 
     <script>
@@ -697,5 +748,83 @@
             });
         });
     </script>
+
+    <div id="modal-edit-order-items"
+        style="display:none; position:fixed; inset:0; background:rgba(0,0,0,.65); z-index:180; align-items:center; justify-content:center;">
+        <div class="admin-panel"
+            style="width:580px; max-width:95vw; max-height:90vh; overflow-y:auto; background:#fff; border-radius:12px;">
+            <div class="admin-panel__head"
+                style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #e5e7eb; padding-bottom:12px; margin-bottom:16px;">
+                <div style="display:flex; align-items:center; gap:8px;">
+                    <h2 style="font-size:16px; margin:0; color:#1e293b;">Edit Item Aki Pesanan</h2>
+                </div>
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <button type="button" title="Tutup"
+                        onclick="document.getElementById('modal-edit-order-items').style.display='none'"
+                        style="width: 28px; height: 28px; border-radius: 50%; background: #ef4444; border: none; color: #fff; display: inline-flex; align-items: center; justify-content: center; cursor: pointer; font-size: 12px; font-weight: bold;">
+                        ✕
+                    </button>
+                </div>
+            </div>
+
+            <form id="form-edit-order-items">
+                <input type="hidden" id="edit-order-items-id">
+
+                <p style="font-size:12px; color:#64748b; margin-bottom:14px; line-height:1.4;">
+                    Ubah jenis dan jumlah unit aki reject. Setelah Anda simpan, notifikasi konfirmasi (link) akan otomatis
+                    dikirimkan ke WhatsApp customer.
+                </p>
+
+                <div id="edit-items-rows-container"
+                    style="display:flex; flex-direction:column; gap:10px; margin-bottom:16px;">
+                    <!-- Dynamically populated rows -->
+                </div>
+
+                {{-- //Kalau Perlu --}}
+                {{-- <button type="button" id="btn-add-edit-item-row" class="admin-button admin-button--secondary"
+                    style="width:100%; height:34px; font-size:12px; margin-bottom:18px; border:1px dashed #3b82f6; color:#2563eb; background:#eff6ff; display:inline-flex; align-items:center; justify-content:center; gap:6px;">
+                    <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="12" y1="5" x2="12" y2="19" />
+                        <line x1="5" y1="12" x2="19" y2="12" />
+                    </svg>
+                    <span>Tambah Baris Aki Baru</span>
+                </button> --}}
+
+                <div id="edit-items-error"
+                    style="display:none; background:#fee2e2; color:#991b1b; padding:10px; border-radius:6px; font-size:12px; font-weight:600; margin-bottom:14px;">
+                </div>
+
+                <div
+                    style="display:flex; gap:10px; justify-content:flex-end; border-top:1px solid #e5e7eb; padding-top:14px;">
+                    <button type="button" class="admin-button admin-button--secondary"
+                        onclick="document.getElementById('modal-edit-order-items').style.display='none'">Batal</button>
+                    <button type="submit" id="btn-save-edit-items" class="admin-button admin-button--primary"
+                        style="background:#2563eb;">Simpan & Kirim Konfirmasi WA</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="modal-spam-warning"
+        style="display:none; position:fixed; inset:0; background:rgba(0,0,0,.75); z-index:99999; align-items:center; justify-content:center; padding:20px;">
+        <div
+            style="background:#fff; border-radius:14px; width:440px; max-width:100%; box-shadow:0 25px 50px -12px rgba(0,0,0,0.25); text-align:center; padding:28px 24px; border:2px solid #ef4444;">
+            <span style="font-size:48px; display:block; margin-bottom:10px;">🛑</span>
+            <h2 style="margin:0 0 8px; font-size:18px; font-weight:800; color:#991b1b;">PERINGATAN ANTI-SPAM!</h2>
+            <p style="font-size:13px; color:#4b5563; margin:0 0 16px; line-height:1.5;">
+                Anda telah melakukan pembaruan proses lebih dari <strong>10 kali dalam 30 detik</strong>. Harap berhenti
+                sejenak. Fungsi update di halaman ini dibekukan sementara.
+            </p>
+            <div style="background:#fee2e2; border:1px solid #fca5a5; border-radius:8px; padding:12px; margin-bottom:16px;">
+                <span style="font-size:12px; color:#991b1b; font-weight:600; display:block; margin-bottom:4px;">Fungsi
+                    update dapat digunakan kembali dalam:</span>
+                <strong id="spam-countdown-timer" style="font-size:24px; color:#dc2626; font-family:monospace;">30
+                    detik</strong>
+            </div>
+            <p style="font-size:11px; color:#6b7280; margin:0;">
+                *Navigasi ke halaman admin panel lainnya tetap aktif dan dapat digunakan.
+            </p>
+        </div>
+    </div>
 
 @endsection

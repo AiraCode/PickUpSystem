@@ -56,6 +56,7 @@ class ReceiptController extends Controller
                 'status' => $order->receipt->status,
                 'price_received' => $order->receipt->price_received,
                 'price_owed' => $order->receipt->price_owed,
+                'edit_confirmed_by_user' => $order->receipt->edit_confirmed_by_user ?? 1,
                 'accus' => $formattedAccus,
                 'transfer' => $transfer,
             ];
@@ -109,9 +110,32 @@ class ReceiptController extends Controller
                 'pickup_address' => $order->pickup_address,
                 'pickup_address_note' => $order->pickup_address_note,
                 'cancel_reason' => $order->cancel_reason,
+                'warehouse_proof' => $order->warehouse_proof,
                 'pickup_fee' => $pickupFee,
                 'receipt' => $receiptData,
             ],
         ]);
+    }
+
+    public function confirmEdit(\Illuminate\Http\Request $request, int $orderId): JsonResponse
+    {
+        $request->validate([
+            'action' => 'required|string|in:accept,reject',
+        ]);
+
+        $order = Order::with('receipt')->findOrFail($orderId);
+        $receipt = $order->receipt;
+
+        if (! $receipt) {
+            return response()->json(['message' => 'Receipt tidak ditemukan.'], 404);
+        }
+
+        if ($request->action === 'accept') {
+            $receipt->update(['edit_confirmed_by_user' => 1]);
+            return response()->json(['message' => 'Perubahan pesanan berhasil Anda setujui!']);
+        } else {
+            $receipt->update(['edit_confirmed_by_user' => 2]);
+            return response()->json(['message' => 'Perubahan pesanan telah Anda tolak.']);
+        }
     }
 }

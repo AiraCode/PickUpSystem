@@ -39,6 +39,7 @@ Route::prefix('customer')->group(function () {
     Route::get('orders/{id}', [CustomerOrderController::class, 'show']);
     Route::put('orders/{id}/note', [CustomerOrderController::class, 'updateNote']);
     Route::get('receipts/{orderId}', [CustomerReceiptController::class, 'show']);
+    Route::post('orders/{id}/confirm-edit', [CustomerReceiptController::class, 'confirmEdit']);
     Route::post('ocr/extract-name', [CustomerOCRController::class, 'extractName']);
     Route::post('ocr/verify-proof', [CustomerOCRController::class, 'verifyProof']);
     Route::post('calculate-pickup-fee', [CustomerOrderController::class, 'calculatePickupFee']);
@@ -124,7 +125,8 @@ Route::prefix('public-admin')->group(function () {
 });
 
 
-Route::post('/login', [AuthController::class, 'login']);
+Route::get('admin/storages/{id}/stock', [WarehouseController::class, 'stockSummary']);
+Route::put('admin/orders/{id}/items', [AdminOrderController::class, 'updateItems']);
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
@@ -160,10 +162,12 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::put('customers/{id}/flag', [AdminCustomerController::class, 'updateFlag']);
         Route::apiResource('orders', AdminOrderController::class)->only(['index', 'show']);
         Route::put('orders/{id}/status', [AdminOrderController::class, 'updateStatus']);
+        Route::put('orders/{id}/items', [AdminOrderController::class, 'updateItems']);
         Route::apiResource('transfers', TransferController::class)->only(['index', 'show', 'update']);
 
         Route::get('storages/trashed', [WarehouseController::class, 'trashed']);
         Route::post('storages/{id}/restore', [WarehouseController::class, 'restore']);
+        Route::get('storages/{id}/stock', [WarehouseController::class, 'stockSummary']);
         Route::apiResource('storages', WarehouseController::class);
         Route::apiResource('shipments', ShipmentController::class);
 

@@ -1229,6 +1229,7 @@ document.addEventListener("DOMContentLoaded", () => {
                         parseFloat(localStorage.getItem("pickup_lat")) || -7.2575,
                     pickup_long:
                         parseFloat(localStorage.getItem("pickup_long")) || 112.7521,
+                    storages_id: parseInt(localStorage.getItem("pickup_storage_id")) || null,
                     delivery_method: deliveryMethodVal,
                     items: itemsPayload,
                     ktp_base64: ktpBase64,
@@ -1686,6 +1687,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     );
                     if (summaryBlocks) {
                         const divs = summaryBlocks.querySelectorAll("div");
+                        const grandTotalElement = receiptContainer.querySelector(".user-receipt__grand-total strong");
                         let divIndex = 0;
 
                         if (divs[divIndex]) {
@@ -1731,48 +1733,119 @@ document.addEventListener("DOMContentLoaded", () => {
                             }
                         }
                     }
-                    const proofSection = document.querySelector(
-                        "[data-proof-section]",
-                    );
-                    if (proofSection) {
-                        if (isPaid) {
-                            proofSection.removeAttribute("hidden");
-                            proofSection.style.display = "block";
-                            if (receipt.transfer) {
-                                const transfer = receipt.transfer;
-                                const dds = proofSection.querySelectorAll("dd");
-                                if (dds[0]) {
-                                    const transferDateObj = parseSafeDate(
-                                        transfer.transfer_date,
-                                    );
-                                    dds[0].innerHTML = `${transferDateObj.toLocaleDateString("id-ID")}<br><small style="font-size: 11px; color: #64748b;">${transferDateObj.toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit" }).replace(".", ":")} WIB</small>`;
-                                }
-                                if (dds[1])
-                                    dds[1].textContent = transfer.id || "-";
-                                const img = proofSection.querySelector("img");
-                                const notFoundSpan = proofSection.querySelector(
-                                    ".user-image-not-found",
-                                );
-                                if (img && transfer.proof_image) {
-                                    img.src = `/storage/${transfer.proof_image}`;
-                                    img.parentElement.classList.add(
-                                        "is-loaded",
-                                    );
-                                    if (notFoundSpan)
-                                        notFoundSpan.style.display = "none";
-                                } else {
-                                    if (img)
-                                        img.parentElement.classList.remove(
-                                            "is-loaded",
-                                        );
-                                    if (notFoundSpan)
-                                        notFoundSpan.style.display = "flex";
-                                }
-                            }
+                    window.toggleProofContent = (bodyId, arrowId) => {
+                        const bodyEl = document.getElementById(bodyId);
+                        const arrowEl = document.getElementById(arrowId);
+                        if (!bodyEl) return;
+                        if (bodyEl.style.display === "none" || !bodyEl.style.display) {
+                            bodyEl.style.display = "block";
+                            if (arrowEl) arrowEl.style.transform = "rotate(180deg)";
                         } else {
-                            proofSection.setAttribute("hidden", "true");
-                            proofSection.style.display = "none";
+                            bodyEl.style.display = "none";
+                            if (arrowEl) arrowEl.style.transform = "rotate(0deg)";
                         }
+                    };
+
+                    // Handle Warehouse Proof (Bukti Sampai Gudang)
+                    const proofWarehouseBox = document.getElementById("proof-warehouse-box");
+                    const warehouseProofImg = document.getElementById("warehouse-proof-img");
+                    if (o.warehouse_proof && proofWarehouseBox && warehouseProofImg) {
+                        proofWarehouseBox.style.display = "block";
+                        warehouseProofImg.src = `/storage/${o.warehouse_proof}`;
+                    } else if (proofWarehouseBox) {
+                        proofWarehouseBox.style.display = "none";
+                    }
+
+                    // Handle Payment Transfer Proof
+                    const proofPaymentBox = document.getElementById("proof-payment-box");
+                    const paymentProofImg = document.getElementById("payment-proof-img");
+                    const paymentProofDetails = document.getElementById("payment-proof-details");
+                    if (receipt.transfer && receipt.transfer.proof_image && proofPaymentBox && paymentProofImg) {
+                        proofPaymentBox.style.display = "block";
+                        paymentProofImg.src = `/storage/${receipt.transfer.proof_image}`;
+
+                        if (paymentProofDetails) {
+                            const transferDateObj = parseSafeDate(receipt.transfer.transfer_date);
+                            const tDateStr = transferDateObj.toLocaleDateString("id-ID");
+                            const tTimeStr = transferDateObj.toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit" }).replace(".", ":");
+                            paymentProofDetails.innerHTML = `
+                                <div><strong>Tanggal Transfer:</strong> ${tDateStr} ${tTimeStr} WIB</div>
+                                <div><strong>Nomor Referensi:</strong> ${receipt.transfer.id || "-"}</div>
+                            `;
+                        }
+                    } else if (proofPaymentBox) {
+                        proofPaymentBox.style.display = "none";
+                    }
+
+                    // Check if there is an unconfirmed edit from Admin
+                    const editConfirmed = receipt.edit_confirmed_by_user !== undefined ? parseInt(receipt.edit_confirmed_by_user) : 1;
+                    const isConfirmParam = urlParams.get("confirm_edit") === "1";
+
+                    const editBanner = document.getElementById("receipt-edit-pending-banner");
+                    const btnTriggerModal = document.getElementById("btn-trigger-confirm-modal");
+                    const confirmModal = document.getElementById("modal-user-confirm-edit");
+                    const itemsListEl = document.getElementById("confirm-edit-items-list");
+                    const totalOwedEl = document.getElementById("confirm-edit-total-owed");
+                    const btnAccept = document.getElementById("btn-accept-edit");
+                    const btnReject = document.getElementById("btn-reject-edit");
+
+                    if (editConfirmed === 0 || isConfirmParam) {
+                        if (editBanner) editBanner.style.display = "block";
+
+                        if (confirmModal && itemsListEl) {
+                            document.body.appendChild(confirmModal);
+
+                            let itemsHtml = "";
+                            (receipt.accus || []).forEach(item => {
+                                itemsHtml += `<div style="display:flex; justify-content:space-between; color:#334155; padding:4px 0; border-bottom:1px dashed #e2e8f0;"><span>⚡ ${item.name} (${item.amount} unit)</span><strong>${rupiah(item.subtotal || 0)}</strong></div>`;
+                            });
+                            itemsListEl.innerHTML = itemsHtml || "<div>Detail item diperbarui.</div>";
+                            if (totalOwedEl) totalOwedEl.textContent = rupiah(receipt.price_owed || 0);
+
+                            const openModalFunc = () => {
+                                confirmModal.style.display = "flex";
+                                confirmModal.style.zIndex = "999999";
+                                confirmModal.style.position = "fixed";
+                                confirmModal.style.top = "0";
+                                confirmModal.style.left = "0";
+                                confirmModal.style.right = "0";
+                                confirmModal.style.bottom = "0";
+                            };
+
+                            openModalFunc();
+
+                            if (btnTriggerModal) {
+                                btnTriggerModal.onclick = () => openModalFunc();
+                            }
+
+                            if (btnAccept) {
+                                btnAccept.onclick = async () => {
+                                    btnAccept.disabled = true;
+                                    await fetchPublicApi(`/orders/${orderId}/confirm-edit`, {
+                                        method: "POST",
+                                        body: JSON.stringify({ action: "accept" })
+                                    });
+                                    confirmModal.style.display = "none";
+                                    showCustomAlert("Terima kasih! Anda telah menyetujui perubahan rincian pesanan.");
+                                    window.location.href = `/receipt?order_id=${orderId}`;
+                                };
+                            }
+
+                            if (btnReject) {
+                                btnReject.onclick = async () => {
+                                    btnReject.disabled = true;
+                                    await fetchPublicApi(`/orders/${orderId}/confirm-edit`, {
+                                        method: "POST",
+                                        body: JSON.stringify({ action: "reject" })
+                                    });
+                                    confirmModal.style.display = "none";
+                                    showCustomAlert("Anda telah menolak perubahan rincian pesanan ini.");
+                                    window.location.href = `/receipt?order_id=${orderId}`;
+                                };
+                            }
+                        }
+                    } else {
+                        if (editBanner) editBanner.style.display = "none";
                     }
                 }
             })();
@@ -2067,6 +2140,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 });
             });
 
+            renderWarehouseOptions();
+
             if (userLat && userLng) {
                 findAndDisplayNearestWarehouse();
             }
@@ -2074,8 +2149,72 @@ document.addEventListener("DOMContentLoaded", () => {
     }
     loadWarehouses();
 
+    function renderWarehouseOptions() {
+        const listEl = document.getElementById("user-warehouse-options-list");
+        if (!listEl || !warehousesList.length) return;
+
+        let baseLat = userLat;
+        let baseLng = userLng;
+        if (!baseLat || !baseLng) {
+            const cityC = getSelectedCityCoords();
+            baseLat = cityC.lat;
+            baseLng = cityC.lng;
+        }
+
+        const sorted = warehousesList.map(w => {
+            const d = calculateDistance(baseLat, baseLng, parseFloat(w.lat), parseFloat(w.long));
+            return { ...w, distance: d };
+        }).sort((a, b) => a.distance - b.distance);
+
+        let savedStorageId = parseInt(localStorage.getItem("pickup_storage_id"));
+        if (!savedStorageId || !sorted.some(s => s.id === savedStorageId)) {
+            savedStorageId = sorted[0].id;
+            localStorage.setItem("pickup_storage_id", savedStorageId);
+        }
+
+        let html = "";
+        sorted.forEach((w, idx) => {
+            const isSelected = w.id === savedStorageId;
+            const isRec = idx === 0;
+            html += `
+                <label class="user-radio-card ${isSelected ? 'is-selected' : ''}" style="padding: 10px 12px; cursor: pointer; border: 1.5px solid ${isSelected ? '#2563eb' : '#e2e8f0'}; border-radius: 8px; background: ${isSelected ? '#eff6ff' : '#fff'}; transition: all 0.15s; display: flex; align-items: flex-start;">
+                    <input type="radio" name="selected_warehouse_option" value="${w.id}" ${isSelected ? 'checked' : ''} style="margin-top: 3px; accent-color: #2563eb;">
+                    <div style="display: flex; flex-direction: column; width: 100%; margin-left: 8px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; gap: 8px;">
+                            <strong style="font-size: 12px; color: #1e293b;">${w.name}</strong>
+                            ${isRec ? '<span style="background:#fef3c7; color:#92400e; font-size:10px; font-weight:700; padding:2px 6px; border-radius:4px; border:1px solid #fde68a; white-space:nowrap;">⭐ Rekomendasi</span>' : ''}
+                        </div>
+                        <small style="font-size: 11px; color: #64748b; margin-top: 2px; line-height: 1.3;">${w.address}</small>
+                        <small style="font-size: 10px; color: #2563eb; font-weight: 600; margin-top: 4px;">Estimasi Jarak: ${w.distance.toFixed(2)} km</small>
+                    </div>
+                </label>
+            `;
+        });
+
+        listEl.innerHTML = html;
+
+        listEl.querySelectorAll('input[name="selected_warehouse_option"]').forEach(radio => {
+            radio.addEventListener("change", (e) => {
+                const wId = parseInt(e.target.value);
+                localStorage.setItem("pickup_storage_id", wId);
+                const found = sorted.find(x => x.id === wId);
+                if (found) {
+                    localStorage.setItem("nearest_warehouse_name", found.name);
+                    localStorage.setItem("nearest_warehouse_address", found.address);
+                    if (nearestWarehouseDetail) {
+                        nearestWarehouseDetail.innerHTML = `<strong>${found.name}</strong><br>${found.address}<br><span style="color:#2563eb; font-weight:700;">Jarak: ${found.distance.toFixed(2)} km</span>`;
+                    }
+                }
+                renderWarehouseOptions();
+            });
+        });
+    }
+
     function findAndDisplayNearestWarehouse() {
-        if (!userLat || !userLng || !warehousesList.length) return;
+        if (!warehousesList.length) return;
+        renderWarehouseOptions();
+
+        if (!userLat || !userLng) return;
 
         let nearest = null;
         let minDistance = Infinity;

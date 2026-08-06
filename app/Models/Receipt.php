@@ -18,6 +18,7 @@ class Receipt extends Model
         'status',
         'price_received',
         'price_owed',
+        'edit_confirmed_by_user',
         'users_id',
         'orders_id',
     ];

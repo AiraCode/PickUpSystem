@@ -184,27 +184,13 @@
                                     <span><strong>Antar ke gudang</strong><small>Rekomendasi gudang terdekat ·
                                             biaya layanan gratis.</small></span>
                                 </label>
-                                <label class="user-radio-card">
-                                    <input type="radio" name="delivery_method" value="courier" data-pickup-method>
+                                <label class="user-radio-card user-radio-card--disabled" style="opacity: 0.6; cursor: not-allowed; pointer-events: none;">
+                                    <input type="radio" name="delivery_method" value="courier" disabled data-pickup-method>
                                     <span class="user-radio-card__indicator"></span>
                                     <span class="user-radio-card__content"
                                         style="display: flex; flex-direction: column; width: 100%;">
-                                        <strong>Dijemput kurir</strong>
+                                        <strong>Dijemput kurir <span style="color: #ea580c; font-size: 11px; font-weight: 700; margin-left: 4px; background: #fff7ed; padding: 2px 6px; border-radius: 4px; border: 1px solid #ffedd5;">(Available Soon)</span></strong>
                                         <small>Biaya penjemputan akan dihitung berdasarkan jarak.</small>
-                                        <style>
-                                            .user-radio-card input:not(:checked)~span #pickup-fee-warning {
-                                                display: none !important;
-                                            }
-
-                                            .user-radio-card input:checked~span #pickup-fee-warning {
-                                                display: block !important;
-                                            }
-                                        </style>
-                                        <small id="pickup-fee-warning" class="user-pickup-warning"
-                                            style="color: #dc2626; font-size: 12px; font-weight: 600; padding: 6px 12px; margin-top: 8px; background: #fef2f2; border: 1px solid #fecaca; border-radius: 6px; line-height: 1.4;">
-                                            ⚠️ Biaya penjemputan ditanggung oleh penjual dan akan mengurangi total
-                                            pembayaran.
-                                        </small>
                                     </span>
                                 </label>
                             </div>
@@ -254,8 +240,14 @@
                                     <strong style="display:block; margin-bottom: 2px;"><span>📍 Gudang Penerimaan Terdekat:</span></strong>
                                     <span id="nearest-warehouse-detail">Mencari...</span>
                                 </div>
-                                <p style="margin-top: 10px;">Alamat digunakan untuk menentukan gudang terdekat serta
-                                    estimasi biaya penjemputan.</p>
+
+                                <div id="user-warehouse-picker-section" style="margin-top: 14px;">
+                                    <div class="user-checkout-label" style="font-size: 11px; font-weight: 700; color: #334155; margin-bottom: 6px;">PILIH ALAMAT GUDANG PENYERAHAN</div>
+                                    <p style="font-size: 11px; color: #64748b; margin-bottom: 8px;">Rekomendasi terdekat tampil di paling atas. Anda dapat memilih gudang manapun.</p>
+                                    <div id="user-warehouse-options-list" style="display: flex; flex-direction: column; gap: 8px; max-height: 220px; overflow-y: auto;">
+                                        <div style="font-size: 11px; color: #94a3b8; font-style: italic;">Memuat daftar gudang...</div>
+                                    </div>
+                                </div>
                             </div>
 
                             <button type="button" id="checkout-submit-btn"
@@ -270,7 +262,7 @@
                 <div class="user-container user-faq__inner">
                     <div>
                         <span class="user-kicker"><span>PERTANYAAN UMUM</span></span>
-                        <h2>Siap menjual aki<<br><em>tanpa proses rumit?</em></h2>
+                        <h2>Siap menjual aki<br><em>tanpa proses rumit?</em></h2>
                     </div>
                     <div class="user-faq__list">
                         <details>

@@ -13,6 +13,7 @@ class Order extends Model
     protected $fillable = [
         'id',
         'cities_id',
+        'storages_id',
         'pickup_address',
         'pickup_address_note',
         'pickup_lat',
@@ -25,7 +26,13 @@ class Order extends Model
         'new_accus_id',
         'payment_method',
         'accu_ktp',
+        'warehouse_proof',
     ];
+
+    public function warehouse(): BelongsTo
+    {
+        return $this->belongsTo(Warehouse::class, 'storages_id');
+    }
 
     public function newAccu(): BelongsTo
     {

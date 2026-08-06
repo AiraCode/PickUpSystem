@@ -88,6 +88,7 @@ class OrderController extends Controller
             'pickup_address_note' => 'nullable|string|max:200',
             'pickup_lat' => 'nullable|numeric',
             'pickup_long' => 'nullable|numeric',
+            'storages_id' => 'nullable|integer|exists:storages,id',
             'delivery_method' => 'nullable|string|in:courier,warehouse',
             'items' => 'required|array',
             'items.*.id' => 'required|integer|exists:accus,id',
@@ -149,9 +150,27 @@ class OrderController extends Controller
                 $deliveryMethod = $validated['delivery_method'] ?? 'warehouse';
                 $orderType = $validated['order_type'] ?? 'sell';
 
+                $selectedStorageId = $validated['storages_id'] ?? null;
+                if (! $selectedStorageId) {
+                    $allStorages = DB::table('storages')->get();
+                    if ($allStorages->isNotEmpty()) {
+                        $pLat = (float) ($validated['pickup_lat'] ?? -7.2575);
+                        $pLng = (float) ($validated['pickup_long'] ?? 112.7521);
+                        $minD = INF;
+                        foreach ($allStorages as $st) {
+                            $d = $this->haversineKm($pLat, $pLng, (float) $st->lat, (float) $st->long);
+                            if ($d < $minD) {
+                                $minD = $d;
+                                $selectedStorageId = $st->id;
+                            }
+                        }
+                    }
+                }
+
                 $order = Order::create([
                     'id' => $orderId,
                     'cities_id' => $validated['cities_id'],
+                    'storages_id' => $selectedStorageId,
                     'pickup_address' => substr($validated['pickup_address'], 0, 200),
                     'pickup_address_note' => substr($validated['pickup_address_note'] ?? '-', 0, 200),
                     'pickup_lat' => $validated['pickup_lat'] ?? -7.2575,

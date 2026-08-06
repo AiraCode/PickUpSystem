@@ -36,6 +36,7 @@ class OrderController extends Controller
         $statusCounts = [
             'pending' => (clone $filterCountsQuery)->where('status', 'pending')->count(),
             'processing' => (clone $filterCountsQuery)->where('status', 'processing')->count(),
+            'arrived_at_warehouse' => (clone $filterCountsQuery)->where('status', 'arrived_at_warehouse')->count(),
             'completed' => (clone $filterCountsQuery)->where('status', 'completed')->count(),
             'cancelled' => (clone $filterCountsQuery)->where('status', 'cancelled')->count(),
             'all' => (clone $filterCountsQuery)->count(),
@@ -182,6 +183,17 @@ class OrderController extends Controller
             $updateData['cancel_reason'] = $cancelReason;
         }
 
+        if ($request->status === 'arrived_at_warehouse' && $request->filled('warehouse_proof_base64')) {
+            $base64 = $request->warehouse_proof_base64;
+            $extension = explode('/', explode(':', substr($base64, 0, strpos($base64, ';')))[1])[1];
+            $replace = substr($base64, 0, strpos($base64, ',') + 1);
+            $image = str_replace($replace, '', $base64);
+            $image = str_replace(' ', '+', $image);
+            $imageName = \Illuminate\Support\Str::random(10) . '.' . $extension;
+            \Illuminate\Support\Facades\Storage::disk('public')->put('warehouses/' . $imageName, base64_decode($image));
+            $updateData['warehouse_proof'] = 'warehouses/' . $imageName;
+        }
+
         $proofPath = null;
         if ($request->status === 'completed' && $request->filled('proof_base64')) {
             $base64 = $request->proof_base64;
@@ -304,6 +316,82 @@ class OrderController extends Controller
         return response()->json([
             'message' => 'Status order berhasil diperbarui',
             'data' => $order,
+        ]);
+    }
+
+    public function updateItems(Request $request, int $id): JsonResponse
+    {
+        $request->validate([
+            'items' => 'required|array|min:1',
+            'items.*.accu_id' => 'required|integer|exists:accus,id',
+            'items.*.amount' => 'required|integer|min:1',
+        ]);
+
+        $order = Order::with(['city', 'customer', 'receipt', 'pickupPricing', 'newAccu'])->findOrFail($id);
+        $receipt = $order->receipt;
+        if (! $receipt) {
+            return response()->json(['message' => 'Receipt order tidak ditemukan.'], 422);
+        }
+
+        $lme = (float) \App\Models\Setting::getValue('lme', 2100);
+        $kurs = (float) \App\Models\Setting::getValue('kurs', 16000);
+        $cityPercentage = (float) ($order->city->percentage ?? 80.00);
+        $pricePerKg = ($lme * $kurs * ($cityPercentage / 100)) / 1000.0;
+
+        $subtotal = 0;
+        $accusPivot = [];
+        foreach ($request->items as $item) {
+            $accu = \App\Models\Accu::findOrFail($item['accu_id']);
+            $beratKering = (float) ($accu->berat_kering ?? 0);
+            if ($beratKering <= 0) {
+                return response()->json(['message' => "Aki {$accu->name} berat keringnya 0 kg."], 422);
+            }
+            $price = (int) round($pricePerKg * $beratKering);
+            $qty = (int) $item['amount'];
+            $subtotal += $price * $qty;
+            $accusPivot[$item['accu_id']] = ['amount' => $qty];
+        }
+
+        $receipt->accus()->sync($accusPivot);
+
+        $pickupFee = 0;
+        if ($order->pickupPricing) {
+            $pickupFee = (float) $order->pickupPricing->final_pickup_fee;
+        }
+        $newAccuPrice = 0;
+        if ($order->order_type === 'trade_in' && $order->newAccu) {
+            $newAccuPrice = (float) $order->newAccu->price;
+        }
+
+        $priceOwed = $subtotal - $pickupFee - $newAccuPrice;
+        $receipt->update([
+            'price_owed' => $priceOwed,
+            'edit_confirmed_by_user' => 0,
+        ]);
+
+        try {
+            $customer = $order->customer;
+            if ($customer && $customer->phone_number) {
+                $customerName = $customer->name ?? 'Kak';
+                $baseUrl = url('/');
+                $confirmUrl = "{$baseUrl}/receipt?order_id={$order->id}&confirm_edit=1";
+                $message = "Halo {$customerName}, 😊\n\nAdmin telah memperbarui rincian item aki pada pesanan Anda (ID: #{$order->id}).\n\nSilakan klik link berikut untuk meninjau dan mengonfirmasi perubahan rincian harga:\n🔗 {$confirmUrl}\n\nTerima kasih!";
+
+                $token = config('services.fonnte.token') ?? env('FONNTE_TOKEN');
+                \Illuminate\Support\Facades\Http::withoutVerifying()
+                    ->withHeaders(['Authorization' => $token])
+                    ->post('https://api.fonnte.com/send', [
+                        'target' => $customer->phone_number,
+                        'message' => $message,
+                    ]);
+            }
+        } catch (\Exception $e) {
+            \Illuminate\Support\Facades\Log::error('Gagal kirim WA edit item: ' . $e->getMessage());
+        }
+
+        return response()->json([
+            'message' => 'Rincian item order berhasil diperbarui & notifikasi WA telah dikirim',
+            'data' => $order->fresh(['receipt.accus']),
         ]);
     }
 }
