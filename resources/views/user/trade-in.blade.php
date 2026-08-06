@@ -47,7 +47,7 @@
                     <span class="user-kicker">KATALOG AKI BARU</span>
 
                     <h1>
-                        Pilih Aki Baru Anda untuk<br>
+                        <span>Pilih Aki Baru Anda untuk</span><br>
                         <em>Tukar Tambah.</em>
                     </h1>
 
@@ -103,7 +103,7 @@
                             <button type="button" id="btn-trade-in-continue"
                                 class="user-button user-button--primary user-button--full"
                                 style="margin-top: 20px; opacity:0.5; pointer-events:none;">
-                                Lanjut Isi Identitas <span aria-hidden="true">→</span>
+                                <span>Lanjut Isi Identitas</span> <span aria-hidden="true">→</span>
                             </button>
                             <p style="margin-top:12px; font-size:11px; color:#64748b; line-height:1.4;">
                                 *Catatan: Anda akan diarahkan ke halaman pengisian identitas. Data aki reject yang sudah Anda pilih sebelumnya tetap tersimpan.

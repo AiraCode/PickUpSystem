@@ -1,0 +1,1115 @@
+{
+  "-- Pilih Kota Penyerahan --": {
+    "en": "-- Select Delivery City --"
+  },
+  "[Memuat Grafik...]": {
+    "en": "[Loading Chart...]"
+  },
+  "*Catatan: Anda akan diarahkan ke halaman pengisian identitas. Data aki reject yang sudah Anda pilih sebelumnya tetap tersimpan.": {
+    "en": "*Note: You will be redirected to the identity form. The scrap battery data you previously selected remains saved."
+  },
+  "*Daftar harga aki berdasarkan wilayah yang dipilih.": {
+    "en": "*Battery price list is based on selected region."
+  },
+  "*Silakan memilih kota terlebih dahulu": {
+    "en": "*Please select a city first"
+  },
+  "+ Tambahkan ke Keranjang": {
+    "en": "+ Add to Cart"
+  },
+  "⚠️ Biaya penjemputan ditanggung oleh penjual dan akan mengurangi total\n                                            pembayaran.": {
+    "en": "⚠️ Pickup fee is borne by the seller and will reduce total payment."
+  },
+  "⚠️ Format file tidak didukung. Silakan gunakan format foto JPG, JPEG, atau PNG.": {
+    "en": "⚠️ Unsupported file format. Please use JPG, JPEG, or PNG photo format."
+  },
+  "✓ Jumlah telah diupdate": {
+    "en": "✓ Quantity updated"
+  },
+  "✓ Nama berhasil diekstrak dari dokumen. (jika nama yang diekstraksi salah, lakukan foto sesuai dengan contoh)": {
+    "en": "✓ Name successfully extracted from document. (if the extracted name is incorrect, please take a photo according to the example)"
+  },
+  "✗ Terjadi kesalahan jaringan saat memproses OCR.": {
+    "en": "✗ Network error occurred while processing OCR."
+  },
+  "📍 Gudang Penerimaan\n                                        Terdekat:": {
+    "en": "📍 Nearest Receiving Warehouse:"
+  },
+  "30 hari terakhir": {
+    "en": "Last 30 days"
+  },
+  "7 hari terakhir": {
+    "en": "Last 7 days"
+  },
+  "AKI": {
+    "en": "BATTERY"
+  },
+  "Aki Baru (Trade In)": {
+    "en": "New Battery (Trade In)"
+  },
+  "Aki Diambil": {
+    "en": "Picked Up"
+  },
+  "Aki Reject": {
+    "en": "Scrap Battery"
+  },
+  "Aksi": {
+    "en": "Actions"
+  },
+  "Aktivitas terbaru": {
+    "en": "Recent activity"
+  },
+  "Aktivitas transaksi": {
+    "en": "Transaction activity"
+  },
+  "Alamat": {
+    "en": "Address"
+  },
+  "Alamat digunakan untuk menentukan gudang terdekat serta\n                                    estimasi biaya penjemputan.": {
+    "en": "Address is used to determine nearest warehouse and estimated pickup cost."
+  },
+  "Alamat Penjemputan": {
+    "en": "Pickup Address"
+  },
+  "ALAMAT PENJUAL": {
+    "en": "SELLER ADDRESS"
+  },
+  "Alasan\n                        Pembatalan (Wajib)": {
+    "en": "Cancellation Reason (Required)"
+  },
+  "ANALISIS & PERFORMA": {
+    "en": "ANALYSIS & PERFORMANCE"
+  },
+  "Anda dapat memilih untuk mengantar aki ke gudang atau menggunakan layanan penjemputan oleh kurir kami.": {
+    "en": "You can choose to deliver the battery to the warehouse or use the pickup service by our courier."
+  },
+  "Antar ke gudang": {
+    "en": "Deliver to warehouse"
+  },
+  "Antar ke Gudang": {
+    "en": "Warehouse Delivery"
+  },
+  "Apakah aki harus diantar ke gudang?": {
+    "en": "Does the battery need to be delivered to the warehouse?"
+  },
+  "Apakah Anda yakin ingin menghapus aki ini dari pilihan?": {
+    "en": "Are you sure you want to remove this battery from selection?"
+  },
+  "Apakah Anda yakin ingin menghapus data ini?": {
+    "en": "Are you sure you want to delete this data?"
+  },
+  "Apakah semua data": {
+    "en": "Is all the information you entered correct?"
+  },
+  "AREA TERBANYAK": {
+    "en": "TOP AREAS"
+  },
+  "Atas Nama": {
+    "en": "Account Name"
+  },
+  "Bagaimana cara mengetahui harga aki?": {
+    "en": "How do I know the battery price?"
+  },
+  "Batal": {
+    "en": "Cancel"
+  },
+  "Belum ada aki baru dipilih": {
+    "en": "No new battery selected"
+  },
+  "Belum ada aki dipilih": {
+    "en": "No battery selected yet"
+  },
+  "Belum ada aktivitas": {
+    "en": "No activity yet"
+  },
+  "Belum ada aktivitas transaksi": {
+    "en": "No transaction activity yet"
+  },
+  "Belum ada data aki": {
+    "en": "No battery data"
+  },
+  "Belum ada gudang": {
+    "en": "No warehouses yet"
+  },
+  "Belum ada transaksi": {
+    "en": "No orders yet"
+  },
+  "Berat Kering": {
+    "en": "Dry Weight"
+  },
+  "Berhasil": {
+    "en": "Success"
+  },
+  "Berikan informasi kontak dan alamat yang akurat untuk memudahkan proses penjemputan aki.": {
+    "en": "Provide accurate contact information and address to facilitate the battery pickup process."
+  },
+  "Biaya Awal": {
+    "en": "Initial Fee"
+  },
+  "Biaya Penjemputan": {
+    "en": "Pickup Pricing"
+  },
+  "Biaya penjemputan akan dihitung berdasarkan jarak.": {
+    "en": "Pickup fee will be calculated based on distance."
+  },
+  "Bukti\n                        Pembayaran / Penyerahan": {
+    "en": "Proof of Payment / Handover"
+  },
+  "BUKTI PEMBAYARAN": {
+    "en": "PAYMENT PROOF"
+  },
+  "Bukti transfer · not found": {
+    "en": "Transfer proof · not found"
+  },
+  "Bukti Transfer Pelanggan (Tukar Tambah)": {
+    "en": "Customer Transfer Proof (Trade In)"
+  },
+  "CARA MENJUAL": {
+    "en": "HOW TO SELL"
+  },
+  "Cari": {
+    "en": "Search"
+  },
+  "CARI JENIS AKI": {
+    "en": "SEARCH BATTERY TYPE"
+  },
+  "Cari jenis aki (NX100, NS40, dll)...": {
+    "en": "Search battery type (NX100, NS40, etc)..."
+  },
+  "CARI JENIS AKI BARU": {
+    "en": "SEARCH NEW BATTERY"
+  },
+  "Cari nama admin...": {
+    "en": "Search admin name..."
+  },
+  "Cari nama gudang, alamat...": {
+    "en": "Search warehouse name, address..."
+  },
+  "Cari nama, ID...": {
+    "en": "Search name, ID..."
+  },
+  "Cari...": {
+    "en": "Search..."
+  },
+  "Catatan": {
+    "en": "Notes"
+  },
+  "Cek Rincian Harga": {
+    "en": "Check Price Details"
+  },
+  "Cetak": {
+    "en": "Print"
+  },
+  "Contoh: 08123456789": {
+    "en": "Example: 08123456789"
+  },
+  "Daftar aki dan informasi harga jual akan muncul secara otomatis setelah Anda menentukan\n                                    lokasi penyerahan.": {
+    "en": "The battery list and selling price information will automatically appear after you determine the delivery location."
+  },
+  "Daftar Gudang": {
+    "en": "Warehouse List"
+  },
+  "Daftar Pesanan": {
+    "en": "Order List"
+  },
+  "Daftar Staf Admin": {
+    "en": "Admin Staff List"
+  },
+  "dalam tiga langkah.": {
+    "en": "in three easy steps."
+  },
+  "Dapatkan harga aki baru terbaik dan potongan harga dari penjualan aki reject Anda.": {
+    "en": "Get the best price for new batteries and discounts from selling your scrap batteries."
+  },
+  "dari": {
+    "en": "of"
+  },
+  "Dari awal sistem berjalan": {
+    "en": "Since system start"
+  },
+  "Dari request hingga selesai": {
+    "en": "From request to completion"
+  },
+  "Data apa yang perlu disiapkan?": {
+    "en": "What data needs to be prepared?"
+  },
+  "Data berhasil dihapus": {
+    "en": "Data deleted successfully"
+  },
+  "Data berhasil diperbarui": {
+    "en": "Data updated successfully"
+  },
+  "Data berhasil disimpan": {
+    "en": "Data saved successfully"
+  },
+  "Data diri": {
+    "en": "Personal data"
+  },
+  "Data grafik akan tampil setelah transaksi pertama tercatat.": {
+    "en": "Chart data will appear after the first transaction is recorded."
+  },
+  "Data penjualan Anda": {
+    "en": "Your sales data"
+  },
+  "Detail aki belum tersedia": {
+    "en": "Battery details not available yet"
+  },
+  "DETAIL PENYERAHAN": {
+    "en": "DELIVERY DETAIL"
+  },
+  "Detail Transaksi": {
+    "en": "Order Details"
+  },
+  "Dibatalkan": {
+    "en": "Cancelled"
+  },
+  "Dijemput kurir": {
+    "en": "Picked up by courier"
+  },
+  "Dijemput Kurir": {
+    "en": "Courier Pickup"
+  },
+  "Diproses": {
+    "en": "Pending"
+  },
+  "Diubah Oleh": {
+    "en": "Updated By"
+  },
+  "Diubah Pada": {
+    "en": "Updated At"
+  },
+  "Download Gambar": {
+    "en": "Download Image"
+  },
+  "Edit Profil Admin": {
+    "en": "Edit Admin Profile"
+  },
+  "Ekspor": {
+    "en": "Export"
+  },
+  "entri": {
+    "en": "entries"
+  },
+  "Estimasi Biaya Tambah": {
+    "en": "Estimated Additional Cost"
+  },
+  "Estimasi Uang Diterima": {
+    "en": "Estimated Money Received"
+  },
+  "Filter Transaksi Lanjutan": {
+    "en": "Advanced Transaction Filter"
+  },
+  "Format email tidak valid.": {
+    "en": "Invalid email address format."
+  },
+  "Format file tidak sesuai! Mohon unggah bukti transfer dalam format gambar (JPG, JPEG, PNG). Format PDF atau berkas non-gambar tidak didukung.": {
+    "en": "Unsupported file format! Please upload transfer proof in image format (JPG, JPEG, PNG). PDF or non-image files are not supported."
+  },
+  "Gagal": {
+    "en": "Error"
+  },
+  "Gagal membaca file gambar.": {
+    "en": "Failed to read image file."
+  },
+  "Gagal membaca nama. Coba upload ulang dengan foto yang lebih jelas.": {
+    "en": "Failed to read name. Please re-upload with a clearer photo."
+  },
+  "Gagal mengakses kamera.": {
+    "en": "Failed to access camera."
+  },
+  "Gagal mengirim pesanan": {
+    "en": "Failed to submit order"
+  },
+  "GRAFIK REVENUE": {
+    "en": "REVENUE CHART"
+  },
+  "Gratis": {
+    "en": "Free"
+  },
+  "Gudang / kurir": {
+    "en": "Warehouse / courier"
+  },
+  "Gudang & Lokasi": {
+    "en": "Warehouse & Location"
+  },
+  "Gunakan peta untuk menentukan\n                                    lokasi presisi penjemputan.": {
+    "en": "Use map to determine precise pickup location."
+  },
+  "Halaman": {
+    "en": "Page"
+  },
+  "Hapus": {
+    "en": "Delete"
+  },
+  "Hapus Aki Pilihan": {
+    "en": "Remove Selected Battery"
+  },
+  "Harap tentukan lokasi Anda melalui peta terlebih dahulu.": {
+    "en": "Please determine your location via map first."
+  },
+  "Harap tentukan lokasi koordinat Anda di peta dengan menekan tombol peta.": {
+    "en": "Please determine your coordinate location on map by pressing the map button."
+  },
+  "Harap upload bukti transfer untuk pembayaran kekurangan Trade In.": {
+    "en": "Please upload transfer proof for Trade In payment shortage."
+  },
+  "Harap upload file berupa gambar (JPEG, PNG).": {
+    "en": "Please upload an image file (JPEG, PNG)."
+  },
+  "Harap upload foto identitas Anda.": {
+    "en": "Please upload your identity photo."
+  },
+  "Harap upload foto KTP atau SIM terlebih dahulu agar nama dapat diekstrak otomatis.": {
+    "en": "Please upload ID card or driver license photo first so name can be extracted automatically."
+  },
+  "Harga": {
+    "en": "Price"
+  },
+  "Harga Aki": {
+    "en": "Battery Prices"
+  },
+  "Harga Aki (Rp)": {
+    "en": "Battery Price (Rp)"
+  },
+  "Harga jual aki terbaik": {
+    "en": "Best battery selling price"
+  },
+  "Harga Jual Baru (Rp)": {
+    "en": "New Selling Price (Rp)"
+  },
+  "Harga Terbaik": {
+    "en": "Best Price"
+  },
+  "HARGA UNIT": {
+    "en": "UNIT PRICE"
+  },
+  "Hubungi Kami": {
+    "en": "Contact Us"
+  },
+  "ℹ️ Bukti transfer akan diverifikasi secara manual oleh Admin.": {
+    "en": "ℹ️ Transfer proof will be manually verified by Admin."
+  },
+  "ID Pesanan": {
+    "en": "Order ID"
+  },
+  "Identitas": {
+    "en": "Identity"
+  },
+  "Identitas Anda.": {
+    "en": "Identity Data."
+  },
+  "INFORMASI IDENTITAS": {
+    "en": "IDENTITY INFORMATION"
+  },
+  "Informasi Pembayaran": {
+    "en": "Payment Information"
+  },
+  "INFORMASI PENJUAL": {
+    "en": "SELLER INFORMATION"
+  },
+  "Informasi Pesanan": {
+    "en": "Order Information"
+  },
+  "Input Nama Manual": {
+    "en": "Input Name Manually"
+  },
+  "Isi informasi penjual dan rekening yang diperlukan untuk verifikasi serta pembayaran.": {
+    "en": "Fill in the seller and bank account information required for verification and payment."
+  },
+  "Item akan muncul setelah transaksi terhubung.": {
+    "en": "Items will appear after transaction is linked."
+  },
+  "Item akan tampil setelah transaksi terhubung.": {
+    "en": "Items will appear after transaction is linked."
+  },
+  "Item aki": {
+    "en": "Battery item"
+  },
+  "Izin kamera ditolak oleh browser. Silakan beri izin akses kamera di pengaturan browser Anda, atau gunakan opsi Galeri.": {
+    "en": "Camera permission denied by browser. Please grant camera access permission in your browser settings, or use Gallery option."
+  },
+  "Jual Aki Reject Anda dengan": {
+    "en": "Sell Your Scrap Batteries at the"
+  },
+  "Jual Sekarang": {
+    "en": "Sell Now"
+  },
+  "Jumlah digit harus antara 10-13": {
+    "en": "Digit count must be between 10-13"
+  },
+  "Jumlah Terjual": {
+    "en": "Amount Sold"
+  },
+  "Kamera tidak ditemukan pada perangkat Anda. Beralih ke opsi Galeri.": {
+    "en": "Camera not found on your device. Switch to Gallery option."
+  },
+  "KATALOG AKI": {
+    "en": "BATTERY CATALOG"
+  },
+  "KATALOG AKI BARU": {
+    "en": "NEW BATTERY CATALOG"
+  },
+  "Kelola aktivitas Pick Up System dari satu ruang kerja terpusat.": {
+    "en": "Manage Pick Up System activities from one centralized workspace."
+  },
+  "Kelola data LME, Kurs, area layanan, dan jenis aki beserta persentasenya.": {
+    "en": "Manage LME data, Exchange Rate, service areas, and battery types with percentages."
+  },
+  "Kelola data titik layanan warehouse Pick Up System.": {
+    "en": "Manage Pick Up System warehouse service point data."
+  },
+  "Kelola formula biaya, multiplier dinamis, dan riwayat perubahan pengaturan penjemputan.": {
+    "en": "Manage cost formula, dynamic multiplier, and history of pickup settings."
+  },
+  "Kelola Harga Aki": {
+    "en": "Manage Battery Prices"
+  },
+  "Kelola Pengguna": {
+    "en": "Manage Users"
+  },
+  "Kelola staf admin yang memiliki akses ke sistem.": {
+    "en": "Manage admin staff who have access to the system."
+  },
+  "Kelola Transaksi": {
+    "en": "Manage Orders"
+  },
+  "Keluar": {
+    "en": "Logout"
+  },
+  "Kembali": {
+    "en": "Back"
+  },
+  "Kembali ke atas": {
+    "en": "Back to top"
+  },
+  "Kembali ke Beranda": {
+    "en": "Back to Home"
+  },
+  "Keranjang belanja kosong! Silakan tambahkan minimal satu aki ke keranjang sebelum melanjutkan.": {
+    "en": "Shopping cart is empty! Please add at least one battery to cart before proceeding."
+  },
+  "Ketikkan jenis aki pada kolom pencarian di atas.": {
+    "en": "Type battery type in the search field above."
+  },
+  "Kirim": {
+    "en": "Submit"
+  },
+  "Kirim Sendiri": {
+    "en": "Self Delivery"
+  },
+  "Klik untuk upload foto atau seret file ke\n                                sini": {
+    "en": "Click to upload photo or drag file here"
+  },
+  "Kolom ini hanya menerima angka! Masukan huruf atau simbol tidak diperbolehkan.": {
+    "en": "This field only accepts numbers! Letters or symbols are not allowed."
+  },
+  "Konfirmasi": {
+    "en": "Confirm"
+  },
+  "Konfirmasi & Selesaikan Transaksi": {
+    "en": "Confirm & Complete Transaction"
+  },
+  "KONFIRMASI DATA": {
+    "en": "CONFIRM DATA"
+  },
+  "Konfirmasi Hapus": {
+    "en": "Confirm Deletion"
+  },
+  "Konfirmasi Keluar": {
+    "en": "Confirm Logout"
+  },
+  "Kota": {
+    "en": "City"
+  },
+  "KTP/SIM dan gambar identitas tidak ditampilkan pada receipt ini untuk menjaga privasi penjual.": {
+    "en": "ID card and identity pictures are not displayed on this receipt to maintain seller privacy."
+  },
+  "Kurir": {
+    "en": "Courier"
+  },
+  "Kurir Ditugaskan": {
+    "en": "Courier Assigned"
+  },
+  "Lanjut": {
+    "en": "Continue"
+  },
+  "Lanjut Isi Identitas": {
+    "en": "Continue to Identity"
+  },
+  "Laporan": {
+    "en": "Reports"
+  },
+  "Laporan & Analitik": {
+    "en": "Reports & Analytics"
+  },
+  "Lengkapi Data": {
+    "en": "Complete Your"
+  },
+  "Lengkapi identitas": {
+    "en": "Complete identity"
+  },
+  "Maksimal 5 jenis aki per transaksi!": {
+    "en": "Maximum 5 types of battery per transaction!"
+  },
+  "Masuk": {
+    "en": "Login"
+  },
+  "Masuk ke Dashboard": {
+    "en": "Login to Dashboard"
+  },
+  "Masukkan alamat lengkap Anda...": {
+    "en": "Enter your complete address..."
+  },
+  "Masukkan nama admin": {
+    "en": "Enter admin name"
+  },
+  "Masukkan nama lengkap Anda": {
+    "en": "Enter your full name"
+  },
+  "Masukkan nama pemilik rekening": {
+    "en": "Enter account owner name"
+  },
+  "Masukkan nomor rekening Anda": {
+    "en": "Enter your account number"
+  },
+  "Masukkan password": {
+    "en": "Enter password"
+  },
+  "Masukkan password Anda untuk mengonfirmasi keluar dari sistem.": {
+    "en": "Enter your password to confirm logging out of the system."
+  },
+  "Memproses...": {
+    "en": "Processing..."
+  },
+  "Memuat data aki baru...": {
+    "en": "Loading new battery data..."
+  },
+  "Memuat data harga...": {
+    "en": "Loading price data..."
+  },
+  "Memuat data...": {
+    "en": "Loading data..."
+  },
+  "Memuat jam...": {
+    "en": "Loading time..."
+  },
+  "Memuat riwayat...": {
+    "en": "Loading history..."
+  },
+  "Menampilkan": {
+    "en": "Showing"
+  },
+  "Mengekstrak nama dari KTP/SIM...": {
+    "en": "Extracting name from ID..."
+  },
+  "Menunggu data pilihan": {
+    "en": "Waiting for selected data"
+  },
+  "Menunggu pilihan": {
+    "en": "Waiting for selection"
+  },
+  "Menunggu verifikasi": {
+    "en": "Waiting for verification"
+  },
+  "Metode Pembayaran": {
+    "en": "Payment Method"
+  },
+  "Metode Pengiriman": {
+    "en": "Delivery Method"
+  },
+  "Mode Gelap": {
+    "en": "Dark Mode"
+  },
+  "Mode Terang": {
+    "en": "Light Mode"
+  },
+  "Modern Mulya Mandiri membeli aki mobil dan aki motor reject dengan proses cepat, transparan, dan pembayaran langsung ke rekening Anda.": {
+    "en": "Modern Mulya Mandiri buys scrap car and motorcycle batteries with a fast, transparent process and direct payment to your bank account."
+  },
+  "Nama": {
+    "en": "Name"
+  },
+  "Nama Admin": {
+    "en": "Admin Name"
+  },
+  "Nama Aki": {
+    "en": "Battery Name"
+  },
+  "Nama Gudang": {
+    "en": "Warehouse Name"
+  },
+  "Nama Kota": {
+    "en": "City Name"
+  },
+  "Nama Lengkap": {
+    "en": "Full Name"
+  },
+  "Nama pada KTP/SIM tidak sesuai dengan nama pemilik rekening! Pastikan kedua nama identik untuk mencegah identitas ganda (Gelar akademik diabaikan).": {
+    "en": "Name on ID does not match account owner name! Ensure both names are identical to prevent duplicate identity (Academic titles ignored)."
+  },
+  "Nama pemilik rekening hanya boleh berisi huruf, spasi, titik, dan koma!": {
+    "en": "Account owner name can only contain letters, spaces, dots, and commas!"
+  },
+  "Nama wajib diisi.": {
+    "en": "Name is required."
+  },
+  "Nilai rata-rata per order": {
+    "en": "Average value per order"
+  },
+  "No Rekening": {
+    "en": "Account No"
+  },
+  "Nomor harus diawali dengan 0": {
+    "en": "Number must start with 0"
+  },
+  "Nomor referensi": {
+    "en": "Reference number"
+  },
+  "Nomor Rekening": {
+    "en": "Account Number"
+  },
+  "Nomor rekening hanya boleh berisi angka!": {
+    "en": "Account number can only contain numbers!"
+  },
+  "Nomor rekening harus": {
+    "en": "Account number must be"
+  },
+  "Nomor Telepon (WhatsApp)": {
+    "en": "Phone Number (WhatsApp)"
+  },
+  "Nomor telepon tidak valid.": {
+    "en": "Invalid phone number."
+  },
+  "Nomor WhatsApp hanya boleh berisi angka!": {
+    "en": "WhatsApp number can only contain numbers!"
+  },
+  "Password Admin": {
+    "en": "Admin Password"
+  },
+  "Password Baru (Opsional)": {
+    "en": "New Password (Optional)"
+  },
+  "Password Saat Ini (Wajib jika ganti password)": {
+    "en": "Current Password (Required if changing password)"
+  },
+  "Pastikan nama, rekening, dan nomor WhatsApp sudah sesuai. Data ini akan digunakan untuk proses verifikasi dan pembayaran.": {
+    "en": "Please make sure your name, account, and WhatsApp number are correct. This data will be used for verification and payment."
+  },
+  "pastikan no rekening": {
+    "en": "ensure account number"
+  },
+  "Pelanggan": {
+    "en": "Customer"
+  },
+  "PEMBARUAN": {
+    "en": "UPDATES"
+  },
+  "Pembayaran telah diterima": {
+    "en": "Payment has been received"
+  },
+  "PENGATURAN": {
+    "en": "SETTINGS"
+  },
+  "Pengaturan Multiplier Dynamic Pricing": {
+    "en": "Dynamic Pricing Multiplier Settings"
+  },
+  "Pengaturan Rumus Biaya Penjemputan": {
+    "en": "Pickup Cost Formula Settings"
+  },
+  "Pengguna Admin": {
+    "en": "Admin Users"
+  },
+  "Penjualan Anda": {
+    "en": "Your Sales"
+  },
+  "Perangkat atau browser Anda tidak mendukung akses kamera langsung. Beralih ke pengunggahan dari galeri.": {
+    "en": "Your device or browser does not support direct camera access. Switch to uploading from gallery."
+  },
+  "PERFORMA": {
+    "en": "PERFORMANCE"
+  },
+  "Persentase (%)": {
+    "en": "Percentage (%)"
+  },
+  "PERTANYAAN UMUM": {
+    "en": "FREQUENTLY ASKED QUESTIONS"
+  },
+  "Pesanan berstatus pending": {
+    "en": "Pending orders"
+  },
+  "Pesanan dibatalkan": {
+    "en": "Order cancelled"
+  },
+  "PESANAN DIBATALKAN": {
+    "en": "CANCELLED ORDERS"
+  },
+  "Pesanan Dibatalkan": {
+    "en": "Order Cancelled"
+  },
+  "Pesanan dibatalkan (wajib beri\n                                    alasan)": {
+    "en": "Order cancelled (must provide reason)"
+  },
+  "Pesanan selesai (wajib upload\n                                    foto bukti)": {
+    "en": "Order completed (must upload proof photo)"
+  },
+  "Pesanan yang memerlukan perhatian": {
+    "en": "Orders requiring attention"
+  },
+  "Pilih Aki Baru": {
+    "en": "Choose New Battery"
+  },
+  "Pilih Aki Baru Anda untuk": {
+    "en": "Choose Your New Battery for"
+  },
+  "Pilih aki dan wilayah": {
+    "en": "Select battery & location"
+  },
+  "Pilih Bank": {
+    "en": "Select Bank"
+  },
+  "Pilih bank untuk pembayaran": {
+    "en": "Select bank for payment"
+  },
+  "Pilih foto": {
+    "en": "Choose photo"
+  },
+  "Pilih jenis aki dan kota untuk melihat informasi harga yang tersedia pada sistem.": {
+    "en": "Choose battery type and city to view available pricing in the system."
+  },
+  "Pilih kota dan jenis aki pada katalog. Nilai yang tampil mengikuti data wilayah yang tersedia di sistem.": {
+    "en": "Select city and battery type in the catalog. The displayed value follows regional data available in the system."
+  },
+  "PILIH KOTA PENYERAHAN": {
+    "en": "SELECT DELIVERY CITY"
+  },
+  "Pilih kota untuk menampilkan data yang terhubung pada\n                            sistem.": {
+    "en": "Select city to display data connected to the system."
+  },
+  "Pilih layanan jemput atau antar langsung ke gudang kami terdekat.": {
+    "en": "Choose pickup service or drop off directly to our nearest warehouse."
+  },
+  "Pilih penyerahan ke gudang atau penjemputan kurir sesuai kebutuhan Anda.": {
+    "en": "Choose warehouse delivery or courier pickup according to your needs."
+  },
+  "Pilih status untuk melihat variasi dokumen yang sesuai.": {
+    "en": "Select status to view appropriate document variation."
+  },
+  "Pilih Tahun:": {
+    "en": "Select Year:"
+  },
+  "Portal Verifikasi & Kelola Transaksi Admin": {
+    "en": "Admin Verification & Transaction Portal"
+  },
+  "PREVIEW RECEIPT": {
+    "en": "RECEIPT PREVIEW"
+  },
+  "PRODUK TERLARIS": {
+    "en": "TOP PRODUCTS"
+  },
+  "RATA-RATA TRANSAKSI": {
+    "en": "AVERAGE TRANSACTION"
+  },
+  "RECEIPT PENJUALAN": {
+    "en": "SALES RECEIPT"
+  },
+  "Rekening Bank": {
+    "en": "Bank Account"
+  },
+  "Rekomendasi gudang terdekat ·\n                                            biaya layanan gratis.": {
+    "en": "Recommended nearest warehouse · free service charge."
+  },
+  "Rincian Harga": {
+    "en": "Price Details"
+  },
+  "Rincian Item": {
+    "en": "Item Details"
+  },
+  "RINGKASAN": {
+    "en": "SUMMARY"
+  },
+  "Ringkasan data transaksi real-time sesuai database berdasarkan tahun.": {
+    "en": "Summary of real-time transaction data according to database by year."
+  },
+  "Ringkasan penjualan aki": {
+    "en": "Battery sales summary"
+  },
+  "RINGKASAN PESANAN": {
+    "en": "ORDER SUMMARY"
+  },
+  "Ringkasan Sistem": {
+    "en": "System Overview"
+  },
+  "Ringkasan Tukar Tambah": {
+    "en": "Trade-In Summary"
+  },
+  "se-Jawa Timur.": {
+    "en": "across East Java."
+  },
+  "Sebelumnya": {
+    "en": "Previous"
+  },
+  "Sedang dijemput": {
+    "en": "Being picked up"
+  },
+  "Selanjutnya": {
+    "en": "Next"
+  },
+  "Selesai": {
+    "en": "Completed"
+  },
+  "Semua proses dibuat sederhana agar Anda dapat mengetahui estimasi nilai aki dan metode penyerahan dengan jelas.": {
+    "en": "All processes are simplified so you can clearly know the estimated battery value and delivery method."
+  },
+  "Semua Status": {
+    "en": "All Statuses"
+  },
+  "Serahkan aki Anda": {
+    "en": "Hand over your battery"
+  },
+  "Serahkan aki dan terima pembayaran": {
+    "en": "Hand over battery and receive payment"
+  },
+  "Siap menjual aki": {
+    "en": "Ready to sell battery"
+  },
+  "Siapkan identitas penjual, alamat penyerahan, dan rekening bank untuk proses verifikasi serta pembayaran.": {
+    "en": "Prepare seller identity, delivery address, and bank account for the verification and payment process."
+  },
+  "Silakan mencari jenis aki terlebih dahulu.": {
+    "en": "Please search for battery type first."
+  },
+  "Silakan pilih 1 aki dari katalog.": {
+    "en": "Please select 1 battery from the catalog."
+  },
+  "Silakan pilih kota lain atau hubungi kami untuk informasi lebih lanjut.": {
+    "en": "Please select another city or contact us for more information."
+  },
+  "Simpan": {
+    "en": "Save"
+  },
+  "Simpan Perubahan": {
+    "en": "Save Changes"
+  },
+  "Simpan Profil": {
+    "en": "Save Profile"
+  },
+  "Sistem Terenkripsi & Verifikasi Internal": {
+    "en": "Encrypted System & Internal Verification"
+  },
+  "Status Pesanan": {
+    "en": "Order Status"
+  },
+  "Subtotal Aki Baru": {
+    "en": "New Battery Subtotal"
+  },
+  "Subtotal Aki Reject": {
+    "en": "Scrap Battery Subtotal"
+  },
+  "Tahun ini": {
+    "en": "This year"
+  },
+  "Tambah": {
+    "en": "Add"
+  },
+  "Tambah Aki Baru": {
+    "en": "Add New Battery"
+  },
+  "Tambah Gudang": {
+    "en": "Add Warehouse"
+  },
+  "Tambahkan aki dari daftar untuk melihat rincian.": {
+    "en": "Add battery from list to see details."
+  },
+  "Tampilkan seluruh data": {
+    "en": "Show all data"
+  },
+  "Tanggal": {
+    "en": "Date"
+  },
+  "Tanggal / Waktu": {
+    "en": "Date / Time"
+  },
+  "Tanggal Transaksi": {
+    "en": "Transaction Date"
+  },
+  "Tanggal transaksi": {
+    "en": "Transaction date"
+  },
+  "Tanggal transfer": {
+    "en": "Transfer date"
+  },
+  "tanpa proses<br>rumit?": {
+    "en": "without complex<br>process?"
+  },
+  "Tarif/dtk": {
+    "en": "Rate/sec"
+  },
+  "Tarif/km": {
+    "en": "Rate/km"
+  },
+  "Teks yang ditempelkan hanya boleh berisi huruf, spasi, titik, dan koma!": {
+    "en": "Pasted text can only contain letters, spaces, dots, and commas!"
+  },
+  "Teks yang ditempelkan mengandung karakter non-angka! Kolom ini wajib angka.": {
+    "en": "Pasted text contains non-number characters! This field requires numbers."
+  },
+  "Tentukan metode penyerahan": {
+    "en": "Choose handover method"
+  },
+  "Terakhir Diperbarui": {
+    "en": "Last Updated"
+  },
+  "Terapkan Filter": {
+    "en": "Apply Filter"
+  },
+  "Terima Kasih,": {
+    "en": "Thank You,"
+  },
+  "Terima pembayaran": {
+    "en": "Receive payment"
+  },
+  "Terjadi kesalahan jaringan": {
+    "en": "Network error occurred"
+  },
+  "Terjadi kesalahan.": {
+    "en": "An error occurred."
+  },
+  "Tidak ada aki tersedia untuk kota ini.": {
+    "en": "No battery available for this city."
+  },
+  "Tidak ada data yang ditemukan": {
+    "en": "No data found"
+  },
+  "Tidak ada kota tersedia": {
+    "en": "No city available"
+  },
+  "Tidak ditemukan": {
+    "en": "Not found"
+  },
+  "Tim kami akan segera memproses penjemputan aki reject Anda.": {
+    "en": "Our team will immediately process the pickup for your scrap battery."
+  },
+  "Tim kami melakukan verifikasi fisik aki dan pembayaran dikirimkan langsung.": {
+    "en": "Our team verifies the physical battery and sends payment directly."
+  },
+  "Tingkat pembatalan order": {
+    "en": "Order cancellation rate"
+  },
+  "Tipe": {
+    "en": "Type"
+  },
+  "Tipe Aki": {
+    "en": "Battery Type"
+  },
+  "Top 5 Jenis Aki Sold": {
+    "en": "Top 5 Batteries Sold"
+  },
+  "Top 5 Kota Layanan": {
+    "en": "Top 5 Service Cities"
+  },
+  "Total Diterima": {
+    "en": "Total Received"
+  },
+  "Total estimasi": {
+    "en": "Estimated total"
+  },
+  "Total Pembayaran": {
+    "en": "Total Payment"
+  },
+  "Total Pencairan": {
+    "en": "Total Payout"
+  },
+  "TOTAL PENDAPATAN": {
+    "en": "TOTAL REVENUE"
+  },
+  "Total pendapatan diterima": {
+    "en": "Total revenue received"
+  },
+  "Total pendapatan kotor": {
+    "en": "Total gross revenue"
+  },
+  "Total penjualan": {
+    "en": "Total sales"
+  },
+  "Total Pesanan": {
+    "en": "Total Orders"
+  },
+  "Total Transaksi": {
+    "en": "Total Orders"
+  },
+  "TOTAL TRANSAKSI": {
+    "en": "TOTAL TRANSACTIONS"
+  },
+  "Transaksi Anda Telah Diterima.": {
+    "en": "Your Transaction Has Been Received."
+  },
+  "TRANSAKSI BERHASIL": {
+    "en": "TRANSACTION SUCCESSFUL"
+  },
+  "Transaksi Masuk": {
+    "en": "Incoming Orders"
+  },
+  "Transaksi Pending": {
+    "en": "Pending Orders"
+  },
+  "Transaksi selesai": {
+    "en": "Transaction completed"
+  },
+  "Tukar Tambah.": {
+    "en": "Trade-In."
+  },
+  "Tutup": {
+    "en": "Close"
+  },
+  "Ukuran file terlalu besar (Maksimal 5MB).": {
+    "en": "File size too large (Maximum 5MB)."
+  },
+  "Ukuran file terlalu besar! Maksimal 10 MB.": {
+    "en": "File size too large! Maximum 10 MB."
+  },
+  "Unduh": {
+    "en": "Download"
+  },
+  "Unduh PDF": {
+    "en": "Download PDF"
+  },
+  "Update jumlah keranjang": {
+    "en": "Update cart quantity"
+  },
+  "Update Status Pesanan": {
+    "en": "Update Order Status"
+  },
+  "Upload Bukti Transfer Kekurangan Pembayaran": {
+    "en": "Upload Transfer Proof for Payment Shortage"
+  },
+  "Upload foto Aki & KTP dalam 1 Frame": {
+    "en": "Upload photo of Battery & ID in 1 Frame"
+  },
+  "Upload foto KTP atau SIM": {
+    "en": "Upload ID card or driver license photo"
+  },
+  "Wajib diisi": {
+    "en": "Required"
+  },
+  "Wajib diisi.": {
+    "en": "Field is required."
+  },
+  "Waktu Dibuat": {
+    "en": "Created At"
+  },
+  "Waktu Pesan": {
+    "en": "Order Time"
+  },
+  "Waktu proses rata-rata": {
+    "en": "Average processing time"
+  },
+  "WORKSPACE ADMIN": {
+    "en": "ADMIN WORKSPACE"
+  },
+  "Ya, Hapus": {
+    "en": "Yes, Delete"
+  },
+  "Zoom Gambar": {
+    "en": "Zoom Image"
+  }
+}

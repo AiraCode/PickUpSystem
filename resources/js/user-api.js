@@ -13,7 +13,7 @@ document.addEventListener("DOMContentLoaded", () => {
             return await res.json();
         } catch (err) {
             console.error("Public API Error:", err);
-            return { message: "Terjadi kesalahan jaringan", data: null };
+            return { message: window.i18n ? window.i18n.t('error.network', 'Terjadi kesalahan jaringan') : "Terjadi kesalahan jaringan", data: null };
         }
     };
 
@@ -26,7 +26,7 @@ document.addEventListener("DOMContentLoaded", () => {
     };
 
     const rupiah = (n) =>
-        new Intl.NumberFormat("id-ID", {
+        window.i18n ? window.i18n.formatCurrency(n) : new Intl.NumberFormat("id-ID", {
             style: "currency",
             currency: "IDR",
             maximumFractionDigits: 0,
@@ -219,11 +219,11 @@ document.addEventListener("DOMContentLoaded", () => {
                 window.userCart.has(name)
             ) {
                 if (addButton.getAttribute("data-is-animating") !== "true") {
-                    addButton.textContent = "Update jumlah keranjang";
+                    addButton.textContent = window.i18n ? window.i18n.t('btn.update_cart', 'Update jumlah keranjang') : "Update jumlah keranjang";
                 }
                 addButton.classList.add("user-add-button--update");
             } else if (addButton) {
-                addButton.textContent = "+ Tambahkan ke Keranjang";
+                addButton.textContent = window.i18n ? window.i18n.t('btn.add_to_cart', '+ Tambahkan ke Keranjang') : "+ Tambahkan ke Keranjang";
                 addButton.classList.remove("user-add-button--update");
                 addButton.setAttribute("data-is-animating", "false");
             }
@@ -263,7 +263,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 );
 
                 if (!window.userCart.has(name) && window.userCart.size >= 5) {
-                    showCustomAlert("Maksimal 5 jenis aki per transaksi!");
+                    showCustomAlert(window.i18n ? window.i18n.t('error.max_5_accu', 'Maksimal 5 jenis aki per transaksi!') : "Maksimal 5 jenis aki per transaksi!");
                     return;
                 }
 
@@ -280,8 +280,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 if (isUpdate) {
                     addButton.setAttribute("data-is-animating", "true");
-                    const originalText = "Update jumlah keranjang";
-                    addButton.textContent = "✓ Jumlah telah diupdate";
+                    const originalText = window.i18n ? window.i18n.t('btn.update_cart', 'Update jumlah keranjang') : "Update jumlah keranjang";
+                    addButton.textContent = window.i18n ? window.i18n.t('btn.cart_updated', '✓ Jumlah telah diupdate') : "✓ Jumlah telah diupdate";
                     addButton.style.backgroundColor = "#e04b4b";
                     addButton.style.borderColor = "#e04b4b";
                     addButton.style.color = "#fff";
@@ -360,7 +360,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 ) {
                     e.preventDefault();
                     showCustomAlert(
-                        "Kolom nama hanya menerima huruf, spasi, titik, dan koma!",
+                        window.i18n ? window.i18n.t('error.name_invalid', 'Kolom nama hanya menerima huruf, spasi, titik, dan koma!') : "Kolom nama hanya menerima huruf, spasi, titik, dan koma!",
                     );
                 }
             });
@@ -371,7 +371,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 if (!/^[a-zA-Z\s.,]+$/.test(pastedText)) {
                     e.preventDefault();
                     showCustomAlert(
-                        "Teks yang ditempelkan hanya boleh berisi huruf, spasi, titik, dan koma!",
+                        window.i18n ? window.i18n.t('error.name_paste_invalid', 'Teks yang ditempelkan hanya boleh berisi huruf, spasi, titik, dan koma!') : "Teks yang ditempelkan hanya boleh berisi huruf, spasi, titik, dan koma!",
                     );
                 }
             });
@@ -397,7 +397,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 ) {
                     e.preventDefault();
                     showCustomAlert(
-                        "Kolom nama hanya menerima huruf, spasi, titik, dan koma!",
+                        window.i18n ? window.i18n.t('error.name_invalid', 'Kolom nama hanya menerima huruf, spasi, titik, dan koma!') : "Kolom nama hanya menerima huruf, spasi, titik, dan koma!",
                     );
                 }
             });
@@ -408,7 +408,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 if (!/^[a-zA-Z\s.,]+$/.test(pastedText)) {
                     e.preventDefault();
                     showCustomAlert(
-                        "Teks yang ditempelkan hanya boleh berisi huruf, spasi, titik, dan koma!",
+                        window.i18n ? window.i18n.t('error.name_paste_invalid', 'Teks yang ditempelkan hanya boleh berisi huruf, spasi, titik, dan koma!') : "Teks yang ditempelkan hanya boleh berisi huruf, spasi, titik, dan koma!",
                     );
                 }
             });
@@ -441,17 +441,17 @@ document.addEventListener("DOMContentLoaded", () => {
                 if (!currentBankRule) return;
                 const val = accountNumberInput.value;
                 if (val.length === 0) {
-                    accountHint.textContent = `*pastikan no rekening ${currentBankRule.msg}`;
+                    accountHint.textContent = `*${window.i18n ? window.i18n.t('error.ensure_account', 'pastikan no rekening') : 'pastikan no rekening'} ${currentBankRule.msg}`;
                     accountHint.style.display = "block";
-                    accountNumberInput.setCustomValidity("Wajib diisi");
+                    accountNumberInput.setCustomValidity(window.i18n ? window.i18n.t('error.required', 'Wajib diisi') : "Wajib diisi");
                 } else if (
                     val.length < currentBankRule.min ||
                     val.length > currentBankRule.max
                 ) {
-                    accountHint.textContent = `*pastikan no rekening ${currentBankRule.msg}`;
+                    accountHint.textContent = `*${window.i18n ? window.i18n.t('error.ensure_account', 'pastikan no rekening') : 'pastikan no rekening'} ${currentBankRule.msg}`;
                     accountHint.style.display = "block";
                     accountNumberInput.setCustomValidity(
-                        `Nomor rekening harus ${currentBankRule.msg}`,
+                        `${window.i18n ? window.i18n.t('error.account_must_be', 'Nomor rekening harus') : 'Nomor rekening harus'} ${currentBankRule.msg}`,
                     );
                 } else {
                     accountHint.style.display = "none";
@@ -500,12 +500,12 @@ document.addEventListener("DOMContentLoaded", () => {
                 waHint2.style.display = isValid2 ? "none" : "block";
 
                 if (val.length === 0) {
-                    waInput.setCustomValidity("Wajib diisi");
+                    waInput.setCustomValidity(window.i18n ? window.i18n.t('error.required', 'Wajib diisi') : "Wajib diisi");
                 } else if (!isValid1) {
-                    waInput.setCustomValidity("Nomor harus diawali dengan 0");
+                    waInput.setCustomValidity(window.i18n ? window.i18n.t('error.phone_start_zero', 'Nomor harus diawali dengan 0') : "Nomor harus diawali dengan 0");
                 } else if (!isValid2) {
                     waInput.setCustomValidity(
-                        "Jumlah digit harus antara 10-13",
+                        window.i18n ? window.i18n.t('error.phone_length', 'Jumlah digit harus antara 10-13') : "Jumlah digit harus antara 10-13",
                     );
                 } else {
                     waInput.setCustomValidity("");
@@ -528,7 +528,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 if (e.key && e.key.length === 1 && !/[0-9]/.test(e.key)) {
                     e.preventDefault();
                     showCustomAlert(
-                        "Kolom ini hanya menerima angka! Masukan huruf atau simbol tidak diperbolehkan.",
+                        window.i18n ? window.i18n.t('error.number_only', 'Kolom ini hanya menerima angka! Masukan huruf atau simbol tidak diperbolehkan.') : "Kolom ini hanya menerima angka! Masukan huruf atau simbol tidak diperbolehkan.",
                     );
                 }
             });
@@ -539,7 +539,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 if (!/^\d+$/.test(pastedText)) {
                     e.preventDefault();
                     showCustomAlert(
-                        "Teks yang ditempelkan mengandung karakter non-angka! Kolom ini wajib angka.",
+                        window.i18n ? window.i18n.t('error.number_paste_invalid', 'Teks yang ditempelkan mengandung karakter non-angka! Kolom ini wajib angka.') : "Teks yang ditempelkan mengandung karakter non-angka! Kolom ini wajib angka.",
                     );
                 }
             });
@@ -608,7 +608,7 @@ document.addEventListener("DOMContentLoaded", () => {
         btnChoiceCamera?.addEventListener("click", async () => {
             if (modalUploadChoice) modalUploadChoice.style.display = "none";
             if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-                showCustomAlert("Perangkat atau browser Anda tidak mendukung akses kamera langsung. Beralih ke pengunggahan dari galeri.");
+                showCustomAlert(window.i18n ? window.i18n.t('error.camera_not_supported', 'Perangkat atau browser Anda tidak mendukung akses kamera langsung. Beralih ke pengunggahan dari galeri.') : "Perangkat atau browser Anda tidak mendukung akses kamera langsung. Beralih ke pengunggahan dari galeri.");
                 if (activeUploadTarget === "ktp" && ktpFileInput) ktpFileInput.click();
                 else if (activeUploadTarget === "accu_ktp" && accuKtpFileInput) accuKtpFileInput.click();
                 return;
@@ -638,11 +638,11 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
                 if (modalLiveCamera) modalLiveCamera.style.display = "flex";
             } catch (err) {
-                let errorMsg = "Gagal mengakses kamera.";
+                let errorMsg = window.i18n ? window.i18n.t('error.camera_failed', 'Gagal mengakses kamera.') : "Gagal mengakses kamera.";
                 if (err.name === "NotAllowedError" || err.name === "PermissionDeniedError") {
-                    errorMsg = "Izin kamera ditolak oleh browser. Silakan beri izin akses kamera di pengaturan browser Anda, atau gunakan opsi Galeri.";
+                    errorMsg = window.i18n ? window.i18n.t('error.camera_permission_denied', 'Izin kamera ditolak oleh browser. Silakan beri izin akses kamera di pengaturan browser Anda, atau gunakan opsi Galeri.') : "Izin kamera ditolak oleh browser. Silakan beri izin akses kamera di pengaturan browser Anda, atau gunakan opsi Galeri.";
                 } else if (err.name === "NotFoundError" || err.name === "DevicesNotFoundError") {
-                    errorMsg = "Kamera tidak ditemukan pada perangkat Anda. Beralih ke opsi Galeri.";
+                    errorMsg = window.i18n ? window.i18n.t('error.camera_not_found', 'Kamera tidak ditemukan pada perangkat Anda. Beralih ke opsi Galeri.') : "Kamera tidak ditemukan pada perangkat Anda. Beralih ke opsi Galeri.";
                 }
 
                 showCustomAlert(errorMsg);
@@ -689,18 +689,18 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
 
                 if (!file.type.startsWith("image/")) {
-                    alert("Harap upload file berupa gambar (JPEG, PNG).");
+                    alert(window.i18n ? window.i18n.t('error.upload_image_only', 'Harap upload file berupa gambar (JPEG, PNG).') : "Harap upload file berupa gambar (JPEG, PNG).");
                     accuKtpFileInput.value = "";
-                    if (label) label.textContent = "Upload foto Aki & KTP dalam 1 Frame";
+                    if (label) label.textContent = window.i18n ? window.i18n.t('identity.upload_accu_ktp', 'Upload foto Aki & KTP dalam 1 Frame') : "Upload foto Aki & KTP dalam 1 Frame";
                     if (hint) hint.style.display = "none";
                     return;
                 }
 
                 if (file.size > 5 * 1024 * 1024) {
-                    alert("Ukuran file terlalu besar (Maksimal 5MB).");
+                    alert(window.i18n ? window.i18n.t('error.file_too_large', 'Ukuran file terlalu besar (Maksimal 5MB).') : "Ukuran file terlalu besar (Maksimal 5MB).");
                     if (hint) hint.style.display = "block";
                     accuKtpFileInput.value = "";
-                    if (label) label.textContent = "Upload foto Aki & KTP dalam 1 Frame";
+                    if (label) label.textContent = window.i18n ? window.i18n.t('identity.upload_accu_ktp', 'Upload foto Aki & KTP dalam 1 Frame') : "Upload foto Aki & KTP dalam 1 Frame";
                     return;
                 } else {
                     if (hint) hint.style.display = "none";
@@ -730,7 +730,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 const sizeHint = document.getElementById("ktp-size-hint");
 
                 if (!file) {
-                    if (nameEl) nameEl.textContent = "Upload foto KTP atau SIM";
+                    if (nameEl) nameEl.textContent = window.i18n ? window.i18n.t('identity.upload_ktp', 'Upload foto KTP atau SIM') : "Upload foto KTP atau SIM";
                     if (ocrNameWrapper) ocrNameWrapper.style.display = "none";
                     if (ocrNameInput) ocrNameInput.value = "";
                     if (sizeHint) sizeHint.style.display = "none";
@@ -738,9 +738,9 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
 
                 if (!file.type.startsWith("image/")) {
-                    alert("Harap upload file berupa gambar (JPEG, PNG).");
+                    alert(window.i18n ? window.i18n.t('error.upload_image_only', 'Harap upload file berupa gambar (JPEG, PNG).') : "Harap upload file berupa gambar (JPEG, PNG).");
                     ktpInputNode.value = "";
-                    if (nameEl) nameEl.textContent = "Upload foto KTP atau SIM";
+                    if (nameEl) nameEl.textContent = window.i18n ? window.i18n.t('identity.upload_ktp', 'Upload foto KTP atau SIM') : "Upload foto KTP atau SIM";
                     if (ocrNameWrapper) ocrNameWrapper.style.display = "none";
                     if (ocrNameInput) ocrNameInput.value = "";
                     if (sizeHint) sizeHint.style.display = "none";
@@ -748,10 +748,10 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
 
                 if (file.size > 5 * 1024 * 1024) {
-                    alert("Ukuran file terlalu besar (Maksimal 5MB).");
+                    alert(window.i18n ? window.i18n.t('error.file_too_large', 'Ukuran file terlalu besar (Maksimal 5MB).') : "Ukuran file terlalu besar (Maksimal 5MB).");
                     if (sizeHint) sizeHint.style.display = "block";
                     ktpInputNode.value = ""; // Bersihkan file yang di-upload
-                    if (nameEl) nameEl.textContent = "Upload foto KTP atau SIM";
+                    if (nameEl) nameEl.textContent = window.i18n ? window.i18n.t('identity.upload_ktp', 'Upload foto KTP atau SIM') : "Upload foto KTP atau SIM";
                     if (ocrNameWrapper) ocrNameWrapper.style.display = "none";
                     if (ocrNameInput) ocrNameInput.value = "";
                     return;
@@ -768,7 +768,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     ocrStatus.style.display = "block";
                     ocrStatus.style.color = "#2563eb";
                     ocrStatus.innerHTML =
-                        '<span style="display:inline-flex;align-items:center;gap:6px;"><svg width="14" height="14" viewBox="0 0 24 24" style="animation:spin 1s linear infinite;"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="3" fill="none" stroke-dasharray="31.4" stroke-linecap="round"/></svg> Mengekstrak nama dari KTP/SIM...</span>';
+                        `<span style="display:inline-flex;align-items:center;gap:6px;"><svg width="14" height="14" viewBox="0 0 24 24" style="animation:spin 1s linear infinite;"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="3" fill="none" stroke-dasharray="31.4" stroke-linecap="round"/></svg> ${window.i18n ? window.i18n.t('identity.extracting_ktp', 'Mengekstrak nama dari KTP/SIM...') : 'Mengekstrak nama dari KTP/SIM...'}</span>`;
                 }
 
                 try {
@@ -808,8 +808,7 @@ document.addEventListener("DOMContentLoaded", () => {
                         if (ocrNameInput) ocrNameInput.value = data.name;
                         if (ocrStatus) {
                             ocrStatus.style.color = "#16a34a";
-                            ocrStatus.innerHTML =
-                                "✓ Nama berhasil diekstrak dari dokumen. (jika nama yang diekstraksi salah, lakukan foto sesuai dengan contoh)";
+                            ocrStatus.innerHTML = window.i18n ? window.i18n.t('identity.ocr_success', '✓ Nama berhasil diekstrak dari dokumen. (jika nama yang diekstraksi salah, lakukan foto sesuai dengan contoh)') : "✓ Nama berhasil diekstrak dari dokumen. (jika nama yang diekstraksi salah, lakukan foto sesuai dengan contoh)";
                         }
                         if (viewBtn && ktpOverlayImg) {
                             viewBtn.style.display = "inline-block";
@@ -821,8 +820,7 @@ document.addEventListener("DOMContentLoaded", () => {
                             ocrStatus.style.color = "#dc2626";
                             ocrStatus.innerHTML =
                                 "✗ " +
-                                (data.message ||
-                                    "Gagal membaca nama. Coba upload ulang dengan foto yang lebih jelas.");
+                                (data.message || (window.i18n ? window.i18n.t('error.ocr_failed', 'Gagal membaca nama. Coba upload ulang dengan foto yang lebih jelas.') : "Gagal membaca nama. Coba upload ulang dengan foto yang lebih jelas."));
                         }
                         if (viewBtn && ktpOverlayImg) {
                             viewBtn.style.display = "inline-block";
@@ -833,8 +831,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 } catch (err) {
                     if (ocrStatus) {
                         ocrStatus.style.color = "#dc2626";
-                        ocrStatus.innerHTML =
-                            "✗ Terjadi kesalahan jaringan saat memproses OCR.";
+                        ocrStatus.innerHTML = window.i18n ? window.i18n.t('error.ocr_network', '✗ Terjadi kesalahan jaringan saat memproses OCR.') : "✗ Terjadi kesalahan jaringan saat memproses OCR.";
                     }
                     const viewBtn = document.getElementById("view-ktp-btn");
                     const ktpOverlayImg = document.getElementById("ktp-overlay-img");
@@ -981,9 +978,9 @@ document.addEventListener("DOMContentLoaded", () => {
                         const isImage = file.type.startsWith("image/") || validExtensions.includes(ext);
 
                         if (!isImage) {
-                            showCustomAlert("Format file tidak sesuai! Mohon unggah bukti transfer dalam format gambar (JPG, JPEG, PNG). Format PDF atau berkas non-gambar tidak didukung.");
+                            showCustomAlert(window.i18n ? window.i18n.t('error.upload_image_only_transfer', 'Format file tidak sesuai! Mohon unggah bukti transfer dalam format gambar (JPG, JPEG, PNG). Format PDF atau berkas non-gambar tidak didukung.') : "Format file tidak sesuai! Mohon unggah bukti transfer dalam format gambar (JPG, JPEG, PNG). Format PDF atau berkas non-gambar tidak didukung.");
                             transferInput.value = "";
-                            if (transferLabel) transferLabel.textContent = "Upload Bukti Transfer Kekurangan Pembayaran";
+                            if (transferLabel) transferLabel.textContent = window.i18n ? window.i18n.t('identity.upload_transfer', 'Upload Bukti Transfer Kekurangan Pembayaran') : "Upload Bukti Transfer Kekurangan Pembayaran";
                             if (transferStatusEl) {
                                 transferStatusEl.style.display = "block";
                                 transferStatusEl.style.color = "#dc2626";
@@ -991,15 +988,15 @@ document.addEventListener("DOMContentLoaded", () => {
                                 transferStatusEl.style.border = "1px solid #fecaca";
                                 transferStatusEl.style.padding = "8px 12px";
                                 transferStatusEl.style.borderRadius = "6px";
-                                transferStatusEl.innerHTML = "⚠️ Format file tidak didukung. Silakan gunakan format foto JPG, JPEG, atau PNG.";
+                                transferStatusEl.innerHTML = window.i18n ? window.i18n.t('error.unsupported_format', '⚠️ Format file tidak didukung. Silakan gunakan format foto JPG, JPEG, atau PNG.') : "⚠️ Format file tidak didukung. Silakan gunakan format foto JPG, JPEG, atau PNG.";
                             }
                             return;
                         }
 
                         if (file.size > 10 * 1024 * 1024) {
-                            showCustomAlert("Ukuran file terlalu besar! Maksimal 10 MB.");
+                            showCustomAlert(window.i18n ? window.i18n.t('error.file_too_large_10mb', 'Ukuran file terlalu besar! Maksimal 10 MB.') : "Ukuran file terlalu besar! Maksimal 10 MB.");
                             transferInput.value = "";
-                            if (transferLabel) transferLabel.textContent = "Upload Bukti Transfer Kekurangan Pembayaran";
+                            if (transferLabel) transferLabel.textContent = window.i18n ? window.i18n.t('identity.upload_transfer', 'Upload Bukti Transfer Kekurangan Pembayaran') : "Upload Bukti Transfer Kekurangan Pembayaran";
                             if (transferStatusEl) transferStatusEl.style.display = "none";
                             return;
                         }
@@ -1014,7 +1011,7 @@ document.addEventListener("DOMContentLoaded", () => {
                             transferStatusEl.style.border = "1px solid #bfdbfe";
                             transferStatusEl.style.padding = "8px 12px";
                             transferStatusEl.style.borderRadius = "6px";
-                            transferStatusEl.innerHTML = "ℹ️ Bukti transfer akan diverifikasi secara manual oleh Admin.";
+                            transferStatusEl.innerHTML = window.i18n ? window.i18n.t('identity.transfer_verification_info', 'ℹ️ Bukti transfer akan diverifikasi secara manual oleh Admin.') : "ℹ️ Bukti transfer akan diverifikasi secara manual oleh Admin.";
                         }
                     });
                 }
@@ -1064,24 +1061,24 @@ document.addEventListener("DOMContentLoaded", () => {
                 //Validasi OCR nama
                 if (!nameVal) {
                     showCustomAlert(
-                        "Harap upload foto KTP atau SIM terlebih dahulu agar nama dapat diekstrak otomatis.",
+                        window.i18n ? window.i18n.t('error.upload_ktp_first', 'Harap upload foto KTP atau SIM terlebih dahulu agar nama dapat diekstrak otomatis.') : "Harap upload foto KTP atau SIM terlebih dahulu agar nama dapat diekstrak otomatis.",
                     );
                     return;
                 }
                 const namePattern = /^[a-zA-Z\s.,]+$/;
                 if (!namePattern.test(holderVal)) {
                     showCustomAlert(
-                        "Nama pemilik rekening hanya boleh berisi huruf, spasi, titik, dan koma!",
+                        window.i18n ? window.i18n.t('error.name_invalid', 'Nama pemilik rekening hanya boleh berisi huruf, spasi, titik, dan koma!') : "Nama pemilik rekening hanya boleh berisi huruf, spasi, titik, dan koma!",
                     );
                     return;
                 }
                 const numberPattern = /^[0-9]+$/;
                 if (!numberPattern.test(numberVal)) {
-                    showCustomAlert("Nomor rekening hanya boleh berisi angka!");
+                    showCustomAlert(window.i18n ? window.i18n.t('error.account_number_only', 'Nomor rekening hanya boleh berisi angka!') : "Nomor rekening hanya boleh berisi angka!");
                     return;
                 }
                 if (!numberPattern.test(waVal)) {
-                    showCustomAlert("Nomor WhatsApp hanya boleh berisi angka!");
+                    showCustomAlert(window.i18n ? window.i18n.t('error.phone_number_only', 'Nomor WhatsApp hanya boleh berisi angka!') : "Nomor WhatsApp hanya boleh berisi angka!");
                     return;
                 }
                 //Validasi nama KTP harus sama dengan nama pemilik rekening (mengabaikan gelar)
@@ -1108,7 +1105,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     cleanNameVal !== cleanHolderVal
                 ) {
                     showCustomAlert(
-                        "Nama pada KTP/SIM tidak sesuai dengan nama pemilik rekening! Pastikan kedua nama identik untuk mencegah identitas ganda (Gelar akademik diabaikan).",
+                        window.i18n ? window.i18n.t('error.name_mismatch', 'Nama pada KTP/SIM tidak sesuai dengan nama pemilik rekening! Pastikan kedua nama identik untuk mencegah identitas ganda (Gelar akademik diabaikan).') : "Nama pada KTP/SIM tidak sesuai dengan nama pemilik rekening! Pastikan kedua nama identik untuk mencegah identitas ganda (Gelar akademik diabaikan).",
                     );
                     return;
                 }
@@ -1121,7 +1118,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 let accuKtpFile = accuKtpInputNode && accuKtpInputNode.files ? accuKtpInputNode.files[0] : null;
 
                 if (!ktpFile && !accuKtpFile) {
-                    showCustomAlert("Harap upload foto identitas Anda.");
+                    showCustomAlert(window.i18n ? window.i18n.t('error.upload_identity', 'Harap upload foto identitas Anda.') : "Harap upload foto identitas Anda.");
                     return;
                 }
                 
@@ -1146,7 +1143,7 @@ document.addEventListener("DOMContentLoaded", () => {
                         });
                     }
                 } catch (err) {
-                    showCustomAlert("Gagal membaca file gambar.");
+                    showCustomAlert(window.i18n ? window.i18n.t('error.read_image_failed', 'Gagal membaca file gambar.') : "Gagal membaca file gambar.");
                     return;
                 }
 
@@ -1185,7 +1182,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 if (userMustPay) {
                     if (!transferInput || !transferInput.files || !transferInput.files[0]) {
-                        showCustomAlert("Harap upload bukti transfer untuk pembayaran kekurangan Trade In.");
+                        showCustomAlert(window.i18n ? window.i18n.t('error.upload_transfer_tradein', 'Harap upload bukti transfer untuk pembayaran kekurangan Trade In.') : "Harap upload bukti transfer untuk pembayaran kekurangan Trade In.");
                         return;
                     }
                 }
@@ -1349,7 +1346,7 @@ document.addEventListener("DOMContentLoaded", () => {
             btnModalConfirmSubmit.addEventListener("click", async (e) => {
                 e.preventDefault();
                 btnModalConfirmSubmit.disabled = true;
-                btnModalConfirmSubmit.textContent = "Memproses...";
+                btnModalConfirmSubmit.textContent = window.i18n ? window.i18n.t('btn.processing', 'Memproses...') : "Memproses...";
                 if (formDataToSubmit) {
                     await submitOrder(formDataToSubmit);
                 }
@@ -1368,7 +1365,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 localStorage.setItem("pickup_state_timestamp", Date.now().toString());
                 window.location.href = `/receipt?order_id=${res.data.order_id}`;
             } else {
-                showCustomAlert(res.message || "Gagal mengirim pesanan");
+                showCustomAlert(res.message || (window.i18n ? window.i18n.t('error.submit_failed', 'Gagal mengirim pesanan') : "Gagal mengirim pesanan"));
                 const submitBtn = document.getElementById("btn-modal-confirm-submit");
                 if (submitBtn) {
                     submitBtn.disabled = false;
@@ -1452,7 +1449,7 @@ document.addEventListener("DOMContentLoaded", () => {
                             })
                             .replace(".", ":");
 
-                        metaDate.innerHTML = `Tanggal transaksi: ${dateStr} ${timeStr} WIB<br><span style="color:#6d727c; font-weight:500;">Update: ${updateDateStr} ${updateTimeStr} WIB</span>`;
+                        metaDate.innerHTML = `<span>Tanggal transaksi</span>: ${dateStr} ${timeStr} WIB<br><span style="color:#6d727c; font-weight:500;">Update: ${updateDateStr} ${updateTimeStr} WIB</span>`;
                     }
                     const badge = receiptContainer.querySelector(
                         "[data-receipt-badge]",
@@ -1462,13 +1459,13 @@ document.addEventListener("DOMContentLoaded", () => {
                         let statusClass = "unpaid";
 
                         if (orderStatus === "completed") {
-                            statusText = "PAID";
+                            statusText = window.i18n ? window.i18n.t('status.paid', 'PAID') : "PAID";
                             statusClass = "paid";
                         } else if (orderStatus === "processing") {
-                            statusText = "PROCESSING";
+                            statusText = window.i18n ? window.i18n.t('status.processing_badge', 'PROCESSING') : "PROCESSING";
                             statusClass = "processing";
                         } else if (orderStatus === "cancelled") {
-                            statusText = "CANCELLED";
+                            statusText = window.i18n ? window.i18n.t('status.cancelled_badge', 'CANCELLED') : "CANCELLED";
                             statusClass = "cancelled";
                         }
 
@@ -1538,15 +1535,15 @@ document.addEventListener("DOMContentLoaded", () => {
                         const dds = blockPenyerahan.querySelectorAll("dd");
                         if (dds[0])
                             dds[0].textContent = isCourier
-                                ? "Dijemput Kurir"
-                                : "Antar ke Gudang";
+                                ? (window.i18n ? window.i18n.t('delivery.courier', 'Dijemput Kurir') : "Dijemput Kurir")
+                                : (window.i18n ? window.i18n.t('delivery.warehouse', 'Antar ke Gudang') : "Antar ke Gudang");
                         if (dds[1])
                             dds[1].textContent = o.city ? o.city.name : "-";
                         if (dds[2])
                             dds[2].textContent =
                                 isCourier && deliveryCost > 0
                                     ? "- " + rupiah(deliveryCost)
-                                    : "Gratis";
+                                    : (window.i18n ? window.i18n.t('receipt.free', 'Gratis') : "Gratis");
 
                         const noteDisplay = document.getElementById(
                             "receipt-note-display",
@@ -1631,12 +1628,12 @@ document.addEventListener("DOMContentLoaded", () => {
                                         } catch (e) {
                                             console.error(e);
                                             showCustomAlert(
-                                                "Terjadi kesalahan.",
+                                                window.i18n ? window.i18n.t('error.generic', 'Terjadi kesalahan.') : "Terjadi kesalahan.",
                                             );
                                         }
 
                                         btnSaveNote.disabled = false;
-                                        btnSaveNote.textContent = "Simpan";
+                                        btnSaveNote.textContent = window.i18n ? window.i18n.t('btn.save', 'Simpan') : "Simpan";
 
                                         noteDisplay.style.display = "block";
                                         editContainer.style.display = "none";
@@ -1677,7 +1674,9 @@ document.addEventListener("DOMContentLoaded", () => {
                         }
 
                         if (itemsList.length === 0 && newAccusList.length === 0) {
-                            html = '<tr><td colspan="4"><div class="user-receipt__empty"><strong>Detail aki belum tersedia</strong><span>Item akan muncul setelah transaksi terhubung.</span></div></td></tr>';
+                            const noDetailMsg = window.i18n ? window.i18n.t('tradein.details_unavailable', 'Detail aki belum tersedia') : "Detail aki belum tersedia";
+                            const willAppearMsg = window.i18n ? window.i18n.t('tradein.items_appear_after', 'Item akan muncul setelah transaksi terhubung.') : "Item akan muncul setelah transaksi terhubung.";
+                            html = `<tr><td colspan="4"><div class="user-receipt__empty"><strong>${noDetailMsg}</strong><span>${willAppearMsg}</span></div></td></tr>`;
                         }
 
                         tableBody.innerHTML = html;
@@ -1690,7 +1689,7 @@ document.addEventListener("DOMContentLoaded", () => {
                         let divIndex = 0;
 
                         if (divs[divIndex]) {
-                            divs[divIndex].querySelector("span").textContent = "Subtotal Aki Reject";
+                            divs[divIndex].querySelector("span").textContent = window.i18n ? window.i18n.t('tradein.subtotal_reject', 'Subtotal Aki Reject') : "Subtotal Aki Reject";
                             divs[divIndex].querySelector("strong").textContent = rupiah(subtotal);
                             divIndex++;
                         }
@@ -1698,15 +1697,18 @@ document.addEventListener("DOMContentLoaded", () => {
                         if (isTradeIn && o.new_accus_items && o.new_accus_items.length > 0) {
                             // Find where to insert New Battery Subtotal (before Pickup Fee)
                             const newAccuDiv = document.createElement("div");
-                            newAccuDiv.innerHTML = `<span>Subtotal Aki Baru</span><strong>- ${rupiah(newAccuSubtotal)}</strong>`;
+                            const labelNew = window.i18n ? window.i18n.t('tradein.subtotal_new', 'Subtotal Aki Baru') : "Subtotal Aki Baru";
+                            newAccuDiv.innerHTML = `<span>${labelNew}</span><strong>- ${rupiah(newAccuSubtotal)}</strong>`;
                             summaryBlocks.insertBefore(newAccuDiv, divs[divIndex]);
                             // Also insert Trade In Adjustment if applicable
                             const diff = newAccuSubtotal - subtotal;
                             const tradeInAdjDiv = document.createElement("div");
                             if (diff > 0) {
-                                tradeInAdjDiv.innerHTML = `<span>Estimasi Biaya Tambah</span><strong>${rupiah(diff)}</strong>`;
+                                const labelAdd = window.i18n ? window.i18n.t('tradein.est_add_cost', 'Estimasi Biaya Tambah') : "Estimasi Biaya Tambah";
+                                tradeInAdjDiv.innerHTML = `<span>${labelAdd}</span><strong>${rupiah(diff)}</strong>`;
                             } else {
-                                tradeInAdjDiv.innerHTML = `<span>Estimasi Uang Diterima</span><strong>${rupiah(Math.abs(diff))}</strong>`;
+                                const labelReceive = window.i18n ? window.i18n.t('tradein.est_receive', 'Estimasi Uang Diterima') : "Estimasi Uang Diterima";
+                                tradeInAdjDiv.innerHTML = `<span>${labelReceive}</span><strong>${rupiah(Math.abs(diff))}</strong>`;
                             }
                             summaryBlocks.insertBefore(tradeInAdjDiv, divs[divIndex]);
                         }
@@ -1715,19 +1717,15 @@ document.addEventListener("DOMContentLoaded", () => {
                             divs[divIndex].querySelector("strong").textContent =
                                 deliveryCost > 0
                                     ? "- " + rupiah(deliveryCost)
-                                    : "Gratis";
+                                    : (window.i18n ? window.i18n.t('receipt.free', 'Gratis') : "Gratis");
                             divIndex++;
                         }
 
-                        const grandTotalElement =
-                            receiptContainer.querySelector(
-                                ".user-receipt__grand-total strong",
-                            );
                         if (grandTotalElement) {
                             if (isTradeIn) {
                                 grandTotalElement.textContent = totalCost < 0 ? `+ ${rupiah(Math.abs(totalCost))}` : rupiah(totalCost);
                                 const gLabel = receiptContainer.querySelector(".user-receipt__grand-total span");
-                                if (gLabel) gLabel.textContent = totalCost < 0 ? "Total Pembayaran" : "Total Diterima";
+                                if (gLabel) gLabel.textContent = totalCost < 0 ? (window.i18n ? window.i18n.t('receipt.total_payment', 'Total Pembayaran') : "Total Pembayaran") : (window.i18n ? window.i18n.t('receipt.total_received', 'Total Diterima') : "Total Diterima");
                             } else {
                                 grandTotalElement.textContent = rupiah(totalCost);
                             }
@@ -2512,7 +2510,7 @@ document.addEventListener("DOMContentLoaded", () => {
             const cartSize = window.userCart ? window.userCart.size : 0;
             if (cartSize === 0) {
                 showCustomAlert(
-                    "Keranjang belanja kosong! Silakan tambahkan minimal satu aki ke keranjang sebelum melanjutkan.",
+                    window.i18n ? window.i18n.t('error.cart_empty', 'Keranjang belanja kosong! Silakan tambahkan minimal satu aki ke keranjang sebelum melanjutkan.') : "Keranjang belanja kosong! Silakan tambahkan minimal satu aki ke keranjang sebelum melanjutkan.",
                 );
                 return;
             }
@@ -2522,13 +2520,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
             if (!address || !city) {
                 showCustomAlert(
-                    "Harap tentukan lokasi Anda melalui peta terlebih dahulu.",
+                    window.i18n ? window.i18n.t('error.location_map_first', 'Harap tentukan lokasi Anda melalui peta terlebih dahulu.') : "Harap tentukan lokasi Anda melalui peta terlebih dahulu.",
                 );
                 return;
             }
             if (!userLat || !userLng) {
                 showCustomAlert(
-                    "Harap tentukan lokasi koordinat Anda di peta dengan menekan tombol peta.",
+                    window.i18n ? window.i18n.t('error.coordinate_first', 'Harap tentukan lokasi koordinat Anda di peta dengan menekan tombol peta.') : "Harap tentukan lokasi koordinat Anda di peta dengan menekan tombol peta.",
                 );
                 return;
             }

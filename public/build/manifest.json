@@ -1,7 +1,7 @@
 {
-  "_fonts-C9MNnjVw.css": {
-    "file": "assets/fonts-C9MNnjVw.css",
-    "src": "_fonts-C9MNnjVw.css"
+  "_fonts-DqppEDJS.css": {
+    "file": "assets/fonts-DqppEDJS.css",
+    "src": "_fonts-DqppEDJS.css"
   },
   "_instrument-sans-400-normal-D1W7dsQl.woff": {
     "file": "assets/instrument-sans-400-normal-D1W7dsQl.woff",
@@ -28,7 +28,7 @@
     "src": "_instrument-sans-600-normal-B9e8oLYv.woff"
   },
   "resources/css/app.css": {
-    "file": "assets/app-JYRuFLac.css",
+    "file": "assets/app-DBQ_5FaC.css",
     "name": "app",
     "names": [
       "app.css"
@@ -61,19 +61,19 @@
     "src": "resources/img/logo_admin2-removebg-preview.png"
   },
   "resources/js/admin-api.js": {
-    "file": "assets/admin-api-BiNNV2lz.js",
+    "file": "assets/admin-api-DPTqeGL0.js",
     "name": "admin-api",
     "src": "resources/js/admin-api.js",
     "isEntry": true
   },
   "resources/js/app.js": {
-    "file": "assets/app-BYFRwZch.js",
+    "file": "assets/app-C_sITuD7.js",
     "name": "app",
     "src": "resources/js/app.js",
     "isEntry": true
   },
   "resources/js/user-api.js": {
-    "file": "assets/user-api-dlmG5jiH.js",
+    "file": "assets/user-api-Bn7Ppt8K.js",
     "name": "user-api",
     "src": "resources/js/user-api.js",
     "isEntry": true

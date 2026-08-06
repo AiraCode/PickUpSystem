@@ -23,7 +23,7 @@
                     <div class="user-progress__step is-current"><span>03</span><small>Receipt</small></div>
                 </div>
                 <span class="user-kicker">DOKUMEN PENJUALAN</span>
-                <h1>Receipt pesanan<br><em>One Stop Solution.</em></h1>
+                <h1><span>Receipt pesanan</span><br><em>One Stop Solution.</em></h1>
                 <p>Simpan receipt ini sebagai referensi transaksi. Informasi identitas sensitif tidak ditampilkan pada dokumen ini.</p>
             </div>
         </section>
@@ -47,7 +47,7 @@
                         <div class="user-receipt__meta">
                             <span>RECEIPT PENJUALAN</span>
                             <strong># —</strong>
-                            <small>Tanggal transaksi: —</small>
+                            <small><span>Tanggal transaksi</span>: —</small>
                         </div>
                     </div>
 

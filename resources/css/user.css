@@ -2650,11 +2650,11 @@ body.user-shell textarea:focus-visible {
         padding: 0;
     }
 
-    .user-header__actions>.user-language {
+    .user-header__actions>.user-language, .user-header__actions>.lang-switch {
         display: none;
     }
 
-    .user-header--simple .user-header__actions>.user-language {
+    .user-header--simple .user-header__actions>.user-language, .user-header--simple .user-header__actions>.lang-switch {
         display: inline-flex;
     }
 

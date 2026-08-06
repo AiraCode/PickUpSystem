@@ -41,7 +41,7 @@
                 <span class="user-kicker">LANGKAH 02 DARI 03</span>
 
                 <h1>
-                    Lengkapi identitas<br>
+                    <span>Lengkapi identitas</span><br>
                     <em>penjual.</em>
                 </h1>
 
@@ -181,7 +181,7 @@
                     <span class="user-kicker">RINGKASAN PESANAN</span>
                     <h2>Data penjualan Anda</h2>
                     <div class="user-flow-summary__item"><span>Item aki</span><strong>Menunggu data pilihan</strong></div>
-                    <div class="user-flow-summary__item"><span>Metode penyerahan</span><strong>Menunggu pilihan</strong>
+                    <div class="user-flow-summary__item"><span><span>Metode penyerahan</span></span><strong><span>Menunggu pilihan</span></strong>
                     </div>
                     <div class="user-flow-summary__item"><span>Alamat</span><strong>Menunggu data alamat</strong></div>
                     <div class="user-flow-summary__total"><span>Total harga</span><strong>—</strong></div>
@@ -193,7 +193,7 @@
                 <div class="user-form-actions">
                     <a href="/user" class="user-button user-button--secondary">← Kembali</a>
                     <button type="button" id="btn-identity-next" class="user-button user-button--primary">
-                        Konfirmasi Data
+                        <span>Konfirmasi Data</span>
                         <span aria-hidden="true">→</span>
                     </button>
                 </div>
@@ -209,7 +209,7 @@
                     <path d="M5 12.5 9.5 17 19 7.5" />
                 </svg></span>
             <span class="user-kicker">KONFIRMASI DATA</span>
-            <h2 id="identity-modal-title">Apakah semua data<br>yang Anda masukkan sudah benar?</h2>
+            <h2 id="identity-modal-title">Apakah semua data yang Anda masukkan sudah benar?</h2>
             <style>
                 .modal-split-layout { display: grid; grid-template-columns: 1fr; gap: 16px; margin: 16px 0; text-align: left; }
                 @media (min-width: 768px) {
@@ -260,11 +260,10 @@
                     </div>
                 </div>
             </div>
-            <p style="margin: 0 auto; margin-bottom: 16px;">Pastikan nama, rekening, dan nomor WhatsApp sudah sesuai. Data ini akan digunakan untuk proses verifikasi dan
-                pembayaran.</p>
+            <p style="margin: 0 auto; margin-bottom: 16px;">Pastikan nama, rekening, dan nomor WhatsApp sudah sesuai. Data ini akan digunakan untuk proses verifikasi dan pembayaran.</p>
             <div class="user-modal__actions">
                 <button type="button" class="user-button user-button--secondary" data-modal-close>Kembali</button>
-                <button type="button" id="btn-modal-confirm-submit" class="user-button user-button--primary">Konfirmasi <span
+                <button type="button" id="btn-modal-confirm-submit" class="user-button user-button--primary"><span>Konfirmasi</span> <span
                         aria-hidden="true">→</span></button>
             </div>
         </div>

@@ -93,13 +93,14 @@ document.addEventListener("DOMContentLoaded", () => {
     if (clockEl) {
         const updateClock = () => {
             const now = new Date();
-            const dateStr = now.toLocaleDateString("id-ID", {
+            const locale = (window.i18n && window.i18n.currentLanguage === 'en') ? 'en-US' : 'id-ID';
+            const dateStr = now.toLocaleDateString(locale, {
                 weekday: "short",
                 day: "numeric",
                 month: "short",
                 year: "numeric",
             });
-            const timeStr = now.toLocaleTimeString("id-ID", {
+            const timeStr = now.toLocaleTimeString(locale, {
                 hour: "2-digit",
                 minute: "2-digit",
                 second: "2-digit",
@@ -175,7 +176,7 @@ document.addEventListener("DOMContentLoaded", () => {
     };
 
     const rupiah = (n) =>
-        new Intl.NumberFormat("id-ID", {
+        window.i18n ? window.i18n.formatCurrency(n) : new Intl.NumberFormat("id-ID", {
             style: "currency",
             currency: "IDR",
             maximumFractionDigits: 0,
@@ -405,7 +406,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     initialEl.innerText = newName.charAt(0).toUpperCase();
 
                 modalEditProfile.style.display = "none";
-                showToast("Profil berhasil diperbarui!", "success");
+                showToast(window.i18n ? window.i18n.t('toast.updated_successfully', 'Profil berhasil diperbarui!') : "Profil berhasil diperbarui!", "success");
                 return;
             }
 
@@ -455,7 +456,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
 
                 modalEditProfile.style.display = "none";
-                showToast("Profil berhasil diperbarui!", "success");
+                showToast(window.i18n ? window.i18n.t('toast.updated_successfully', 'Profil berhasil diperbarui!') : "Profil berhasil diperbarui!", "success");
             } else {
                 profileError.innerText =
                     res.message || "Gagal memperbarui profil.";
@@ -810,7 +811,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
             let html = `
                 <div style="font-size:12px; color:${isDark ? "#cbd5e1" : "#64748b"};">
-                    Menampilkan <strong>${from}</strong> - <strong>${to}</strong> dari <strong>${total}</strong> data
+                    <span>Menampilkan</span> <strong>${from}</strong> - <strong>${to}</strong> <span>dari</span> <strong>${total}</strong> <span>data</span>
                 </div>
                 <div style="display:flex; gap:4px; align-items:center;">
             `;

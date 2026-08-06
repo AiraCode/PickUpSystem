@@ -17,22 +17,22 @@
                 <a href="/user" data-user-nav-link>Home</a>
                 <a href="/user#faq" data-user-nav-link>FAQ</a>
                 <a href="/user#hubungi-kami" data-user-nav-link>Hubungi Kami</a>
-                {{-- <div class="user-nav__language">
-                    <button type="button" class="user-language" aria-label="Pilih bahasa">
-                        <span class="is-active">ID</span>
-                        <span>|</span>
-                        <span>EN</span>
-                    </button>
-                </div> --}}
+                <div class="user-nav__language">
+                    <div class="lang-switch" data-lang-switch>
+                        <button type="button" class="lang-btn is-active" data-lang-btn="id" aria-label="Bahasa Indonesia">ID</button>
+                        <span class="lang-divider">|</span>
+                        <button type="button" class="lang-btn" data-lang-btn="en" aria-label="English Language">EN</button>
+                    </div>
+                </div>
             </nav>
         @endunless
-        {{--
-        <div class="user-header__actions">
-            <button type="button" class="user-language" aria-label="Pilih bahasa">
-                <span class="is-active">ID</span>
-                <span>|</span>
-                <span>EN</span>
-            </button>
-        </div> --}}
+
+        <div class="user-header__actions" style="display: flex; align-items: center; gap: 12px;">
+            <div class="lang-switch" data-lang-switch>
+                <button type="button" class="lang-btn is-active" data-lang-btn="id" aria-label="Bahasa Indonesia">ID</button>
+                <span class="lang-divider">|</span>
+                <button type="button" class="lang-btn" data-lang-btn="en" aria-label="English Language">EN</button>
+            </div>
+        </div>
     </div>
 </header>

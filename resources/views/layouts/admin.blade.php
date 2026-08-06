@@ -80,16 +80,6 @@
                         </svg>
                         <span>Gudang &amp; Lokasi</span>
                     </a>
-                    {{-- <a href="{{ url('/admin/biaya-penjemputan') }}"
-                        class="admin-nav__link {{ request()->is('admin/biaya-penjemputan') ? 'is-active' : '' }}" data-nav-link
-                        data-tooltip="Biaya Penjemputan">
-                        <svg viewBox="0 0 24 24" aria-hidden="true">
-                            <circle cx="12" cy="12" r="8" />
-                            <path d="M12 8v4l2.5 2.5" />
-                            <path d="M7 3.5L4 6M17 3.5L20 6" />
-                        </svg>
-                        <span>Biaya Penjemputan</span>
-                    </a> --}}
                     <a href="{{ url('/admin/laporan') }}"
                         class="admin-nav__link {{ request()->is('admin/laporan') ? 'is-active' : '' }}" data-nav-link
                         data-tooltip="Laporan">
@@ -132,11 +122,6 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" />
                             </svg>
                         </button>
-                        {{-- <button type="button" class="sidebar-open" data-sidebar-open aria-label="Buka navigasi">
-                            <svg viewBox="0 0 24 24" aria-hidden="true">
-                                <path d="M4 7h16M4 12h16M4 17h16" />
-                            </svg>
-                        </button> --}}
                         <div class="admin-breadcrumb">
                             <span>Workspace</span>
                             <svg viewBox="0 0 24 24" aria-hidden="true">
@@ -147,6 +132,13 @@
                     </div>
 
                     <div class="admin-topbar__right" style="display:flex; align-items:center; gap:16px;">
+                        <!-- Global Language Switcher -->
+                        <div class="lang-switch" data-lang-switch>
+                            <button type="button" class="lang-btn is-active" data-lang-btn="id" aria-label="Bahasa Indonesia">ID</button>
+                            <span class="lang-divider">|</span>
+                            <button type="button" class="lang-btn" data-lang-btn="en" aria-label="English Language">EN</button>
+                        </div>
+
                         <div id="live-clock-widget"
                             style="display:flex; align-items:center; gap:8px; background:#f8fafc; border:1px solid #e2e8f0; padding:6px 14px; border-radius:20px; font-size:12px; color:#475569;">
                             <span id="admin-live-clock">Memuat jam...</span>

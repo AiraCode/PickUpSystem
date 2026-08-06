@@ -84,7 +84,7 @@
                         </tr>
                     </thead>
                     <tbody id="top-accus-tbody">
-                        <tr><td colspan="3"><div class="admin-table-empty">Memuat data...</div></td></tr>
+                        <tr><td colspan="3"><div class="admin-table-empty"><strong>Memuat data...</strong></div></td></tr>
                     </tbody>
                 </table>
             </div>
@@ -106,7 +106,7 @@
                         </tr>
                     </thead>
                     <tbody id="top-cities-tbody">
-                        <tr><td colspan="2"><div class="admin-table-empty">Memuat data...</div></td></tr>
+                        <tr><td colspan="2"><div class="admin-table-empty"><strong>Memuat data...</strong></div></td></tr>
                     </tbody>
                 </table>
             </div>

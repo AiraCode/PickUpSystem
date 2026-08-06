@@ -20,13 +20,13 @@
                 <div class="user-hero__content user-container">
                     <div class="user-hero__copy">
                         <h1>
-                            Jual Aki Reject Anda dengan<br>
+                            <span>Jual Aki Reject Anda dengan</span><br>
                             <em>Harga Terbaik</em>
                         </h1>
                         <p>Modern Mulya Mandiri membeli aki mobil dan aki motor reject dengan proses cepat, transparan, dan
                             pembayaran langsung ke rekening Anda.</p>
                         <div class="user-hero__actions">
-                            <a href="#daftar-harga" class="user-button user-button--primary">Jual Sekarang <span
+                            <a href="#daftar-harga" class="user-button user-button--primary"><span>Jual Sekarang</span> <span
                                     aria-hidden="true">→</span></a>
                         </div>
                     </div>
@@ -38,7 +38,7 @@
                     <div class="user-section-heading user-section-heading--split">
                         <div>
                             <span class="user-kicker">CARA MENJUAL</span>
-                            <h2>Serahkan aki Anda<br><em>dalam tiga langkah.</em></h2>
+                            <h2><span>Serahkan aki Anda</span><br><em>dalam tiga langkah.</em></h2>
                         </div>
                         <p>Semua proses dibuat sederhana agar Anda dapat mengetahui estimasi nilai aki dan metode penyerahan
                             dengan jelas.</p>
@@ -82,7 +82,7 @@
                 <div class="user-container">
                     <div class="user-section-heading">
                         <span class="user-kicker">KATALOG AKI</span>
-                        <h2>Harga jual aki terbaik<br><em>se-Indonesia.</em></h2>
+                        <h2>Harga jual aki terbaik<br><em><span>se-Indonesia.</span></em></h2>
                         <p style="max-width: none; font-size: 16px;">Pilih kota untuk menampilkan data yang terhubung pada
                             sistem.</p>
                     </div>
@@ -218,7 +218,7 @@
                             </div>
 
                             <div class="user-address">
-                                <div class="user-checkout-label">ALAMAT PENJUAL</div>
+                                <div class="user-checkout-label"><span>ALAMAT PENJUAL</span></div>
                                 <p style="font-size:13px; color:#475569; margin-bottom:10px;">Gunakan peta untuk menentukan
                                     lokasi presisi penjemputan.</p>
                                 <div id="user-address-fields" style="display:none;">
@@ -251,8 +251,7 @@
                                     style="display:none; font-size: 11px; color: #475569; margin-top: 8px;"></div>
                                 <div id="user-coords-badge"
                                     style="display:none; font-size: 11px; color: #1e40af; background: rgba(37,99,235,0.06); padding: 10px; border-radius: 8px; margin-top: 8px; border: 1px solid rgba(37,99,235,0.15); line-height: 1.4; text-align: left;">
-                                    <strong style="display:block; margin-bottom: 2px;">📍 Gudang Penerimaan
-                                        Terdekat:</strong>
+                                    <strong style="display:block; margin-bottom: 2px;"><span>📍 Gudang Penerimaan Terdekat:</span></strong>
                                     <span id="nearest-warehouse-detail">Mencari...</span>
                                 </div>
                                 <p style="margin-top: 10px;">Alamat digunakan untuk menentukan gudang terdekat serta
@@ -260,7 +259,7 @@
                             </div>
 
                             <button type="button" id="checkout-submit-btn"
-                                class="user-button user-button--primary user-button--full" style="margin-top: 20px;">Lanjut
+                                class="user-button user-button--primary user-button--full" style="margin-top: 20px;">Lanjut<
                                 <span aria-hidden="true">→</span></button>
                         </aside>
                     </div>
@@ -270,8 +269,8 @@
             <section class="user-faq user-section" id="faq">
                 <div class="user-container user-faq__inner">
                     <div>
-                        <span class="user-kicker">PERTANYAAN UMUM</span>
-                        <h2>Siap menjual aki<br><em>tanpa proses rumit?</em></h2>
+                        <span class="user-kicker"><span>PERTANYAAN UMUM</span></span>
+                        <h2>Siap menjual aki<<br><em>tanpa proses rumit?</em></h2>
                     </div>
                     <div class="user-faq__list">
                         <details>

@@ -1,6 +1,25 @@
 import.meta.glob(["../img/**", "/resources/img/**"]);
+import { pageTranslator } from './page-translator.js';
+
+// Initialize global translation system on load
+document.addEventListener('DOMContentLoaded', () => {
+    pageTranslator.start();
+});
+
+// Global Event Delegation for Language Switch Buttons
+document.addEventListener('click', (event) => {
+    const langBtn = event.target.closest('[data-lang-btn]');
+    if (langBtn) {
+        event.preventDefault();
+        const lang = langBtn.getAttribute('data-lang-btn');
+        if (lang) {
+            pageTranslator.setLanguage(lang);
+        }
+    }
+});
 
 const sidebar = document.querySelector("#admin-sidebar");
+
 const sidebarOverlay = document.querySelector("[data-sidebar-overlay]");
 const sidebarOpen = document.querySelector("[data-sidebar-open]");
 const sidebarClose = document.querySelector("[data-sidebar-close]");

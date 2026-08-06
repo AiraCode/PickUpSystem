@@ -252,6 +252,14 @@
         <div class="bg-glow-1"></div>
         <div class="bg-glow-2"></div>
 
+        <div class="admin-dark-mode" style="position: absolute; top: 20px; right: 20px; z-index: 10;">
+            <div class="lang-switch" data-lang-switch>
+                <button type="button" class="lang-btn is-active" data-lang-btn="id" aria-label="Bahasa Indonesia">ID</button>
+                <span class="lang-divider">|</span>
+                <button type="button" class="lang-btn" data-lang-btn="en" aria-label="English Language">EN</button>
+            </div>
+        </div>
+
         <div class="login-wrapper">
             <div class="login-card">
                 <div class="login-brand">
