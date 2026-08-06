@@ -52,6 +52,10 @@ Route::prefix('admin')->group(function () {
         return view('admin.storages');
     });
 
+    Route::get('/gudang/{id}', function ($id) {
+        return view('admin.storage-detail', compact('id'));
+    });
+
     Route::get('/pengguna', function () {
         return view('admin.users');
     });

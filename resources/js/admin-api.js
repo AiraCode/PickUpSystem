@@ -243,6 +243,10 @@ document.addEventListener("DOMContentLoaded", () => {
                       bg: "rgba(59, 130, 246, 0.25)",
                       color: "#60a5fa",
                   },
+                  arrived_at_warehouse: {
+                      bg: "rgba(139, 92, 246, 0.25)",
+                      color: "#c084fc",
+                  },
                   completed: {
                       bg: "rgba(16, 185, 129, 0.25)",
                       color: "#34d399",
@@ -255,6 +259,7 @@ document.addEventListener("DOMContentLoaded", () => {
             : {
                   pending: { bg: "#fef3c7", color: "#92400e" },
                   processing: { bg: "#dbeafe", color: "#1e40af" },
+                  arrived_at_warehouse: { bg: "#f3e8ff", color: "#6b21a8" },
                   completed: { bg: "#d1fae5", color: "#065f46" },
                   cancelled: { bg: "#fee2e2", color: "#991b1b" },
               };
@@ -263,7 +268,8 @@ document.addEventListener("DOMContentLoaded", () => {
             (isDark
                 ? { bg: "rgba(148, 163, 184, 0.25)", color: "#cbd5e1" }
                 : { bg: "#f3f4f6", color: "#374151" });
-        return `<span style="padding:4px 10px; border-radius:20px; font-size:11px; font-weight:600; background:${c.bg}; color:${c.color}; text-transform:uppercase;">${status}</span>`;
+        const labelText = status === "arrived_at_warehouse" ? "SAMPAI GUDANG" : status.toUpperCase();
+        return `<span style="padding:4px 10px; border-radius:20px; font-size:11px; font-weight:600; background:${c.bg}; color:${c.color}; text-transform:uppercase;">${labelText}</span>`;
     };
 
     const btnLogout = document.getElementById("btn-logout");
@@ -900,19 +906,22 @@ document.addEventListener("DOMContentLoaded", () => {
                 const c = res.counts;
                 if (document.getElementById("count-pending"))
                     document.getElementById("count-pending").innerText =
-                        c.pending.toLocaleString("id-ID");
+                        (c.pending || 0).toLocaleString("id-ID");
                 if (document.getElementById("count-processing"))
                     document.getElementById("count-processing").innerText =
-                        c.processing.toLocaleString("id-ID");
+                        (c.processing || 0).toLocaleString("id-ID");
+                if (document.getElementById("count-arrived_at_warehouse"))
+                    document.getElementById("count-arrived_at_warehouse").innerText =
+                        (c.arrived_at_warehouse || 0).toLocaleString("id-ID");
                 if (document.getElementById("count-completed"))
                     document.getElementById("count-completed").innerText =
-                        c.completed.toLocaleString("id-ID");
+                        (c.completed || 0).toLocaleString("id-ID");
                 if (document.getElementById("count-cancelled"))
                     document.getElementById("count-cancelled").innerText =
-                        c.cancelled.toLocaleString("id-ID");
+                        (c.cancelled || 0).toLocaleString("id-ID");
                 if (document.getElementById("count-all"))
                     document.getElementById("count-all").innerText =
-                        c.all.toLocaleString("id-ID");
+                        (c.all || 0).toLocaleString("id-ID");
             }
 
             if (activeBadge) {
@@ -937,6 +946,11 @@ document.addEventListener("DOMContentLoaded", () => {
                             text: "PROCESSING",
                             bg: "#dbeafe",
                             color: "#1e40af",
+                        },
+                        arrived_at_warehouse: {
+                            text: "SAMPAI DI GUDANG",
+                            bg: "#f3e8ff",
+                            color: "#6b21a8",
                         },
                         completed: {
                             text: "COMPLETED",
@@ -968,10 +982,30 @@ document.addEventListener("DOMContentLoaded", () => {
             if (res.data && res.data.length) {
                 cachedOrders = res.data;
                 tbody.innerHTML = cachedOrders
-                    .map(
-                        (o) => `
-                    <tr onclick="viewOrderDetail(${o.id})" style="cursor:pointer;">
-                        <td style="font-weight:600; color:#3b82f6;">#${o.id}</td>
+                    .map((o) => {
+                        const isEditPending = o.receipt && parseInt(o.receipt.edit_confirmed_by_user) === 0;
+                        const isEditRejected = o.receipt && parseInt(o.receipt.edit_confirmed_by_user) === 2;
+
+                        let rowStyle = "cursor:pointer;";
+                        if (isEditPending) {
+                            rowStyle += " background:#fffdf5;";
+                        } else if (isEditRejected) {
+                            rowStyle += " background:#fff5f5;";
+                        }
+
+                        let editBadgeHtml = "";
+                        if (isEditPending) {
+                            editBadgeHtml = `<span style="background:#fffbeb; color:#b45309; border:1px solid #fde68a; padding:4px 8px; border-radius:6px; font-size:10px; font-weight:700; display:inline-flex; align-items:center; gap:4px; margin-right:4px;" title="Admin telah mengedit item pesanan, sedang menunggu konfirmasi dari customer">⏳ Menunggu Konfirmasi Customer</span>`;
+                        } else if (isEditRejected) {
+                            editBadgeHtml = `<span style="background:#fef2f2; color:#dc2626; border:1px solid #fecaca; padding:4px 8px; border-radius:6px; font-size:10px; font-weight:700; display:inline-flex; align-items:center; gap:4px; margin-right:4px;" title="Customer menolak perubahan item pesanan">❌ Perubahan Ditolak Customer</span>`;
+                        }
+
+                        return `
+                    <tr onclick="viewOrderDetail(${o.id})" style="${rowStyle}">
+                        <td style="font-weight:600; color:#3b82f6;">
+                            #${o.id}
+                            ${isEditPending ? '<span style="display:block; font-size:9px; color:#d97706; font-weight:700; margin-top:2px;">[EDITED]</span>' : ''}
+                        </td>
                         <td>
                             ${
                                 o.order_type === "trade_in"
@@ -997,12 +1031,13 @@ document.addEventListener("DOMContentLoaded", () => {
                         </td>
                         <td>${statusBadge(o.status)}</td>
                         <td style="text-align:right;">
-                            <div style="display:flex; gap:6px; justify-content:flex-end;">
+                            <div style="display:flex; gap:6px; justify-content:flex-end; align-items:center;">
+                                ${editBadgeHtml}
                                 <button onclick="event.stopPropagation(); editOrderStatus(${o.id}, '${o.status}')" class="admin-button admin-button--secondary" style="height:30px; font-size:11px;">Update</button>
                             </div>
                         </td>
-                    </tr>`,
-                    )
+                    </tr>`;
+                    })
                     .join("");
             } else {
                 tbody.innerHTML = `<tr><td colspan="8"><div class="admin-table-empty"><strong>Tidak ada pesanan ditemukan</strong></div></td></tr>`;
@@ -1044,6 +1079,10 @@ document.addEventListener("DOMContentLoaded", () => {
                               border: "#3b82f6",
                               bg: "rgba(59, 130, 246, 0.18)",
                           },
+                          arrived_at_warehouse: {
+                              border: "#8b5cf6",
+                              bg: "rgba(139, 92, 246, 0.18)",
+                          },
                           completed: {
                               border: "#10b981",
                               bg: "rgba(16, 185, 129, 0.18)",
@@ -1060,6 +1099,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     : {
                           pending: { border: "#f59e0b", bg: "#fffbeb" },
                           processing: { border: "#3b82f6", bg: "#eff6ff" },
+                          arrived_at_warehouse: { border: "#8b5cf6", bg: "#f3e8ff" },
                           completed: { border: "#10b981", bg: "#ecfdf5" },
                           cancelled: { border: "#ef4444", bg: "#fef2f2" },
                           all: { border: "#6b7280", bg: "#f9fafb" },
@@ -1176,6 +1216,10 @@ document.addEventListener("DOMContentLoaded", () => {
         loadOrders();
 
         window.editOrderStatus = (id, currentStatus) => {
+            if (isSpamFrozen) {
+                triggerSpamFreeze();
+                return;
+            }
             const order = cachedOrders.find((o) => o.id === id);
             document.getElementById("update-order-id").value = id;
             if (orderUpdateError) orderUpdateError.style.display = "none";
@@ -1231,11 +1275,43 @@ document.addEventListener("DOMContentLoaded", () => {
                 card.style.borderColor = r.checked ? "#3b82f6" : "#e5e7eb";
             });
 
-            if (containerCancelReason) {
-                containerCancelReason.style.display =
-                    currentStatus === "cancelled" ? "block" : "none";
-                if (cancelReasonInput) cancelReasonInput.value = "";
-            }
+            if (uploadInput) uploadInput.value = "";
+            if (uploadPreview) uploadPreview.style.display = "none";
+            if (uploadPlaceholder) uploadPlaceholder.style.display = "block";
+
+            const containerProofUpload = document.getElementById("container-proof-upload");
+            const proofLabel = document.getElementById("proof-label");
+
+            const updateModalUIForStatus = (selectedStatus) => {
+                if (containerCancelReason) {
+                    containerCancelReason.style.display = selectedStatus === "cancelled" ? "block" : "none";
+                    if (selectedStatus !== "cancelled" && cancelReasonInput) cancelReasonInput.value = "";
+                }
+                if (containerProofUpload) {
+                    if (selectedStatus === "completed" || selectedStatus === "arrived_at_warehouse") {
+                        containerProofUpload.style.display = "block";
+                        if (proofLabel) {
+                            proofLabel.innerText = selectedStatus === "completed"
+                                ? "Bukti Pembayaran / Transfer (Wajib)"
+                                : "Bukti Barang Diterima di Gudang (Wajib)";
+                        }
+                    } else {
+                        containerProofUpload.style.display = "none";
+                    }
+                }
+            };
+
+            radios.forEach((r) => {
+                r.onchange = () => {
+                    radios.forEach(other => {
+                        const card = other.closest("label");
+                        if (card) card.style.borderColor = other.checked ? "#3b82f6" : "#e5e7eb";
+                    });
+                    updateModalUIForStatus(r.value);
+                };
+            });
+
+            updateModalUIForStatus(currentStatus);
 
             const uploadArea = document.getElementById("upload-area");
             const proofViewArea = document.getElementById("proof-view-area");
@@ -1792,10 +1868,82 @@ document.addEventListener("DOMContentLoaded", () => {
             });
         }
 
+        // Anti-Spam Protection System for Admin Update
+        const SPAM_LIMIT = 10;
+        const SPAM_WINDOW_MS = 30000;
+        let updateTimestamps = [];
+        let isSpamFrozen = false;
+        let freezeTimerInterval = null;
+
+        function recordAndCheckSpam() {
+            const now = Date.now();
+            updateTimestamps = updateTimestamps.filter(t => now - t < SPAM_WINDOW_MS);
+            updateTimestamps.push(now);
+
+            if (updateTimestamps.length >= SPAM_LIMIT) {
+                triggerSpamFreeze();
+                return true;
+            }
+            return false;
+        }
+
+        function triggerSpamFreeze() {
+            isSpamFrozen = true;
+            const modalSpam = document.getElementById("modal-spam-warning");
+            const countdownEl = document.getElementById("spam-countdown-timer");
+            const oldestTimestamp = updateTimestamps[0] || Date.now();
+            let remainingMs = SPAM_WINDOW_MS - (Date.now() - oldestTimestamp);
+            if (remainingMs <= 0) remainingMs = SPAM_WINDOW_MS;
+
+            if (modalSpam) modalSpam.style.display = "flex";
+            const updateModal = document.getElementById("modal-update-order");
+            if (updateModal) updateModal.style.display = "none";
+
+            disableOrderUpdateUI(true);
+
+            if (freezeTimerInterval) clearInterval(freezeTimerInterval);
+
+            freezeTimerInterval = setInterval(() => {
+                remainingMs -= 1000;
+                const secondsLeft = Math.max(1, Math.ceil(remainingMs / 1000));
+                if (countdownEl) countdownEl.innerText = `${secondsLeft} detik`;
+
+                if (remainingMs <= 0) {
+                    clearInterval(freezeTimerInterval);
+                    isSpamFrozen = false;
+                    updateTimestamps = [];
+                    if (modalSpam) modalSpam.style.display = "none";
+                    disableOrderUpdateUI(false);
+                    showToast("Fungsi update di halaman ini telah aktif kembali.", "success");
+                }
+            }, 1000);
+        }
+
+        function disableOrderUpdateUI(disabled) {
+            document.querySelectorAll("button[onclick*='editOrderStatus']").forEach(btn => {
+                btn.disabled = disabled;
+                btn.style.opacity = disabled ? "0.4" : "1";
+                btn.style.cursor = disabled ? "not-allowed" : "pointer";
+                btn.style.pointerEvents = disabled ? "none" : "auto";
+            });
+            const submitBtn = document.getElementById("btn-update-submit");
+            if (submitBtn) submitBtn.disabled = disabled;
+        }
+
         const formUpdate = document.getElementById("form-update-order");
         if (formUpdate) {
             formUpdate.addEventListener("submit", async (e) => {
                 e.preventDefault();
+
+                if (isSpamFrozen) {
+                    triggerSpamFreeze();
+                    return;
+                }
+
+                if (recordAndCheckSpam()) {
+                    return;
+                }
+
                 if (orderUpdateError) orderUpdateError.style.display = "none";
 
                 const id = document.getElementById("update-order-id").value;
@@ -1829,41 +1977,42 @@ document.addEventListener("DOMContentLoaded", () => {
                     payload.cancel_reason = reason;
                 }
 
-                if (statusVal === "completed") {
+                if (statusVal === "completed" || statusVal === "arrived_at_warehouse") {
                     const hasFile =
                         uploadInput &&
                         uploadInput.files &&
                         uploadInput.files.length > 0;
-                    const hasPreview =
-                        uploadPreview && uploadPreview.style.display !== "none";
-                    if (!hasFile && !hasPreview) {
+                    if (!hasFile) {
                         if (orderUpdateError) {
-                            orderUpdateError.innerText =
-                                "Wajib mengunggah foto bukti pembayaran / penyerahan untuk status Completed!";
+                            orderUpdateError.innerText = statusVal === "completed"
+                                ? "Wajib mengunggah foto bukti pembayaran / penyerahan untuk status Completed!"
+                                : "Wajib mengunggah foto bukti barang diterima di gudang untuk status Sampai di Gudang!";
                             orderUpdateError.style.display = "block";
                         }
                         return;
                     }
-                    if (hasFile) {
-                        try {
-                            const base64Str = await new Promise(
-                                (resolve, reject) => {
-                                    const reader = new FileReader();
-                                    reader.onload = (ev) =>
-                                        resolve(ev.target.result);
-                                    reader.onerror = (err) => reject(err);
-                                    reader.readAsDataURL(uploadInput.files[0]);
-                                },
-                            );
+                    try {
+                        const base64Str = await new Promise(
+                            (resolve, reject) => {
+                                const reader = new FileReader();
+                                reader.onload = (ev) =>
+                                    resolve(ev.target.result);
+                                reader.onerror = (err) => reject(err);
+                                reader.readAsDataURL(uploadInput.files[0]);
+                            },
+                        );
+                        if (statusVal === "completed") {
                             payload.proof_base64 = base64Str;
-                        } catch (err) {
-                            if (orderUpdateError) {
-                                orderUpdateError.innerText =
-                                    "Gagal membaca foto bukti pembayaran.";
-                                orderUpdateError.style.display = "block";
-                            }
-                            return;
+                        } else {
+                            payload.warehouse_proof_base64 = base64Str;
                         }
+                    } catch (err) {
+                        if (orderUpdateError) {
+                            orderUpdateError.innerText =
+                                "Gagal membaca foto bukti upload.";
+                            orderUpdateError.style.display = "block";
+                        }
+                        return;
                     }
                 }
 
@@ -1872,12 +2021,9 @@ document.addEventListener("DOMContentLoaded", () => {
                     body: JSON.stringify(payload),
                 });
 
-                if (res.data) {
-                    document.getElementById(
-                        "modal-update-order",
-                    ).style.display = "none";
-                    showToast("Status pesanan berhasil diperbarui!", "success");
-                    loadOrders();
+                if (res.data || res.message) {
+                    document.querySelectorAll("div[id^='modal-'], div[id*='modal']").forEach(m => m.style.display = "none");
+                    window.location.reload();
                 } else {
                     if (orderUpdateError) {
                         orderUpdateError.innerText =
@@ -1889,6 +2035,152 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         switchOrderTab("pending");
+
+        // Admin Edit Order Items Logic
+        const btnOpenEditItems = document.getElementById("btn-open-edit-order-items");
+        const modalEditItems = document.getElementById("modal-edit-order-items");
+        const rowsContainer = document.getElementById("edit-items-rows-container");
+        const btnAddRow = document.getElementById("btn-add-edit-item-row");
+        const formEditItems = document.getElementById("form-edit-order-items");
+        const editItemsError = document.getElementById("edit-items-error");
+
+        let cityAccusList = [];
+
+        function addEditItemRow(selectedAccuId = null, amount = 1) {
+            if (!rowsContainer) return;
+            const rowDiv = document.createElement("div");
+            rowDiv.className = "edit-item-row";
+            rowDiv.style.cssText = "display:flex; gap:10px; align-items:center;";
+
+            let optionsHtml = cityAccusList.map(a => `<option value="${a.id}" ${a.id === selectedAccuId ? 'selected' : ''}>${a.name} (${a.brand || '-'})</option>`).join("");
+            if (!optionsHtml) {
+                optionsHtml = `<option value="">Tidak ada jenis aki...</option>`;
+            }
+
+            rowDiv.innerHTML = `
+                <select class="admin-select accu-select" style="flex:1; padding:8px 10px; border-radius:6px; font-size:12px; background:#fff; border:1px solid #cbd5e1;" required>
+                    ${optionsHtml}
+                </select>
+                <input type="number" class="admin-select accu-qty" value="${amount}" min="1" style="width:90px; padding:8px 10px; border-radius:6px; font-size:12px; border:1px solid #cbd5e1;" placeholder="Qty" required>
+                <button type="button" class="btn-remove-row admin-button" style="background:#fee2e2; color:#dc2626; border:1px solid #fecaca; border-radius:6px; width:34px; height:34px; cursor:pointer; font-weight:bold; display:inline-flex; align-items:center; justify-content:center;">✕</button>
+            `;
+
+            rowDiv.querySelector(".btn-remove-row").addEventListener("click", () => {
+                if (rowsContainer.querySelectorAll(".edit-item-row").length > 1) {
+                    rowDiv.remove();
+                } else {
+                    showToast("Minimal harus ada 1 jenis aki dalam pesanan.", "warning");
+                }
+            });
+
+            rowsContainer.appendChild(rowDiv);
+        }
+
+        if (btnOpenEditItems) {
+            btnOpenEditItems.addEventListener("click", async () => {
+                if (!currentDetailOrder) return;
+                document.getElementById("edit-order-items-id").value = currentDetailOrder.id;
+                if (editItemsError) editItemsError.style.display = "none";
+
+                const cityId = currentDetailOrder.cities_id || 1;
+                try {
+                    const res = await fetchApi(`/cities/${cityId}/accus`);
+                    if (res && res.data && Array.isArray(res.data.accus)) {
+                        cityAccusList = res.data.accus;
+                    } else if (res && res.data && Array.isArray(res.data)) {
+                        cityAccusList = res.data;
+                    } else {
+                        cityAccusList = [];
+                    }
+                } catch (e) {
+                    console.error("Gagal memuat accu kota:", e);
+                    cityAccusList = [];
+                }
+
+                if (!cityAccusList || cityAccusList.length === 0) {
+                    try {
+                        const fallbackRes = await fetchApi('/accus');
+                        cityAccusList = (fallbackRes && fallbackRes.data) ? fallbackRes.data : [];
+                    } catch (e) {
+                        console.error("Gagal memuat fallback accus:", e);
+                        cityAccusList = [];
+                    }
+                }
+
+                const existingAccus = (currentDetailOrder.receipt && currentDetailOrder.receipt.accus) ? currentDetailOrder.receipt.accus : [];
+                rowsContainer.innerHTML = "";
+
+                if (existingAccus.length > 0) {
+                    existingAccus.forEach(item => {
+                        addEditItemRow(item.id, item.amount || 1);
+                    });
+                } else {
+                    addEditItemRow(null, 1);
+                }
+
+                document.getElementById("modal-order-summary").style.display = "none";
+                if (modalEditItems) modalEditItems.style.display = "flex";
+            });
+        }
+
+        if (btnAddRow) {
+            btnAddRow.addEventListener("click", () => addEditItemRow());
+        }
+
+        if (formEditItems) {
+            formEditItems.addEventListener("submit", async (e) => {
+                e.preventDefault();
+                if (editItemsError) editItemsError.style.display = "none";
+
+                const orderId = document.getElementById("edit-order-items-id").value;
+                const rows = rowsContainer.querySelectorAll(".edit-item-row");
+                const itemsPayload = [];
+
+                rows.forEach(r => {
+                    const accuId = parseInt(r.querySelector(".accu-select").value);
+                    const qty = parseInt(r.querySelector(".accu-qty").value);
+                    if (accuId && qty > 0) {
+                        itemsPayload.push({ accu_id: accuId, amount: qty });
+                    }
+                });
+
+                if (itemsPayload.length === 0) {
+                    if (editItemsError) {
+                        editItemsError.innerText = "Pilih minimal 1 jenis aki.";
+                        editItemsError.style.display = "block";
+                    }
+                    return;
+                }
+
+                try {
+                    const btnSave = document.getElementById("btn-save-edit-items");
+                    if (btnSave) btnSave.disabled = true;
+
+                    const res = await fetchApi(`/orders/${orderId}/items`, {
+                        method: "PUT",
+                        body: JSON.stringify({ items: itemsPayload })
+                    });
+
+                    if (btnSave) btnSave.disabled = false;
+
+                    if (res.data || res.message) {
+                        document.querySelectorAll("div[id^='modal-'], div[id*='modal']").forEach(m => m.style.display = "none");
+                        window.location.reload();
+                    } else if (res.message) {
+                        if (editItemsError) {
+                            editItemsError.innerText = res.message;
+                            editItemsError.style.display = "block";
+                        }
+                    }
+                } catch (err) {
+                    console.error("Gagal simpan edit item:", err);
+                    if (editItemsError) {
+                        editItemsError.innerText = "Terjadi kesalahan saat menyimpan perubahan.";
+                        editItemsError.style.display = "block";
+                    }
+                }
+            });
+        }
     }
 
     if (window.location.pathname === "/admin/harga") {
@@ -2849,11 +3141,16 @@ document.addEventListener("DOMContentLoaded", () => {
                     .map(
                         (s) => `
                     <tr>
-                        <td style="font-weight:500;">${s.name}</td>
+                        <td style="font-weight:600;">
+                            <a href="/admin/gudang/${s.id}" style="color:#2563eb; text-decoration:none; display:inline-flex; align-items:center; gap:6px;" onmouseover="this.style.textDecoration='underline'" onmouseout="this.style.textDecoration='none'">
+                                <span>🏢 ${s.name}</span>
+                            </a>
+                        </td>
                         <td>${s.address || "-"}</td>
                         <td>
                             <div style="display:flex; gap:6px;">
-                                <button onclick="showStorageMap('${s.name}', ${s.lat}, ${s.long})" class="admin-button admin-button--primary" style="height:30px; font-size:11px;">Lihat Peta</button>
+                                <a href="/admin/gudang/${s.id}" class="admin-button admin-button--primary" style="height:30px; font-size:11px; text-decoration:none; display:inline-flex; align-items:center; gap:4px; background:#2563eb;">Detail & Stok</a>
+                                <button onclick="showStorageMap('${s.name.replace(/'/g, "\\'")}', ${s.lat}, ${s.long})" class="admin-button admin-button--secondary" style="height:30px; font-size:11px;">Lihat Peta</button>
                                 <button onclick="deleteStorage(${s.id})" class="admin-button admin-button--secondary" style="height:30px; font-size:11px; color:#ba1b2b;">Hapus</button>
                             </div>
                         </td>

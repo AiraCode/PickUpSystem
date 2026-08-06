@@ -108,4 +108,56 @@ class WarehouseController extends Controller
             'message' => 'Gudang berhasil dihapus (soft delete)',
         ]);
     }
+
+    public function stockSummary(int $id): JsonResponse
+    {
+        $warehouse = Warehouse::find($id);
+        if (! $warehouse) {
+            return response()->json([
+                'message' => 'Gudang tidak ditemukan',
+                'warehouse' => null,
+                'stocks' => [],
+                'total_items' => 0,
+            ], 404);
+        }
+
+        $existingStocks = \Illuminate\Support\Facades\DB::table('orders')
+            ->join('receipts', 'orders.id', '=', 'receipts.orders_id')
+            ->join('accus_has_receipts', 'receipts.id', '=', 'accus_has_receipts.receipts_id')
+            ->join('accus', 'accus_has_receipts.accus_id', '=', 'accus.id')
+            ->whereIn('orders.status', ['arrived_at_warehouse', 'completed'])
+            ->where('orders.storages_id', $id)
+            ->select(
+                'accus.id as accu_id',
+                \Illuminate\Support\Facades\DB::raw('SUM(accus_has_receipts.amount) as total_quantity')
+            )
+            ->groupBy('accus.id')
+            ->pluck('total_quantity', 'accu_id');
+
+        $allAccus = \App\Models\Accu::orderBy('name', 'asc')->get();
+
+        $stocks = $allAccus->map(function ($accu) use ($existingStocks) {
+            $qty = (int) ($existingStocks[$accu->id] ?? 0);
+            return [
+                'accu_id' => $accu->id,
+                'accu_name' => $accu->name,
+                'accu_brand' => '-',
+                'total_quantity' => $qty,
+            ];
+        })->sort(function ($a, $b) {
+            if ($a['total_quantity'] !== $b['total_quantity']) {
+                return $b['total_quantity'] <=> $a['total_quantity'];
+            }
+            return strnatcasecmp($a['accu_name'], $b['accu_name']);
+        })->values();
+
+        $totalItems = $stocks->sum('total_quantity');
+
+        return response()->json([
+            'message' => 'Detail stok gudang berhasil diambil',
+            'warehouse' => $warehouse,
+            'stocks' => $stocks,
+            'total_items' => $totalItems,
+        ]);
+    }
 }
