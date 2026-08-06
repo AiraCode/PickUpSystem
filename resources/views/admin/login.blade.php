@@ -264,7 +264,7 @@
             <div class="login-card">
                 <div class="login-brand">
                     <div class="brand-logo-wrap">
-                        <img src="{{ Vite::asset('resources/img/logo_admin2-removebg-preview.png') }}" alt="Modern Mulya Mandiri Logo">
+                        <img src="{{ asset('img/logo_admin2-removebg-preview.png') }}" alt="Modern Mulya Mandiri Logo">
                     </div>
                     <span class="brand-kicker">MODERN MULYA MANDIRI</span>
                     <h1>One Stop Solution</h1>
@@ -283,10 +283,10 @@
                     </div>
 
                     <div class="form-group">
-                        <label class="form-label" for="password">Password</label>
+                        <label class="form-label" for="password">Kata Sandi</label>
                         <div class="input-wrapper">
                             <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-                            <input type="password" id="password" class="form-input" placeholder="Masukkan password" required autocomplete="current-password">
+                            <input type="password" id="password" class="form-input" placeholder="Masukkan kata sandi" required autocomplete="current-password">
                         </div>
                     </div>
 

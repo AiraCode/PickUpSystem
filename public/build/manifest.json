@@ -1,7 +1,7 @@
 {
-  "_fonts-C9MNnjVw.css": {
-    "file": "assets/fonts-C9MNnjVw.css",
-    "src": "_fonts-C9MNnjVw.css"
+  "_fonts-DqppEDJS.css": {
+    "file": "assets/fonts-DqppEDJS.css",
+    "src": "_fonts-DqppEDJS.css"
   },
   "_instrument-sans-400-normal-D1W7dsQl.woff": {
     "file": "assets/instrument-sans-400-normal-D1W7dsQl.woff",
@@ -28,7 +28,7 @@
     "src": "_instrument-sans-600-normal-B9e8oLYv.woff"
   },
   "resources/css/app.css": {
-    "file": "assets/app-C43kff86.css",
+    "file": "assets/app-CJ0dJmxq.css",
     "name": "app",
     "names": [
       "app.css"
@@ -36,29 +36,70 @@
     "src": "resources/css/app.css",
     "isEntry": true
   },
-  "resources/img/Aki_Yuasa-removebg-preview.png": {
-    "file": "assets/Aki_Yuasa-removebg-preview-CjjKnV-k.png",
-    "src": "resources/img/Aki_Yuasa-removebg-preview.png"
+  "resources/img/KTP_WILSON ANTONIUS.jpeg": {
+    "file": "assets/KTP_WILSON ANTONIUS-BnCgkiMD.jpeg",
+    "src": "resources/img/KTP_WILSON ANTONIUS.jpeg"
   },
   "resources/img/Logo_user-removebg-preview.png": {
-    "file": "assets/Logo_user-removebg-preview-CPILr9Sg.png",
-    "src": "resources/img/Logo_user-removebg-preview.png"
+    "file": "assets/Logo_user-removebg-preview-BvRk9kiK.js",
+    "name": "Logo_user-removebg-preview",
+    "src": "resources/img/Logo_user-removebg-preview.png",
+    "isEntry": true,
+    "assets": [
+      "assets/Logo_user-removebg-preview-CPILr9Sg.png"
+    ]
+  },
+  "resources/img/aki1.jpeg": {
+    "file": "assets/aki1-CRB9eeDM.jpeg",
+    "src": "resources/img/aki1.jpeg"
+  },
+  "resources/img/aki2.webp": {
+    "file": "assets/aki2-CixkNQPH.webp",
+    "src": "resources/img/aki2.webp"
+  },
+  "resources/img/aki3-removebg-preview.png": {
+    "file": "assets/aki3-removebg-preview-7MKM8Orj.png",
+    "src": "resources/img/aki3-removebg-preview.png"
+  },
+  "resources/img/aki4-removebg-preview.png": {
+    "file": "assets/aki4-removebg-preview-UgTI7Y_r.png",
+    "src": "resources/img/aki4-removebg-preview.png"
   },
   "resources/img/img_aki.png": {
-    "file": "assets/img_aki-DWKAy-ct.png",
-    "src": "resources/img/img_aki.png"
+    "file": "assets/img_aki-BvRk9kiK.js",
+    "name": "img_aki",
+    "src": "resources/img/img_aki.png",
+    "isEntry": true,
+    "assets": [
+      "assets/img_aki-DWKAy-ct.png"
+    ]
   },
   "resources/img/indoprima_logo.png": {
-    "file": "assets/indoprima_logo-DkF_bLVd.png",
-    "src": "resources/img/indoprima_logo.png"
+    "file": "assets/indoprima_logo-BvRk9kiK.js",
+    "name": "indoprima_logo",
+    "src": "resources/img/indoprima_logo.png",
+    "isEntry": true,
+    "assets": [
+      "assets/indoprima_logo-DkF_bLVd.png"
+    ]
   },
   "resources/img/logo_admin1-removebg-preview.png": {
-    "file": "assets/logo_admin1-removebg-preview-e1sfzfGJ.png",
-    "src": "resources/img/logo_admin1-removebg-preview.png"
+    "file": "assets/logo_admin1-removebg-preview-BvRk9kiK.js",
+    "name": "logo_admin1-removebg-preview",
+    "src": "resources/img/logo_admin1-removebg-preview.png",
+    "isEntry": true,
+    "assets": [
+      "assets/logo_admin1-removebg-preview-e1sfzfGJ.png"
+    ]
   },
   "resources/img/logo_admin2-removebg-preview.png": {
-    "file": "assets/logo_admin2-removebg-preview-BVj0x8P0.png",
-    "src": "resources/img/logo_admin2-removebg-preview.png"
+    "file": "assets/logo_admin2-removebg-preview-BvRk9kiK.js",
+    "name": "logo_admin2-removebg-preview",
+    "src": "resources/img/logo_admin2-removebg-preview.png",
+    "isEntry": true,
+    "assets": [
+      "assets/logo_admin2-removebg-preview-BVj0x8P0.png"
+    ]
   },
   "resources/js/admin-api.js": {
     "file": "assets/admin-api-CUvsyZk5.js",
@@ -67,10 +108,22 @@
     "isEntry": true
   },
   "resources/js/app.js": {
-    "file": "assets/app-C_sITuD7.js",
+    "file": "assets/app-B-O_jzaq.js",
     "name": "app",
     "src": "resources/js/app.js",
-    "isEntry": true
+    "isEntry": true,
+    "imports": [
+      "resources/img/Logo_user-removebg-preview.png",
+      "resources/img/Logo_user-removebg-preview.png",
+      "resources/img/img_aki.png",
+      "resources/img/img_aki.png",
+      "resources/img/indoprima_logo.png",
+      "resources/img/indoprima_logo.png",
+      "resources/img/logo_admin1-removebg-preview.png",
+      "resources/img/logo_admin1-removebg-preview.png",
+      "resources/img/logo_admin2-removebg-preview.png",
+      "resources/img/logo_admin2-removebg-preview.png"
+    ]
   },
   "resources/js/user-api.js": {
     "file": "assets/user-api-s4e-Zuvp.js",

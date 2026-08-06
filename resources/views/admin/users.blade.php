@@ -46,7 +46,7 @@
                 <input type="text" id="user-name" class="admin-select" style="width:100%; padding:8px 10px; border-radius:6px;" required>
             </div>
             <div style="margin-bottom:16px;">
-                <label style="display:block; font-size:12px; font-weight:600; margin-bottom:6px; color:#4a4f59;">Password</label>
+                <label style="display:block; font-size:12px; font-weight:600; margin-bottom:6px; color:#4a4f59;">Kata Sandi</label>
                 <input type="password" id="user-password" class="admin-select" style="width:100%; padding:8px 10px; border-radius:6px;" required>
             </div>
             <div style="display:flex; gap:10px; justify-content:flex-end;">
@@ -64,12 +64,12 @@
         </div>
         <h2 style="font-size:18px; font-weight:700; color:#111318; margin-bottom:6px;">Akses Rahasia Staf Admin</h2>
         <p style="font-size:13px; color:#6d727c; margin-bottom:20px; line-height:1.4;">
-            Halaman ini dilindungi password khusus. Masukkan password rahasia untuk membuka akses pembuatan akun admin.
+            Halaman ini dilindungi kata sandi khusus. Masukkan kata sandi rahasia untuk membuka akses pembuatan akun admin.
         </p>
         <form id="form-easter-egg-auth">
             <div style="margin-bottom:16px;">
-                <input type="password" id="easter-egg-password" class="admin-select" style="width:100%; padding:10px 12px; font-size:14px; text-align:center; border-radius:6px; letter-spacing:2px;" placeholder="Masukkan password..." required>
-                <div id="easter-egg-error" style="display:none; color:#ba1b2b; font-size:12px; margin-top:8px; font-weight:600;">Password rahasia salah!</div>
+                <input type="password" id="easter-egg-password" class="admin-select" style="width:100%; padding:10px 12px; font-size:14px; text-align:center; border-radius:6px; letter-spacing:2px;" placeholder="Masukkan kata sandi..." required>
+                <div id="easter-egg-error" style="display:none; color:#ba1b2b; font-size:12px; margin-top:8px; font-weight:600;">Kata sandi rahasia salah!</div>
             </div>
             <div style="display:flex; gap:10px; justify-content:center;">
                 <a href="/admin/login" class="admin-button admin-button--secondary" style="text-decoration:none; display:inline-flex; align-items:center;">Ke Login</a>

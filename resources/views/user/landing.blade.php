@@ -9,11 +9,13 @@
                 <div class="user-hero__media" aria-label="Area gambar hero">
                     <div class="hero-slideshow">
                         <div class="hero-slide is-active"
-                            style="background-image: url('{{ asset('img/Aki_GS_Hijau-removebg-preview.png') }}');"></div>
+                            style="background-image: url('{{ asset('img/aki1.jpeg') }}');"></div>
                         <div class="hero-slide"
-                            style="background-image: url('{{ asset('img/Aki_GS_Putih-removebg-preview.png') }}');"></div>
+                            style="background-image: url('{{ asset('img/aki2.webp') }}');"></div>
                         <div class="hero-slide"
-                            style="background-image: url('{{ asset('img/Aki_Yuasa-removebg-preview.png') }}');"></div>
+                            style="background-image: url('{{ asset('img/aki3-removebg-preview.png') }}');"></div>
+                        <div class="hero-slide"
+                            style="background-image: url('{{ asset('img/aki4-removebg-preview.png') }}');"></div>
                     </div>
                     <span class="user-hero__overlay" aria-hidden="true"></span>
                 </div>
@@ -251,7 +253,7 @@
                             </div>
 
                             <button type="button" id="checkout-submit-btn"
-                                class="user-button user-button--primary user-button--full" style="margin-top: 20px;">Lanjut<
+                                class="user-button user-button--primary user-button--full" style="margin-top: 20px;"><span>Lanjut</span>
                                 <span aria-hidden="true">→</span></button>
                         </aside>
                     </div>

@@ -23,7 +23,7 @@
                 <div class="admin-sidebar__head">
                     <a href="{{ url('/admin/dashboard') }}" class="admin-brand" aria-label="One Stop Solution admin">
 
-                        <img src="{{ Vite::asset('resources/img/logo_admin2-removebg-preview.png') }}" alt="Modern Mulya Mandiri"
+                        <img src="{{ asset('img/logo_admin2-removebg-preview.png') }}" alt="Modern Mulya Mandiri"
                             class="admin-brand__logo" style="height: 40px; width: auto; object-fit: contain;">
 
                         <span class="admin-brand__copy">
@@ -203,14 +203,14 @@
                     </div>
                     <div style="margin-bottom:14px;">
                         <label
-                            style="display:block; font-size:12px; font-weight:600; margin-bottom:6px; color:#4a4f59;">Password
-                            Saat Ini (Wajib jika ganti password)</label>
+                            style="display:block; font-size:12px; font-weight:600; margin-bottom:6px; color:#4a4f59;">Kata Sandi
+                            Saat Ini (Wajib jika ganti kata sandi)</label>
                         <input type="password" id="profile-current-password" class="admin-select"
-                            style="width:100%; padding:8px 10px; border-radius:6px;" placeholder="Password lama">
+                            style="width:100%; padding:8px 10px; border-radius:6px;" placeholder="Kata sandi lama">
                     </div>
                     <div style="margin-bottom:18px;">
                         <label
-                            style="display:block; font-size:12px; font-weight:600; margin-bottom:6px; color:#4a4f59;">Password
+                            style="display:block; font-size:12px; font-weight:600; margin-bottom:6px; color:#4a4f59;">Kata Sandi
                             Baru (Opsional)</label>
                         <input type="password" id="profile-new-password" class="admin-select"
                             style="width:100%; padding:8px 10px; border-radius:6px;"
@@ -234,15 +234,15 @@
                     <h2>Konfirmasi Keluar</h2>
                 </div>
                 <form id="form-logout-confirm">
-                    <p style="font-size:13px; color:#4a4f59; margin-bottom:14px;">Masukkan password Anda untuk
+                    <p style="font-size:13px; color:#4a4f59; margin-bottom:14px;">Masukkan kata sandi Anda untuk
                         mengonfirmasi keluar dari sistem.</p>
                     <div style="margin-bottom:16px;">
                         <label
-                            style="display:block; font-size:12px; font-weight:600; margin-bottom:6px; color:#4a4f59;">Password
+                            style="display:block; font-size:12px; font-weight:600; margin-bottom:6px; color:#4a4f59;">Kata Sandi
                             Admin</label>
                         <input type="password" id="logout-password" class="admin-select"
                             style="width:100%; padding:8px 10px; border-radius:6px;"
-                            placeholder="Masukkan password Anda" required>
+                            placeholder="Masukkan kata sandi Anda" required>
                     </div>
                     <div id="logout-error" style="display:none; color:#ba1b2b; font-size:12px; margin-bottom:14px;">
                     </div>

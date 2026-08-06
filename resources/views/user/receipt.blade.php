@@ -7,9 +7,10 @@
         <section class="user-flow-hero user-flow-hero--receipt">
             <div class="user-flow-hero__bg">
                 <div class="hero-slideshow">
-                    <div class="hero-slide is-active" style="background-image: url('{{ asset('img/Aki_GS_Hijau-removebg-preview.png') }}');"></div>
-                    <div class="hero-slide" style="background-image: url('{{ asset('img/Aki_GS_Putih-removebg-preview.png') }}');"></div>
-                    <div class="hero-slide" style="background-image: url('{{ asset('img/Aki_Yuasa-removebg-preview.png') }}');"></div>
+                    <div class="hero-slide is-active" style="background-image: url('{{ asset('img/aki1.jpeg') }}');"></div>
+                    <div class="hero-slide" style="background-image: url('{{ asset('img/aki2.webp') }}');"></div>
+                    <div class="hero-slide" style="background-image: url('{{ asset('img/aki3-removebg-preview.png') }}');"></div>
+                    <div class="hero-slide" style="background-image: url('{{ asset('img/aki4-removebg-preview.png') }}');"></div>
                 </div>
             </div>
             <div class="user-flow-hero__overlay"></div>
@@ -56,7 +57,7 @@
                 <article class="user-receipt" data-receipt>
                     <div class="user-receipt__top">
                         <div class="user-receipt__brand">
-                            <img src="{{ Vite::asset('resources/img/logo_admin2-removebg-preview.png') }}" alt="Modern Mulya Mandiri" style="height: 45px; width: auto; object-fit: contain;">
+                            <img src="{{ asset('img/logo_admin2-removebg-preview.png') }}" alt="Modern Mulya Mandiri" style="height: 45px; width: auto; object-fit: contain;">
                             <div><strong>Modern Mulya Mandiri</strong><small>One Stop Solution</small></div>
                         </div>
                         <div class="user-receipt__meta">
@@ -157,7 +158,7 @@
                 </article>
 
                 <div class="user-receipt-actions">
-                    <a href="/user" class="user-button user-button--secondary">Kembali ke halaman utama</a>
+                    <a href="/user" class="user-button user-button--secondary">Kembali ke Beranda</a>
                     <button type="button" class="user-button user-button--primary" onclick="window.print()">Cetak receipt</button>
                 </div>
             </div>

@@ -19,7 +19,7 @@ class PageTranslator {
         }
         
         this.observer = null;
-        this.skipElements = new Set(['SCRIPT', 'STYLE', 'CODE', 'PRE', 'TEXTAREA', 'INPUT', 'SVG', 'CANVAS', 'OPTION', 'NOSCRIPT']);
+        this.skipElements = new Set(['SCRIPT', 'STYLE', 'CODE', 'PRE', 'SVG', 'CANVAS', 'NOSCRIPT']);
         this.attributesToTranslate = ['placeholder', 'title', 'aria-label', 'alt', 'aria-description'];
         
         // Stats
@@ -187,9 +187,8 @@ class PageTranslator {
     }
 
     replacePhrase(originalText, searchPhrase, replacement) {
-        const escaped = this.escapeRegExp(searchPhrase);
+        const escaped = this.escapeRegExp(searchPhrase.trim()).replace(/\s+/g, '\\s+');
         // Match phrase surrounded by start/end of string, or non-alphanumeric (allowing spaces, punctuation, brackets)
-        // A-Za-z0-9_À-ÿ captures letters/numbers.
         const regex = new RegExp(`(^|[^a-zA-Z0-9_À-ÿ])(${escaped})([^a-zA-Z0-9_À-ÿ]|$)`, 'gi');
         return originalText.replace(regex, (match, p1, p2, p3) => p1 + replacement + p3);
     }
@@ -198,7 +197,7 @@ class PageTranslator {
         if (!textNode.nodeValue || !textNode.nodeValue.trim()) return;
 
         const parent = textNode.parentElement;
-        if (parent && (this.skipElements.has(parent.tagName.toUpperCase()) || parent.closest('[data-no-translate]'))) {
+        if (parent && (this.skipElements.has(parent.tagName.toUpperCase()) || ['INPUT', 'TEXTAREA'].includes(parent.tagName.toUpperCase()) || parent.closest('[data-no-translate]'))) {
             this.stats.ignored++;
             return;
         }
@@ -215,7 +214,9 @@ class PageTranslator {
             
             // Loop through dictionary (already sorted by longest first)
             for (const [idPhrase, enPhrase] of Object.entries(this.dictionary)) {
-                if (processedText.toLowerCase().includes(idPhrase.toLowerCase())) {
+                const searchPattern = this.escapeRegExp(idPhrase.trim()).replace(/\s+/g, '\\s+');
+                const testRegex = new RegExp(searchPattern, 'i');
+                if (testRegex.test(processedText)) {
                     const newText = this.replacePhrase(processedText, idPhrase, enPhrase);
                     if (newText !== processedText) {
                         processedText = newText;

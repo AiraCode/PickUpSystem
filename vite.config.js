@@ -6,7 +6,7 @@ import tailwindcss from '@tailwindcss/vite';
 export default defineConfig({
     plugins: [
         laravel({
-            input: ['resources/css/app.css', 'resources/js/app.js', 'resources/js/admin-api.js', 'resources/js/user-api.js', 'resources/img/indoprima_logo.png', 'resources/img/Logo_user-removebg-preview.png', 'resources/img/logo_admin1-removebg-preview.png','resources/img/logo_admin2-removebg-preview.png', 'resources/img/Aki_Yuasa-removebg-preview.png', 'resources/img/img_aki.png'],
+            input: ['resources/css/app.css', 'resources/js/app.js', 'resources/js/admin-api.js', 'resources/js/user-api.js', 'resources/img/indoprima_logo.png', 'resources/img/Logo_user-removebg-preview.png', 'resources/img/logo_admin1-removebg-preview.png', 'resources/img/logo_admin2-removebg-preview.png', 'resources/img/img_aki.png'],
             refresh: true,
             fonts: [
                 bunny('Instrument Sans', {

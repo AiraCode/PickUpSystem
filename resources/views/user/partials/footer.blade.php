@@ -2,7 +2,7 @@
     <div class="user-footer__main">
         <div class="user-footer__identity">
             <a class="user-brand user-brand--footer" aria-label="One Stop Solution user">
-                <img src="{{ Vite::asset('resources/img/logo_admin2-removebg-preview.png') }}"
+                <img src="{{ asset('img/logo_admin2-removebg-preview.png') }}"
                     alt="Modern Mulya Mandiri" class="admin-brand__logo"
                     style="height: 44px; width: auto; object-fit: contain;">
 

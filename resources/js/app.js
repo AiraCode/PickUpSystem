@@ -1,4 +1,4 @@
-import.meta.glob(["../img/**", "/resources/img/**"]);
+import.meta.glob(["../img/**"], { eager: true });
 import { pageTranslator } from './page-translator.js';
 
 // Initialize global translation system on load

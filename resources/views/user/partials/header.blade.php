@@ -1,7 +1,7 @@
 <header class="user-header {{ $headerClass ?? '' }}" data-user-header>
     <div class="user-header__inner">
         <a href="/user" class="user-brand" aria-label="One Stop Solution user">
-            <img src="{{ Vite::asset('resources/img/Logo_user-removebg-preview.png') }}" alt="AKIKU"
+            <img src="{{ asset('img/Logo_user-removebg-preview.png') }}" alt="AKIKU"
                 style="height: 140px; width: auto; object-fit: contain;">
         </a>
 

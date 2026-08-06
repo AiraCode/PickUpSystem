@@ -8,9 +8,10 @@
 
             <div class="user-flow-hero__bg">
                 <div class="hero-slideshow">
-                    <div class="hero-slide is-active" style="background-image: url('{{ asset('img/Aki_GS_Hijau-removebg-preview.png') }}');"></div>
-                    <div class="hero-slide" style="background-image: url('{{ asset('img/Aki_GS_Putih-removebg-preview.png') }}');"></div>
-                    <div class="hero-slide" style="background-image: url('{{ asset('img/Aki_Yuasa-removebg-preview.png') }}');"></div>
+                    <div class="hero-slide is-active" style="background-image: url('{{ asset('img/aki1.jpeg') }}');"></div>
+                    <div class="hero-slide" style="background-image: url('{{ asset('img/aki2.webp') }}');"></div>
+                    <div class="hero-slide" style="background-image: url('{{ asset('img/aki3-removebg-preview.png') }}');"></div>
+                    <div class="hero-slide" style="background-image: url('{{ asset('img/aki4-removebg-preview.png') }}');"></div>
                 </div>
             </div>
             <div class="user-flow-hero__overlay"></div>

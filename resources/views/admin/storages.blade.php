@@ -89,10 +89,10 @@
         <div class="admin-panel__head"><h2 style="color:#ba1b2b;">Konfirmasi Hapus Gudang</h2></div>
         <form id="form-delete-storage">
             <input type="hidden" id="delete-storage-id">
-            <p style="font-size:13px; color:#4a4f59; margin-bottom:14px;">Masukkan password akun Admin Anda untuk mengonfirmasi penghapusan gudang ini.</p>
+            <p style="font-size:13px; color:#4a4f59; margin-bottom:14px;">Masukkan kata sandi akun Admin Anda untuk mengonfirmasi penghapusan gudang ini.</p>
             <div style="margin-bottom:16px;">
-                <label style="display:block; font-size:12px; font-weight:600; margin-bottom:6px; color:#4a4f59;">Password Admin</label>
-                <input type="password" id="delete-storage-password" class="admin-select" style="width:100%; padding:8px 10px; border-radius:6px;" placeholder="Masukkan password Anda" required>
+                <label style="display:block; font-size:12px; font-weight:600; margin-bottom:6px; color:#4a4f59;">Kata Sandi Admin</label>
+                <input type="password" id="delete-storage-password" class="admin-select" style="width:100%; padding:8px 10px; border-radius:6px;" placeholder="Masukkan kata sandi Anda" required>
             </div>
             <div style="display:flex; gap:10px; justify-content:flex-end;">
                 <button type="button" class="admin-button admin-button--secondary" onclick="document.getElementById('modal-delete-storage').style.display='none'">Batal</button>
