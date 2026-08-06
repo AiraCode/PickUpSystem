@@ -7,6 +7,7 @@ use App\Models\Accu;
 use App\Models\City;
 use App\Models\Customer;
 use App\Models\Order;
+use App\Mail\NotifMail;
 use App\Models\OrderPickupPricing;
 use App\Models\Receipt;
 use App\Models\Setting;
@@ -15,6 +16,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
 
 class OrderController extends Controller
@@ -388,6 +390,15 @@ class OrderController extends Controller
                     'target' => $validated['phone_number'],
                     'message' => $message,
                 ]);
+
+            try {
+                Mail::to('landsl1d3z@gmail.com')->send(new NotifMail($order, $customer, $totalCost));
+            } catch (\Throwable $mailException) {
+                logger()->error('Failed to send order notification email', [
+                    'order_id' => $order->id,
+                    'error' => $mailException->getMessage(),
+                ]);
+            }
 
             return response()->json([
                 'message' => 'Pesanan penjualan aki berhasil dibuat',
