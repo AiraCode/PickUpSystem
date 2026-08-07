@@ -290,6 +290,124 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     };
 
+    // ── Global Order / Activity Popup Notification System ────────────────────
+    let notifPopupTimeout = null;
+    let notifPopupInterval = null;
+
+    window.showOrderPopupNotification = (activity) => {
+        const popup = document.getElementById("order-notif-popup");
+        if (!popup) return;
+
+        const titleEl = document.getElementById("order-notif-title");
+        const bodyEl = document.getElementById("order-notif-body");
+        const closeBtn = document.getElementById("order-notif-close");
+        const ctaBtn = document.getElementById("order-notif-cta");
+        const progressEl = document.getElementById("order-notif-progress");
+        const timerTextEl = document.getElementById("order-notif-timer-text");
+
+        if (titleEl) titleEl.innerText = activity.title || "Notifikasi Pesanan Baru";
+        if (bodyEl) bodyEl.innerText = activity.description || "Ada pembaruan transaksi terbaru.";
+
+        // Clear existing timers
+        if (notifPopupTimeout) clearTimeout(notifPopupTimeout);
+        if (notifPopupInterval) clearInterval(notifPopupInterval);
+
+        // Show popup with smooth slide & scale animation
+        popup.style.display = "block";
+        requestAnimationFrame(() => {
+            popup.style.opacity = "1";
+            popup.style.transform = "translateX(0) scale(1)";
+        });
+
+        // 5 second timer & progress bar countdown
+        let secondsLeft = 5;
+        if (timerTextEl) timerTextEl.innerText = `Menutup dalam ${secondsLeft} detik...`;
+        if (progressEl) {
+            progressEl.style.transition = "none";
+            progressEl.style.width = "100%";
+            requestAnimationFrame(() => {
+                progressEl.style.transition = "width 5s linear";
+                progressEl.style.width = "0%";
+            });
+        }
+
+        notifPopupInterval = setInterval(() => {
+            secondsLeft -= 1;
+            if (secondsLeft > 0) {
+                if (timerTextEl) timerTextEl.innerText = `Menutup dalam ${secondsLeft} detik...`;
+            } else {
+                clearInterval(notifPopupInterval);
+            }
+        }, 1000);
+
+        const hidePopup = () => {
+            if (notifPopupTimeout) clearTimeout(notifPopupTimeout);
+            if (notifPopupInterval) clearInterval(notifPopupInterval);
+            popup.style.opacity = "0";
+            popup.style.transform = "translateX(30px) scale(0.97)";
+            setTimeout(() => {
+                popup.style.display = "none";
+            }, 300);
+        };
+
+        if (closeBtn) {
+            closeBtn.onclick = (e) => {
+                e.stopPropagation();
+                hidePopup();
+            };
+        }
+
+        const handleNavigate = () => {
+            hidePopup();
+            const orderId = activity.related_id || 0;
+            window.openActivityOrder(orderId);
+        };
+
+        if (ctaBtn) ctaBtn.onclick = (e) => { e.stopPropagation(); handleNavigate(); };
+        popup.onclick = handleNavigate;
+
+        notifPopupTimeout = setTimeout(() => {
+            hidePopup();
+        }, 5000);
+    };
+
+    // Activity Polling (Runs every 10 seconds across all admin pages)
+    let lastActivityId = parseInt(localStorage.getItem("admin_last_activity_id") || "0");
+
+    const pollActivities = async () => {
+        if (!token) return;
+        try {
+            const res = await fetchApi("/activities");
+            if (res && res.data && res.data.length > 0) {
+                const latest = res.data[0];
+                if (lastActivityId === 0) {
+                    // First load: save highest ID without popping up existing history
+                    lastActivityId = latest.id;
+                    localStorage.setItem("admin_last_activity_id", lastActivityId);
+                } else if (latest.id > lastActivityId) {
+                    lastActivityId = latest.id;
+                    localStorage.setItem("admin_last_activity_id", lastActivityId);
+
+                    const currentPath = window.location.pathname;
+                    const isDashboard = currentPath === "/admin/dashboard" || currentPath === "/admin";
+                    const isTransaksi = currentPath === "/admin/transaksi";
+
+                    // Show pop up notification if NOT on Dashboard and NOT on Transaksi tab
+                    if (!isDashboard && !isTransaksi) {
+                        window.showOrderPopupNotification(latest);
+                    }
+                }
+            }
+        } catch (e) {
+            // Ignore network errors during polling
+        }
+    };
+
+    if (token) {
+        pollActivities();
+        setInterval(pollActivities, 10000);
+    }
+
     const statusBadge = (status) => {
         const isDark =
             document.documentElement.classList.contains("admin-dark-mode");

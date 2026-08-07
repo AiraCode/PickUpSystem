@@ -170,6 +170,90 @@
             <span id="admin-toast-message">Notifikasi</span>
         </div>
 
+        {{-- New Order / Activity Notification Popup --}}
+        <div id="order-notif-popup" style="
+            display: none;
+            position: fixed;
+            top: 24px;
+            right: 24px;
+            z-index: 998;
+            width: 340px;
+            background: #ffffff;
+            border-radius: 14px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.18), 0 4px 16px rgba(37,99,235,0.12);
+            border: 1px solid #e0e7ff;
+            overflow: hidden;
+            opacity: 0;
+            transform: translateX(30px) scale(0.97);
+            transition: opacity 0.3s cubic-bezier(0.4,0,0.2,1), transform 0.3s cubic-bezier(0.4,0,0.2,1);
+            pointer-events: auto;
+        ">
+            {{-- Accent bar top --}}
+            <div style="height:4px; background: linear-gradient(90deg, #2563eb 0%, #7c3aed 100%);"></div>
+
+            {{-- Content --}}
+            <div style="padding: 16px 18px 14px 18px;">
+                <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:10px;">
+                    <div style="display:flex; align-items:flex-start; gap:12px; flex:1; min-width:0;">
+                        <div style="
+                            width: 38px; height: 38px; flex-shrink:0;
+                            background: linear-gradient(135deg, #eff6ff 0%, #e0e7ff 100%);
+                            border-radius: 10px;
+                            display:flex; align-items:center; justify-content:center;
+                            font-size: 18px;
+                        " id="order-notif-icon-wrap">🔔</div>
+                        <div style="flex:1; min-width:0;">
+                            <p id="order-notif-title" style="
+                                font-size:13px; font-weight:700; color:#111827;
+                                margin:0 0 4px 0; line-height:1.3;
+                                white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+                            ">Notifikasi Baru</p>
+                            <p id="order-notif-body" style="
+                                font-size:12px; color:#6b7280; margin:0; line-height:1.5;
+                                display:-webkit-box; -webkit-line-clamp:2;
+                                -webkit-box-orient:vertical; overflow:hidden;
+                            ">Ada aktivitas terbaru di sistem.</p>
+                        </div>
+                    </div>
+                    <button type="button" id="order-notif-close" aria-label="Tutup notifikasi" style="
+                        flex-shrink:0;
+                        width:26px; height:26px;
+                        border:none; background:#f3f4f6; color:#6b7280;
+                        border-radius:6px; cursor:pointer;
+                        font-size:14px; font-weight:700;
+                        display:flex; align-items:center; justify-content:center;
+                        transition: background 0.15s, color 0.15s;
+                        margin-top:-2px;
+                    " onmouseover="this.style.background='#fee2e2';this.style.color='#dc2626';"
+                       onmouseout="this.style.background='#f3f4f6';this.style.color='#6b7280';">×</button>
+                </div>
+
+                <button type="button" id="order-notif-cta" style="
+                    margin-top:14px; width:100%;
+                    background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+                    color:#fff; border:none; border-radius:8px;
+                    padding:9px 16px; font-size:12px; font-weight:600;
+                    cursor:pointer; display:flex; align-items:center; justify-content:center; gap:6px;
+                    transition: opacity 0.15s, transform 0.15s;
+                " onmouseover="this.style.opacity='0.9';this.style.transform='scale(1.01)'"
+                   onmouseout="this.style.opacity='1';this.style.transform='scale(1)'">
+                    <svg viewBox="0 0 24 24" style="width:13px;height:13px;fill:none;stroke:currentColor;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round;" aria-hidden="true"><path d="M4 5.5h16v13H4z"/><path d="M8 9h8M8 13h5"/></svg>
+                    Lihat Detail Transaksi
+                </button>
+
+                {{-- Progress bar countdown --}}
+                <div style="margin-top:10px; height:3px; background:#f3f4f6; border-radius:99px; overflow:hidden;">
+                    <div id="order-notif-progress" style="
+                        height:100%; width:100%;
+                        background: linear-gradient(90deg, #2563eb, #7c3aed);
+                        border-radius:99px;
+                        transition: width 0.1s linear;
+                    "></div>
+                </div>
+                <p id="order-notif-timer-text" style="font-size:10px;color:#9ca3af;margin:4px 0 0;text-align:right;">Menutup dalam 5 detik...</p>
+            </div>
+        </div>
+
         <div id="modal-custom-confirm"
             style="display:none; position:fixed; inset:0; background:rgba(0,0,0,.45); z-index:200; align-items:center; justify-content:center;">
             <div class="admin-panel" style="width:380px; text-align:center;">
