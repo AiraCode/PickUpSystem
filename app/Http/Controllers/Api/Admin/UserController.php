@@ -13,7 +13,7 @@ class UserController extends Controller
 {
     public function index(): JsonResponse
     {
-        $users = User::all();
+        $users = User::with('warehouse')->get();
 
         return response()->json([
             'message' => 'Daftar admin berhasil diambil',
@@ -25,6 +25,8 @@ class UserController extends Controller
     {
         $data = $request->validated();
         $data['password'] = Hash::make($data['password']);
+        $data['warehouse_id'] = isset($data['warehouse_id']) && $data['warehouse_id'] !== '' ? $data['warehouse_id'] : null;
+        $data['role'] = $data['warehouse_id'] ? 'warehouse' : 'central';
 
         $user = User::create($data);
 
@@ -51,6 +53,11 @@ class UserController extends Controller
 
         if (isset($data['password'])) {
             $data['password'] = Hash::make($data['password']);
+        }
+
+        if (array_key_exists('warehouse_id', $data)) {
+            $data['warehouse_id'] = $data['warehouse_id'] !== '' ? $data['warehouse_id'] : null;
+            $data['role'] = $data['warehouse_id'] ? 'warehouse' : 'central';
         }
 
         $user->update($data);

@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Warehouse;
 use App\Http\Requests\Admin\StoreWarehouseRequest;
 use App\Http\Requests\Admin\UpdateWarehouseRequest;
+use App\Services\WarehouseStockNotificationService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -218,16 +219,18 @@ class WarehouseController extends Controller
         $totalUntakenAll = 0;
 
         $warehouses = Warehouse::all();
+        $notificationService = new WarehouseStockNotificationService();
         foreach ($warehouses as $w) {
             $untaken = (int) ($untakenCounts[$w->id] ?? 0);
             $totalUntakenAll += $untaken;
-            
+             
             if ($untaken >= 20) {
                 $w->total_untaken = $untaken;
                 $readyWarehouses[] = $w;
+                $notificationService->notifyWarehouseReady($w);
             }
         }
-
+ 
         return response()->json([
             'message' => 'Data gudang siap diambil',
             'ready_warehouses' => $readyWarehouses,
@@ -246,6 +249,11 @@ class WarehouseController extends Controller
             ->update(['taken_by_central' => true]);
 
         if ($updatedCount > 0) {
+            \App\Models\Activity::where('type', 'warehouse_ready')
+                ->where('related_type', Warehouse::class)
+                ->where('related_id', $id)
+                ->delete();
+
             \App\Models\Activity::create([
                 'type' => 'warehouse_pickup',
                 'title' => 'Pengambilan Aki ' . $warehouse->name,

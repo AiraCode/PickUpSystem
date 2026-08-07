@@ -209,21 +209,12 @@ class PickUpSystemSeeder extends Seeder
         DB::table('cities_has_accus')->insert($cityAccuRows);
 
         $usersData = [
-            ['id' => 1, 'name' => 'Admin Test', 'password' => Hash::make('password123')],
-            ['id' => 2, 'name' => 'Admin Utama', 'password' => Hash::make('password123')],
-            ['id' => 3, 'name' => 'Budi Staf Admin', 'password' => Hash::make('password123')],
-            ['id' => 4, 'name' => 'Siti Ops Surabaya', 'password' => Hash::make('password123')],
-            ['id' => 5, 'name' => 'Dedi Ops Bandung', 'password' => Hash::make('password123')],
+            ['id' => 1, 'name' => 'Admin Test', 'email' => 'admin.test@example.com', 'password' => Hash::make('password123'), 'role' => 'central', 'warehouse_id' => null],
+            ['id' => 2, 'name' => 'Admin Utama', 'email' => 'admin.utama@example.com', 'password' => Hash::make('password123'), 'role' => 'central', 'warehouse_id' => null],
+            ['id' => 3, 'name' => 'Budi Staf Admin', 'email' => 'budi.admin@example.com', 'password' => Hash::make('password123'), 'role' => 'warehouse', 'warehouse_id' => 1],
+            ['id' => 4, 'name' => 'Siti Ops Surabaya', 'email' => 'siti.surabaya@example.com', 'password' => Hash::make('password123'), 'role' => 'warehouse', 'warehouse_id' => 2],
+            ['id' => 5, 'name' => 'Dedi Ops Bandung', 'email' => 'dedi.bandung@example.com', 'password' => Hash::make('password123'), 'role' => 'warehouse', 'warehouse_id' => 3],
         ];
-        foreach ($usersData as $u) {
-            DB::table('users')->insert([
-                'id' => $u['id'],
-                'name' => $u['name'],
-                'password' => $u['password'],
-                'created_at' => $now,
-                'updated_at' => $now,
-            ]);
-        }
 
         $banksData = ['BCA', 'Mandiri', 'BNI', 'BRI', 'CIMB Niaga'];
         foreach ($banksData as $idx => $bName) {
@@ -248,6 +239,19 @@ class PickUpSystemSeeder extends Seeder
                 'address' => $s['address'],
                 'lat' => $s['lat'],
                 'long' => $s['long'],
+                'created_at' => $now,
+                'updated_at' => $now,
+            ]);
+        }
+
+        foreach ($usersData as $u) {
+            DB::table('users')->insert([
+                'id' => $u['id'],
+                'name' => $u['name'],
+                'email' => $u['email'],
+                'password' => $u['password'],
+                'role' => $u['role'],
+                'warehouse_id' => $u['warehouse_id'],
                 'created_at' => $now,
                 'updated_at' => $now,
             ]);

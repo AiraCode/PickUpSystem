@@ -21,12 +21,14 @@
             <thead>
                 <tr>
                     <th>Nama</th>
+                    <th>Email</th>
+                    <th>Gudang</th>
                     <th>Waktu Dibuat</th>
                     <th>Aksi</th>
                 </tr>
             </thead>
             <tbody id="users-tbody">
-                <tr><td colspan="3"><div class="admin-table-empty"><strong>Memuat data...</strong></div></td></tr>
+                <tr><td colspan="5"><div class="admin-table-empty"><strong>Memuat data...</strong></div></td></tr>
             </tbody>
         </table>
     </div>
@@ -44,6 +46,18 @@
             <div style="margin-bottom:16px;">
                 <label style="display:block; font-size:12px; font-weight:600; margin-bottom:6px; color:#4a4f59;">Nama Lengkap</label>
                 <input type="text" id="user-name" class="admin-select" style="width:100%; padding:8px 10px; border-radius:6px;" required>
+            </div>
+            <div style="margin-bottom:16px;">
+                <label style="display:block; font-size:12px; font-weight:600; margin-bottom:6px; color:#4a4f59;">Email</label>
+                <input type="email" id="user-email" class="admin-select" style="width:100%; padding:8px 10px; border-radius:6px;" placeholder="contoh@domain.com" required>
+                <small style="display:block; margin-top:6px; font-size:11px; color:#6b7280;">Pastikan format email valid dan mengandung karakter @.</small>
+            </div>
+            <div style="margin-bottom:16px;">
+                <label style="display:block; font-size:12px; font-weight:600; margin-bottom:6px; color:#4a4f59;">Gudang</label>
+                <select id="user-warehouse" class="admin-select" style="width:100%; padding:8px 10px; border-radius:6px;">
+                    <option value="">Admin Utama (akses seluruh gudang)</option>
+                </select>
+                <small style="display:block; margin-top:6px; font-size:11px; color:#6b7280;">Pilih gudang jika admin ini akan bertugas mengelola satu cabang. Kosongkan untuk admin utama.</small>
             </div>
             <div style="margin-bottom:16px;">
                 <label style="display:block; font-size:12px; font-weight:600; margin-bottom:6px; color:#4a4f59;">Kata Sandi</label>

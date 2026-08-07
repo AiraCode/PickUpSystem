@@ -3464,7 +3464,7 @@ document.addEventListener("DOMContentLoaded", () => {
                             </div>
                             <button type="button" onclick="confirmPickup(${w.id})" class="admin-button" style="background:#16a34a; color:#fff; width:100%; justify-content:center; display:flex; align-items:center; gap:6px;">
                                 <svg viewBox="0 0 24 24" style="width:14px; height:14px; fill:none; stroke:currentColor; stroke-width:2;"><polyline points="20 6 9 17 4 12"></polyline></svg>
-                                Tandai Sudah Diambil
+                                OK
                             </button>
                         </div>
                     `).join("");
@@ -3662,6 +3662,25 @@ document.addEventListener("DOMContentLoaded", () => {
             });
         }
 
+        const loadWarehouses = async () => {
+            const warehouseSelect = document.getElementById("user-warehouse");
+            if (!warehouseSelect) return;
+            try {
+                const res = await fetch("/api/customer/storages");
+                const warehouses = res.ok ? await res.json() : null;
+                if (warehouses && warehouses.data && warehouses.data.length) {
+                    warehouseSelect.innerHTML = `<option value="">Admin Utama (akses seluruh gudang)</option>` +
+                        warehouses.data
+                            .map(
+                                (s) => `<option value="${s.id}">${s.name} (${s.address || 'Alamat belum diisi'})</option>`,
+                            )
+                            .join("");
+                }
+            } catch (error) {
+                console.error("Gagal memuat daftar gudang:", error);
+            }
+        };
+
         const loadUsers = async () => {
             if (!checkEasterEggLock()) return;
             const res = await fetchApi("/users");
@@ -3672,6 +3691,8 @@ document.addEventListener("DOMContentLoaded", () => {
                         (u) => `
                     <tr>
                         <td style="font-weight:500;">${u.name}</td>
+                        <td>${u.email || '-'}</td>
+                        <td>${u.warehouse ? u.warehouse.name : (u.warehouse_id ? 'Gudang #' + u.warehouse_id : 'Admin Utama')}</td>
                         <td>${parseSafeDate(u.created_at).toLocaleDateString("id-ID")}</td>
                         <td>
                             <button onclick="deleteUser(${u.id})" class="admin-button admin-button--secondary" style="height:30px; font-size:11px; color:#ba1b2b;">Hapus</button>
@@ -3680,14 +3701,15 @@ document.addEventListener("DOMContentLoaded", () => {
                     )
                     .join("");
             } else {
-                tbody.innerHTML = `<tr><td colspan="3"><div class="admin-table-empty"><strong>Belum ada pengguna</strong></div></td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="5"><div class="admin-table-empty"><strong>Belum ada pengguna</strong></div></td></tr>`;
             }
         };
 
         if (checkEasterEggLock()) {
+            loadWarehouses();
             loadUsers();
         }
-
+ 
         document
             .getElementById("form-add-user")
             .addEventListener("submit", async (e) => {
@@ -3695,15 +3717,30 @@ document.addEventListener("DOMContentLoaded", () => {
                 if (!checkEasterEggLock()) return;
                 const payload = {
                     name: document.getElementById("user-name").value,
+                    email: document.getElementById("user-email").value,
                     password: document.getElementById("user-password").value,
                 };
+                const warehouseId = document.getElementById("user-warehouse").value;
+                if (warehouseId) {
+                    payload.warehouse_id = parseInt(warehouseId, 10);
+                }
                 const idVal = document.getElementById("user-id").value;
                 payload.id = idVal
                     ? idVal
                     : Math.floor(Math.random() * 1000000);
                 const errorEl = document.getElementById("add-user-error");
                 if (errorEl) errorEl.style.display = "none";
-
+ 
+                if (!payload.email || !payload.email.includes("@")) {
+                    if (errorEl) {
+                        errorEl.innerText = "Email harus valid dan mengandung @.";
+                        errorEl.style.display = "block";
+                    } else {
+                        showToast("Email harus valid dan mengandung @.", "error");
+                    }
+                    return;
+                }
+ 
                 const res = await fetchApi("/users", {
                     method: "POST",
                     body: JSON.stringify(payload),

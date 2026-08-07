@@ -20,4 +20,9 @@ class Warehouse extends Model
     {
         return $this->hasMany(Shipment::class, 'storages_id');
     }
+ 
+    public function admins(): HasMany
+    {
+        return $this->hasMany(User::class, 'warehouse_id');
+    }
 }

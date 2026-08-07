@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Api\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Order;
+use App\Models\Warehouse;
+use App\Services\WarehouseStockNotificationService;
 use App\Http\Requests\Admin\UpdateOrderStatusRequest;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -268,7 +270,14 @@ class OrderController extends Controller
         }
 
         $order->update($updateData);
-
+ 
+        if (in_array($request->status, ['arrived_at_warehouse', 'completed']) && $order->storages_id) {
+            $warehouse = Warehouse::find($order->storages_id);
+            if ($warehouse) {
+                (new WarehouseStockNotificationService())->notifyWarehouseReady($warehouse);
+            }
+        }
+ 
         // Kirim WA
         try {
             if (in_array($request->status, ['processing', 'completed', 'cancelled'])) {

@@ -16,6 +16,9 @@ class AdminSeeder extends Seeder
         if ($centralAdmin) {
             $centralAdmin->role = 'central';
             $centralAdmin->warehouse_id = null;
+            if (! $centralAdmin->email) {
+                $centralAdmin->email = 'admin.pusat@example.com';
+            }
             $centralAdmin->save();
         }
 
@@ -29,6 +32,7 @@ class AdminSeeder extends Seeder
                 \App\Models\User::create([
                     'id' => (\App\Models\User::max('id') ?? 0) + 1,
                     'name' => $username,
+                    'email' => $username . '@example.com',
                     'password' => bcrypt('password123'),
                     'role' => 'warehouse',
                     'warehouse_id' => $w->id,
@@ -36,6 +40,9 @@ class AdminSeeder extends Seeder
             } else {
                 $existing->role = 'warehouse';
                 $existing->warehouse_id = $w->id;
+                if (! $existing->email) {
+                    $existing->email = $username . '@example.com';
+                }
                 $existing->save();
             }
         }

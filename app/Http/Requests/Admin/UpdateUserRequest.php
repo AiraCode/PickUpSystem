@@ -15,7 +15,9 @@ class UpdateUserRequest extends FormRequest
     {
         return [
             'name' => 'sometimes|required|string|max:45|unique:users,name,' . $this->route('user'),
+            'email' => 'sometimes|required|email|unique:users,email,' . $this->route('user'),
             'password' => 'nullable|string|min:8',
+            'warehouse_id' => 'sometimes|nullable|integer|exists:storages,id',
         ];
     }
 }
