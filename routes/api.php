@@ -137,6 +137,9 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('settings', [SettingController::class, 'index']);
         Route::put('settings', [SettingController::class, 'update']);
         Route::get('price-histories', [SettingController::class, 'history']);
+        
+        Route::get('activities', [\App\Http\Controllers\Api\Admin\ActivityController::class, 'index']);
+        Route::delete('activities/{id}', [\App\Http\Controllers\Api\Admin\ActivityController::class, 'destroy']);
 
         Route::get('dashboard-stats', [DashboardStatsController::class, 'index']);
         Route::get('reports', [ReportController::class, 'index']);
@@ -167,6 +170,8 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::apiResource('transfers', TransferController::class)->only(['index', 'show', 'update']);
 
         Route::get('storages/trashed', [WarehouseController::class, 'trashed']);
+        Route::get('storages/ready-to-pickup', [WarehouseController::class, 'readyToPickup']);
+        Route::post('storages/{id}/pickup', [WarehouseController::class, 'pickup']);
         Route::post('storages/{id}/restore', [WarehouseController::class, 'restore']);
         Route::get('storages/{id}/stock', [WarehouseController::class, 'stockSummary']);
         Route::apiResource('storages', WarehouseController::class);

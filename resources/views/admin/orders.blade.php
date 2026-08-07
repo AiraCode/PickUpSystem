@@ -459,6 +459,22 @@
                                     </svg>Lihat Foto</a>
                             </td>
                         </tr>
+                        <tr id="row-warehouse-proof" style="display:none;">
+                            <td style="color:#6d727c; padding:6px 0;">Foto Bukti Gudang</td>
+                            <td style="font-weight:500; display:flex; align-items:center; gap:8px;">
+                                <span id="detail-warehouse-proof-status"></span>
+                                <a id="detail-warehouse-proof-link" href="#"
+                                    style="display:none; align-items:center; font-size:11px; font-weight:600; color:#2563eb; text-decoration:none;"><svg
+                                        style="width:14px; height:14px; margin-right:4px;" fill="none" stroke="currentColor"
+                                        viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z">
+                                        </path>
+                                    </svg>Lihat Foto</a>
+                            </td>
+                        </tr>
                         <tr>
                             <td style="color:#6d727c; padding:6px 0;">Bank & Rekening</td>
                             <td id="detail-customer-bank" style="font-weight:500;"></td>
@@ -777,18 +793,7 @@
 
                 <div id="edit-items-rows-container"
                     style="display:flex; flex-direction:column; gap:10px; margin-bottom:16px;">
-                    <!-- Dynamically populated rows -->
                 </div>
-
-                {{-- //Kalau Perlu --}}
-                {{-- <button type="button" id="btn-add-edit-item-row" class="admin-button admin-button--secondary"
-                    style="width:100%; height:34px; font-size:12px; margin-bottom:18px; border:1px dashed #3b82f6; color:#2563eb; background:#eff6ff; display:inline-flex; align-items:center; justify-content:center; gap:6px;">
-                    <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2">
-                        <line x1="12" y1="5" x2="12" y2="19" />
-                        <line x1="5" y1="12" x2="19" y2="12" />
-                    </svg>
-                    <span>Tambah Baris Aki Baru</span>
-                </button> --}}
 
                 <div id="edit-items-error"
                     style="display:none; background:#fee2e2; color:#991b1b; padding:10px; border-radius:6px; font-size:12px; font-weight:600; margin-bottom:14px;">

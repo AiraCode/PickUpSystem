@@ -12,7 +12,13 @@ class User extends Authenticatable
 
     public $incrementing = false;
 
-    protected $fillable = ['id', 'name', 'password'];
+    protected $fillable = [
+        'id',
+        'name',
+        'password',
+        'role',
+        'warehouse_id',
+    ];
 
     protected $hidden = ['password'];
 
@@ -26,6 +32,11 @@ class User extends Authenticatable
     public function receipts(): HasMany
     {
         return $this->hasMany(Receipt::class, 'users_id');
+    }
+
+    public function warehouse()
+    {
+        return $this->belongsTo(Warehouse::class, 'warehouse_id', 'id');
     }
 
     public function transfers(): HasMany

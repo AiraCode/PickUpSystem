@@ -132,10 +132,28 @@ class ReceiptController extends Controller
 
         if ($request->action === 'accept') {
             $receipt->update(['edit_confirmed_by_user' => 1]);
+            \App\Models\Activity::create([
+                'type' => 'order_edit_accepted',
+                'title' => 'Perubahan Disetujui #' . $order->id,
+                'description' => 'Customer menyetujui perubahan item pesanan.',
+                'related_id' => $order->id,
+                'related_type' => \App\Models\Order::class,
+            ]);
             return response()->json(['message' => 'Perubahan pesanan berhasil Anda setujui!']);
         } else {
             $receipt->update(['edit_confirmed_by_user' => 2]);
-            return response()->json(['message' => 'Perubahan pesanan telah Anda tolak.']);
+            $order->update([
+                'status' => 'cancelled',
+                'cancel_reason' => 'Perubahan item pesanan ditolak oleh pelanggan.'
+            ]);
+            \App\Models\Activity::create([
+                'type' => 'order_edit_rejected',
+                'title' => 'Perubahan Ditolak #' . $order->id,
+                'description' => 'Customer menolak perubahan item pesanan. Pesanan dibatalkan otomatis.',
+                'related_id' => $order->id,
+                'related_type' => \App\Models\Order::class,
+            ]);
+            return response()->json(['message' => 'Perubahan pesanan telah Anda tolak dan pesanan dibatalkan.']);
         }
     }
 }

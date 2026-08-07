@@ -2,6 +2,12 @@ document.addEventListener("DOMContentLoaded", () => {
     const API_BASE = "/api/admin";
     const token = localStorage.getItem("admin_token");
     const user = JSON.parse(localStorage.getItem("admin_user") || "null");
+
+    if (user && user.role === 'warehouse' && window.location.pathname === '/admin/gudang') {
+        window.location.href = `/admin/gudang/${user.warehouse_id}`;
+        return;
+    }
+
     const themeToggleBtn = document.querySelector(".admin-theme-toggle-foot");
 
     if (!token && window.location.pathname !== "/admin/login") {
@@ -233,6 +239,55 @@ document.addEventListener("DOMContentLoaded", () => {
         btnCancel.onclick = () => {
             modal.style.display = "none";
         };
+    };
+
+    window.openActivityOrder = (orderId) => {
+        if (!orderId || orderId === 0 || orderId === "0") {
+            window.location.href = "/admin/transaksi";
+            return;
+        }
+        if (window.location.pathname.includes("/admin/transaksi")) {
+            if (typeof window.viewOrderDetail === "function") {
+                window.viewOrderDetail(orderId);
+            }
+        } else {
+            window.location.href = `/admin/transaksi?order_id=${orderId}`;
+        }
+    };
+
+    window.dismissActivityNotification = async (e, id) => {
+        if (e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+
+        if (e && e.target) {
+            const elem = e.target.closest("div[onclick]") || e.target.closest("tr");
+            if (elem) elem.style.opacity = "0.3";
+        }
+
+        try {
+            const res = await fetchApi(`/activities/${id}`, { method: "DELETE" });
+            showToast(res.message || "Notifikasi berhasil dihapus", "success");
+
+            if (e && e.target) {
+                const elem = e.target.closest("div[onclick]") || e.target.closest("tr");
+                if (elem) elem.remove();
+            }
+
+            if (typeof window.loadDashboardStats === "function") {
+                window.loadDashboardStats();
+            }
+            if (typeof window.fetchActivitiesPage === "function") {
+                window.fetchActivitiesPage();
+            }
+        } catch (err) {
+            console.error(err);
+            if (e && e.target) {
+                const elem = e.target.closest("div[onclick]") || e.target.closest("tr");
+                if (elem) elem.style.opacity = "1";
+            }
+        }
     };
 
     const statusBadge = (status) => {
@@ -526,7 +581,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (window.location.pathname === "/admin/dashboard") {
         const periodSelect = document.getElementById("dashboard-period-select");
 
-        const loadDashboardStats = async (period = "7days") => {
+        window.loadDashboardStats = async (period = "7days") => {
             const res = await fetchApi(`/dashboard-stats?period=${period}`);
             if (!res || !res.data) return;
 
@@ -574,27 +629,38 @@ document.addEventListener("DOMContentLoaded", () => {
 
             const actList = document.getElementById("activity-list-container");
             const actEmpty = document.getElementById("activity-empty-state");
-            const shipments = res.data.recent_activities?.shipments || [];
-            if (!shipments.length) {
-                if (actEmpty)
+            const activities = res.data.recent_activities || [];
+            
+            if (!activities.length) {
+                if (actEmpty) {
+                    actEmpty.style.display = "block";
                     actEmpty.innerHTML = `<strong>Belum ada aktivitas</strong>`;
+                }
+                if (actList) actList.style.display = "none";
             } else {
                 if (actEmpty) actEmpty.style.display = "none";
                 if (actList) {
                     actList.style.display = "flex";
-                    actList.innerHTML = shipments
+                    actList.innerHTML = activities
                         .map(
-                            (s) => {
-                                const rawName = s.warehouse ? s.warehouse.name : "-";
-                                const cleanName = rawName.replace(/^Gudang\s+/i, "");
-                                return `
-                        <div style="padding:10px; border:1px solid #e5e7eb; border-radius:8px;">
-                            <strong style="display:block; font-size:12px;">Pengiriman #${s.id}</strong>
-                            <small style="color:#6d727c;">Ke Gudang ${cleanName} - ${s.status}</small>
-                        </div>`;
-                            },
+                            (a) => `
+                        <div onclick="openActivityOrder(${a.related_id || 0})" style="padding:10px; border:1px solid #e5e7eb; border-radius:8px; position:relative; cursor:pointer; transition:background 0.2s; background:#fff;" onmouseover="this.style.background='#f9fafb'" onmouseout="this.style.background='#fff'">
+                            <div style="display:flex; justify-content:space-between; align-items:flex-start; padding-right:18px;">
+                                <strong style="display:block; font-size:12px; color:#111827;">${a.title}</strong>
+                            </div>
+                            <small style="color:#6d727c; display:block; margin-top:4px; line-height:1.4;">${a.description}</small>
+                            <button type="button" onclick="dismissActivityNotification(event, ${a.id})" title="Hapus Notifikasi" style="position:absolute; top:6px; right:6px; border:none; background:transparent; color:#9ca3af; font-size:14px; font-weight:bold; cursor:pointer; padding:2px 6px; border-radius:4px;" onmouseover="this.style.color='#ef4444'; this.style.background='#fee2e2'" onmouseout="this.style.color='#9ca3af'; this.style.background='transparent'">
+                                &times;
+                            </button>
+                        </div>`
                         )
                         .join("");
+                    
+                    actList.innerHTML += `
+                        <a href="/admin/aktivitas" style="display:block; text-align:center; padding:10px; margin-top:8px; font-size:12px; font-weight:600; text-decoration:none; color:#2563eb; border:1px dashed #bfdbfe; border-radius:8px; background:#eff6ff;">
+                            Tampilkan Semua Aktivitas
+                        </a>
+                    `;
                 }
             }
 
@@ -992,20 +1058,15 @@ document.addEventListener("DOMContentLoaded", () => {
                 tbody.innerHTML = cachedOrders
                     .map((o) => {
                         const isEditPending = o.receipt && parseInt(o.receipt.edit_confirmed_by_user) === 0;
-                        const isEditRejected = o.receipt && parseInt(o.receipt.edit_confirmed_by_user) === 2;
 
                         let rowStyle = "cursor:pointer;";
                         if (isEditPending) {
                             rowStyle += " background:#fffdf5;";
-                        } else if (isEditRejected) {
-                            rowStyle += " background:#fff5f5;";
                         }
 
                         let editBadgeHtml = "";
                         if (isEditPending) {
                             editBadgeHtml = `<span style="background:#fffbeb; color:#b45309; border:1px solid #fde68a; padding:4px 8px; border-radius:6px; font-size:10px; font-weight:700; display:inline-flex; align-items:center; gap:4px; margin-right:4px;" title="Admin telah mengedit item pesanan, sedang menunggu konfirmasi dari customer">⏳ Menunggu Konfirmasi Customer</span>`;
-                        } else if (isEditRejected) {
-                            editBadgeHtml = `<span style="background:#fef2f2; color:#dc2626; border:1px solid #fecaca; padding:4px 8px; border-radius:6px; font-size:10px; font-weight:700; display:inline-flex; align-items:center; gap:4px; margin-right:4px;" title="Customer menolak perubahan item pesanan">❌ Perubahan Ditolak Customer</span>`;
                         }
 
                         return `
@@ -1057,6 +1118,18 @@ document.addEventListener("DOMContentLoaded", () => {
                     "orders-pagination",
                     "changeOrdersPage",
                 );
+            }
+
+            // Auto open order detail if order_id URL parameter is present
+            const urlParams = new URLSearchParams(window.location.search);
+            const autoOrderId = urlParams.get('order_id');
+            if (autoOrderId && !window.__autoOrderOpened) {
+                window.__autoOrderOpened = true;
+                setTimeout(() => {
+                    if (typeof window.viewOrderDetail === "function") {
+                        window.viewOrderDetail(autoOrderId);
+                    }
+                }, 300);
             }
         };
 
@@ -1236,8 +1309,16 @@ document.addEventListener("DOMContentLoaded", () => {
                 'input[name="order_status"]',
             );
 
+            const isEditPending = order && order.receipt && parseInt(order.receipt.edit_confirmed_by_user) === 0;
+
             let allowedOptions = [currentStatus];
-            if (currentStatus === "pending") {
+            
+            if (isEditPending) {
+                if (orderUpdateError) {
+                    orderUpdateError.innerText = "Pesanan sedang menunggu konfirmasi customer, status tidak dapat diubah.";
+                    orderUpdateError.style.display = "block";
+                }
+            } else if (currentStatus === "pending") {
                 allowedOptions = [
                     "pending",
                     "processing",
@@ -1487,6 +1568,42 @@ document.addEventListener("DOMContentLoaded", () => {
                 } else {
                     accuKtpLinkEl.style.display = "none";
                     accuKtpLinkEl.onclick = null;
+                }
+            }
+
+            const rowWarehouseProof = document.getElementById("row-warehouse-proof");
+            const proofVal = o.warehouse_proof || "-";
+            const proofStatusEl = document.getElementById("detail-warehouse-proof-status");
+            if (proofStatusEl) proofStatusEl.innerText = proofVal === "-" ? "Belum ada" : "Tersedia";
+            const proofLinkEl = document.getElementById("detail-warehouse-proof-link");
+            
+            if (rowWarehouseProof) {
+                if (["arrived_at_warehouse", "completed"].includes(o.status) || proofVal !== "-") {
+                    rowWarehouseProof.style.display = "table-row";
+                    
+                    if (proofLinkEl) {
+                        if (proofVal !== "-") {
+                            const imgUrl = proofVal.startsWith("http") || proofVal.startsWith("data:")
+                                ? proofVal
+                                : proofVal.startsWith("/")
+                                  ? proofVal
+                                  : `/storage/${proofVal}`;
+                            proofLinkEl.onclick = (e) => {
+                                e.preventDefault();
+                                if (typeof openImageViewer === "function") {
+                                    openImageViewer(imgUrl);
+                                } else {
+                                    window.open(imgUrl, "_blank");
+                                }
+                            };
+                            proofLinkEl.style.display = "inline-flex";
+                        } else {
+                            proofLinkEl.style.display = "none";
+                            proofLinkEl.onclick = null;
+                        }
+                    }
+                } else {
+                    rowWarehouseProof.style.display = "none";
                 }
             }
             document.getElementById("detail-customer-bank").innerText =
@@ -2069,7 +2186,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 <select class="admin-select accu-select" style="flex:1; padding:8px 10px; border-radius:6px; font-size:12px; background:#fff; border:1px solid #cbd5e1;" required>
                     ${optionsHtml}
                 </select>
-                <input type="number" class="admin-select accu-qty" value="${amount}" min="1" style="width:90px; padding:8px 10px; border-radius:6px; font-size:12px; border:1px solid #cbd5e1;" placeholder="Qty" required>
+                <input type="number" class="admin-select accu-qty" value="${amount}" min="1" style="width:90px; padding:8px 10px; border-radius:6px; font-size:12px; border:1px solid #cbd5e1; background: #f1f5f9;" placeholder="Qty" readonly required>
                 <button type="button" class="btn-remove-row admin-button" style="background:#fee2e2; color:#dc2626; border:1px solid #fecaca; border-radius:6px; width:34px; height:34px; cursor:pointer; font-weight:bold; display:inline-flex; align-items:center; justify-content:center;">✕</button>
             `;
 
@@ -3204,8 +3321,61 @@ document.addEventListener("DOMContentLoaded", () => {
             loadTrashedStorages();
         };
 
+        const loadReadyToPickup = async () => {
+            const res = await fetchApi("/storages/ready-to-pickup");
+            
+            const dashboard = document.getElementById("storage-dashboard-summary");
+            if (dashboard) dashboard.style.display = "grid";
+            
+            const countTaken = document.getElementById("count-total-taken");
+            const countUntaken = document.getElementById("count-total-untaken");
+            if (countTaken) countTaken.innerText = res.total_taken_all || 0;
+            if (countUntaken) countUntaken.innerText = res.total_untaken_all || 0;
+
+            const listEl = document.getElementById("ready-pickup-list");
+            if (listEl) {
+                if (res.ready_warehouses && res.ready_warehouses.length > 0) {
+                    listEl.innerHTML = res.ready_warehouses.map(w => `
+                        <div style="padding:15px; border:1px solid #e5e7eb; border-radius:8px; background:#fff; display:flex; flex-direction:column; gap:10px;">
+                            <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+                                <div>
+                                    <strong style="display:block; font-size:14px; color:#111827;">${w.name}</strong>
+                                    <small style="color:#6b7280;">Siap diambil: <strong style="color:#991b1b;">${w.total_untaken}</strong> aki</small>
+                                </div>
+                                <span style="background:#fee2e2; color:#991b1b; padding:2px 6px; border-radius:4px; font-size:10px; font-weight:600;">Action Required</span>
+                            </div>
+                            <button type="button" onclick="confirmPickup(${w.id})" class="admin-button" style="background:#16a34a; color:#fff; width:100%; justify-content:center; display:flex; align-items:center; gap:6px;">
+                                <svg viewBox="0 0 24 24" style="width:14px; height:14px; fill:none; stroke:currentColor; stroke-width:2;"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                                Tandai Sudah Diambil
+                            </button>
+                        </div>
+                    `).join("");
+                } else {
+                    listEl.innerHTML = `
+                        <div style="padding:15px; border:1px solid #e5e7eb; border-radius:8px; background:#f9fafb; text-align:center;">
+                            <small style="color:#6b7280;">Tidak ada gudang yang siap diambil (stok &lt; 20).</small>
+                        </div>
+                    `;
+                }
+            }
+        };
+
+        window.confirmPickup = async (id) => {
+            if (!confirm("Konfirmasi bahwa Anda (Pusat) sudah mengambil seluruh aki yang siap dari gudang ini?")) return;
+            try {
+                const res = await fetchApi(`/storages/${id}/pickup`, { method: "POST" });
+                showToast(res.message || "Barang berhasil diambil", "success");
+                loadReadyToPickup();
+            } catch (err) {
+                console.error(err);
+            }
+        };
+
         loadStorages();
         loadTrashedStorages();
+        if (document.getElementById("ready-pickup-list")) {
+            loadReadyToPickup();
+        }
 
         const storageSearchInput = document.getElementById(
             "storage-search-input",

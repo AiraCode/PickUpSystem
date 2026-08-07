@@ -18,6 +18,7 @@ class DatabaseSeeder extends Seeder
         $this->call([
             PickUpSystemSeeder::class,
             NewAccuSeeder::class,
+            AdminSeeder::class,
         ]);
     }
 }

@@ -26,13 +26,17 @@ class DashboardStatsController extends Controller
             ->take(5)
             ->get();
 
-        $recentShipments = Shipment::with('warehouse')->orderBy('created_at', 'desc')->take(3)->get();
-        $recentReceipts = Receipt::with('user')->orderBy('created_at', 'desc')->take(3)->get();
-
-        $recentActivities = [
-            'shipments' => $recentShipments,
-            'receipts' => $recentReceipts,
-        ];
+        $query = \App\Models\Activity::orderBy('created_at', 'desc');
+        $user = auth()->user();
+        if ($user && $user->role === 'warehouse_admin' && $user->warehouse_id) {
+            $warehouseId = $user->warehouse_id;
+            $orderIds = Order::where('storages_id', $warehouseId)->pluck('id');
+            $query->where(function ($q) use ($orderIds) {
+                $q->where('related_type', Order::class)
+                  ->whereIn('related_id', $orderIds);
+            });
+        }
+        $recentActivities = $query->take(5)->get();
 
         $period = $request->input('period', '7days');
         $activityChart = [];

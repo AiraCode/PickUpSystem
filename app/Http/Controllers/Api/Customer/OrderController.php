@@ -419,6 +419,18 @@ class OrderController extends Controller
                 ]);
             }
 
+            try {
+                \App\Models\Activity::create([
+                    'type' => 'order_created',
+                    'title' => 'Pesanan Baru #' . $order->id,
+                    'description' => 'Pelanggan ' . $customer->name . ' membuat pesanan baru dari ' . ($city->name ?? '-'),
+                    'related_id' => $order->id,
+                    'related_type' => \App\Models\Order::class,
+                ]);
+            } catch (\Exception $e) {
+                logger()->error('Failed to log activity: ' . $e->getMessage());
+            }
+
             return response()->json([
                 'message' => 'Pesanan penjualan aki berhasil dibuat',
                 'data' => [

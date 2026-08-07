@@ -13,6 +13,10 @@ class OrderController extends Controller
     public function index(Request $request): JsonResponse
     {
         $filterCountsQuery = Order::query();
+        
+        if (auth()->user()->role === 'warehouse') {
+            $filterCountsQuery->where('storages_id', auth()->user()->warehouse_id);
+        }
 
         if ($request->filled('city_id')) {
             $filterCountsQuery->where('cities_id', $request->input('city_id'));
@@ -43,6 +47,10 @@ class OrderController extends Controller
         ];
 
         $query = Order::with(['city', 'customer.bank', 'receipt.transfer', 'newAccu']);
+
+        if (auth()->user()->role === 'warehouse') {
+            $query->where('storages_id', auth()->user()->warehouse_id);
+        }
 
         $search = $request->input('search');
         $status = $request->input('status');
@@ -138,7 +146,21 @@ class OrderController extends Controller
 
     public function show(int $id): JsonResponse
     {
-        $order = Order::with(['city', 'customer.bank', 'receipt.transfer', 'newAccu', 'receipt.accus', 'pickupPricing'])->findOrFail($id);
+        $order = Order::with(['city', 'customer.bank', 'receipt.transfer', 'newAccu', 'receipt.accus', 'pickupPricing', 'newAccusItems'])->find($id);
+
+        if (!$order) {
+            return response()->json([
+                'message' => 'Pesanan tidak ditemukan',
+                'data' => null
+            ], 404);
+        }
+        
+        if (auth()->user()->role === 'warehouse' && $order->storages_id !== auth()->user()->warehouse_id) {
+            return response()->json([
+                'message' => 'Anda tidak memiliki akses ke pesanan ini',
+                'data' => null
+            ], 403);
+        }
 
         $orderData = $order->toArray();
         if ($order->receipt) {
@@ -174,7 +196,13 @@ class OrderController extends Controller
 
     public function updateStatus(UpdateOrderStatusRequest $request, int $id): JsonResponse
     {
-        $order = Order::with(['customer', 'city'])->findOrFail($id);
+        $order = Order::with(['customer', 'city', 'receipt'])->findOrFail($id);
+
+        if ($order->receipt && $order->receipt->edit_confirmed_by_user === 0) {
+            return response()->json([
+                'message' => 'Pesanan menunggu konfirmasi user, status tidak dapat diubah.',
+            ], 403);
+        }
 
         $updateData = ['status' => $request->status];
         $cancelReason = $request->cancel_reason;
@@ -313,6 +341,27 @@ class OrderController extends Controller
             \Illuminate\Support\Facades\Log::error('Gagal mengirim WA update status: ' . $e->getMessage());
         }
 
+        try {
+            $statusNames = [
+                'pending' => 'Pending',
+                'processing' => 'Processing',
+                'arrived_at_warehouse' => 'Sampai Gudang',
+                'completed' => 'Selesai',
+                'cancelled' => 'Dibatalkan'
+            ];
+            $statusName = $statusNames[$request->status] ?? $request->status;
+            
+            \App\Models\Activity::create([
+                'type' => 'order_status_updated',
+                'title' => 'Update Status Pesanan #' . $order->id,
+                'description' => 'Admin memperbarui status pesanan menjadi ' . $statusName,
+                'related_id' => $order->id,
+                'related_type' => \App\Models\Order::class,
+            ]);
+        } catch (\Exception $e) {
+            \Illuminate\Support\Facades\Log::error('Gagal mencatat aktivitas: ' . $e->getMessage());
+        }
+
         return response()->json([
             'message' => 'Status order berhasil diperbarui',
             'data' => $order,
@@ -387,6 +436,18 @@ class OrderController extends Controller
             }
         } catch (\Exception $e) {
             \Illuminate\Support\Facades\Log::error('Gagal kirim WA edit item: ' . $e->getMessage());
+        }
+
+        try {
+            \App\Models\Activity::create([
+                'type' => 'order_items_updated',
+                'title' => 'Item Pesanan Diperbarui #' . $order->id,
+                'description' => 'Admin memperbarui item pesanan. Menunggu konfirmasi customer.',
+                'related_id' => $order->id,
+                'related_type' => \App\Models\Order::class,
+            ]);
+        } catch (\Exception $e) {
+            \Illuminate\Support\Facades\Log::error('Gagal mencatat aktivitas: ' . $e->getMessage());
         }
 
         return response()->json([

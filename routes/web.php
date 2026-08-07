@@ -43,6 +43,10 @@ Route::prefix('admin')->group(function () {
     Route::get('/transaksi', function () {
         return view('admin.orders');
     });
+    
+    Route::get('/aktivitas', function () {
+        return view('admin.activities');
+    });
 
     Route::get('/harga', function () {
         return view('admin.prices');

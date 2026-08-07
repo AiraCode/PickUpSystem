@@ -91,6 +91,37 @@
             </table>
         </div>
     </article>
+
+    {{-- <article class="admin-panel admin-table-panel">
+        <div class="admin-panel__head" style="margin-bottom:10px;">
+            <div style="display:flex; align-items:center; gap:8px;">
+                <span style="font-size:16px;">📦</span>
+                <div>
+                    <h3 style="margin:0; font-size:16px; color:#1e293b; line-height:1.2;">Stok Sudah Diambil</h3>
+                    <p style="margin:2px 0 0 0; font-size:11px; color:#64748b;">Daftar aki yang sudah dipindahkan ke pusat.</p>
+                </div>
+            </div>
+            <div style="font-size:11px; color:#fff; background:#1e3a8a; padding:4px 10px; border-radius:12px; font-weight:700;">
+                <span id="stock-taken-badge-count">...</span>
+            </div>
+        </div>
+        <div style="padding:10px 15px; border-bottom:1px solid #f1f5f9;">
+            <input type="text" id="input-search-warehouse-taken-stock" class="admin-select" placeholder="🔍 Cari jenis / nama..." style="width:100%; max-width:240px; font-size:11px; padding:6px 10px; border-radius:6px;">
+        </div>
+        <div style="max-height:300px; overflow-y:auto; padding:0; background:#fff; border-bottom-left-radius:12px; border-bottom-right-radius:12px;">
+            <table style="width:100%; border-collapse:collapse; font-size:12px;">
+                <thead>
+                    <tr style="border-bottom:1px solid #e2e8f0; background:#f8fafc; color:#64748b; font-size:11px;">
+                        <th style="padding:8px 10px; text-align:left; font-weight:700;">Jenis Aki</th>
+                        <th style="padding:8px 10px; text-align:center; font-weight:700; width:80px;">Jumlah</th>
+                    </tr>
+                </thead>
+                <tbody id="storage-taken-stocks-tbody">
+                    <tr><td colspan="2"><div class="admin-table-empty"><strong>Memuat data stok...</strong></div></td></tr>
+                </tbody>
+            </table>
+        </div> --}}
+    </article>
 </div>
 
 <script>
@@ -108,6 +139,11 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     let map = null;
     let allStocksData = [];
+    let allTakenStocksData = [];
+
+    const takenStocksTbody = document.getElementById("storage-taken-stocks-tbody");
+    const takenStockBadgeCount = document.getElementById("stock-taken-badge-count");
+    const searchTakenInput = document.getElementById("input-search-warehouse-taken-stock");
 
     function renderStockTable(filteredStocks) {
         if (!stocksTbody) return;
@@ -137,6 +173,27 @@ document.addEventListener("DOMContentLoaded", async () => {
         }
     }
 
+    function renderTakenStockTable(filteredStocks) {
+        if (!takenStocksTbody) return;
+        if (filteredStocks.length > 0) {
+            takenStocksTbody.innerHTML = filteredStocks.map(item => {
+                const qty = parseInt(item.total_quantity || 0);
+                return `
+                    <tr style="border-bottom:1px solid #f1f5f9; ${qty > 0 ? 'background:#eff6ff;' : ''}">
+                        <td style="padding:8px 10px; font-weight:700; color:#1e293b; font-size:12px;">
+                            📦 ${item.accu_name || "-"}
+                        </td>
+                        <td style="padding:8px 10px; text-align:center; font-weight:700; color:${qty > 0 ? '#1d4ed8' : '#64748b'}; font-size:12px; white-space:nowrap;">
+                            ${qty} unit
+                        </td>
+                    </tr>
+                `;
+            }).join("");
+        } else {
+            takenStocksTbody.innerHTML = `<tr><td colspan="2"><div class="admin-table-empty"><strong>Tidak ada riwayat pengambilan</strong></div></td></tr>`;
+        }
+    }
+
     try {
         const headers = { "Accept": "application/json" };
         const token = localStorage.getItem("admin_token");
@@ -148,7 +205,9 @@ document.addEventListener("DOMContentLoaded", async () => {
         const data = await res.json();
         const w = data.warehouse;
         const stocks = data.stocks || [];
+        const takenStocks = data.taken_stocks || [];
         const totalItems = data.total_items || 0;
+        const totalTakenItems = data.total_taken_items || 0;
 
         titleHeading.innerText = `Detail ${w.name}`;
         addressHeading.innerText = w.address || "Alamat gudang belum diisi.";
@@ -157,6 +216,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         statTotal.innerText = totalItems.toLocaleString("id-ID") + " Unit";
         statCoords.innerText = `${parseFloat(w.lat).toFixed(4)}, ${parseFloat(w.long).toFixed(4)}`;
         stockBadgeCount.innerText = `${stocks.length} Jenis Aki`;
+        if (takenStockBadgeCount) takenStockBadgeCount.innerText = `${totalTakenItems} Unit Diambil`;
 
         // Render Map
         const lat = parseFloat(w.lat || -7.250445);
@@ -187,7 +247,17 @@ document.addEventListener("DOMContentLoaded", async () => {
             return (a.accu_name || "").localeCompare(b.accu_name || "");
         });
 
+        allTakenStocksData = takenStocks.sort((a, b) => {
+            const qtyA = parseInt(a.total_quantity || 0);
+            const qtyB = parseInt(b.total_quantity || 0);
+            if (qtyB !== qtyA) {
+                return qtyB - qtyA;
+            }
+            return (a.accu_name || "").localeCompare(b.accu_name || "");
+        });
+
         renderStockTable(allStocksData);
+        renderTakenStockTable(allTakenStocksData);
 
         if (searchInput) {
             searchInput.addEventListener("input", (e) => {
@@ -198,6 +268,17 @@ document.addEventListener("DOMContentLoaded", async () => {
                 );
                 renderStockTable(filtered);
                 stockBadgeCount.innerText = `${filtered.length} Jenis Aki`;
+            });
+        }
+
+        if (searchTakenInput) {
+            searchTakenInput.addEventListener("input", (e) => {
+                const query = e.target.value.toLowerCase().trim();
+                const filtered = allTakenStocksData.filter(item =>
+                    (item.accu_name && item.accu_name.toLowerCase().includes(query)) ||
+                    (item.accu_brand && item.accu_brand.toLowerCase().includes(query))
+                );
+                renderTakenStockTable(filtered);
             });
         }
 
