@@ -227,10 +227,10 @@ class PickUpSystemSeeder extends Seeder
         }
 
         $storagesData = [
-            ['id' => 1, 'name' => 'Gudang Pusat Jakarta', 'address' => 'Jl. Merdeka Raya No. 45, Jakarta', 'lat' => -6.1751, 'long' => 106.8272],
-            ['id' => 2, 'name' => 'Gudang Surabaya Rungkut', 'address' => 'Kawasan Industri Rungkut, Surabaya', 'lat' => -7.3294, 'long' => 112.7661],
-            ['id' => 3, 'name' => 'Gudang Bandung Soekarno-Hatta', 'address' => 'Jl. Soekarno-Hatta No. 120, Bandung', 'lat' => -6.9382, 'long' => 107.6432],
-            ['id' => 4, 'name' => 'Gudang Medan Amplas', 'address' => 'Jl. Sisingamangaraja, Medan', 'lat' => 3.5412, 'long' => 98.7012],
+            ['id' => 1, 'name' => 'DEP Jakarta', 'address' => 'Blok III, Kawasan Industri Pulo Gadung, Jl. Pulobuaran Raya No.6 Kav. 2-3, RW.9, Jatinegara, Kec. Cakung, Kota Jakarta Timur, DKI Jakarta', 'lat' => -6.2095, 'long' => 106.9176],
+            ['id' => 2, 'name' => 'DEP Bandung', 'address' => 'Jl. Caringin No.439 Kav.B, Babakan, Kec. Babakan Ciparay, Kota Bandung, Jawa Barat', 'lat' => -6.942727, 'long' => 107.570660],
+            ['id' => 3, 'name' => 'DEP Surabaya', 'address' => 'Jl. Raya Banjarsugihan No.7, Banjar Sugihan, Kec. Tandes, Surabaya, Jawa Timur', 'lat' => -7.254767, 'long' => 112.662228],
+            ['id' => 4, 'name' => 'MMM Banyuwangi', 'address' => 'Jl. Yos Sudarso No.56, Lingkungan Sukowidi, Klatak, Kec. Kalipuro, Kabupaten Banyuwangi, Jawa Timur', 'lat' => -8.188101, 'long' => 114.379391],
         ];
         foreach ($storagesData as $s) {
             DB::table('storages')->insert([

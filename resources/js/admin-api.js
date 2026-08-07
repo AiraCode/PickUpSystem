@@ -3671,9 +3671,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 if (warehouses && warehouses.data && warehouses.data.length) {
                     warehouseSelect.innerHTML = `<option value="">Admin Utama (akses seluruh gudang)</option>` +
                         warehouses.data
-                            .map(
-                                (s) => `<option value="${s.id}">${s.name} (${s.address || 'Alamat belum diisi'})</option>`,
-                            )
+                            .sort((a, b) => a.name.localeCompare(b.name))
+                            .map((s) => `<option value="${s.id}">${s.name}</option>`)
                             .join("");
                 }
             } catch (error) {

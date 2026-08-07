@@ -43,8 +43,8 @@ return new class extends Migration
         Schema::create('customers', function (Blueprint $table) {
             $table->integer('id')->primary();
             $table->string('name', 100);
-            $table->string('address', 500);
-            $table->string('address_note', 500)->nullable();
+            $table->longText('address');
+            $table->longText('address_note')->nullable();
             $table->decimal('lat', 11, 8);
             $table->decimal('long', 11, 8);
             $table->string('ktp', 45);
