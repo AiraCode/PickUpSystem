@@ -2222,5 +2222,140 @@
   },
   "Kata sandi rahasia salah!": {
     "en": "Incorrect secret password!"
+  },
+  "PEMBARUAN": {
+    "en": "UPDATES"
+  },
+  "Pembaruan": {
+    "en": "Updates"
+  },
+  "Semua Aktivitas": {
+    "en": "All Activities"
+  },
+  "Log Aktivitas": {
+    "en": "Activity Log"
+  },
+  "Update Status Pesanan": {
+    "en": "Update Order Status"
+  },
+  "Item Pesanan Diperbarui": {
+    "en": "Order Items Updated"
+  },
+  "Perubahan Disetujui": {
+    "en": "Changes Approved"
+  },
+  "Perubahan Ditolak": {
+    "en": "Changes Rejected"
+  },
+  "Pesanan Baru": {
+    "en": "New Order"
+  },
+  "Tampilkan Semua Aktivitas": {
+    "en": "Show All Activities"
+  },
+  "Edit Item Aki Pesanan": {
+    "en": "Edit Order Battery Items"
+  },
+  "Ubah jenis dan jumlah unit aki reject. Setelah Anda simpan, notifikasi konfirmasi (link) akan otomatis dikirimkan ke WhatsApp customer.": {
+    "en": "Change the battery type and unit quantity. After saving, a confirmation link notification will be automatically sent to the customer's WhatsApp."
+  },
+  "Simpan & Kirim Konfirmasi WA": {
+    "en": "Save & Send WA Confirmation"
+  },
+  "Batal": {
+    "en": "Cancel"
+  },
+  "BATAL": {
+    "en": "CANCEL"
+  },
+  "Tandai Sudah Diambil": {
+    "en": "Mark as Picked Up"
+  },
+  "Total Aki Sudah Diambil": {
+    "en": "Total Batteries Picked Up"
+  },
+  "Total Aki Belum Diambil": {
+    "en": "Total Batteries Not Yet Picked Up"
+  },
+  "Akumulasi seluruh gudang": {
+    "en": "Accumulation across all warehouses"
+  },
+  "Tersebar di cabang (masih di gudang)": {
+    "en": "Spread across branches (still in warehouse)"
+  },
+  "Menunggu Pengambilan Pusat": {
+    "en": "Awaiting Central Pickup"
+  },
+  "Daftar gudang cabang dengan jumlah stok \u2265 20 unit.": {
+    "en": "List of branch warehouses with stock \u2265 20 units."
+  },
+  "Daftar gudang cabang dengan jumlah stok &ge; 20 unit.": {
+    "en": "List of branch warehouses with stock \u2265 20 units."
+  },
+  "Stok Sudah Diambil": {
+    "en": "Stock Picked Up"
+  },
+  "Daftar aki yang sudah dipindahkan ke pusat.": {
+    "en": "List of batteries moved to central."
+  },
+  "Unit Diambil": {
+    "en": "Units Picked Up"
+  },
+  "Gagal memuat data.": {
+    "en": "Failed to load data."
+  },
+  "Belum ada aktivitas": {
+    "en": "No activity yet"
+  },
+  "Belum ada aktivitas.": {
+    "en": "No activity yet."
+  },
+  "Memuat data...": {
+    "en": "Loading data..."
+  },
+  "Edit Item": {
+    "en": "Edit Item"
+  },
+  "Edit Diterima": {
+    "en": "Edit Accepted"
+  },
+  "Edit Ditolak": {
+    "en": "Edit Rejected"
+  },
+  "Update Status": {
+    "en": "Update Status"
+  },
+  "Menunggu Konfirmasi Customer": {
+    "en": "Awaiting Customer Confirmation"
+  },
+  "Admin memperbarui status pesanan menjadi Processing": {
+    "en": "Admin updated order status to Processing"
+  },
+  "Admin memperbarui status pesanan menjadi Pending": {
+    "en": "Admin updated order status to Pending"
+  },
+  "Admin memperbarui status pesanan menjadi Sampai Gudang": {
+    "en": "Admin updated order status to Arrived at Warehouse"
+  },
+  "Admin memperbarui status pesanan menjadi Selesai": {
+    "en": "Admin updated order status to Completed"
+  },
+  "Admin memperbarui status pesanan menjadi Dibatalkan": {
+    "en": "Admin updated order status to Cancelled"
+  },
+  "Admin memperbarui item pesanan. Menunggu konfirmasi customer.": {
+    "en": "Admin updated order items. Awaiting customer confirmation."
+  },
+  "Customer menyetujui perubahan item pesanan.": {
+    "en": "Customer approved order item changes."
+  },
+  "Customer menolak perubahan item pesanan. Pesanan dibatalkan otomatis.": {
+    "en": "Customer rejected order item changes. Order automatically cancelled."
+  },
+  "Batas waktu 10 menit konfirmasi perubahan habis. Pesanan dibatalkan otomatis.": {
+    "en": "10-minute confirmation time limit expired. Order automatically cancelled."
+  },
+  "Admin Pusat mengambil barang yang sudah siap dari gudang cabang.": {
+    "en": "Central Admin picked up ready items from branch warehouse."
   }
 }

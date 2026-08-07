@@ -1,7 +1,7 @@
 {
-  "_fonts-C9MNnjVw.css": {
-    "file": "assets/fonts-C9MNnjVw.css",
-    "src": "_fonts-C9MNnjVw.css"
+  "_fonts-DqppEDJS.css": {
+    "file": "assets/fonts-DqppEDJS.css",
+    "src": "_fonts-DqppEDJS.css"
   },
   "_instrument-sans-400-normal-D1W7dsQl.woff": {
     "file": "assets/instrument-sans-400-normal-D1W7dsQl.woff",
@@ -28,7 +28,7 @@
     "src": "_instrument-sans-600-normal-B9e8oLYv.woff"
   },
   "resources/css/app.css": {
-    "file": "assets/app-CJ0dJmxq.css",
+    "file": "assets/app-r_mBh2sY.css",
     "name": "app",
     "names": [
       "app.css"
@@ -50,7 +50,7 @@
     ]
   },
   "resources/img/aki1.jpeg": {
-    "file": "assets/aki1-CRB9eeDM.jpeg",
+    "file": "assets/aki1-DFrKrVYZ.jpeg",
     "src": "resources/img/aki1.jpeg"
   },
   "resources/img/aki2.webp": {
@@ -102,13 +102,13 @@
     ]
   },
   "resources/js/admin-api.js": {
-    "file": "assets/admin-api-DLeT7htH.js",
+    "file": "assets/admin-api-B-1D_nZz.js",
     "name": "admin-api",
     "src": "resources/js/admin-api.js",
     "isEntry": true
   },
   "resources/js/app.js": {
-    "file": "assets/app-__W80IBw.js",
+    "file": "assets/app-CfNaieAp.js",
     "name": "app",
     "src": "resources/js/app.js",
     "isEntry": true,

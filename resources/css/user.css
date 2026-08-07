@@ -3174,27 +3174,55 @@ body.user-shell textarea:focus-visible {
 /* Hero Slideshow */
 .hero-slideshow {
     position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
+    inset: -20px;
+    width: calc(100% + 40px);
+    height: calc(100% + 40px);
     overflow: hidden;
     z-index: 1;
 }
 
 .hero-slide {
     position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
+    inset: -20px;
+    width: calc(100% + 40px);
+    height: calc(100% + 40px);
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
     opacity: 0;
-    transform: scale(0.92);
+    transform: scale(1);
     transition: opacity 1s ease-in-out, transform 1s ease-in-out;
 }
 
 .hero-slide.is-active {
-    opacity: 0.35;
-    transform: scale(1);
+    opacity: 0.45;
+    transform: scale(1.05);
+}
+
+/* Hero Slideshow Per-Slide Custom Sizes */
+
+/* Slide 1: aki1.jpeg (Full photo - Edge-to-edge zoom) */
+.hero-slide:nth-child(1).is-active {
+    transform: scale(1.14);
+}
+
+/* Slide 2: aki2.webp (Slightly smaller) */
+.hero-slide:nth-child(2).is-active {
+    transform: scale(0.95);
+}
+
+/* Slide 3: aki3 (Battery PNG cutout - Noticeably smaller) */
+.hero-slide:nth-child(3) {
+    background-size: contain;
+}
+.hero-slide:nth-child(3).is-active {
+    transform: scale(0.90);
+}
+
+/* Slide 4: aki4 (Battery PNG cutout - Noticeably smaller) */
+.hero-slide:nth-child(4) {
+    background-size: contain;
+}
+.hero-slide:nth-child(4).is-active {
+    transform: scale(0.90);
 }

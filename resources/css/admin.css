@@ -1729,11 +1729,12 @@ html.admin-dark-mode #modal-edit-profile .admin-panel,
 html.admin-dark-mode #modal-logout-confirm .admin-panel,
 html.admin-dark-mode #modal-shopee-filter .admin-panel,
 html.admin-dark-mode #modal-detail-order .admin-panel,
+html.admin-dark-mode #modal-edit-order-items .admin-panel,
 html.admin-dark-mode #modal-order-map .admin-panel,
 html.admin-dark-mode #modal-view-city-prices .admin-panel {
-    background: #1e293b;
-    border: 1px solid #334155;
-    color: #f1f5f9;
+    background: #1e293b !important;
+    border: 1px solid #334155 !important;
+    color: #f1f5f9 !important;
 }
 
 html.admin-dark-mode #modal-custom-confirm h3,
@@ -1741,6 +1742,7 @@ html.admin-dark-mode #modal-edit-profile h2,
 html.admin-dark-mode #modal-logout-confirm h2,
 html.admin-dark-mode #modal-shopee-filter h2,
 html.admin-dark-mode #modal-detail-order h3,
+html.admin-dark-mode #modal-edit-order-items h2,
 html.admin-dark-mode #modal-order-map h2,
 html.admin-dark-mode #modal-view-city-prices h2 {
     color: #f8fafc !important;
@@ -2014,5 +2016,45 @@ html.admin-dark-mode .card-all-count {
 }
 
 html.admin-dark-mode .card-all-small {
-    color: #d1d5db;
+    color: #9ca3af;
+}
+
+.admin-activity-item {
+    padding: 10px;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    position: relative;
+    cursor: pointer;
+    transition: background 0.2s, border-color 0.2s;
+    background: #ffffff;
+}
+.admin-activity-item:hover {
+    background: #f9fafb;
+}
+.admin-activity-item__title {
+    display: block;
+    font-size: 12px;
+    font-weight: 700;
+    color: #111827;
+}
+.admin-activity-item__desc {
+    display: block;
+    font-size: 11px;
+    color: #6d727c;
+    margin-top: 4px;
+    line-height: 1.4;
+}
+
+html.admin-dark-mode .admin-activity-item {
+    background: #0f172a !important;
+    border-color: #334155 !important;
+}
+html.admin-dark-mode .admin-activity-item:hover {
+    background: #1e293b !important;
+}
+html.admin-dark-mode .admin-activity-item__title {
+    color: #f8fafc !important;
+}
+html.admin-dark-mode .admin-activity-item__desc {
+    color: #94a3b8 !important;
 }
