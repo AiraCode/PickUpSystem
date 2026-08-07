@@ -768,11 +768,11 @@
     <div id="modal-edit-order-items"
         style="display:none; position:fixed; inset:0; background:rgba(0,0,0,.65); z-index:180; align-items:center; justify-content:center;">
         <div class="admin-panel"
-            style="width:580px; max-width:95vw; max-height:90vh; overflow-y:auto; background:#fff; border-radius:12px;">
+            style="width:580px; max-width:95vw; max-height:90vh; overflow-y:auto; border-radius:12px;">
             <div class="admin-panel__head"
                 style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #e5e7eb; padding-bottom:12px; margin-bottom:16px;">
                 <div style="display:flex; align-items:center; gap:8px;">
-                    <h2 style="font-size:16px; margin:0; color:#1e293b;">Edit Item Aki Pesanan</h2>
+                    <h2 style="font-size:16px; margin:0;">Edit Item Aki Pesanan</h2>
                 </div>
                 <div style="display: flex; align-items: center; gap: 8px;">
                     <button type="button" title="Tutup"
@@ -786,7 +786,7 @@
             <form id="form-edit-order-items">
                 <input type="hidden" id="edit-order-items-id">
 
-                <p style="font-size:12px; color:#64748b; margin-bottom:14px; line-height:1.4;">
+                <p style="font-size:12px; margin-bottom:14px; line-height:1.4; opacity:0.85;">
                     Ubah jenis dan jumlah unit aki reject. Setelah Anda simpan, notifikasi konfirmasi (link) akan otomatis
                     dikirimkan ke WhatsApp customer.
                 </p>

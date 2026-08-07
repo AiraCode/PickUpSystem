@@ -762,12 +762,12 @@ document.addEventListener("DOMContentLoaded", () => {
                     actList.innerHTML = activities
                         .map(
                             (a) => `
-                        <div onclick="openActivityOrder(${a.related_id || 0})" style="padding:10px; border:1px solid #e5e7eb; border-radius:8px; position:relative; cursor:pointer; transition:background 0.2s; background:#fff;" onmouseover="this.style.background='#f9fafb'" onmouseout="this.style.background='#fff'">
+                        <div class="admin-activity-item" onclick="openActivityOrder(${a.related_id || 0})">
                             <div style="display:flex; justify-content:space-between; align-items:flex-start; padding-right:18px;">
-                                <strong style="display:block; font-size:12px; color:#111827;">${a.title}</strong>
+                                <strong class="admin-activity-item__title">${a.title}</strong>
                             </div>
-                            <small style="color:#6d727c; display:block; margin-top:4px; line-height:1.4;">${a.description}</small>
-                            <button type="button" onclick="dismissActivityNotification(event, ${a.id})" title="Hapus Notifikasi" style="position:absolute; top:6px; right:6px; border:none; background:transparent; color:#9ca3af; font-size:14px; font-weight:bold; cursor:pointer; padding:2px 6px; border-radius:4px;" onmouseover="this.style.color='#ef4444'; this.style.background='#fee2e2'" onmouseout="this.style.color='#9ca3af'; this.style.background='transparent'">
+                            <small class="admin-activity-item__desc">${a.description}</small>
+                            <button type="button" onclick="dismissActivityNotification(event, ${a.id})" title="Hapus Notifikasi" style="position:absolute; top:6px; right:6px; border:none; background:transparent; color:#9ca3af; font-size:14px; font-weight:bold; cursor:pointer; padding:2px 6px; border-radius:4px; z-index:10;" onmouseover="this.style.color='#ef4444'; this.style.background='rgba(239,68,68,0.15)'" onmouseout="this.style.color='#9ca3af'; this.style.background='transparent'">
                                 &times;
                             </button>
                         </div>`
@@ -2301,10 +2301,10 @@ document.addEventListener("DOMContentLoaded", () => {
             }
 
             rowDiv.innerHTML = `
-                <select class="admin-select accu-select" style="flex:1; padding:8px 10px; border-radius:6px; font-size:12px; background:#fff; border:1px solid #cbd5e1;" required>
+                <select class="admin-select accu-select" style="flex:1; padding:8px 10px; border-radius:6px; font-size:12px;" required>
                     ${optionsHtml}
                 </select>
-                <input type="number" class="admin-select accu-qty" value="${amount}" min="1" style="width:90px; padding:8px 10px; border-radius:6px; font-size:12px; border:1px solid #cbd5e1; background: #f1f5f9;" placeholder="Qty" readonly required>
+                <input type="number" class="admin-select accu-qty" value="${amount}" min="1" style="width:90px; padding:8px 10px; border-radius:6px; font-size:12px;" placeholder="Qty" readonly required>
                 <button type="button" class="btn-remove-row admin-button" style="background:#fee2e2; color:#dc2626; border:1px solid #fecaca; border-radius:6px; width:34px; height:34px; cursor:pointer; font-weight:bold; display:inline-flex; align-items:center; justify-content:center;">✕</button>
             `;
 
