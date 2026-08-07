@@ -5,7 +5,7 @@
 @section('content')
     <div class="admin-page-heading">
         <div>
-            <span class="admin-eyebrow">ANALISIS & PERFORMA</span>
+            <span class="admin-eyebrow">Analisis & Performa</span>
             <h1>Laporan Penjualan & Performa</h1>
             <p>Ringkasan data transaksi real-time sesuai database berdasarkan tahun.</p>
         </div>
@@ -21,25 +21,25 @@
 
     <div style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; margin-bottom: 24px;">
         <article class="admin-panel admin-stat-card" style="margin:0;">
-            <span class="admin-stat-card__eyebrow">TOTAL PENDAPATAN</span>
+            <span class="admin-stat-card__eyebrow">Total Pendapatan</span>
             <div class="admin-stat-card__value" id="report-stat-sales" style="font-size:22px; font-weight:700; color:#111318; margin:6px 0 4px;">Rp 0</div>
             <p class="admin-stat-card__note" style="margin:0; font-size:11px; color:#6d727c;">Total pendapatan diterima</p>
         </article>
 
         <article class="admin-panel admin-stat-card" style="margin:0;">
-            <span class="admin-stat-card__eyebrow">TOTAL TRANSAKSI</span>
+            <span class="admin-stat-card__eyebrow">Total Transaksi</span>
             <div class="admin-stat-card__value" id="report-stat-orders" style="font-size:22px; font-weight:700; color:#111318; margin:6px 0 4px;">0</div>
             <p class="admin-stat-card__note" id="report-stat-completed-note" style="margin:0; font-size:11px; color:#6d727c;">0 Selesai</p>
         </article>
 
         <article class="admin-panel admin-stat-card" style="margin:0;">
-            <span class="admin-stat-card__eyebrow">RATA-RATA TRANSAKSI</span>
+            <span class="admin-stat-card__eyebrow">Rata-Rata Transaksi</span>
             <div class="admin-stat-card__value" id="report-stat-avg" style="font-size:22px; font-weight:700; color:#111318; margin:6px 0 4px;">Rp 0</div>
             <p class="admin-stat-card__note" style="margin:0; font-size:11px; color:#6d727c;">Nilai rata-rata per order</p>
         </article>
 
         <article class="admin-panel admin-stat-card" style="margin:0;">
-            <span class="admin-stat-card__eyebrow">PESANAN DIBATALKAN</span>
+            <span class="admin-stat-card__eyebrow">Pesanan Dibatalkan</span>
             <div class="admin-stat-card__value" id="report-stat-cancelled" style="font-size:22px; font-weight:700; color:#ba1b2b; margin:6px 0 4px;">0 (0%)</div>
             <p class="admin-stat-card__note" style="margin:0; font-size:11px; color:#6d727c;">Tingkat pembatalan order</p>
         </article>
@@ -48,7 +48,7 @@
     <article class="admin-panel admin-chart-panel" style="margin-bottom: 24px;">
         <div class="admin-panel__head" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
             <div>
-                <span class="admin-panel__eyebrow">GRAFIK REVENUE</span>
+                <span class="admin-panel__eyebrow">Grafik Revenue</span>
                 <h2 id="chart-title">Pendapatan Bulanan Tahun 2026</h2>
             </div>
             <span id="chart-max-label" style="font-size:12px; color:#6d727c; font-weight:500;"></span>
@@ -70,7 +70,7 @@
         <article class="admin-panel" style="margin:0;">
             <div class="admin-panel__head">
                 <div>
-                    <span class="admin-panel__eyebrow">PRODUK TERLARIS</span>
+                    <span class="admin-panel__eyebrow">Produk Terlaris</span>
                     <h2>Top 5 Jenis Aki Sold</h2>
                 </div>
             </div>
@@ -93,7 +93,7 @@
         <article class="admin-panel" style="margin:0;">
             <div class="admin-panel__head">
                 <div>
-                    <span class="admin-panel__eyebrow">AREA TERBANYAK</span>
+                    <span class="admin-panel__eyebrow">Area Terbanyak</span>
                     <h2>Top 5 Kota Layanan</h2>
                 </div>
             </div>

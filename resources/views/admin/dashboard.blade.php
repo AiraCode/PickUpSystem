@@ -99,7 +99,7 @@
                                 <th>Nomor pesanan</th>
                                 <th>Pelanggan</th>
                                 <th>Kota</th>
-                                <th>Metode Pengiriman</th>
+                                <th>Metode pengiriman</th>
                                 <th>Waktu</th>
                                 <th>Status</th>
                             </tr>
@@ -121,17 +121,6 @@
         </div>
 
         <aside class="admin-dashboard__right" style="flex-direction:column; gap:24px;">
-
-                        <article class="admin-stat-card" style="margin:0;">
-                <div class="admin-stat-card__head">
-                    <span class="admin-stat-card__icon admin-stat-card__icon--red">
-                        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20a8 8 0 1 0 0-16 8 8 0 0 0 0 16Z" /><path d="M12 8v4l2.6 1.7" /></svg>
-                    </span>
-                </div>
-                <p>Waktu proses rata-rata</p>
-                <strong id="stat-avg-time">-</strong>
-                <small>Dari request hingga selesai</small>
-            </article>
 
                         <article class="admin-panel admin-activity-panel" style="flex:1;">
                 <div class="admin-panel__head">

@@ -9,7 +9,7 @@
 <div class="admin-page-heading" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
     <div>
         <span class="admin-eyebrow">MANAJEMEN GUDANG</span>
-        <h1 id="warehouse-title-heading">Detail Gudang...</h1>
+        <h1 id="warehouse-title-heading">Detail Gudang</h1>
         <p id="warehouse-address-heading">Kelola dan lihat informasi stok aki yang tersimpan di gudang ini.</p>
     </div>
     <a href="/admin/gudang" class="admin-button admin-button--secondary" style="display:inline-flex; align-items:center; gap:6px; height:36px; text-decoration:none;">
@@ -79,7 +79,7 @@
         <div class="admin-table-wrap" style="max-height:310px; overflow-y:auto; overflow-x:hidden; flex:1;">
             <table style="width:100%; border-collapse:collapse; font-size:12px;">
                 <thead>
-                    <tr style="border-bottom:1px solid #e2e8f0; background:#f8fafc; color:#64748b; font-size:11px; text-transform:uppercase;">
+                    <tr style="border-bottom:1px solid #e2e8f0; background:#f8fafc; color:#64748b; font-size:11px;">
                         <th style="padding:8px 10px; text-align:left; font-weight:700;">Jenis Aki</th>
                         <th style="padding:8px 10px; text-align:center; font-weight:700; width:80px;">Jumlah</th>
                         <th style="padding:8px 10px; text-align:right; font-weight:700; width:90px;">Status</th>

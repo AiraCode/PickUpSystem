@@ -16,7 +16,7 @@
             <div>
                 <h2>Pengaturan Global LME &amp; Kurs</h2>
                 <p style="font-size:12px; color:#6d727c; margin-top:2px;">Rumus Harga: [(LME &times; Kurs &times; % Kota) /
-                    1000] &times; Berat Data Kering (kg)</p>
+                    1000] &times; Berat Kering (kg)</p>
             </div>
         </div>
         <form id="form-global-settings"
@@ -132,8 +132,8 @@
                 <table class="admin-table">
                     <thead>
                         <tr>
-                            <th>Nama / Tipe Aki</th>
-                            <th>Berat Data Kering (kg)</th>
+                            <th>Tipe Aki</th>
+                            <th>Berat Kering (kg)</th>
                             <th style="width:140px; text-align:right;">Aksi</th>
                         </tr>
                     </thead>
@@ -324,22 +324,20 @@
         style="display:none; position:fixed; inset:0; background:rgba(0,0,0,.45); z-index:100; align-items:center; justify-content:center;">
         <div class="admin-panel" style="width:440px; max-width:92vw;">
             <div class="admin-panel__head">
-                <h2>Tambah Aki Reject</h2>
-                <p style="font-size:12px; color:#6d727c; margin-top:2px;">Aki reject akan otomatis terhubung dan berlaku di
+                <h2>Tambah Aki Bekas</h2>
+                <p style="font-size:12px; color:#6d727c; margin-top:2px;">Aki bekas akan otomatis terhubung dan berlaku di
                     semua kota.</p>
             </div>
             <form id="form-add-accu">
 
                 <div style="margin-bottom:14px;">
-                    <label style="display:block; font-size:12px; font-weight:600; margin-bottom:6px; color:#4a4f59;">Nama /
-                        Tipe Aki</label>
+                    <label style="display:block; font-size:12px; font-weight:600; margin-bottom:6px; color:#4a4f59;">Tipe Aki</label>
                     <input type="text" id="accu-name" class="admin-select"
                         style="width:100%; padding:8px 10px; border-radius:6px;" placeholder="Contoh: NS40, NS60, N50Z"
                         required>
                 </div>
                 <div style="margin-bottom:18px;">
-                    <label style="display:block; font-size:12px; font-weight:600; margin-bottom:6px; color:#4a4f59;">Berat
-                        Data Kering (kg)</label>
+                    <label style="display:block; font-size:12px; font-weight:600; margin-bottom:6px; color:#4a4f59;">Berat Kering (kg)</label>
                     <input type="number" step="0.01" id="accu-berat-kering" class="admin-select"
                         style="width:100%; padding:8px 10px; border-radius:6px;" placeholder="Contoh: 5.50" required>
                 </div>
@@ -370,7 +368,7 @@
                 <input type="hidden" id="new-accu-id">
                 
                 <div style="margin-bottom:14px;">
-                    <label style="display:block; font-size:12px; font-weight:600; margin-bottom:6px; color:#4a4f59;">Nama / Tipe Aki</label>
+                    <label style="display:block; font-size:12px; font-weight:600; margin-bottom:6px; color:#4a4f59;">Tipe Aki</label>
                     <input type="text" id="new-accu-name" class="admin-select"
                         style="width:100%; padding:8px 10px; border-radius:6px;" placeholder="Contoh: GS Astra NS40" required>
                 </div>
