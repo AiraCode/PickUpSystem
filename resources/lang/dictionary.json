@@ -200,6 +200,9 @@
   "Cetak": {
     "en": "Print"
   },
+  "Dihitung setelah pilih lokasi": {
+    "en": "Calculated after selecting location"
+  },
   "Contoh: 08123456789": {
     "en": "Example: 08123456789"
   },
@@ -428,6 +431,12 @@
   "Izin kamera ditolak oleh browser. Silakan beri izin akses kamera di pengaturan browser Anda, atau gunakan opsi Galeri.": {
     "en": "Camera permission denied by browser. Please grant camera access permission in your browser settings, or use Gallery option."
   },
+  "ℹ️ Izin lokasi tidak diberikan. Anda dapat menentukan lokasi secara manual di peta.": {
+    "en": "ℹ️ Location permission not granted. You can set location manually on the map."
+  },
+  "Izin lokasi tidak diberikan. Anda dapat menentukan lokasi secara manual di peta.": {
+    "en": "Location permission not granted. You can set location manually on the map."
+  },
   "Jual Aki Reject Anda dengan": {
     "en": "Sell Your Scrap Batteries at the"
   },
@@ -518,6 +527,9 @@
   "Konfirmasi Keluar": {
     "en": "Confirm Logout"
   },
+  "Koordinat Peta:": {
+    "en": "Map Coordinates:"
+  },
   "Kota": {
     "en": "City"
   },
@@ -548,6 +560,21 @@
   "Lengkapi identitas": {
     "en": "Complete seller identity"
   },
+  "Lokasi berhasil dideteksi dari GPS perangkat.": {
+    "en": "Location successfully detected from device GPS."
+  },
+  "✅ Lokasi berhasil dideteksi dari GPS perangkat.": {
+    "en": "✅ Location successfully detected from device GPS."
+  },
+  "ℹ️ Lokasi perangkat tidak dapat diperoleh. Anda dapat menentukan lokasi secara manual di peta.": {
+    "en": "ℹ️ Device location could not be obtained. You can set location manually on the map."
+  },
+  "Lokasi perangkat tidak dapat diperoleh. Anda dapat menentukan lokasi secara manual di peta.": {
+    "en": "Device location could not be obtained. You can set location manually on the map."
+  },
+  "Lokasi tidak ditemukan. Cobalah hapus nomor rumah atau cari nama jalan utamanya saja, lalu geser pin secara manual.": {
+    "en": "Location not found. Try removing house number or searching main street name, then drag pin manually."
+  },
   "Maksimal 5 jenis aki per transaksi!": {
     "en": "Maximum 5 types of battery per transaction!"
   },
@@ -577,6 +604,18 @@
   },
   "Masukkan password Anda untuk mengonfirmasi keluar dari sistem.": {
     "en": "Enter your password to confirm logging out of the system."
+  },
+  "📡 Meminta izin lokasi perangkat...": {
+    "en": "📡 Requesting device location permission..."
+  },
+  "Meminta izin lokasi perangkat...": {
+    "en": "Requesting device location permission..."
+  },
+  "⏳ Meminta Lokasi...": {
+    "en": "⏳ Requesting Location..."
+  },
+  "Meminta Lokasi...": {
+    "en": "Requesting Location..."
   },
   "Memproses...": {
     "en": "Processing..."
@@ -724,6 +763,12 @@
   },
   "Perangkat atau browser Anda tidak mendukung akses kamera langsung. Beralih ke pengunggahan dari galeri.": {
     "en": "Your device or browser does not support direct camera access. Switch to uploading from gallery."
+  },
+  "ℹ️ Peramban tidak mendukung geolokasi. Silakan tentukan lokasi secara manual.": {
+    "en": "ℹ️ Browser does not support geolocation. Please set location manually."
+  },
+  "Peramban tidak mendukung geolokasi. Silakan tentukan lokasi secara manual.": {
+    "en": "Browser does not support geolocation. Please set location manually."
   },
   "PERFORMA": {
     "en": "PERFORMANCE"

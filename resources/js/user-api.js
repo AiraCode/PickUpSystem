@@ -1985,6 +1985,7 @@ document.addEventListener("DOMContentLoaded", () => {
             noticeEl.style.background = "#eff6ff";
             noticeEl.style.color = "#1e40af";
             noticeEl.style.borderColor = "#bfdbfe";
+            noticeEl.dataset.noticeType = "loading";
             noticeEl.innerHTML = "📡 Meminta izin lokasi perangkat...";
         }
 
@@ -2025,9 +2026,10 @@ document.addEventListener("DOMContentLoaded", () => {
                     noticeEl.style.background = "#f0fdf4";
                     noticeEl.style.color = "#166534";
                     noticeEl.style.borderColor = "#bbf7d0";
+                    noticeEl.dataset.noticeType = "success";
                     noticeEl.innerHTML = "✅ Lokasi berhasil dideteksi dari GPS perangkat.";
                     setTimeout(() => {
-                        if (noticeEl && noticeEl.innerHTML.includes("berhasil")) {
+                        if (noticeEl && (noticeEl.dataset.noticeType === "success" || noticeEl.innerHTML.includes("berhasil") || noticeEl.innerHTML.includes("successfully") || noticeEl.innerHTML.includes("Success"))) {
                             noticeEl.style.display = "none";
                         }
                     }, 4000);
