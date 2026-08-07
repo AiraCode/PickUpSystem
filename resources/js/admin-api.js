@@ -93,7 +93,8 @@ document.addEventListener("DOMContentLoaded", () => {
     if (clockEl) {
         const updateClock = () => {
             const now = new Date();
-            const locale = (window.i18n && window.i18n.currentLanguage === 'en') ? 'en-US' : 'id-ID';
+            const activeLang = localStorage.getItem('app_language') || (window.pageTranslator ? window.pageTranslator.activeLang : 'id');
+            const locale = activeLang === 'en' ? 'en-US' : 'id-ID';
             const dateStr = now.toLocaleDateString(locale, {
                 weekday: "short",
                 day: "numeric",
@@ -104,6 +105,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 hour: "2-digit",
                 minute: "2-digit",
                 second: "2-digit",
+                hour12: false,
             });
             clockEl.innerHTML = `<span style="font-weight:500; color:#475569;">${dateStr}</span> <span style="color:#2563eb; font-weight:700;">${timeStr} WIB</span>`;
         };
@@ -535,8 +537,10 @@ document.addEventListener("DOMContentLoaded", () => {
             document.getElementById("stat-total-sales").innerText = rupiah(
                 res.data.overview.total_sales,
             );
-            document.getElementById("stat-avg-time").innerText =
-                res.data.overview.avg_processing_time;
+            if (document.getElementById("stat-avg-time")) {
+                document.getElementById("stat-avg-time").innerText =
+                    res.data.overview.avg_processing_time;
+            }
 
             const tbody = document.getElementById("attention-orders-tbody");
             if (
@@ -580,11 +584,15 @@ document.addEventListener("DOMContentLoaded", () => {
                     actList.style.display = "flex";
                     actList.innerHTML = shipments
                         .map(
-                            (s) => `
+                            (s) => {
+                                const rawName = s.warehouse ? s.warehouse.name : "-";
+                                const cleanName = rawName.replace(/^Gudang\s+/i, "");
+                                return `
                         <div style="padding:10px; border:1px solid #e5e7eb; border-radius:8px;">
                             <strong style="display:block; font-size:12px;">Pengiriman #${s.id}</strong>
-                            <small style="color:#6d727c;">Ke Gudang ${s.warehouse ? s.warehouse.name : "-"} - ${s.status}</small>
-                        </div>`,
+                            <small style="color:#6d727c;">Ke Gudang ${cleanName} - ${s.status}</small>
+                        </div>`;
+                            },
                         )
                         .join("");
                 }

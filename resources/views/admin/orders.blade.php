@@ -5,7 +5,7 @@
 @section('content')
     <div class="admin-page-heading">
         <div>
-            <span class="admin-eyebrow">OPERASIONAL & MANAJEMEN</span>
+            <span class="admin-eyebrow">Operasional &amp; Manajemen</span>
             <h1>Transaksi Masuk</h1>
             <p>Kelola dan perbarui status pesanan dari pelanggan secara real-time.</p>
         </div>
@@ -619,7 +619,7 @@
                     </div>
                     <div
                         style="display:flex; justify-content:space-between; padding-top:12px; border-top:1px solid #4b5563; font-size:15px; font-weight:700;">
-                        <span id="detail-summary-total-label" style="color: #fff;">Total Dibayar ke Customer</span>
+                        <span id="detail-summary-total-label" style="color: #fff;">Total Dibayar ke Pelanggan</span>
                         <span id="detail-summary-total" style="color:#38bdf8;">-</span>
                     </div>
                 </div>

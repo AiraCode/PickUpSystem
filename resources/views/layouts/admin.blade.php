@@ -182,7 +182,7 @@
                     <button type="button" id="btn-confirm-cancel" class="admin-button admin-button--secondary"
                         style="width:100px;">Batal</button>
                     <button type="button" id="btn-confirm-ok" class="admin-button admin-button--primary"
-                        style="width:110px; background:#ba1b2b;">Ya, Hapus</button>
+                        style="width:110px; background:#ba1b2b;">Hapus</button>
                 </div>
             </div>
         </div>

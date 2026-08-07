@@ -1,4 +1,743 @@
 {
+  "Foto KTP": {
+    "en": "ID Card Photo"
+  },
+  "Nomor HP": {
+    "en": "Phone Number"
+  },
+  "Bank & Rekening": {
+    "en": "Bank & Account"
+  },
+  "Konfirmasi Perubahan Pesanan": {
+    "en": "Confirm Order Changes"
+  },
+  "Admin telah memperbarui rincian item aki pada pesanan Anda. Silakan setujui atau tolak rincian baru di bawah ini:": {
+    "en": "Admin has updated the battery item details on your order. Please approve or reject the new details below:"
+  },
+  "Item Aki Terbaru:": {
+    "en": "Latest Battery Item:"
+  },
+  "Total Estimasi Pembayaran:": {
+    "en": "Estimated Total Payment:"
+  },
+  "❌ Tolak Perubahan": {
+    "en": "❌ Reject Changes"
+  },
+  "✅ Saya Setuju": {
+    "en": "✅ I Agree"
+  },
+  "Pemberitahuan Perubahan Pesanan oleh Admin": {
+    "en": "Order Change Notification by Admin"
+  },
+  "Admin telah memperbarui rincian item aki pada pesanan Anda. Silakan tinjau dan konfirmasi perubahan ini.": {
+    "en": "Admin has updated the battery item details on your order. Please review and confirm this change."
+  },
+  "⚡ Tinjau & Konfirmasi Perubahan": {
+    "en": "⚡ Review & Confirm Changes"
+  },
+  "Type Pesanan": {
+    "en": "Order Type"
+  },
+  "Tipe Pesanan": {
+    "en": "Order Type"
+  },
+  "City Layanan": {
+    "en": "Service City"
+  },
+  "Kota Layanan": {
+    "en": "Service City"
+  },
+  "Operasional & Manajemen": {
+    "en": "Operations & Management"
+  },
+  "OPERASIONAL & MANAJEMEN": {
+    "en": "Operations & Management"
+  },
+  "Manage and update customer order STATUS in real-time.": {
+    "en": "Manage and update customer order status in real-time."
+  },
+  "Kelola dan perbarui Order STATUS of Customer secara real-time.": {
+    "en": "Manage and update customer order status in real-time."
+  },
+  "Kelola dan perbarui status pesanan dari pelanggan secara real-time.": {
+    "en": "Manage and update customer order status in real-time."
+  },
+  "Semua Transaksi": {
+    "en": "All Transactions"
+  },
+  "Barang diterima gudang": {
+    "en": "Items received at warehouse"
+  },
+  "Sampai Gudang": {
+    "en": "Arrived at Warehouse"
+  },
+  "Filter Lanjutan": {
+    "en": "Advanced Filter"
+  },
+  "📍 City Layanan": {
+    "en": "📍 Service City"
+  },
+  "📍 Kota Layanan": {
+    "en": "📍 Service City"
+  },
+  "Semua City": {
+    "en": "All Cities"
+  },
+  "Semua Kota": {
+    "en": "All Cities"
+  },
+  "Semua Bank": {
+    "en": "All Banks"
+  },
+  "📅 Rentang Date Pesanan": {
+    "en": "📅 Order Date Range"
+  },
+  "📅 Rentang Tanggal Pesanan": {
+    "en": "📅 Order Date Range"
+  },
+  "Urutkan Berdasarkan Time": {
+    "en": "Sort By Time"
+  },
+  "🔀 Urutkan Berdasarkan Time": {
+    "en": "🔀 Sort By Time"
+  },
+  "Urutkan Berdasarkan Waktu": {
+    "en": "Sort By Time"
+  },
+  "🔀 Urutkan Berdasarkan Waktu": {
+    "en": "🔀 Sort By Time"
+  },
+  "Terbaru ke Terlama (Default)": {
+    "en": "Newest to Oldest (Default)"
+  },
+  "Update Order STATUS": {
+    "en": "Update Order Status"
+  },
+  "Pilih STATUS Baru": {
+    "en": "Select New Status"
+  },
+  "Pilih Status Baru": {
+    "en": "Select New Status"
+  },
+  "Pesanan Login, menunggu Pending": {
+    "en": "Order created, awaiting processing"
+  },
+  "Pesanan masuk, menunggu diproses": {
+    "en": "Order created, awaiting processing"
+  },
+  "Being picked up / Pending admin": {
+    "en": "Being picked up / processed by admin"
+  },
+  "Sedang dijemput / diproses admin": {
+    "en": "Being picked up / processed by admin"
+  },
+  "Sampai di Gudang": {
+    "en": "Arrived at Warehouse"
+  },
+  "BATTERY telah diterima & sampai di gudang": {
+    "en": "Batteries received & arrived at warehouse"
+  },
+  "Aki telah diterima & sampai di gudang": {
+    "en": "Batteries received & arrived at warehouse"
+  },
+  "Order completed (must upload proof photo)": {
+    "en": "Order completed (must upload proof photo)"
+  },
+  "Pesanan selesai (wajib upload foto bukti)": {
+    "en": "Order completed (must upload proof photo)"
+  },
+  "Order cancelled (must provide reason)": {
+    "en": "Order cancelled (must provide reason)"
+  },
+  "Pesanan dibatalkan (wajib beri alasan)": {
+    "en": "Order cancelled (must provide reason)"
+  },
+  "PAYMENT PROOF / Transfer (Wajib)": {
+    "en": "Payment Proof / Transfer (Required)"
+  },
+  "Lihat PAYMENT PROOF": {
+    "en": "View Payment Proof"
+  },
+  "Order Details": {
+    "en": "Order Details"
+  },
+  "Check Price Details": {
+    "en": "Check Price Details"
+  },
+  "Informasi Customer": {
+    "en": "Customer Information"
+  },
+  "Informasi Pelanggan": {
+    "en": "Customer Information"
+  },
+  "Full Name": {
+    "en": "Full Name"
+  },
+  "Full address": {
+    "en": "Full Address"
+  },
+  "Foto BATTERY": {
+    "en": "Battery Photo"
+  },
+  "Foto Aki": {
+    "en": "Battery Photo"
+  },
+  "Order Information": {
+    "en": "Order Information"
+  },
+  "Informasi Pesanan": {
+    "en": "Order Information"
+  },
+  "Type Pesanan": {
+    "en": "Order Type"
+  },
+  "City Layanan": {
+    "en": "Service City"
+  },
+  "Payment Method": {
+    "en": "Payment Method"
+  },
+  "Delivery Method": {
+    "en": "Delivery Method"
+  },
+  "Order Time": {
+    "en": "Order Time"
+  },
+  "Last Updated": {
+    "en": "Last Updated"
+  },
+  "Pickup Address": {
+    "en": "Pickup Address"
+  },
+  "Lihat Address di Map": {
+    "en": "View Address on Map"
+  },
+  "Notes Address": {
+    "en": "Address Notes"
+  },
+  "Total Dibayar ke Customer": {
+    "en": "Total Paid to Customer"
+  },
+  "Total Dibayar ke Pelanggan": {
+    "en": "Total Paid to Customer"
+  },
+  "Contoh:": {
+    "en": "Example:"
+  },
+  "Contoh": {
+    "en": "Example"
+  },
+  "Contoh: Surabaya": {
+    "en": "Example: Surabaya"
+  },
+  "Contoh: NS40, NS60, N50Z": {
+    "en": "Example: NS40, NS60, N50Z"
+  },
+  "Contoh: 5.50": {
+    "en": "Example: 5.50"
+  },
+  "Contoh: GS Astra NS40": {
+    "en": "Example: GS Astra NS40"
+  },
+  "Contoh: 850000": {
+    "en": "Example: 850000"
+  },
+  "Contoh: 2100": {
+    "en": "Example: 2100"
+  },
+  "Contoh: 16000": {
+    "en": "Example: 16000"
+  },
+  "Delete Battery Baru": {
+    "en": "Delete New Battery"
+  },
+  "Hapus Aki Baru": {
+    "en": "Delete New Battery"
+  },
+  "Yakin ingin menghapus New Battery ini?": {
+    "en": "Are you sure you want to delete this new battery?"
+  },
+  "Yakin ingin menghapus aki baru ini?": {
+    "en": "Are you sure you want to delete this new battery?"
+  },
+  "Scrap Battery akan otomatis terhubung dan berlaku di semua City.": {
+    "en": "Scrap batteries will automatically link and apply to all cities."
+  },
+  "Aki bekas akan otomatis terhubung dan berlaku di semua kota.": {
+    "en": "Scrap batteries will automatically link and apply to all cities."
+  },
+  "Aki reject akan otomatis terhubung dan berlaku di semua kota.": {
+    "en": "Scrap batteries will automatically link and apply to all cities."
+  },
+  "Riwayat Perubahan Parameter": {
+    "en": "Parameter Change History"
+  },
+  "5 / hal": {
+    "en": "5 / page"
+  },
+  "20 / hal": {
+    "en": "20 / page"
+  },
+  "50 / hal": {
+    "en": "50 / page"
+  },
+  "/ hal": {
+    "en": "/ page"
+  },
+  "0 Jenis Aki": {
+    "en": "0 Battery Types"
+  },
+  "0 Jenis BATTERY": {
+    "en": "0 Battery Types"
+  },
+  "Aki dari pesanan yang sudah diterima di gudang": {
+    "en": "Batteries from orders received at warehouse"
+  },
+  "BATTERY of pesanan yang sudah diterima di gudang": {
+    "en": "Batteries from orders received at warehouse"
+  },
+  "Back ke Warehouse List": {
+    "en": "Back to Warehouse List"
+  },
+  "Kembali ke Daftar Gudang": {
+    "en": "Back to Warehouse List"
+  },
+  "Cari jenis / nama...": {
+    "en": "Search type / name..."
+  },
+  "🔍 Cari jenis / nama...": {
+    "en": "🔍 Search type / name..."
+  },
+  "Search jenis / Name...": {
+    "en": "Search type / name..."
+  },
+  "🔍 Search jenis / Name...": {
+    "en": "Search type / name..."
+  },
+  "Catatan log historis perubahan LME, Kurs, dan persentase kota.": {
+    "en": "Historical log of LME, Exchange Rate, and city percentage changes."
+  },
+  "Catatan log historis perubahan LME, Kurs, dan persentase City.": {
+    "en": "Historical log of LME, Exchange Rate, and city percentage changes."
+  },
+  "Notes log historis perubahan LME, Kurs, dan persentase City.": {
+    "en": "Historical log of LME, Exchange Rate, and city percentage changes."
+  },
+  "Confirm Deletion Gudang": {
+    "en": "Confirm Warehouse Deletion"
+  },
+  "Konfirmasi Hapus Gudang": {
+    "en": "Confirm Warehouse Deletion"
+  },
+  "Daftar akumulasi aki (diurutkan berdasarkan jumlah terbesar).": {
+    "en": "List of accumulated batteries (sorted by largest quantity)."
+  },
+  "Daftar akumulasi BATTERY (diurutkan berdasarkan jumlah terbesar).": {
+    "en": "List of accumulated batteries (sorted by largest quantity)."
+  },
+  "Delete Gudang": {
+    "en": "Delete Warehouse"
+  },
+  "Hapus Gudang": {
+    "en": "Delete Warehouse"
+  },
+  "Delete BATTERY": {
+    "en": "Delete Battery"
+  },
+  "Hapus Aki": {
+    "en": "Delete Battery"
+  },
+  "Detail Gudang & Stok Aki": {
+    "en": "Warehouse Details & Battery Stock"
+  },
+  "Detail Gudang": {
+    "en": "Warehouse Details"
+  },
+  "Detail Gudang...": {
+    "en": "Warehouse Details"
+  },
+  "Edit BATTERY Baru": {
+    "en": "Edit New Battery"
+  },
+  "Edit Aki Baru": {
+    "en": "Edit New Battery"
+  },
+  "Enter password akun Admin Anda untuk mengonfirmasi penghapusan gudang ini.": {
+    "en": "Enter your Admin account password to confirm deleting this warehouse."
+  },
+  "Error memuat data riwayat": {
+    "en": "Error loading history data"
+  },
+  "Gagal memuat data riwayat": {
+    "en": "Failed to load history data"
+  },
+  "JENIS BATTERY": {
+    "en": "Battery Type"
+  },
+  "Jenis BATTERY": {
+    "en": "Battery Type"
+  },
+  "JUMLAH": {
+    "en": "QUANTITY"
+  },
+
+  "Kelola dan lihat informasi stok aki yang tersimpan di gudang ini.": {
+    "en": "Manage and view battery stock information stored in this warehouse."
+  },
+  "Koordinat Lokasi": {
+    "en": "Location Coordinates"
+  },
+  "Lokasi:": {
+    "en": "Location:"
+  },
+  "Memuat data stok gudang...": {
+    "en": "Loading warehouse stock data..."
+  },
+  "Merk BATTERY": {
+    "en": "Battery Brand"
+  },
+  "Merk Aki": {
+    "en": "Battery Brand"
+  },
+  "Peta Lokasi Gudang": {
+    "en": "Warehouse Location Map"
+  },
+  "📍 Peta Lokasi Gudang": {
+    "en": "📍 Warehouse Location Map"
+  },
+  "Pilih Merk": {
+    "en": "Select Brand"
+  },
+  "Rumus Price: [(LME × Kurs × % City) / 1000] × Berat Data Kering (kg)": {
+    "en": "Price Formula: [(LME × Exchange Rate × % City) / 1000] × Dry Weight (kg)"
+  },
+  "Rumus Price: [(LME × Kurs × % City) / 1000] × Berat Kering (kg)": {
+    "en": "Price Formula: [(LME × Exchange Rate × % City) / 1000] × Dry Weight (kg)"
+  },
+  "Rumus Harga: [(LME × Kurs × % Kota) / 1000] × Berat Kering (kg)": {
+    "en": "Price Formula: [(LME × Exchange Rate × % City) / 1000] × Dry Weight (kg)"
+  },
+  "Save BATTERY Baru": {
+    "en": "Save New Battery"
+  },
+  "Simpan Aki Baru": {
+    "en": "Save New Battery"
+  },
+  "Save BATTERY": {
+    "en": "Save Battery"
+  },
+  "Simpan Aki": {
+    "en": "Save Battery"
+  },
+  "Add BATTERY Bekas": {
+    "en": "Add Scrap Battery"
+  },
+  "Tambah Aki Bekas": {
+    "en": "Add Scrap Battery"
+  },
+  "BATTERY Bekas (LME)": {
+    "en": "Scrap Battery (LME)"
+  },
+  "Aki Bekas (LME)": {
+    "en": "Scrap Battery (LME)"
+  },
+  "BATTERY Baru": {
+    "en": "New Battery"
+  },
+  "Aki Baru": {
+    "en": "New Battery"
+  },
+  "Name / Battery Type": {
+    "en": "Battery Type"
+  },
+  "Tipe Aki": {
+    "en": "Battery Type"
+  },
+  "Nama / Tipe Aki": {
+    "en": "Battery Type"
+  },
+  "Berat Data Kering (kg)": {
+    "en": "Dry Weight (kg)"
+  },
+  "Berat Kering (kg)": {
+    "en": "Dry Weight (kg)"
+  },
+  "Search model, ukuran...": {
+    "en": "Search model, size..."
+  },
+  "Cari model, ukuran...": {
+    "en": "Search model, size..."
+  },
+  "Scrap Battery akan otomatis terhubung dan berlaku di semua City.": {
+    "en": "Scrap batteries will automatically link and apply to all cities."
+  },
+  "Aki bekas akan otomatis terhubung dan berlaku di semua kota.": {
+    "en": "Scrap batteries will automatically link and apply to all cities."
+  },
+  "Atur Percentage (%) untuk City ini di bagian atas. Battery Prices dihitung otomatis dengan rumus.": {
+    "en": "Set percentage (%) for this city above. Battery prices are calculated automatically using formula."
+  },
+  "Set persentase (%) untuk kota ini di bagian atas. Harga aki dihitung otomatis dengan rumus.": {
+    "en": "Set percentage (%) for this city above. Battery prices are calculated automatically using formula."
+  },
+  "Daftar Battery Prices: City": {
+    "en": "Battery Price List: City"
+  },
+  "Daftar Harga Aki: Kota": {
+    "en": "Battery Price List: City"
+  },
+  "Area Layanan (City)": {
+    "en": "Service Area (City)"
+  },
+  "Area Layanan (Kota)": {
+    "en": "Service Area (City)"
+  },
+  "Yakin ingin menghapus City ini?": {
+    "en": "Are you sure you want to delete this city?"
+  },
+  "Yakin ingin menghapus kota ini?": {
+    "en": "Are you sure you want to delete this city?"
+  },
+  "Daftar Jenis BATTERY": {
+    "en": "Battery Type List"
+  },
+  "Daftar Jenis Aki": {
+    "en": "Battery Type List"
+  },
+  "Riwayat BATTERY Terhapus (Klik untuk pulihkan)": {
+    "en": "Deleted Battery History (Click to restore)"
+  },
+  "Riwayat Aki Terhapus (Klik untuk pulihkan)": {
+    "en": "Deleted Battery History (Click to restore)"
+  },
+  "Tidak ada BATTERY terhapus": {
+    "en": "No deleted batteries"
+  },
+  "Tidak ada aki terhapus": {
+    "en": "No deleted batteries"
+  },
+  "Persentase Kota (%)": {
+    "en": "City Percentage (%)"
+  },
+  "Riwayat Kota Terhapus (Klik untuk pulihkan)": {
+    "en": "Deleted City History (Click to restore)"
+  },
+  "Tidak ada kota terhapus": {
+    "en": "No deleted cities"
+  },
+  "Cari nama kota...": {
+    "en": "Search city name..."
+  },
+  "Search City Name...": {
+    "en": "Search city name..."
+  },
+  "Cari nama aki baru...": {
+    "en": "Search new battery name..."
+  },
+  "Search Battery Name baru...": {
+    "en": "Search new battery name..."
+  },
+  "Stok Barang per Jenis Aki": {
+    "en": "Stock per Battery Type"
+  },
+  "📦 Stok Barang per Jenis Aki": {
+    "en": "📦 Stock per Battery Type"
+  },
+  "Stok Barang per Jenis BATTERY": {
+    "en": "Stock per Battery Type"
+  },
+  "📦 Stok Barang per Jenis BATTERY": {
+    "en": "📦 Stock per Battery Type"
+  },
+  "Terjadi kesalahan saat memuat stok gudang": {
+    "en": "An error occurred while loading warehouse stock"
+  },
+  "Tidak ada jenis aki yang cocok": {
+    "en": "No matching battery types found"
+  },
+  "Titik GPS lokasi gudang": {
+    "en": "Warehouse GPS location point"
+  },
+  "Total Stok Aki Tersimpan": {
+    "en": "Total Battery Stock Stored"
+  },
+  "Total Stok BATTERY Tersimpan": {
+    "en": "Total Battery Stock Stored"
+  },
+  "Yakin ingin menghapus jenis BATTERY ini?": {
+    "en": "Are you sure you want to delete this battery type?"
+  },
+  "Yakin ingin menghapus jenis aki ini?": {
+    "en": "Are you sure you want to delete this battery type?"
+  },
+  "0 Selesai": {
+    "en": "0 Completed"
+  },
+  "Agu": {
+    "en": "Aug"
+  },
+  "Analisis & Performa": {
+    "en": "Analysis & Performance"
+  },
+  "ANALISIS & PERFORMA": {
+    "en": "Analysis & Performance"
+  },
+  "Area Terbanyak": {
+    "en": "Top Areas"
+  },
+  "AREA TERBANYAK": {
+    "en": "Top Areas"
+  },
+  "AVERAGE TRANSACTION": {
+    "en": "Average Transaction"
+  },
+  "Detail & Stok": {
+    "en": "Detail & Stock"
+  },
+  "Des": {
+    "en": "Dec"
+  },
+  "Grafik Revenue": {
+    "en": "Revenue Chart"
+  },
+  "GRAFIK REVENUE": {
+    "en": "Revenue Chart"
+  },
+  "Jum": {
+    "en": "Fri"
+  },
+  "Kam": {
+    "en": "Thu"
+  },
+  "Kata sandi lama": {
+    "en": "Old password"
+  },
+  "Kata Sandi Saat Ini (Wajib jika ganti kata sandi)": {
+    "en": "Current Password (Required if changing password)"
+  },
+  "Ke Gudang": {
+    "en": "To Warehouse"
+  },
+  "Kosongkan jika tidak diubah": {
+    "en": "Leave blank if unchanged"
+  },
+  "Laporan Penjualan & Performa": {
+    "en": "Sales & Performance Report"
+  },
+  "Lihat Peta": {
+    "en": "View Map"
+  },
+  "Mei": {
+    "en": "May"
+  },
+  "Min": {
+    "en": "Sun"
+  },
+  "Nilai penjualan": {
+    "en": "Sales Value"
+  },
+  "Nilai rata-rata per order": {
+    "en": "Average value per order"
+  },
+  "Nomor pesanan": {
+    "en": "Order Number"
+  },
+  "Okt": {
+    "en": "Oct"
+  },
+  "Pendapatan Bulanan Tahun": {
+    "en": "Monthly Revenue Year"
+  },
+  "Pendapatan Bulanan Tahun 2026": {
+    "en": "Monthly Revenue Year 2026"
+  },
+  "Pendapatan Bulanan Tahun 2025": {
+    "en": "Monthly Revenue Year 2025"
+  },
+  "Pendapatan Bulanan Tahun 2024": {
+    "en": "Monthly Revenue Year 2024"
+  },
+  "Pengiriman": {
+    "en": "Shipment"
+  },
+  "Pengiriman #": {
+    "en": "Shipment #"
+  },
+  "Pesanan Dibatalkan": {
+    "en": "Orders Cancelled"
+  },
+  "PESANAN DIBATALKAN": {
+    "en": "Orders Cancelled"
+  },
+  "Produk Terlaris": {
+    "en": "Top Selling Products"
+  },
+  "PRODUK TERLARIS": {
+    "en": "Top Selling Products"
+  },
+  "Rab": {
+    "en": "Wed"
+  },
+  "Rata-Rata Transaksi": {
+    "en": "Average Transaction"
+  },
+  "RATA-RATA TRANSAKSI": {
+    "en": "Average Transaction"
+  },
+  "Sab": {
+    "en": "Sat"
+  },
+  "Sel": {
+    "en": "Tue"
+  },
+  "Selesai": {
+    "en": "Completed"
+  },
+  "Sen": {
+    "en": "Mon"
+  },
+  "Tertinggi:": {
+    "en": "Highest:"
+  },
+  "Tindak Lanjuti": {
+    "en": "Follow Up"
+  },
+  "Tingkat pembatalan order": {
+    "en": "Order cancellation rate"
+  },
+  "Total Gross Revenue": {
+    "en": "Total Gross Revenue"
+  },
+  "Total Pendapatan": {
+    "en": "Total Revenue"
+  },
+  "TOTAL PENDAPATAN": {
+    "en": "Total Revenue"
+  },
+  "Total Transaksi": {
+    "en": "Total Orders"
+  },
+  "TOTAL TRANSAKSI": {
+    "en": "Total Orders"
+  },
+  "Transaksi Masuk": {
+    "en": "Incoming Orders"
+  },
+  "Ubah Status": {
+    "en": "Change Status"
+  },
+  "Wajib jika ganti kata sandi": {
+    "en": "Required if changing password"
+  },
+  "Wajib jika ganti password": {
+    "en": "Required if changing password"
+  },
+  "Wajib jika ganti Password": {
+    "en": "Required if changing password"
+  },
+  "Waktu": {
+    "en": "Time"
+  },
   "-- Pilih Kota Penyerahan --": {
     "en": "-- Select Delivery City --"
   },
@@ -43,6 +782,12 @@
   },
   "AKI": {
     "en": "BATTERY"
+  },
+  "Aki": {
+    "en": "Battery"
+  },
+  "aki": {
+    "en": "battery"
   },
   "Aki Baru (Trade In)": {
     "en": "New Battery (Trade In)"

@@ -20,7 +20,7 @@ class PageTranslator {
         
         this.observer = null;
         this.skipElements = new Set(['SCRIPT', 'STYLE', 'CODE', 'PRE', 'SVG', 'CANVAS', 'NOSCRIPT']);
-        this.attributesToTranslate = ['placeholder', 'title', 'aria-label', 'alt', 'aria-description'];
+        this.attributesToTranslate = ['placeholder', 'title', 'aria-label', 'alt', 'aria-description', 'data-tooltip'];
         
         // Stats
         this.stats = {

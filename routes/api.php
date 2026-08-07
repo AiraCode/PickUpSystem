@@ -28,6 +28,7 @@ use Illuminate\Support\Facades\Route;
 
 
 use App\Http\Controllers\Api\Customer\OCRController as CustomerOCRController;
+Route::post('/login', [AuthController::class, 'login']);
 
 Route::prefix('customer')->group(function () {
     Route::get('cities', [CustomerCityController::class, 'index']);
