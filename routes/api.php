@@ -128,6 +128,8 @@ Route::prefix('public-admin')->group(function () {
 Route::get('admin/storages/{id}/stock', [WarehouseController::class, 'stockSummary']);
 Route::put('admin/orders/{id}/items', [AdminOrderController::class, 'updateItems']);
 
+Route::post('/login', [AuthController::class, 'login']);
+
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::put('/admin/profile', [AuthController::class, 'updateProfile']);
