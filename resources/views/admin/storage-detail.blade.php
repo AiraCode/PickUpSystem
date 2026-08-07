@@ -18,7 +18,7 @@
     </a>
 </div>
 
-<div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; margin-bottom: 20px;">
+<div style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; margin-bottom: 20px;">
     <article class="admin-panel admin-stat-card">
         <div class="admin-stat-card__head" style="margin-bottom:6px;">
             <span class="admin-stat-card__icon" style="background:#dbeafe; color:#2563eb; padding:6px; border-radius:6px;">
@@ -39,6 +39,17 @@
         <p style="margin:0; font-size:12px; color:#065f46; font-weight:600;">Total Stok Aki Tersimpan</p>
         <strong id="stat-total-items" style="font-size:22px; color:#059669;">0</strong>
         <small style="color:#10b981; font-size:11px;">Aki dari pesanan yang sudah diterima di gudang</small>
+    </article>
+
+    <article class="admin-panel admin-stat-card">
+        <div class="admin-stat-card__head" style="margin-bottom:6px;">
+            <span class="admin-stat-card__icon" style="background:#e0e7ff; color:#4338ca; padding:6px; border-radius:6px;">
+                📦
+            </span>
+        </div>
+        <p style="margin:0; font-size:12px; color:#3730a3; font-weight:600;">Aki Dikirim ke Pusat</p>
+        <strong id="stat-total-taken" style="font-size:22px; color:#4338ca;">0</strong>
+        <small style="color:#4f46e5; font-size:11px;">Aki yang dikirim ke gudang utama</small>
     </article>
 
     <article class="admin-panel admin-stat-card">
@@ -76,13 +87,13 @@
                 </span>
             </div>
         </div>
-        <div class="admin-table-wrap" style="max-height:310px; overflow-y:auto; overflow-x:hidden; flex:1;">
+        <div class="admin-table-wrap" style="max-height:380px; overflow-y:auto; overflow-x:hidden; flex:1;">
             <table style="width:100%; border-collapse:collapse; font-size:12px;">
-                <thead>
-                    <tr style="border-bottom:1px solid #e2e8f0; background:#f8fafc; color:#64748b; font-size:11px;">
-                        <th style="padding:8px 10px; text-align:left; font-weight:700;">Jenis Aki</th>
-                        <th style="padding:8px 10px; text-align:center; font-weight:700; width:80px;">Jumlah</th>
-                        <th style="padding:8px 10px; text-align:right; font-weight:700; width:90px;">Status</th>
+                <thead style="position: sticky; top: 0; z-index: 10;">
+                    <tr style="background:#f8fafc; color:#64748b; font-size:11px;">
+                        <th style="padding:8px 10px; text-align:left; font-weight:700; position:sticky; top:0; background:#f8fafc; z-index:10; border-bottom:1px solid #e2e8f0;">Jenis Aki</th>
+                        <th style="padding:8px 10px; text-align:center; font-weight:700; width:80px; position:sticky; top:0; background:#f8fafc; z-index:10; border-bottom:1px solid #e2e8f0;">Jumlah</th>
+                        <th style="padding:8px 10px; text-align:right; font-weight:700; width:90px; position:sticky; top:0; background:#f8fafc; z-index:10; border-bottom:1px solid #e2e8f0;">Status</th>
                     </tr>
                 </thead>
                 <tbody id="storage-stocks-tbody">
@@ -133,6 +144,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     const statAddr = document.getElementById("stat-warehouse-address");
     const statTotal = document.getElementById("stat-total-items");
     const statCoords = document.getElementById("stat-coords");
+    const statTotalTaken = document.getElementById("stat-total-taken");
     const stocksTbody = document.getElementById("storage-stocks-tbody");
     const stockBadgeCount = document.getElementById("stock-badge-count");
     const searchInput = document.getElementById("input-search-warehouse-stock");
@@ -215,6 +227,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         statAddr.innerText = w.address || "-";
         statTotal.innerText = totalItems.toLocaleString("id-ID") + " Unit";
         statCoords.innerText = `${parseFloat(w.lat).toFixed(4)}, ${parseFloat(w.long).toFixed(4)}`;
+        if (statTotalTaken) statTotalTaken.innerText = totalTakenItems.toLocaleString("id-ID") + " Unit";
         stockBadgeCount.innerText = `${stocks.length} Jenis Aki`;
         if (takenStockBadgeCount) takenStockBadgeCount.innerText = `${totalTakenItems} Unit Diambil`;
 
