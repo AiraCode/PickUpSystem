@@ -14,7 +14,7 @@
   <a href="#-fitur-utama"><img src="https://img.shields.io/badge/Tailwind_CSS-v4.0-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white" alt="Tailwind CSS"></a>
   <a href="#-fitur-utama"><img src="https://img.shields.io/badge/Vite-8.0-646CFF?style=for-the-badge&logo=vite&logoColor=white" alt="Vite"></a>
   <a href="#-fitur-utama"><img src="https://img.shields.io/badge/Sanctum-Auth-F58025?style=for-the-badge&logo=laravel&logoColor=white" alt="Sanctum"></a>
-  <a href="#-fitur-utama"><img src="https://img.shields.io/badge/Database-MySQL%20%7C%20SQLite-4479A1?style=for-the-badge&logo=mysql&logoColor=white" alt="Database"></a>
+  <a href="#-fitur-utama"><img src="https://img.shields.io/badge/Database-MySQL-4479A1?style=for-the-badge&logo=mysql&logoColor=white" alt="Database"></a>
   <a href="#-lisensi"><img src="https://img.shields.io/badge/License-MIT-green.svg?style=for-the-badge" alt="License"></a>
 </p>
 
