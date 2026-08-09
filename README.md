@@ -33,7 +33,7 @@
 - [Struktur Database & Model](#-struktur-database--model)
 - [Daftar Endpoint API Utama](#-daftar-endpoint-api-utama)
 - [Panduan Instalasi & Setup](#-panduan-instalasi--setup)
-- [Akun Demo & Kredensial Default](#-akun-demo--kredensial-default)
+- [Manajemen Peran Pengguna (User Roles)](#-manajemen-peran-pengguna-user-roles)
 - [Struktur Direktori Projek](#-struktur-direktori-projek)
 - [Pengujian & Verifikasi (Testing)](#-pengujian--verifikasi-testing)
 - [Lisensi](#-lisensi)
@@ -47,7 +47,7 @@
 Sistem ini menghubungkan penjual (customer), depo/gudang penyimpanan kota, kurir penjemputan, hingga manajemen pusat dengan alur kerja yang transparan, perhitungan harga dinamis berbasis bursa logam internasional (**London Metal Exchange / LME**), estimasi ongkir pintar, serta verifikasi identitas berbasis **Optical Character Recognition (OCR)**.
 
 > [!NOTE]
-> Proyek ini siap digunakan pada server lokal (**Laragon, XAMPP, Nginx**) maupun serverless environment (**Vercel**) melalui modul *bridge adapter* `api_core/index.php`.
+> Proyek ini dapat dijalankan pada server lokal (**Laragon, XAMPP, Nginx**) maupun serverless environment (**Vercel**) melalui modul *bridge adapter* `api_core/index.php`.
 
 ---
 
@@ -57,9 +57,9 @@ Sistem ini menghubungkan penjual (customer), depo/gudang penyimpanan kota, kurir
 - **Kalkulator & Estimator Harga Real-Time**: Simulasi harga aki bekas langsung berdasarkan jenis aki, brand (GS Astra, Yuasa, Incoe, dll), dan kota pengambilan.
 - **Tukar Tambah (Trade-In) & Direct Sale**: Pilihan menjual aki bekas untuk dicairkan dana atau ditukar tambah dengan aki baru.
 - **Formulir Transaksi Multi-Step**:
-  1. *Pilihan Aki & Jumlah* (bisa multi-tipe sekaligus).
+  1. *Pilihan Aki & Jumlah* (mendukung multi-tipe sekaligus).
   2. *Identitas & Rekening* (Nama, No. HP, Bank tujuan transfer, Nomor rekening).
-  3. *Metode Pengiriman*: Antar mandiri ke Depo terdekat (**Drop-off**) atau Dijemput ke rumah (**Pick-Up**).
+  3. *Metode Pengiriman*: Antar mandiri ke Depo terdekat (**Drop-off**) atau Dijemput ke lokasi (**Pick-Up**).
   4. *Kalkulasi Jarak & Ongkir Otomatis*: Geocoding jarak pengguna ke gudang terdekat dengan rumus dinamis.
 - **Struk Digital & Pelacakan Transaksi (Digital Receipt)**: Pelacakan status real-time (`Menunggu`, `Dijemput`, `Tiba di Gudang`, `Transfer Berhasil`, `Selesai`, `Dibatalkan`).
 - **Konfirmasi Revisi QC (User Edit Confirmation)**: Jika fisik aki yang diterima gudang berbeda dengan yang diinputkan pelanggan, pelanggan dapat mengonfirmasi atau menolak penyesuaian sebelum pembayaran ditransfer.
@@ -93,7 +93,7 @@ Sistem ini menghubungkan penjual (customer), depo/gudang penyimpanan kota, kurir
 - **OCR Smart Verification**:
   - Ekstraksi otomatis nama pada foto KTP pelanggan.
   - Verifikasi otomatis kesesuaian nama rekening tujuan pada bukti pembayaran / slip transfer.
-- **Easter Egg Secret Protection**: Akses proteksi ganda dengan kata sandi rahasia (`X-Easter-Egg-Pass`) untuk halaman sensitif (Manajemen User & Penyesuaian Tarif Penjemputan).
+- **Security Pass Gate**: Lapisan verifikasi keamanan tambahan untuk akses modul konfigurasi sensitif.
 
 ---
 
@@ -130,7 +130,7 @@ flowchart TD
 
     Pelanggan -->|HTTP Requests| F
     Admin_Portal -->|Sanctum Token| I --> G
-    Admin_Portal -->|Easter Egg Pass| H
+    Admin_Portal -->|Authorized Request| H
     F --> Database
     G --> Database
     H --> Database
@@ -243,44 +243,28 @@ composer install
 npm install
 ```
 
-### 4. Konfigurasi File Environment (.env)
-Salin berkas `.env.example` menjadi `.env`:
+### 4. Konfigurasi Lingkungan (.env)
+Salin berkas template environment:
 ```bash
 cp .env.example .env
 ```
 
-Sesuaikan konfigurasi database pada `.env`:
-```env
-APP_NAME="PickUp System"
-APP_ENV=local
-APP_KEY=
-APP_DEBUG=true
-APP_URL=http://localhost:8000
+> [!IMPORTANT]
+> Buka file `.env` dan sesuaikan koneksi database (`DB_DATABASE`, `DB_USERNAME`, `DB_PASSWORD`) sesuai konfigurasi server lokal Anda. Jangan pernah meng-commit file `.env` asli ke repositori publik.
 
-DB_CONNECTION=mysql
-DB_HOST=127.0.0.1
-DB_PORT=3306
-DB_DATABASE=pickup_system
-DB_USERNAME=root
-DB_PASSWORD=
-```
-
-Generate application key:
+Generate application encryption key:
 ```bash
 php artisan key:generate
 ```
 
 ### 5. Jalankan Migrasi & Database Seeder
-Jalankan migrasi tabel lengkap beserta dummy data transaksi riil:
+Jalankan migrasi tabel dan seeding data awal:
 ```bash
 php artisan migrate:fresh --seed
 ```
 
 > [!TIP]
-> Seeder akan otomatis mengisi:
-> - Master data kota, brand, 50+ varian tipe aki, depo gudang, bank, metode bayar.
-> - Lebih dari **2.500+ riwayat transaksi realistis**, struk, shipment, dan transfer.
-> - Akun admin pusat dan admin gudang kota.
+> Database seeder akan otomatis menyiapkan master kota, merek aki, tipe baterai, depo gudang, pengaturan LME/Kurs, dan akun pengelola lokal.
 
 ### 6. Menjalankan Server Pengembangan
 Gunakan perintah serentak (Vite + Laravel Server):
@@ -288,38 +272,31 @@ Gunakan perintah serentak (Vite + Laravel Server):
 # Opsi 1: Menjalankan via composer script
 composer run dev
 
-# Opsi 2: Menjalankan secara terpisah di 2 terminal
+# Opsi 2: Menjalankan secara terpisah di terminal
 php artisan serve
 npm run dev
 ```
 
-Buka peramban (browser) di:
+Akses aplikasi melalui peramban:
 - **Portal Pelanggan**: [`http://localhost:8000/`](http://localhost:8000/)
 - **Portal Admin**: [`http://localhost:8000/admin`](http://localhost:8000/admin)
 
 ---
 
-## 🔑 Akun Demo & Kredensial Default
+## 👥 Manajemen Peran Pengguna (User Roles)
 
-Setelah menjalankan `DatabaseSeeder`, Anda dapat login menggunakan akun berikut:
+Sistem membagi hak akses ke dalam 2 tingkatan peran utama:
 
-### 👑 Admin Pusat (Central Admin)
-- **Username**: `Admin Test` atau `Admin Utama`
-- **Email**: `admin.test@example.com`
-- **Password**: `password123`
-- **Hak Akses**: Seluruh modul, audit LME, user management, dan laporan keuangan nasional.
+1. **👑 Admin Pusat (Central Admin)**:
+   - Pengawasan seluruh data transaksi nasional.
+   - Manajemen indeks global LME (London Metal Exchange) dan kurs mata uang.
+   - Konfigurasi tarif logistik pengiriman dan pengelolaan staf admin.
+   - Akses penuh terhadap laporan keuangan dan analitik lintas wilayah.
 
-### 🏭 Admin Gudang / Depo Regional
-| Wilayah Depo | Username | Email | Password |
-|---|---|---|---|
-| **DEP Jakarta** | `admin.depjakarta` / `Budi Staf Admin` | `budi.admin@example.com` | `password123` |
-| **DEP Surabaya** | `admin.depsurabaya` / `Siti Ops Surabaya` | `siti.surabaya@example.com` | `password123` |
-| **DEP Bandung** | `admin.depbandung` / `Dedi Ops Bandung` | `dedi.bandung@example.com` | `password123` |
-| **MMM Banyuwangi** | `admin.mmmbanyuwangi` | `admin.mmmbanyuwangi@example.com` | `password123` |
-
-### 🗝️ Password Rahasia (Easter Egg Secret Gate)
-- **Akses Pengguna**: `aadu_imli`
-- **Akses Pengiriman / Ongkir**: `jojo_ganteng`
+2. **🏭 Admin Gudang / Depo (Warehouse Admin)**:
+   - Manajemen penerimaan dan QC penyesuaian fisik aki di depo lokal masing-masing.
+   - Update status pesanan dan verifikasi bukti transfer pembayaran.
+   - Pemantauan stok fisik aki di gudang kota dan eksekusi pengiriman ke gudang pusat.
 
 ---
 
@@ -367,23 +344,6 @@ php artisan test
 
 # Atau menggunakan composer test script
 composer run test
-```
-
-Contoh keluaran pengujian:
-```text
-   PASS  Tests\Feature\ExampleTest
-  ✓ it returns a successful response
-
-   PASS  Tests\Feature\AdminPickupPricingTest
-  ✓ index returns current setting and history
-  ✓ update modifies settings and records history
-  ✓ update rejects invalid multipliers
-
-   PASS  Tests\Feature\PickUpSystemSeederTest
-  ✓ seeder populates core tables correctly
-
-  Tests:    12 passed (28 assertions)
-  Duration: 0.85s
 ```
 
 ---
