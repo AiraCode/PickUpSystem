@@ -15,7 +15,7 @@
 
         <div class="admin-dashboard__left">
 
-            <div style="display:grid; grid-template-columns:repeat(3, minmax(0, 1fr)); gap:16px;">
+            <div class="admin-grid-3col">
                 <article class="admin-stat-card">
                     <div class="admin-stat-card__head">
                         <span class="admin-stat-card__icon admin-stat-card__icon--blue">

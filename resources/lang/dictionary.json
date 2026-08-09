@@ -846,7 +846,7 @@
     "en": "No battery selected yet"
   },
   "Belum ada aktivitas": {
-    "en": "No activity yet"
+    "en": "No activities yet"
   },
   "Belum ada aktivitas transaksi": {
     "en": "No transaction activity yet"
@@ -2445,10 +2445,10 @@
     "en": "Are you sure you want to delete all activity notifications?"
   },
   "Semua notifikasi berhasil dihapus": {
-    "en": "All notifications deleted successfully"
+    "en": "All notifications successfully deleted"
   },
   "Notifikasi berhasil dihapus": {
-    "en": "Notification deleted successfully"
+    "en": "Notification successfully deleted"
   },
   "Gagal menghapus notifikasi": {
     "en": "Failed to delete notification"
@@ -2505,7 +2505,7 @@
     "en": "ACTIONS"
   },
   "Pantau seluruh aktivitas dan perubahan status di dalam sistem.": {
-    "en": "Monitor all activities and status changes in the system."
+    "en": "Monitor all activities and status changes within the system."
   },
   "Pantau seluruh aktivitas dan perubahan status di dalam sistem": {
     "en": "Monitor all activities and status changes in the system"

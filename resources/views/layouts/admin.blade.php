@@ -116,7 +116,7 @@
             <div class="admin-main">
                 <header class="admin-topbar">
                     <div class="admin-topbar__left">
-                        <button id="sidebarToggle" class="sidebar-toggle" type="button">
+                        <button id="sidebarToggle" class="sidebar-toggle" type="button" data-sidebar-open>
                             <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="none"
                                 viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" />

@@ -19,7 +19,7 @@
         </div>
     </div>
 
-    <div style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; margin-bottom: 24px;">
+    <div class="admin-grid-4col">
         <article class="admin-panel admin-stat-card" style="margin:0;">
             <span class="admin-stat-card__eyebrow">Total Pendapatan</span>
             <div class="admin-stat-card__value" id="report-stat-sales" style="font-size:22px; font-weight:700; color:#111318; margin:6px 0 4px;">Rp 0</div>
@@ -66,7 +66,7 @@
         </div>
     </article>
 
-    <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px;">
+    <div class="admin-grid-2col" style="gap:20px; margin-bottom:20px;">
         <article class="admin-panel" style="margin:0;">
             <div class="admin-panel__head">
                 <div>

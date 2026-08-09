@@ -11,7 +11,7 @@
         </div>
     </div>
 
-    <div style="display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 16px; margin-bottom: 20px;">
+    <div class="admin-grid-5col">
         <article id="card-status-pending" class="admin-panel admin-stat-card order-status-tab active"
             onclick="switchOrderTab('pending')" style="cursor:pointer; border:2px solid #f59e0b; transition:all 0.2s;">
             <div class="admin-stat-card__head" style="margin-bottom:6px;">

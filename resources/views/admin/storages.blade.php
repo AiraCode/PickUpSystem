@@ -14,7 +14,7 @@
     </div>
 </div>
 
-<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; margin-bottom: 20px;" id="storage-dashboard-summary">
+<div class="admin-grid-2col" id="storage-dashboard-summary">
     <article class="admin-panel admin-stat-card storage-stat-card">
         <div class="admin-stat-card__head" style="margin-bottom:6px;">
             <span class="admin-stat-card__icon stat-icon--blue">
@@ -42,7 +42,7 @@
     </article>
 </div>
 
-<div style="display: grid; grid-template-columns: 2fr 1fr; gap: 20px;">
+<div class="admin-grid-2-1">
     <!-- Left Column: Daftar Gudang -->
     <div style="display:flex; flex-direction:column; gap:20px; width:100%;">
         <article class="admin-panel admin-table-panel" style="width:100%;">

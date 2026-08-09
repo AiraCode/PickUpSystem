@@ -1280,10 +1280,14 @@ select:focus-visible {
         position: fixed !important;
         transform: translateX(-102%) !important;
         transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+        pointer-events: none !important;
+        z-index: 100 !important;
     }
 
     .admin-sidebar.is-open {
         transform: translateX(0);
+        pointer-events: all !important;
+        z-index: 100 !important;
     }
 
     .admin-sidebar-overlay.is-visible {
@@ -2520,4 +2524,137 @@ html.admin-dark-mode #confirm-title {
 }
 html.admin-dark-mode #confirm-message {
     color: #94a3b8 !important;
+}
+
+/* --- RWD Adjustments & Utility Classes --- */
+
+/* .admin-eyebrow is already defined above at line 727-736, 
+   this just ensures the font-size is correct if overridden */
+.admin-eyebrow,
+.admin-panel__eyebrow {
+    font-size: 13px !important;
+}
+
+/* ── Responsive Grid Classes ─────────────────────────────── */
+.admin-grid-3col {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 16px;
+}
+
+.admin-grid-2col {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+    margin-bottom: 20px;
+}
+
+.admin-grid-2-1 {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 20px;
+}
+
+.admin-grid-4col {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 16px;
+    margin-bottom: 20px;
+}
+
+.admin-grid-5col {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 16px;
+    margin-bottom: 20px;
+}
+
+/* ── Tablet: iPad Pro & similar (1024px–1200px) ────────────
+   Only grids collapse here, laptop styles untouched          */
+@media (max-width: 1200px) {
+    .admin-grid-3col {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    .admin-grid-4col {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    .admin-grid-5col {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+    .admin-grid-2-1 {
+        grid-template-columns: 1fr;
+    }
+    /* Prevent stat values from overflowing on iPad Pro */
+    .admin-stat-card strong {
+        font-size: clamp(16px, 3vw, 26px);
+        word-break: break-all;
+        overflow-wrap: break-word;
+    }
+}
+
+/* ── Mobile/Tablet ≤980px — Topbar, Sidebar, Grids ────────
+   Existing @media(980px) already handles sidebar open/close.
+   We extend it here for topbar width and grid collapsing.    */
+@media (max-width: 980px) {
+    /* Profile menu: must be above the sidebar overlay (z:35) */
+    .admin-profile-menu {
+        z-index: 200 !important;
+    }
+
+    /* Topbar: stretch full viewport width, remove curves */
+    .admin-topbar {
+        margin: 0 !important;
+        border-radius: 0 !important;
+        top: 0 !important;
+        width: 100% !important;
+        box-sizing: border-box !important;
+        border-left: none !important;
+        border-right: none !important;
+        border-top: none !important;
+    }
+
+    /* Right section: allow horizontal scroll so nothing clips */
+    .admin-topbar__right {
+        gap: 10px !important;
+        overflow-x: auto;
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+        flex-shrink: 0;
+    }
+    .admin-topbar__right::-webkit-scrollbar { display: none; }
+
+    /* Clock: compact */
+    #live-clock-widget {
+        padding: 4px 8px !important;
+        font-size: 11px !important;
+        white-space: nowrap;
+        flex-shrink: 0;
+    }
+
+    .lang-switch .lang-btn {
+        font-size: 11px;
+    }
+
+    /* All custom grids: single column on mobile/tablet */
+    .admin-grid-3col,
+    .admin-grid-2col,
+    .admin-grid-4col,
+    .admin-grid-5col {
+        grid-template-columns: 1fr;
+    }
+
+    .admin-page-heading h1 {
+        font-size: clamp(20px, 5vw, 28px);
+    }
+}
+
+/* ── Small mobile ≤680px — Breadcrumb cleanup ──────────── */
+@media (max-width: 680px) {
+    .admin-breadcrumb > span:first-child,
+    .admin-breadcrumb > svg {
+        display: none;
+    }
+    .admin-breadcrumb strong {
+        font-size: 14px;
+    }
 }

@@ -18,7 +18,7 @@
     </a>
 </div>
 
-<div style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; margin-bottom: 20px;">
+<div class="admin-grid-4col">
     <article class="admin-panel admin-stat-card storage-stat-card">
         <div class="admin-stat-card__head" style="margin-bottom:6px;">
             <span class="admin-stat-card__icon stat-icon--blue">
