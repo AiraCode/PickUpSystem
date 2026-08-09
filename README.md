@@ -104,7 +104,7 @@ Sistem ini menghubungkan penjual (customer), depo/gudang penyimpanan kota, kurir
 flowchart TD
     subgraph Pelanggan ["📱 Pelanggan / Seller"]
         A[Landing Page & Kalkulator] --> B[Input Data & Pilih Aki]
-        B --> C[OCR KTP & Lokasi Pickup]
+        B --> C[OCR KTP & Data Diri Penjual]
         C --> D[Submit Pesanan & Dapatkan Struk]
         D --> E[Tracking Status & Konfirmasi Revisi]
     end
@@ -124,7 +124,7 @@ flowchart TD
     end
 
     subgraph Database ["🗄️ Database & Storage Layer"]
-        N[(MySQL / SQLite)]
+        N[(MySQL Database)]
         O[(Activity Logs & Price Histories)]
         P[Local / Cloud File Storage]
     end
@@ -149,7 +149,7 @@ flowchart TD
 | **Frontend Template** | Blade & Vanilla JS | Ringan, responsif, tanpa overhead SPA |
 | **Styling** | Tailwind CSS v4.0 | Utilitas CSS modern dan dinamis |
 | **Asset Bundler** | Vite 8.0 | Hot-Module Replacement super cepat |
-| **Database** | MySQL 8.0 / SQLite | Relational database dengan 30+ migrasi |
+| **Database** | MySQL 8.0 | Relational database dengan 30+ migrasi |
 | **Testing** | PHPUnit 12 | Automated Feature & Unit Testing |
 | **Serverless Ready** | Vercel Serverless PHP | Terintegrasi via adapter `api_core` |
 
@@ -224,10 +224,10 @@ Aplikasi didukung oleh 19 model Eloquent yang saling berelasi:
 Ikuti langkah-langkah berikut untuk menjalankan proyek di lingkungan pengembangan lokal:
 
 ### 1. Prasyarat Sistem
-- **PHP** $\ge$ 8.3 dengan ekstensi: `pdo`, `pdo_mysql` / `pdo_sqlite`, `mbstring`, `bcmath`, `curl`, `gd`
+- **PHP** $\ge$ 8.3 dengan ekstensi: `pdo`, `pdo_mysql`, `mbstring`, `bcmath`, `curl`, `gd`
 - **Composer** $\ge$ 2.x
 - **Node.js** $\ge$ 20.x & **NPM**
-- **MySQL** atau **SQLite**
+- **MySQL** ($\ge$ 8.0)
 
 ### 2. Clone Repositori
 ```bash
