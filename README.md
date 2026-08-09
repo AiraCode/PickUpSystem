@@ -44,7 +44,7 @@
 
 **PickUp System** adalah sistem backend dan antarmuka web modern berbasis **Laravel & Tailwind CSS v4** yang dirancang untuk mengelola seluruh rantai pasok daur ulang aki/baterai bekas secara terotomatisasi.
 
-Sistem ini menghubungkan penjual (customer), depo/gudang penyimpanan kota, kurir penjemputan, hingga manajemen pusat dengan alur kerja yang transparan, perhitungan harga dinamis berbasis bursa logam internasional (**London Metal Exchange / LME**), estimasi ongkir pintar, serta verifikasi identitas berbasis **Optical Character Recognition (OCR)**.
+Sistem ini menghubungkan penjual (customer), depo/gudang penyimpanan kota, kurir penjemputan, hingga manajemen pusat dengan alur kerja yang transparan, perhitungan harga dinamis berbasis bursa logam internasional (**London Metal Exchange / LME**), serta verifikasi identitas berbasis **Optical Character Recognition (OCR)**.
 
 > [!NOTE]
 > Proyek ini dapat dijalankan pada server lokal (**Laragon, XAMPP, Nginx**) maupun serverless environment (**Vercel**) melalui modul *bridge adapter* `api_core/index.php`.
@@ -54,13 +54,14 @@ Sistem ini menghubungkan penjual (customer), depo/gudang penyimpanan kota, kurir
 ## ✨ Fitur Utama
 
 ### 1. 🛍️ Customer / Seller Portal
-- **Kalkulator & Estimator Harga Real-Time**: Simulasi harga aki bekas langsung berdasarkan jenis aki, brand (GS Astra, Yuasa, Incoe, dll), dan kota pengambilan.
-- **Tukar Tambah (Trade-In) & Direct Sale**: Pilihan menjual aki bekas untuk dicairkan dana atau ditukar tambah dengan aki baru.
+- **Kalkulator & Estimator Harga Real-Time**: Simulasi harga aki bekas langsung berdasarkan jenis aki dan kota pengambilan.
+<!-- - **Tukar Tambah (Trade-In) & Direct Sale**: Pilihan menjual aki bekas untuk dicairkan dana atau ditukar tambah dengan aki baru. -->
 - **Formulir Transaksi Multi-Step**:
   1. *Pilihan Aki & Jumlah* (mendukung multi-tipe sekaligus).
   2. *Identitas & Rekening* (Nama, No. HP, Bank tujuan transfer, Nomor rekening).
-  3. *Metode Pengiriman*: Antar mandiri ke Depo terdekat (**Drop-off**) atau Dijemput ke lokasi (**Pick-Up**).
-  4. *Kalkulasi Jarak & Ongkir Otomatis*: Geocoding jarak pengguna ke gudang terdekat dengan rumus dinamis.
+  3. *Metode Pengiriman*: Antar mandiri ke gudang terdekat (**Drop-off**) 
+  <!-- atau Dijemput ke lokasi (**Pick-Up**). -->
+  <!-- 4. *Kalkulasi Jarak & Ongkir Otomatis*: Geocoding jarak pengguna ke gudang terdekat dengan rumus dinamis. -->
 - **Struk Digital & Pelacakan Transaksi (Digital Receipt)**: Pelacakan status real-time (`Menunggu`, `Dijemput`, `Tiba di Gudang`, `Transfer Berhasil`, `Selesai`, `Dibatalkan`).
 - **Konfirmasi Revisi QC (User Edit Confirmation)**: Jika fisik aki yang diterima gudang berbeda dengan yang diinputkan pelanggan, pelanggan dapat mengonfirmasi atau menolak penyesuaian sebelum pembayaran ditransfer.
 
@@ -71,14 +72,14 @@ Sistem ini menghubungkan penjual (customer), depo/gudang penyimpanan kota, kurir
   - Unggah bukti transfer & foto serah terima gudang.
   - Pelabelan pelanggan bermasalah (*Customer Flagging*).
 - **Manajemen Multi-Depo & Stok Gudang (Warehouse Storage)**:
-  - Pelacakan stok aki per depo kota (DEP Jakarta, DEP Bandung, DEP Surabaya, MMM Banyuwangi, dll).
+  - Pelacakan stok aki per depo kota (Jakarta, Bandung, Surabaya, Banyuwangi, dll).
   - Fitur **Batch Central Pick-Up**: Menandai pengiriman stok aki terkumpul dari depo regional menuju gudang pusat.
   - Soft-delete & Restore depo/gudang.
 - **Activity Log & Audit Trail**: Pencatatan riwayat aktivitas operasional admin secara mendetail (perubahan status, update harga, revisi pesanan, dll).
-- **Manajemen Pengguna & Hak Akses Berjenjang**:
+- **Manajemen Pengguna & Hak Akses**:
   - `Admin Pusat` (Central Admin): Akses penuh ke seluruh data nasional, pengaturan LME, harga pengiriman, dan user admin.
   - `Admin Gudang` (Warehouse Admin): Akses terfokus pada transaksi dan stok gudang/depo wilayah masing-masing.
-- **Laporan & Export Data**: Filter laporan berdasarkan rentang tanggal, status pesanan, kota, brand, dan gudang penyimpanan.
+- **Laporan**: Filter laporan berdasarkan rentang tanggal, status pesanan, kota, brand, dan gudang penyimpanan.
 
 ### 3. 📈 Dynamic Pricing Engine (LME & Kurs)
 - **Kalkulasi Otomatis Berbasis Indeks Global**:
@@ -86,10 +87,10 @@ Sistem ini menghubungkan penjual (customer), depo/gudang penyimpanan kota, kurir
 - **Persentase Wilayah Per Kota**: Fleksibilitas margin harga per kota (misal Jakarta 82.5%, Bandung 87.5%, Yogyakarta 90%).
 - **Audit & Timeline Riwayat Harga**: Jejak rekaman histori perubahan harga aki untuk keperluan akuntansi dan audit.
 
-### 4. 🚚 Smart Logistics & OCR AI Verification
-- **Logistics Pricing Setting**:
+### 4. 💡 OCR AI Verification
+<!-- - **Logistics Pricing Setting**:
   - Pengaturan biaya jemput dasar (*Base Fee*), tarif per kilometer (*Distance Rate*), waktu tempuh (*Time Rate*), batas gratis ongkir (*Free Distance / Min Battery threshold*), dan pengali biaya.
-  - Riwayat penyesuaian tarif pengiriman (*Pickup Pricing History*).
+  - Riwayat penyesuaian tarif pengiriman (*Pickup Pricing History*). -->
 - **OCR Smart Verification**:
   - Ekstraksi otomatis nama pada foto KTP pelanggan.
   - Verifikasi otomatis kesesuaian nama rekening tujuan pada bukti pembayaran / slip transfer.
