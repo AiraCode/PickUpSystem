@@ -141,6 +141,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('price-histories', [SettingController::class, 'history']);
         
         Route::get('activities', [\App\Http\Controllers\Api\Admin\ActivityController::class, 'index']);
+        Route::delete('activities', [\App\Http\Controllers\Api\Admin\ActivityController::class, 'destroyAll']);
         Route::delete('activities/{id}', [\App\Http\Controllers\Api\Admin\ActivityController::class, 'destroy']);
 
         Route::get('dashboard-stats', [DashboardStatsController::class, 'index']);

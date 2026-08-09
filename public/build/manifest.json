@@ -28,7 +28,7 @@
     "src": "_instrument-sans-600-normal-B9e8oLYv.woff"
   },
   "resources/css/app.css": {
-    "file": "assets/app-r_mBh2sY.css",
+    "file": "assets/app-Ba0biudB.css",
     "name": "app",
     "names": [
       "app.css"
@@ -74,15 +74,6 @@
       "assets/img_aki-DWKAy-ct.png"
     ]
   },
-  "resources/img/indoprima_logo.png": {
-    "file": "assets/indoprima_logo-BvRk9kiK.js",
-    "name": "indoprima_logo",
-    "src": "resources/img/indoprima_logo.png",
-    "isEntry": true,
-    "assets": [
-      "assets/indoprima_logo-DkF_bLVd.png"
-    ]
-  },
   "resources/img/logo_admin1-removebg-preview.png": {
     "file": "assets/logo_admin1-removebg-preview-BvRk9kiK.js",
     "name": "logo_admin1-removebg-preview",
@@ -102,13 +93,13 @@
     ]
   },
   "resources/js/admin-api.js": {
-    "file": "assets/admin-api-BfUBXWZ4.js",
+    "file": "assets/admin-api-B6AKO0FI.js",
     "name": "admin-api",
     "src": "resources/js/admin-api.js",
     "isEntry": true
   },
   "resources/js/app.js": {
-    "file": "assets/app-CfNaieAp.js",
+    "file": "assets/app-4IZ1eKyh.js",
     "name": "app",
     "src": "resources/js/app.js",
     "isEntry": true,
@@ -117,8 +108,6 @@
       "resources/img/Logo_user-removebg-preview.png",
       "resources/img/img_aki.png",
       "resources/img/img_aki.png",
-      "resources/img/indoprima_logo.png",
-      "resources/img/indoprima_logo.png",
       "resources/img/logo_admin1-removebg-preview.png",
       "resources/img/logo_admin1-removebg-preview.png",
       "resources/img/logo_admin2-removebg-preview.png",

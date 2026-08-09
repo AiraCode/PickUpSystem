@@ -728,10 +728,11 @@ select:focus-visible {
 .admin-panel__eyebrow {
     color: var(--brand-blue);
     display: block;
-    font-size: 10px;
+    font-size: 13px;
     font-weight: 800;
-    letter-spacing: 0.16em;
+    letter-spacing: 0.12em;
     margin-bottom: 8px;
+    text-transform: uppercase;
 }
 
 .admin-page-heading h1 {
@@ -2056,5 +2057,467 @@ html.admin-dark-mode .admin-activity-item__title {
     color: #f8fafc !important;
 }
 html.admin-dark-mode .admin-activity-item__desc {
+    color: #94a3b8 !important;
+}
+
+/* ========================================================
+   STORAGE & WAREHOUSE MANAGEMENT (Light & Dark Mode)
+   ======================================================== */
+
+.storage-sidebar-title,
+.admin-sidebar-title {
+    font-size: 15px;
+    margin-top: 0;
+    margin-bottom: 4px;
+    color: #111827;
+    font-weight: 700;
+}
+.storage-sidebar-desc,
+.admin-sidebar-desc {
+    margin: 0 0 12px 0;
+    font-size: 12px;
+    color: #6b7280;
+}
+.ready-pickup-card {
+    padding: 15px;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    background: #ffffff;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    transition: background 0.2s, border-color 0.2s;
+}
+.ready-pickup-card--empty,
+.ready-pickup-empty-card {
+    padding: 15px;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    background: #f9fafb;
+    text-align: center;
+    color: #6b7280;
+}
+.ready-pickup-card__title {
+    display: block;
+    font-size: 14px;
+    color: #111827;
+    font-weight: 700;
+}
+.ready-pickup-card__subtitle {
+    color: #6b7280;
+    font-size: 12px;
+}
+.admin-button--pickup {
+    background: #16a34a;
+    color: #ffffff;
+    width: 100%;
+    justify-content: center;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    border: none;
+    cursor: pointer;
+    font-weight: 600;
+}
+.admin-button--pickup:hover {
+    background: #15803d;
+}
+
+/* Storage detail stat cards */
+.storage-stat-card {
+    transition: all 0.2s ease;
+}
+.stat-icon--blue {
+    background: #dbeafe;
+    color: #2563eb;
+    padding: 6px;
+    border-radius: 6px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+.stat-icon--green {
+    background: #d1fae5;
+    color: #059669;
+    padding: 6px;
+    border-radius: 6px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+.stat-icon--indigo {
+    background: #e0e7ff;
+    color: #4338ca;
+    padding: 6px;
+    border-radius: 6px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+.stat-icon--amber {
+    background: #fef3c7;
+    color: #d97706;
+    padding: 6px;
+    border-radius: 6px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.stat-card-label {
+    margin: 0;
+    font-size: 12px;
+    color: #4b5563;
+    font-weight: 600;
+}
+.stat-card-label--green { color: #065f46; }
+.stat-card-label--indigo { color: #3730a3; }
+.stat-card-label--amber { color: #92400e; }
+
+.stat-card-value {
+    display: block;
+    font-size: 18px;
+    color: #1e293b;
+    font-weight: 700;
+    margin: 2px 0;
+}
+.stat-card-value--green { font-size: 22px; color: #059669; }
+.stat-card-value--indigo { font-size: 22px; color: #4338ca; }
+.stat-card-value--amber { font-size: 16px; color: #b45309; }
+
+.stat-card-desc {
+    color: #64748b;
+    font-size: 11px;
+    display: block;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+}
+.stat-card-desc--green { color: #10b981; }
+.stat-card-desc--indigo { color: #4f46e5; }
+.stat-card-desc--amber { color: #d97706; }
+
+/* Storage detail stock table */
+.stock-badge-pill {
+    padding: 3px 8px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 700;
+    background: #dbeafe;
+    color: #1e40af;
+    white-space: nowrap;
+}
+.admin-panel-subdesc {
+    font-size: 12px;
+    color: #64748b;
+    margin: 2px 0 0;
+}
+.stock-table thead tr {
+    background: #f8fafc;
+    color: #64748b;
+    font-size: 11px;
+}
+.stock-table thead th {
+    padding: 8px 10px;
+    font-weight: 700;
+    position: sticky;
+    top: 0;
+    background: #f8fafc;
+    z-index: 10;
+    border-bottom: 1px solid #e2e8f0;
+}
+.stock-table-row {
+    border-bottom: 1px solid #f1f5f9;
+}
+.stock-table-row--active {
+    background: rgba(16, 185, 129, 0.04);
+}
+.stock-table-name {
+    padding: 8px 10px;
+    font-weight: 700;
+    color: #1e293b;
+    font-size: 12px;
+}
+.stock-table-qty {
+    padding: 8px 10px;
+    text-align: center;
+    font-weight: 700;
+    color: #64748b;
+    font-size: 12px;
+    white-space: nowrap;
+}
+.stock-table-qty--positive {
+    color: #059669;
+}
+.stock-table-status {
+    padding: 8px 10px;
+    text-align: right;
+}
+
+.admin-badge {
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 10px;
+    font-weight: 700;
+    display: inline-block;
+}
+.admin-badge--success {
+    background: #d1fae5;
+    color: #065f46;
+}
+.admin-badge--muted {
+    background: #f1f5f9;
+    color: #64748b;
+}
+.admin-badge--danger {
+    background: #fee2e2;
+    color: #991b1b;
+}
+
+/* Modals generic form labels & hints */
+.admin-form-label {
+    display: block;
+    font-size: 12px;
+    font-weight: 600;
+    margin-bottom: 6px;
+    color: #4a4f59;
+}
+.admin-form-label--muted {
+    color: #6d727c;
+}
+.admin-form-hint {
+    font-size: 11px;
+    color: #6d727c;
+    margin-bottom: 8px;
+}
+.admin-map-coords {
+    font-size: 11px;
+    color: #6d727c;
+    margin-top: 6px;
+    text-align: center;
+}
+.admin-modal-desc {
+    font-size: 13px;
+    color: #4a4f59;
+    margin-bottom: 14px;
+}
+
+/* ========================================================
+   DARK MODE OVERRIDES FOR STORAGE & WAREHOUSE
+   ======================================================== */
+html.admin-dark-mode .storage-sidebar-title,
+html.admin-dark-mode .admin-sidebar-title {
+    color: #f8fafc !important;
+}
+html.admin-dark-mode .storage-sidebar-desc,
+html.admin-dark-mode .admin-sidebar-desc {
+    color: #94a3b8 !important;
+}
+html.admin-dark-mode .ready-pickup-card {
+    background: #1e293b !important;
+    border-color: #334155 !important;
+}
+html.admin-dark-mode .ready-pickup-card--empty,
+html.admin-dark-mode .ready-pickup-empty-card {
+    background: #1e293b !important;
+    border-color: #334155 !important;
+    color: #94a3b8 !important;
+}
+html.admin-dark-mode .ready-pickup-card__title {
+    color: #f8fafc !important;
+}
+html.admin-dark-mode .ready-pickup-card__subtitle {
+    color: #94a3b8 !important;
+}
+
+html.admin-dark-mode .stat-icon--blue {
+    background: rgba(37, 99, 235, 0.25) !important;
+    color: #60a5fa !important;
+}
+html.admin-dark-mode .stat-icon--green {
+    background: rgba(5, 150, 105, 0.25) !important;
+    color: #34d399 !important;
+}
+html.admin-dark-mode .stat-icon--indigo {
+    background: rgba(67, 56, 202, 0.25) !important;
+    color: #818cf8 !important;
+}
+html.admin-dark-mode .stat-icon--amber {
+    background: rgba(217, 119, 6, 0.25) !important;
+    color: #fbbf24 !important;
+}
+
+html.admin-dark-mode .stat-card-label {
+    color: #94a3b8 !important;
+}
+html.admin-dark-mode .stat-card-label--green { color: #34d399 !important; }
+html.admin-dark-mode .stat-card-label--indigo { color: #a5b4fc !important; }
+html.admin-dark-mode .stat-card-label--amber { color: #fbbf24 !important; }
+
+html.admin-dark-mode .stat-card-value {
+    color: #f8fafc !important;
+}
+html.admin-dark-mode .stat-card-value--green { color: #34d399 !important; }
+html.admin-dark-mode .stat-card-value--indigo { color: #818cf8 !important; }
+html.admin-dark-mode .stat-card-value--amber { color: #fbbf24 !important; }
+
+html.admin-dark-mode .stat-card-desc {
+    color: #64748b !important;
+}
+html.admin-dark-mode .stat-card-desc--green { color: #6ee7b7 !important; }
+html.admin-dark-mode .stat-card-desc--indigo { color: #a5b4fc !important; }
+html.admin-dark-mode .stat-card-desc--amber { color: #fde68a !important; }
+
+html.admin-dark-mode .stock-badge-pill {
+    background: #1e3a8a !important;
+    color: #93c5fd !important;
+}
+html.admin-dark-mode .admin-panel-subdesc {
+    color: #94a3b8 !important;
+}
+html.admin-dark-mode .stock-table thead tr,
+html.admin-dark-mode .stock-table thead th {
+    background: #0f172a !important;
+    color: #94a3b8 !important;
+    border-bottom-color: #334155 !important;
+}
+html.admin-dark-mode .stock-table-row {
+    border-bottom-color: #334155 !important;
+}
+html.admin-dark-mode .stock-table-row--active {
+    background: rgba(16, 185, 129, 0.12) !important;
+}
+html.admin-dark-mode .stock-table-name {
+    color: #f8fafc !important;
+}
+html.admin-dark-mode .stock-table-qty {
+    color: #94a3b8 !important;
+}
+html.admin-dark-mode .stock-table-qty--positive {
+    color: #34d399 !important;
+}
+html.admin-dark-mode .admin-badge--success {
+    background: rgba(16, 185, 129, 0.2) !important;
+    color: #34d399 !important;
+}
+html.admin-dark-mode .admin-badge--muted {
+    background: #334155 !important;
+    color: #94a3b8 !important;
+}
+html.admin-dark-mode .admin-badge--danger {
+    background: rgba(239, 68, 68, 0.2) !important;
+    color: #f87171 !important;
+}
+
+html.admin-dark-mode .admin-form-label,
+html.admin-dark-mode .admin-form-label--muted {
+    color: #cbd5e1 !important;
+}
+html.admin-dark-mode .admin-form-hint,
+html.admin-dark-mode .admin-map-coords,
+html.admin-dark-mode .admin-modal-desc {
+    color: #94a3b8 !important;
+}
+
+html.admin-dark-mode #modal-add-storage .admin-panel,
+html.admin-dark-mode #modal-delete-storage .admin-panel,
+html.admin-dark-mode #modal-view-map .admin-panel {
+    background: #1e293b !important;
+    border: 1px solid #334155 !important;
+    color: #f1f5f9 !important;
+}
+html.admin-dark-mode #trashed-storages-container {
+    border-top-color: #334155 !important;
+}
+html.admin-dark-mode #map-add,
+html.admin-dark-mode #map-view,
+html.admin-dark-mode #detail-warehouse-map {
+    border-color: #334155 !important;
+}
+
+/* Activity Items & Action Buttons */
+.activity-delete-btn {
+    border: none;
+    background: transparent;
+    color: #9ca3af;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    padding: 2px 6px;
+    border-radius: 4px;
+    transition: all 0.15s ease;
+    line-height: 1;
+}
+.activity-delete-btn:hover {
+    color: #ef4444 !important;
+    background: rgba(239, 68, 68, 0.15) !important;
+}
+
+.all-activities-link-btn {
+    display: block;
+    text-align: center;
+    padding: 10px;
+    margin-top: 8px;
+    font-size: 12px;
+    font-weight: 600;
+    text-decoration: none;
+    color: #2563eb;
+    border: 1px dashed #bfdbfe;
+    border-radius: 8px;
+    background: #eff6ff;
+    transition: all 0.2s ease;
+}
+.all-activities-link-btn:hover {
+    background: #dbeafe;
+    border-color: #93c5fd;
+}
+
+.btn-clear-all {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    color: #ba1b2b;
+    border-color: #fee2e2;
+    background: #fff5f5;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 0 8px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+.btn-clear-all:hover {
+    background: #fee2e2;
+    color: #991b1b;
+}
+
+html.admin-dark-mode .all-activities-link-btn {
+    background: rgba(37, 99, 235, 0.12) !important;
+    border-color: #1e3a8a !important;
+    color: #60a5fa !important;
+}
+html.admin-dark-mode .all-activities-link-btn:hover {
+    background: rgba(37, 99, 235, 0.22) !important;
+    border-color: #2563eb !important;
+}
+
+html.admin-dark-mode .btn-clear-all {
+    background: rgba(239, 68, 68, 0.12) !important;
+    border-color: rgba(239, 68, 68, 0.3) !important;
+    color: #f87171 !important;
+}
+html.admin-dark-mode .btn-clear-all:hover {
+    background: rgba(239, 68, 68, 0.25) !important;
+}
+
+html.admin-dark-mode #modal-custom-confirm .admin-panel {
+    background: #1e293b !important;
+    border: 1px solid #334155 !important;
+    color: #f1f5f9 !important;
+}
+html.admin-dark-mode #confirm-title {
+    color: #f8fafc !important;
+}
+html.admin-dark-mode #confirm-message {
     color: #94a3b8 !important;
 }

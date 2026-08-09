@@ -19,6 +19,7 @@ class DatabaseSeeder extends Seeder
             PickUpSystemSeeder::class,
             NewAccuSeeder::class,
             AdminSeeder::class,
+            ActivitySeeder::class,
         ]);
     }
 }

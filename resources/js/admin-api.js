@@ -241,6 +241,61 @@ document.addEventListener("DOMContentLoaded", () => {
         };
     };
 
+    window.showConfirmModal = function({
+        title = "Konfirmasi Hapus",
+        message = "Apakah Anda yakin ingin menghapus?",
+        confirmText = "Hapus",
+        cancelText = "Batal",
+        isDanger = true
+    } = {}) {
+        return new Promise((resolve) => {
+            const modal = document.getElementById("modal-custom-confirm");
+            if (!modal) {
+                resolve(window.confirm(message));
+                return;
+            }
+
+            const titleEl = document.getElementById("confirm-title");
+            const msgEl = document.getElementById("confirm-message");
+            const okBtn = document.getElementById("btn-confirm-ok");
+            const cancelBtn = document.getElementById("btn-confirm-cancel");
+
+            if (titleEl) titleEl.innerText = title;
+            if (msgEl) msgEl.innerText = message;
+            if (okBtn) {
+                okBtn.innerText = confirmText;
+                okBtn.style.background = isDanger ? "#ba1b2b" : "#2563eb";
+            }
+            if (cancelBtn) cancelBtn.innerText = cancelText;
+
+            modal.style.display = "flex";
+
+            const cleanup = () => {
+                modal.style.display = "none";
+                okBtn.onclick = null;
+                cancelBtn.onclick = null;
+                modal.onclick = null;
+            };
+
+            okBtn.onclick = () => {
+                cleanup();
+                resolve(true);
+            };
+
+            cancelBtn.onclick = () => {
+                cleanup();
+                resolve(false);
+            };
+
+            modal.onclick = (e) => {
+                if (e.target === modal) {
+                    cleanup();
+                    resolve(false);
+                }
+            };
+        });
+    };
+
     window.openActivityOrder = (orderId) => {
         if (!orderId || orderId === 0 || orderId === "0") {
             window.location.href = "/admin/transaksi";
@@ -255,14 +310,24 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     };
 
-    window.dismissActivityNotification = async (e, id) => {
+    window.confirmDismissActivity = async (e, id) => {
         if (e) {
             e.preventDefault();
             e.stopPropagation();
         }
 
+        const isConfirmed = await window.showConfirmModal({
+            title: "Hapus Notifikasi",
+            message: "Apakah Anda yakin ingin menghapus notifikasi ini?",
+            confirmText: "Hapus",
+            cancelText: "Batal",
+            isDanger: true,
+        });
+
+        if (!isConfirmed) return;
+
         if (e && e.target) {
-            const elem = e.target.closest("div[onclick]") || e.target.closest("tr");
+            const elem = e.target.closest("div.admin-activity-item") || e.target.closest("tr");
             if (elem) elem.style.opacity = "0.3";
         }
 
@@ -270,11 +335,7 @@ document.addEventListener("DOMContentLoaded", () => {
             const res = await fetchApi(`/activities/${id}`, { method: "DELETE" });
             showToast(res.message || "Notifikasi berhasil dihapus", "success");
 
-            if (e && e.target) {
-                const elem = e.target.closest("div[onclick]") || e.target.closest("tr");
-                if (elem) elem.remove();
-            }
-
+            // Auto refresh UI immediately
             if (typeof window.loadDashboardStats === "function") {
                 window.loadDashboardStats();
             }
@@ -283,12 +344,49 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         } catch (err) {
             console.error(err);
+            showToast(err.message || "Gagal menghapus notifikasi", "error");
             if (e && e.target) {
-                const elem = e.target.closest("div[onclick]") || e.target.closest("tr");
+                const elem = e.target.closest("div.admin-activity-item") || e.target.closest("tr");
                 if (elem) elem.style.opacity = "1";
             }
         }
     };
+
+    window.confirmClearAllActivities = async (e) => {
+        if (e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+
+        const isConfirmed = await window.showConfirmModal({
+            title: "Hapus Semua Notifikasi",
+            message: "Apakah Anda yakin ingin menghapus semua notifikasi aktivitas?",
+            confirmText: "Hapus Semua",
+            cancelText: "Batal",
+            isDanger: true,
+        });
+
+        if (!isConfirmed) return;
+
+        try {
+            const res = await fetchApi("/activities", { method: "DELETE" });
+            showToast(res.message || "Semua notifikasi berhasil dihapus", "success");
+
+            // Auto refresh UI immediately
+            if (typeof window.loadDashboardStats === "function") {
+                window.loadDashboardStats();
+            }
+            if (typeof window.fetchActivitiesPage === "function") {
+                window.fetchActivitiesPage();
+            }
+        } catch (err) {
+            console.error(err);
+            showToast(err.message || "Gagal menghapus semua notifikasi", "error");
+        }
+    };
+
+    window.dismissActivityNotification = window.confirmDismissActivity;
+    window.clearAllActivities = window.confirmClearAllActivities;
 
     // ── Global Order / Activity Popup Notification System ────────────────────
     let notifPopupTimeout = null;
@@ -748,11 +846,11 @@ document.addEventListener("DOMContentLoaded", () => {
             const actList = document.getElementById("activity-list-container");
             const actEmpty = document.getElementById("activity-empty-state");
             const activities = res.data.recent_activities || [];
-            
+
             if (!activities.length) {
                 if (actEmpty) {
                     actEmpty.style.display = "block";
-                    actEmpty.innerHTML = `<strong>Belum ada aktivitas</strong>`;
+                    actEmpty.innerHTML = `<div class="admin-empty-icon admin-empty-icon--red"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 5.5h14v13H5z"/><path d="M8.5 9.5h7M8.5 13h4"/></svg></div><strong>Belum ada aktivitas</strong>`;
                 }
                 if (actList) actList.style.display = "none";
             } else {
@@ -767,7 +865,7 @@ document.addEventListener("DOMContentLoaded", () => {
                                 <strong class="admin-activity-item__title">${a.title}</strong>
                             </div>
                             <small class="admin-activity-item__desc">${a.description}</small>
-                            <button type="button" onclick="dismissActivityNotification(event, ${a.id})" title="Hapus Notifikasi" style="position:absolute; top:6px; right:6px; border:none; background:transparent; color:#9ca3af; font-size:14px; font-weight:bold; cursor:pointer; padding:2px 6px; border-radius:4px; z-index:10;" onmouseover="this.style.color='#ef4444'; this.style.background='rgba(239,68,68,0.15)'" onmouseout="this.style.color='#9ca3af'; this.style.background='transparent'">
+                            <button type="button" onclick="confirmDismissActivity(event, ${a.id})" title="Hapus Notifikasi" class="activity-delete-btn" aria-label="Hapus Notifikasi" style="position:absolute; top:6px; right:6px;">
                                 &times;
                             </button>
                         </div>`
@@ -775,7 +873,7 @@ document.addEventListener("DOMContentLoaded", () => {
                         .join("");
                     
                     actList.innerHTML += `
-                        <a href="/admin/aktivitas" style="display:block; text-align:center; padding:10px; margin-top:8px; font-size:12px; font-weight:600; text-decoration:none; color:#2563eb; border:1px dashed #bfdbfe; border-radius:8px; background:#eff6ff;">
+                        <a href="/admin/aktivitas" class="all-activities-link-btn">
                             Tampilkan Semua Aktivitas
                         </a>
                     `;
@@ -3454,15 +3552,15 @@ document.addEventListener("DOMContentLoaded", () => {
             if (listEl) {
                 if (res.ready_warehouses && res.ready_warehouses.length > 0) {
                     listEl.innerHTML = res.ready_warehouses.map(w => `
-                        <div style="padding:15px; border:1px solid #e5e7eb; border-radius:8px; background:#fff; display:flex; flex-direction:column; gap:10px;">
+                        <div class="ready-pickup-card">
                             <div style="display:flex; justify-content:space-between; align-items:flex-start;">
                                 <div>
-                                    <strong style="display:block; font-size:14px; color:#111827;">${w.name}</strong>
-                                    <small style="color:#6b7280;">Siap diambil: <strong style="color:#991b1b;">${w.total_untaken}</strong> aki</small>
+                                    <strong class="ready-pickup-card__title">${w.name}</strong>
+                                    <small class="ready-pickup-card__subtitle">Siap diambil: <strong style="color:#ef4444;">${w.total_untaken}</strong> aki</small>
                                 </div>
-                                <span style="background:#fee2e2; color:#991b1b; padding:2px 6px; border-radius:4px; font-size:10px; font-weight:600;">Action Required</span>
+                                <span class="admin-badge admin-badge--danger">Action Required</span>
                             </div>
-                            <button type="button" onclick="confirmPickup(${w.id})" class="admin-button" style="background:#16a34a; color:#fff; width:100%; justify-content:center; display:flex; align-items:center; gap:6px;">
+                            <button type="button" onclick="confirmPickup(${w.id})" class="admin-button admin-button--pickup">
                                 <svg viewBox="0 0 24 24" style="width:14px; height:14px; fill:none; stroke:currentColor; stroke-width:2;"><polyline points="20 6 9 17 4 12"></polyline></svg>
                                 OK
                             </button>
@@ -3470,8 +3568,8 @@ document.addEventListener("DOMContentLoaded", () => {
                     `).join("");
                 } else {
                     listEl.innerHTML = `
-                        <div style="padding:15px; border:1px solid #e5e7eb; border-radius:8px; background:#f9fafb; text-align:center;">
-                            <small style="color:#6b7280;">Tidak ada gudang yang siap diambil (stok &lt; 20).</small>
+                        <div class="ready-pickup-card ready-pickup-card--empty">
+                            <small>Tidak ada gudang yang siap diambil (stok &lt; 20).</small>
                         </div>
                     `;
                 }

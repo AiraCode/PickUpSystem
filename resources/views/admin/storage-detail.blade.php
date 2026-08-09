@@ -19,48 +19,48 @@
 </div>
 
 <div style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; margin-bottom: 20px;">
-    <article class="admin-panel admin-stat-card">
+    <article class="admin-panel admin-stat-card storage-stat-card">
         <div class="admin-stat-card__head" style="margin-bottom:6px;">
-            <span class="admin-stat-card__icon" style="background:#dbeafe; color:#2563eb; padding:6px; border-radius:6px;">
+            <span class="admin-stat-card__icon stat-icon--blue">
                 🏢
             </span>
         </div>
-        <p style="margin:0; font-size:12px; color:#4b5563; font-weight:600;">Nama Gudang</p>
-        <strong id="stat-warehouse-name" style="font-size:18px; color:#1e293b;">-</strong>
-        <small id="stat-warehouse-address" style="color:#64748b; font-size:11px; display:block; text-overflow:ellipsis; overflow:hidden; white-space:nowrap;">-</small>
+        <p class="stat-card-label">Nama Gudang</p>
+        <strong id="stat-warehouse-name" class="stat-card-value">-</strong>
+        <small id="stat-warehouse-address" class="stat-card-desc">-</small>
     </article>
 
-    <article class="admin-panel admin-stat-card">
+    <article class="admin-panel admin-stat-card storage-stat-card">
         <div class="admin-stat-card__head" style="margin-bottom:6px;">
-            <span class="admin-stat-card__icon" style="background:#d1fae5; color:#059669; padding:6px; border-radius:6px;">
+            <span class="admin-stat-card__icon stat-icon--green">
                 ⚡
             </span>
         </div>
-        <p style="margin:0; font-size:12px; color:#065f46; font-weight:600;">Total Stok Aki Tersimpan</p>
-        <strong id="stat-total-items" style="font-size:22px; color:#059669;">0</strong>
-        <small style="color:#10b981; font-size:11px;">Aki dari pesanan yang sudah diterima di gudang</small>
+        <p class="stat-card-label stat-card-label--green">Total Stok Aki Tersimpan</p>
+        <strong id="stat-total-items" class="stat-card-value stat-card-value--green">0</strong>
+        <small class="stat-card-desc stat-card-desc--green">Aki dari pesanan yang sudah diterima di gudang</small>
     </article>
 
-    <article class="admin-panel admin-stat-card">
+    <article class="admin-panel admin-stat-card storage-stat-card">
         <div class="admin-stat-card__head" style="margin-bottom:6px;">
-            <span class="admin-stat-card__icon" style="background:#e0e7ff; color:#4338ca; padding:6px; border-radius:6px;">
+            <span class="admin-stat-card__icon stat-icon--indigo">
                 📦
             </span>
         </div>
-        <p style="margin:0; font-size:12px; color:#3730a3; font-weight:600;">Aki Dikirim ke Pusat</p>
-        <strong id="stat-total-taken" style="font-size:22px; color:#4338ca;">0</strong>
-        <small style="color:#4f46e5; font-size:11px;">Aki yang dikirim ke gudang utama</small>
+        <p class="stat-card-label stat-card-label--indigo">Aki Dikirim ke Pusat</p>
+        <strong id="stat-total-taken" class="stat-card-value stat-card-value--indigo">0</strong>
+        <small class="stat-card-desc stat-card-desc--indigo">Aki yang dikirim ke gudang utama</small>
     </article>
 
-    <article class="admin-panel admin-stat-card">
+    <article class="admin-panel admin-stat-card storage-stat-card">
         <div class="admin-stat-card__head" style="margin-bottom:6px;">
-            <span class="admin-stat-card__icon" style="background:#fef3c7; color:#d97706; padding:6px; border-radius:6px;">
+            <span class="admin-stat-card__icon stat-icon--amber">
                 📍
             </span>
         </div>
-        <p style="margin:0; font-size:12px; color:#92400e; font-weight:600;">Koordinat Lokasi</p>
-        <strong id="stat-coords" style="font-size:16px; color:#b45309; font-family:monospace;">-</strong>
-        <small style="color:#d97706; font-size:11px;">Titik GPS lokasi gudang</small>
+        <p class="stat-card-label stat-card-label--amber">Koordinat Lokasi</p>
+        <strong id="stat-coords" class="stat-card-value stat-card-value--amber" style="font-family:monospace;">-</strong>
+        <small class="stat-card-desc stat-card-desc--amber">Titik GPS lokasi gudang</small>
     </article>
 </div>
 
@@ -78,22 +78,22 @@
         <div class="admin-panel__head" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; margin-bottom:12px;">
             <div>
                 <h2>📦 Stok Barang per Jenis Aki</h2>
-                <p style="font-size:12px; color:#64748b; margin:2px 0 0;">Daftar akumulasi aki (diurutkan berdasarkan jumlah terbesar).</p>
+                <p class="admin-panel-subdesc">Daftar akumulasi aki (diurutkan berdasarkan jumlah terbesar).</p>
             </div>
             <div style="display:flex; align-items:center; gap:8px;">
-                <input type="text" id="input-search-warehouse-stock" class="admin-select" placeholder="🔍 Cari jenis / nama..." style="padding:5px 10px; font-size:12px; width:170px; border-radius:6px; background:#fff; border:1px solid #cbd5e1;">
-                <span id="stock-badge-count" style="padding:3px 8px; border-radius:20px; font-size:11px; font-weight:700; background:#dbeafe; color:#1e40af; white-space:nowrap;">
+                <input type="text" id="input-search-warehouse-stock" class="admin-select" placeholder="🔍 Cari jenis / nama..." style="padding:5px 10px; font-size:12px; width:170px; border-radius:6px;">
+                <span id="stock-badge-count" class="stock-badge-pill">
                     0 Jenis Aki
                 </span>
             </div>
         </div>
         <div class="admin-table-wrap" style="max-height:380px; overflow-y:auto; overflow-x:hidden; flex:1;">
-            <table style="width:100%; border-collapse:collapse; font-size:12px;">
-                <thead style="position: sticky; top: 0; z-index: 10;">
-                    <tr style="background:#f8fafc; color:#64748b; font-size:11px;">
-                        <th style="padding:8px 10px; text-align:left; font-weight:700; position:sticky; top:0; background:#f8fafc; z-index:10; border-bottom:1px solid #e2e8f0;">Jenis Aki</th>
-                        <th style="padding:8px 10px; text-align:center; font-weight:700; width:80px; position:sticky; top:0; background:#f8fafc; z-index:10; border-bottom:1px solid #e2e8f0;">Jumlah</th>
-                        <th style="padding:8px 10px; text-align:right; font-weight:700; width:90px; position:sticky; top:0; background:#f8fafc; z-index:10; border-bottom:1px solid #e2e8f0;">Status</th>
+            <table class="admin-table stock-table" style="width:100%; border-collapse:collapse; font-size:12px;">
+                <thead>
+                    <tr>
+                        <th style="padding:8px 10px; text-align:left; font-weight:700;">Jenis Aki</th>
+                        <th style="padding:8px 10px; text-align:center; font-weight:700; width:80px;">Jumlah</th>
+                        <th style="padding:8px 10px; text-align:right; font-weight:700; width:90px;">Status</th>
                     </tr>
                 </thead>
                 <tbody id="storage-stocks-tbody">
@@ -101,37 +101,6 @@
                 </tbody>
             </table>
         </div>
-    </article>
-
-    {{-- <article class="admin-panel admin-table-panel">
-        <div class="admin-panel__head" style="margin-bottom:10px;">
-            <div style="display:flex; align-items:center; gap:8px;">
-                <span style="font-size:16px;">📦</span>
-                <div>
-                    <h3 style="margin:0; font-size:16px; color:#1e293b; line-height:1.2;">Stok Sudah Diambil</h3>
-                    <p style="margin:2px 0 0 0; font-size:11px; color:#64748b;">Daftar aki yang sudah dipindahkan ke pusat.</p>
-                </div>
-            </div>
-            <div style="font-size:11px; color:#fff; background:#1e3a8a; padding:4px 10px; border-radius:12px; font-weight:700;">
-                <span id="stock-taken-badge-count">...</span>
-            </div>
-        </div>
-        <div style="padding:10px 15px; border-bottom:1px solid #f1f5f9;">
-            <input type="text" id="input-search-warehouse-taken-stock" class="admin-select" placeholder="🔍 Cari jenis / nama..." style="width:100%; max-width:240px; font-size:11px; padding:6px 10px; border-radius:6px;">
-        </div>
-        <div style="max-height:300px; overflow-y:auto; padding:0; background:#fff; border-bottom-left-radius:12px; border-bottom-right-radius:12px;">
-            <table style="width:100%; border-collapse:collapse; font-size:12px;">
-                <thead>
-                    <tr style="border-bottom:1px solid #e2e8f0; background:#f8fafc; color:#64748b; font-size:11px;">
-                        <th style="padding:8px 10px; text-align:left; font-weight:700;">Jenis Aki</th>
-                        <th style="padding:8px 10px; text-align:center; font-weight:700; width:80px;">Jumlah</th>
-                    </tr>
-                </thead>
-                <tbody id="storage-taken-stocks-tbody">
-                    <tr><td colspan="2"><div class="admin-table-empty"><strong>Memuat data stok...</strong></div></td></tr>
-                </tbody>
-            </table>
-        </div> --}}
     </article>
 </div>
 
@@ -153,28 +122,25 @@ document.addEventListener("DOMContentLoaded", async () => {
     let allStocksData = [];
     let allTakenStocksData = [];
 
-    const takenStocksTbody = document.getElementById("storage-taken-stocks-tbody");
-    const takenStockBadgeCount = document.getElementById("stock-taken-badge-count");
-    const searchTakenInput = document.getElementById("input-search-warehouse-taken-stock");
-
     function renderStockTable(filteredStocks) {
         if (!stocksTbody) return;
-        if (filteredStocks.length > 0) {
-            stocksTbody.innerHTML = filteredStocks.map(item => {
+        const validStocks = filteredStocks.filter(item => item.accu_name && item.accu_name.trim() !== "");
+        if (validStocks.length > 0) {
+            stocksTbody.innerHTML = validStocks.map(item => {
                 const qty = parseInt(item.total_quantity || 0);
                 const badgeHtml = qty > 0
-                    ? `<span style="background:#d1fae5; color:#065f46; font-size:10px; font-weight:700; padding:2px 8px; border-radius:12px; display:inline-block;">Tersedia</span>`
-                    : `<span style="background:#f1f5f9; color:#64748b; font-size:10px; font-weight:700; padding:2px 8px; border-radius:12px; display:inline-block;">Stok 0</span>`;
+                    ? `<span class="admin-badge admin-badge--success">Tersedia</span>`
+                    : `<span class="admin-badge admin-badge--muted">Stok 0</span>`;
 
                 return `
-                    <tr style="border-bottom:1px solid #f1f5f9; ${qty > 0 ? 'background:#ecfdf5;' : ''}">
-                        <td style="padding:8px 10px; font-weight:700; color:#1e293b; font-size:12px;">
-                            ⚡ ${item.accu_name || "-"}
+                    <tr class="stock-table-row ${qty > 0 ? 'stock-table-row--active' : ''}">
+                        <td class="stock-table-name">
+                            ⚡ ${item.accu_name}
                         </td>
-                        <td style="padding:8px 10px; text-align:center; font-weight:700; color:${qty > 0 ? '#059669' : '#64748b'}; font-size:12px; white-space:nowrap;">
+                        <td class="stock-table-qty ${qty > 0 ? 'stock-table-qty--positive' : ''}">
                             ${qty} unit
                         </td>
-                        <td style="padding:8px 10px; text-align:right;">
+                        <td class="stock-table-status">
                             ${badgeHtml}
                         </td>
                     </tr>
@@ -182,27 +148,6 @@ document.addEventListener("DOMContentLoaded", async () => {
             }).join("");
         } else {
             stocksTbody.innerHTML = `<tr><td colspan="3"><div class="admin-table-empty"><strong>Tidak ada jenis aki yang cocok</strong></div></td></tr>`;
-        }
-    }
-
-    function renderTakenStockTable(filteredStocks) {
-        if (!takenStocksTbody) return;
-        if (filteredStocks.length > 0) {
-            takenStocksTbody.innerHTML = filteredStocks.map(item => {
-                const qty = parseInt(item.total_quantity || 0);
-                return `
-                    <tr style="border-bottom:1px solid #f1f5f9; ${qty > 0 ? 'background:#eff6ff;' : ''}">
-                        <td style="padding:8px 10px; font-weight:700; color:#1e293b; font-size:12px;">
-                            📦 ${item.accu_name || "-"}
-                        </td>
-                        <td style="padding:8px 10px; text-align:center; font-weight:700; color:${qty > 0 ? '#1d4ed8' : '#64748b'}; font-size:12px; white-space:nowrap;">
-                            ${qty} unit
-                        </td>
-                    </tr>
-                `;
-            }).join("");
-        } else {
-            takenStocksTbody.innerHTML = `<tr><td colspan="2"><div class="admin-table-empty"><strong>Tidak ada riwayat pengambilan</strong></div></td></tr>`;
         }
     }
 
@@ -216,8 +161,8 @@ document.addEventListener("DOMContentLoaded", async () => {
         if (!res.ok) throw new Error("Gagal mengambil data gudang");
         const data = await res.json();
         const w = data.warehouse;
-        const stocks = data.stocks || [];
-        const takenStocks = data.taken_stocks || [];
+        const stocks = (data.stocks || []).filter(item => item.accu_name && item.accu_name.trim() !== "");
+        const takenStocks = (data.taken_stocks || []).filter(item => item.accu_name && item.accu_name.trim() !== "");
         const totalItems = data.total_items || 0;
         const totalTakenItems = data.total_taken_items || 0;
 
@@ -229,7 +174,6 @@ document.addEventListener("DOMContentLoaded", async () => {
         statCoords.innerText = `${parseFloat(w.lat).toFixed(4)}, ${parseFloat(w.long).toFixed(4)}`;
         if (statTotalTaken) statTotalTaken.innerText = totalTakenItems.toLocaleString("id-ID") + " Unit";
         stockBadgeCount.innerText = `${stocks.length} Jenis Aki`;
-        if (takenStockBadgeCount) takenStockBadgeCount.innerText = `${totalTakenItems} Unit Diambil`;
 
         // Render Map
         const lat = parseFloat(w.lat || -7.250445);
@@ -270,7 +214,6 @@ document.addEventListener("DOMContentLoaded", async () => {
         });
 
         renderStockTable(allStocksData);
-        renderTakenStockTable(allTakenStocksData);
 
         if (searchInput) {
             searchInput.addEventListener("input", (e) => {
@@ -284,17 +227,6 @@ document.addEventListener("DOMContentLoaded", async () => {
             });
         }
 
-        if (searchTakenInput) {
-            searchTakenInput.addEventListener("input", (e) => {
-                const query = e.target.value.toLowerCase().trim();
-                const filtered = allTakenStocksData.filter(item =>
-                    (item.accu_name && item.accu_name.toLowerCase().includes(query)) ||
-                    (item.accu_brand && item.accu_brand.toLowerCase().includes(query))
-                );
-                renderTakenStockTable(filtered);
-            });
-        }
-
     } catch (e) {
         console.error(e);
         stocksTbody.innerHTML = `<tr><td colspan="3"><div class="admin-table-empty" style="color:#dc2626;"><strong>Terjadi kesalahan saat memuat stok gudang</strong></div></td></tr>`;
@@ -302,3 +234,4 @@ document.addEventListener("DOMContentLoaded", async () => {
 });
 </script>
 @endsection
+

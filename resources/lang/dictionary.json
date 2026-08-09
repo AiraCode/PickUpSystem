@@ -51,7 +51,7 @@
     "en": "Operations & Management"
   },
   "OPERASIONAL & MANAJEMEN": {
-    "en": "Operations & Management"
+    "en": "OPERATIONS & MANAGEMENT"
   },
   "Manage and update customer order STATUS in real-time.": {
     "en": "Manage and update customer order status in real-time."
@@ -187,12 +187,6 @@
   },
   "Informasi Pesanan": {
     "en": "Order Information"
-  },
-  "Type Pesanan": {
-    "en": "Order Type"
-  },
-  "City Layanan": {
-    "en": "Service City"
   },
   "Payment Method": {
     "en": "Payment Method"
@@ -363,7 +357,7 @@
     "en": "Edit New Battery"
   },
   "Enter password akun Admin Anda untuk mengonfirmasi penghapusan gudang ini.": {
-    "en": "Enter your Admin account password to confirm deleting this warehouse."
+    "en": "Enter your Admin account password to confirm deletion of this warehouse."
   },
   "Error memuat data riwayat": {
     "en": "Error loading history data"
@@ -372,7 +366,7 @@
     "en": "Failed to load history data"
   },
   "JENIS BATTERY": {
-    "en": "Battery Type"
+    "en": "BATTERY TYPE"
   },
   "Jenis BATTERY": {
     "en": "Battery Type"
@@ -380,7 +374,6 @@
   "JUMLAH": {
     "en": "QUANTITY"
   },
-
   "Kelola dan lihat informasi stok aki yang tersimpan di gudang ini.": {
     "en": "Manage and view battery stock information stored in this warehouse."
   },
@@ -468,12 +461,6 @@
   "Cari model, ukuran...": {
     "en": "Search model, size..."
   },
-  "Scrap Battery akan otomatis terhubung dan berlaku di semua City.": {
-    "en": "Scrap batteries will automatically link and apply to all cities."
-  },
-  "Aki bekas akan otomatis terhubung dan berlaku di semua kota.": {
-    "en": "Scrap batteries will automatically link and apply to all cities."
-  },
   "Atur Percentage (%) untuk City ini di bagian atas. Battery Prices dihitung otomatis dengan rumus.": {
     "en": "Set percentage (%) for this city above. Battery prices are calculated automatically using formula."
   },
@@ -538,13 +525,13 @@
     "en": "Search new battery name..."
   },
   "Stok Barang per Jenis Aki": {
-    "en": "Stock per Battery Type"
+    "en": "Stock by Battery Type"
   },
   "📦 Stok Barang per Jenis Aki": {
     "en": "📦 Stock per Battery Type"
   },
   "Stok Barang per Jenis BATTERY": {
-    "en": "Stock per Battery Type"
+    "en": "Stock by Battery Type"
   },
   "📦 Stok Barang per Jenis BATTERY": {
     "en": "📦 Stock per Battery Type"
@@ -553,13 +540,13 @@
     "en": "An error occurred while loading warehouse stock"
   },
   "Tidak ada jenis aki yang cocok": {
-    "en": "No matching battery types found"
+    "en": "No matching battery types"
   },
   "Titik GPS lokasi gudang": {
-    "en": "Warehouse GPS location point"
+    "en": "Warehouse GPS coordinates"
   },
   "Total Stok Aki Tersimpan": {
-    "en": "Total Battery Stock Stored"
+    "en": "Total Stored Battery Stock"
   },
   "Total Stok BATTERY Tersimpan": {
     "en": "Total Battery Stock Stored"
@@ -580,13 +567,13 @@
     "en": "Analysis & Performance"
   },
   "ANALISIS & PERFORMA": {
-    "en": "Analysis & Performance"
+    "en": "ANALYSIS & PERFORMANCE"
   },
   "Area Terbanyak": {
     "en": "Top Areas"
   },
   "AREA TERBANYAK": {
-    "en": "Top Areas"
+    "en": "TOP AREAS"
   },
   "AVERAGE TRANSACTION": {
     "en": "Average Transaction"
@@ -601,7 +588,7 @@
     "en": "Revenue Chart"
   },
   "GRAFIK REVENUE": {
-    "en": "Revenue Chart"
+    "en": "REVENUE CHART"
   },
   "Jum": {
     "en": "Fri"
@@ -664,16 +651,16 @@
     "en": "Shipment #"
   },
   "Pesanan Dibatalkan": {
-    "en": "Orders Cancelled"
+    "en": "Order Cancelled"
   },
   "PESANAN DIBATALKAN": {
-    "en": "Orders Cancelled"
+    "en": "CANCELLED ORDERS"
   },
   "Produk Terlaris": {
     "en": "Top Selling Products"
   },
   "PRODUK TERLARIS": {
-    "en": "Top Selling Products"
+    "en": "TOP PRODUCTS"
   },
   "Rab": {
     "en": "Wed"
@@ -682,7 +669,7 @@
     "en": "Average Transaction"
   },
   "RATA-RATA TRANSAKSI": {
-    "en": "Average Transaction"
+    "en": "AVERAGE TRANSACTION"
   },
   "Sab": {
     "en": "Sat"
@@ -712,13 +699,13 @@
     "en": "Total Revenue"
   },
   "TOTAL PENDAPATAN": {
-    "en": "Total Revenue"
+    "en": "TOTAL REVENUE"
   },
   "Total Transaksi": {
     "en": "Total Orders"
   },
   "TOTAL TRANSAKSI": {
-    "en": "Total Orders"
+    "en": "TOTAL TRANSACTIONS"
   },
   "Transaksi Masuk": {
     "en": "Incoming Orders"
@@ -822,9 +809,6 @@
   "Alasan\n                        Pembatalan (Wajib)": {
     "en": "Cancellation Reason (Required)"
   },
-  "ANALISIS & PERFORMA": {
-    "en": "ANALYSIS & PERFORMANCE"
-  },
   "Anda dapat memilih untuk mengantar aki ke gudang atau menggunakan layanan penjemputan oleh kurir kami.": {
     "en": "You can choose to deliver batteries to the warehouse or use our courier pickup service."
   },
@@ -845,9 +829,6 @@
   },
   "Apakah semua data": {
     "en": "Is all the information you entered correct?"
-  },
-  "AREA TERBANYAK": {
-    "en": "TOP AREAS"
   },
   "Atas Nama": {
     "en": "Account Name"
@@ -1068,9 +1049,6 @@
   "Gagal mengirim pesanan": {
     "en": "Failed to submit order"
   },
-  "GRAFIK REVENUE": {
-    "en": "REVENUE CHART"
-  },
   "Gratis": {
     "en": "Free"
   },
@@ -1154,9 +1132,6 @@
   },
   "INFORMASI PENJUAL": {
     "en": "SELLER INFORMATION"
-  },
-  "Informasi Pesanan": {
-    "en": "Order Information"
   },
   "Input Nama Manual": {
     "en": "Manual Name Input"
@@ -1437,9 +1412,6 @@
   "Nama wajib diisi.": {
     "en": "Name is required."
   },
-  "Nilai rata-rata per order": {
-    "en": "Average value per order"
-  },
   "No Rekening": {
     "en": "Account No"
   },
@@ -1530,12 +1502,6 @@
   "Pesanan dibatalkan": {
     "en": "Order cancelled"
   },
-  "PESANAN DIBATALKAN": {
-    "en": "CANCELLED ORDERS"
-  },
-  "Pesanan Dibatalkan": {
-    "en": "Order Cancelled"
-  },
   "Pesanan dibatalkan (wajib beri\n                                    alasan)": {
     "en": "Order cancelled (must provide reason)"
   },
@@ -1593,12 +1559,6 @@
   "PREVIEW RECEIPT": {
     "en": "RECEIPT PREVIEW"
   },
-  "PRODUK TERLARIS": {
-    "en": "TOP PRODUCTS"
-  },
-  "RATA-RATA TRANSAKSI": {
-    "en": "AVERAGE TRANSACTION"
-  },
   "RECEIPT PENJUALAN": {
     "en": "SALES RECEIPT"
   },
@@ -1643,9 +1603,6 @@
   },
   "Selanjutnya": {
     "en": "Next"
-  },
-  "Selesai": {
-    "en": "Completed"
   },
   "Semua proses dibuat sederhana agar Anda dapat mengetahui estimasi nilai aki dan metode penyerahan dengan jelas.": {
     "en": "The entire process is made simple so you can clearly check estimated battery values and handover methods."
@@ -1782,14 +1739,8 @@
   "Tim kami melakukan verifikasi fisik aki dan pembayaran dikirimkan langsung.": {
     "en": "Our team verifies the physical battery and sends payment directly."
   },
-  "Tingkat pembatalan order": {
-    "en": "Order cancellation rate"
-  },
   "Tipe": {
     "en": "Type"
-  },
-  "Tipe Aki": {
-    "en": "Battery Type"
   },
   "Top 5 Jenis Aki Sold": {
     "en": "Top 5 Batteries Sold"
@@ -1809,9 +1760,6 @@
   "Total Pencairan": {
     "en": "Total Payout"
   },
-  "TOTAL PENDAPATAN": {
-    "en": "TOTAL REVENUE"
-  },
   "Total pendapatan diterima": {
     "en": "Total revenue received"
   },
@@ -1824,20 +1772,11 @@
   "Total Pesanan": {
     "en": "Total Orders"
   },
-  "Total Transaksi": {
-    "en": "Total Orders"
-  },
-  "TOTAL TRANSAKSI": {
-    "en": "TOTAL TRANSACTIONS"
-  },
   "Transaksi Anda Telah Diterima.": {
     "en": "Your Transaction Has Been Received."
   },
   "TRANSAKSI BERHASIL": {
     "en": "TRANSACTION SUCCESSFUL"
-  },
-  "Transaksi Masuk": {
-    "en": "Incoming Orders"
   },
   "Transaksi Pending": {
     "en": "Pending Orders"
@@ -2205,9 +2144,6 @@
   "Kata Sandi Saat Ini": {
     "en": "Current Password"
   },
-  "Kata sandi lama": {
-    "en": "Old password"
-  },
   "Masukkan kata sandi": {
     "en": "Enter password"
   },
@@ -2223,9 +2159,6 @@
   "Kata sandi rahasia salah!": {
     "en": "Incorrect secret password!"
   },
-  "PEMBARUAN": {
-    "en": "UPDATES"
-  },
   "Pembaruan": {
     "en": "Updates"
   },
@@ -2234,9 +2167,6 @@
   },
   "Log Aktivitas": {
     "en": "Activity Log"
-  },
-  "Update Status Pesanan": {
-    "en": "Update Order Status"
   },
   "Item Pesanan Diperbarui": {
     "en": "Order Items Updated"
@@ -2262,9 +2192,6 @@
   "Simpan & Kirim Konfirmasi WA": {
     "en": "Save & Send WA Confirmation"
   },
-  "Batal": {
-    "en": "Cancel"
-  },
   "BATAL": {
     "en": "CANCEL"
   },
@@ -2286,11 +2213,11 @@
   "Menunggu Pengambilan Pusat": {
     "en": "Awaiting Central Pickup"
   },
-  "Daftar gudang cabang dengan jumlah stok \u2265 20 unit.": {
-    "en": "List of branch warehouses with stock \u2265 20 units."
+  "Daftar gudang cabang dengan jumlah stok ≥ 20 unit.": {
+    "en": "List of branch warehouses with stock ≥ 20 units."
   },
   "Daftar gudang cabang dengan jumlah stok &ge; 20 unit.": {
-    "en": "List of branch warehouses with stock \u2265 20 units."
+    "en": "List of branch warehouses with stock ≥ 20 units."
   },
   "Stok Sudah Diambil": {
     "en": "Stock Picked Up"
@@ -2304,14 +2231,8 @@
   "Gagal memuat data.": {
     "en": "Failed to load data."
   },
-  "Belum ada aktivitas": {
-    "en": "No activity yet"
-  },
   "Belum ada aktivitas.": {
     "en": "No activity yet."
-  },
-  "Memuat data...": {
-    "en": "Loading data..."
   },
   "Edit Item": {
     "en": "Edit Item"
@@ -2323,7 +2244,7 @@
     "en": "Edit Rejected"
   },
   "Update Status": {
-    "en": "Update Status"
+    "en": "Status Update"
   },
   "Menunggu Konfirmasi Customer": {
     "en": "Awaiting Customer Confirmation"
@@ -2344,18 +2265,453 @@
     "en": "Admin updated order status to Cancelled"
   },
   "Admin memperbarui item pesanan. Menunggu konfirmasi customer.": {
-    "en": "Admin updated order items. Awaiting customer confirmation."
+    "en": "Admin updated order items. Waiting for customer confirmation."
   },
   "Customer menyetujui perubahan item pesanan.": {
-    "en": "Customer approved order item changes."
+    "en": "Customer approved changes to order items."
   },
   "Customer menolak perubahan item pesanan. Pesanan dibatalkan otomatis.": {
-    "en": "Customer rejected order item changes. Order automatically cancelled."
+    "en": "Customer rejected changes to order items. Order was automatically cancelled."
   },
   "Batas waktu 10 menit konfirmasi perubahan habis. Pesanan dibatalkan otomatis.": {
-    "en": "10-minute confirmation time limit expired. Order automatically cancelled."
+    "en": "The 10-minute change confirmation time limit expired. Order was automatically cancelled."
   },
   "Admin Pusat mengambil barang yang sudah siap dari gudang cabang.": {
-    "en": "Central Admin picked up ready items from branch warehouse."
+    "en": "Central Admin picked up ready goods from the branch warehouse."
+  },
+  "OPERASIONAL": {
+    "en": "OPERATIONAL"
+  },
+  "Operasional": {
+    "en": "Operational"
+  },
+  "operasional": {
+    "en": "operational"
+  },
+  "Operasional &amp; Manajemen": {
+    "en": "Operations & Management"
+  },
+  "OPERASIONAL &amp; MANAJEMEN": {
+    "en": "OPERATIONS & MANAGEMENT"
+  },
+  "Tidak ada gudang yang siap diambil (stok < 20).": {
+    "en": "No warehouses ready for pickup (stock < 20)."
+  },
+  "Tidak ada gudang yang siap diambil (stok &lt; 20).": {
+    "en": "No warehouses ready for pickup (stock < 20)."
+  },
+  "Tidak ada gudang yang siap diambil (stok < 20)": {
+    "en": "No warehouses ready for pickup (stock < 20)"
+  },
+  "Tidak ada gudang yang siap diambil (stok &lt; 20)": {
+    "en": "No warehouses ready for pickup (stock < 20)"
+  },
+  "Tidak ada gudang yang siap diambil": {
+    "en": "No warehouses ready for pickup"
+  },
+  "Siap diambil:": {
+    "en": "Ready for pickup:"
+  },
+  "Siap diambil": {
+    "en": "Ready for pickup"
+  },
+  "Memuat status pengambilan...": {
+    "en": "Loading pickup status..."
+  },
+  "Aki Dikirim ke Pusat": {
+    "en": "Batteries Shipped to Central"
+  },
+  "BATTERY Dikirim ke Pusat": {
+    "en": "Batteries Shipped to Central"
+  },
+  "Aki Dikirim ke Gudang Pusat": {
+    "en": "Batteries Shipped to Central Warehouse"
+  },
+  "Aki yang dikirim ke gudang utama": {
+    "en": "Batteries shipped to central warehouse"
+  },
+  "BATTERY yang dikirim To Warehouse utama": {
+    "en": "Batteries shipped to central warehouse"
+  },
+  "Aki yang dikirim ke gudang utama.": {
+    "en": "Batteries shipped to central warehouse."
+  },
+  "86 Jenis BATTERY": {
+    "en": "86 Battery Types"
+  },
+  "86 Jenis Aki": {
+    "en": "86 Battery Types"
+  },
+  "Jenis Aki": {
+    "en": "Battery Type"
+  },
+  "JENIS AKI": {
+    "en": "BATTERY TYPE"
+  },
+  "Jenis aki": {
+    "en": "Battery type"
+  },
+  "Pilih Lokasi di Peta": {
+    "en": "Select Location on Map"
+  },
+  "Klik pada peta untuk menandai titik lokasi gudang.": {
+    "en": "Click on the map to mark warehouse location."
+  },
+  "Belum ada titik dipilih": {
+    "en": "No location selected"
+  },
+  "Riwayat Gudang Terhapus (Klik untuk pulihkan)": {
+    "en": "Deleted Warehouses History (Click to restore)"
+  },
+  "Tidak ada gudang terhapus": {
+    "en": "No deleted warehouses"
+  },
+  "Masukkan kata sandi akun Admin Anda untuk mengonfirmasi penghapusan gudang ini.": {
+    "en": "Enter your Admin account password to confirm deletion of this warehouse."
+  },
+  "Alamat Lengkap": {
+    "en": "Full Address"
+  },
+  "Lokasi Gudang": {
+    "en": "Warehouse Location"
+  },
+  "Pengaturan Global LME & Kurs": {
+    "en": "Global LME & Exchange Rate Settings"
+  },
+  "Pengaturan Global LME &amp; Kurs": {
+    "en": "Global LME & Exchange Rate Settings"
+  },
+  "SETTINGS Global LME & Kurs": {
+    "en": "Global LME & Exchange Rate Settings"
+  },
+  "SETTINGS Global LME &amp; Kurs": {
+    "en": "Global LME & Exchange Rate Settings"
+  },
+  "Pengaturan Global LME & Kurs.": {
+    "en": "Global LME & Exchange Rate Settings."
+  },
+  "Simpan LME & Kurs": {
+    "en": "Save LME & Exchange Rate"
+  },
+  "Simpan LME &amp; Kurs": {
+    "en": "Save LME & Exchange Rate"
+  },
+  "Rumus Harga: [(LME &times; Kurs &times; % Kota) / 1000] &times; Berat Kering (kg)": {
+    "en": "Price Formula: [(LME × Exchange Rate × % City) / 1000] × Dry Weight (kg)"
+  },
+  "Tersedia": {
+    "en": "Available"
+  },
+  "Stok 0": {
+    "en": "0 Stock"
+  },
+  "0 unit": {
+    "en": "0 units"
+  },
+  "0 Unit": {
+    "en": "0 Units"
+  },
+  "Unit": {
+    "en": "Units"
+  },
+  "unit": {
+    "en": "units"
+  },
+  "Tidak ada jenis BATTERY yang cocok": {
+    "en": "No matching battery types"
+  },
+  "MANAJEMEN GUDANG": {
+    "en": "WAREHOUSE MANAGEMENT"
+  },
+  "Manajemen Gudang": {
+    "en": "Warehouse Management"
+  },
+  "Pengaturan": {
+    "en": "Settings"
+  },
+  "Hapus Notifikasi": {
+    "en": "Delete Notification"
+  },
+  "Apakah Anda yakin ingin menghapus notifikasi ini?": {
+    "en": "Are you sure you want to delete this notification?"
+  },
+  "Hapus Semua Notifikasi": {
+    "en": "Delete All Notifications"
+  },
+  "Hapus Semua": {
+    "en": "Delete All"
+  },
+  "Apakah Anda yakin ingin menghapus semua notifikasi aktivitas?": {
+    "en": "Are you sure you want to delete all activity notifications?"
+  },
+  "Semua notifikasi berhasil dihapus": {
+    "en": "All notifications deleted successfully"
+  },
+  "Notifikasi berhasil dihapus": {
+    "en": "Notification deleted successfully"
+  },
+  "Gagal menghapus notifikasi": {
+    "en": "Failed to delete notification"
+  },
+  "Gagal menghapus semua notifikasi": {
+    "en": "Failed to delete all notifications"
+  },
+  "Aktivitas Terbaru": {
+    "en": "Recent Activity"
+  },
+  "Aki Tiba di Gudang": {
+    "en": "Battery Arrived at Warehouse"
+  },
+  "Pengambilan Gudang Selesai": {
+    "en": "Warehouse Pickup Completed"
+  },
+  "Stok Gudang Siap Diambil": {
+    "en": "Warehouse Stock Ready for Pickup"
+  },
+  "Penyesuaian Item Pesanan": {
+    "en": "Order Items Adjustment"
+  },
+  "Perubahan Pesanan Disetujui": {
+    "en": "Order Change Approved"
+  },
+  "Perubahan Pesanan Ditolak": {
+    "en": "Order Change Rejected"
+  },
+  "Judul": {
+    "en": "Title"
+  },
+  "JUDUL": {
+    "en": "TITLE"
+  },
+  "Deskripsi": {
+    "en": "Description"
+  },
+  "DESKRIPSI": {
+    "en": "DESCRIPTION"
+  },
+  "Pengambilan Pusat": {
+    "en": "Central Pickup"
+  },
+  "Stok Gudang": {
+    "en": "Warehouse Stock"
+  },
+  "WAKTU": {
+    "en": "TIME"
+  },
+  "TIPE": {
+    "en": "TYPE"
+  },
+  "AKSI": {
+    "en": "ACTIONS"
+  },
+  "Pantau seluruh aktivitas dan perubahan status di dalam sistem.": {
+    "en": "Monitor all activities and status changes in the system."
+  },
+  "Pantau seluruh aktivitas dan perubahan status di dalam sistem": {
+    "en": "Monitor all activities and status changes in the system"
+  },
+  "judul": {
+    "en": "Title"
+  },
+  "deskripsi": {
+    "en": "Description"
+  },
+  "waktu": {
+    "en": "Time"
+  },
+  "tipe": {
+    "en": "Type"
+  },
+  "aksi": {
+    "en": "Actions"
+  },
+  "PENGAMBILAN PUSAT": {
+    "en": "CENTRAL PICKUP"
+  },
+  "STOK GUDANG": {
+    "en": "WAREHOUSE STOCK"
+  },
+  "membuat pesanan baru dari": {
+    "en": "created a new order from"
+  },
+  "membuat pesanan baru": {
+    "en": "created a new order"
+  },
+  "membuat pesanan": {
+    "en": "created an order"
+  },
+  "membuat": {
+    "en": "created"
+  },
+  "Admin memperbarui status pesanan menjadi": {
+    "en": "Admin updated order status to"
+  },
+  "memperbarui status pesanan menjadi": {
+    "en": "updated order status to"
+  },
+  "memperbarui status pesanan": {
+    "en": "updated order status"
+  },
+  "memperbarui status": {
+    "en": "updated status"
+  },
+  "memperbarui item pesanan": {
+    "en": "updated order items"
+  },
+  "memperbarui": {
+    "en": "updated"
+  },
+  "menjadi": {
+    "en": "to"
+  },
+  "Sedang Dijemput / Processing": {
+    "en": "Being Picked Up / Processing"
+  },
+  "Sedang Dijemput": {
+    "en": "Being Picked Up"
+  },
+  "telah mencapai akumulasi": {
+    "en": "has reached an accumulation of"
+  },
+  "unit aki (siap penjemputan pusat)": {
+    "en": "battery units (ready for central pickup)"
+  },
+  "(siap penjemputan pusat)": {
+    "en": "(ready for central pickup)"
+  },
+  "siap penjemputan pusat": {
+    "en": "ready for central pickup"
+  },
+  "siap diambil": {
+    "en": "ready for pickup"
+  },
+  "aki yang siap diambil": {
+    "en": "batteries ready for pickup"
+  },
+  "menyetujui penyesuaian rincian item aki oleh admin": {
+    "en": "approved the adjustment of battery item details by admin"
+  },
+  "menyetujui penyesuaian rincian item aki": {
+    "en": "approved the adjustment of battery item details"
+  },
+  "menyetujui penyesuaian": {
+    "en": "approved the adjustment of"
+  },
+  "penyesuaian rincian item aki oleh admin": {
+    "en": "adjustment of battery item details by admin"
+  },
+  "penyesuaian rincian item aki": {
+    "en": "battery item details adjustment"
+  },
+  "rincian item aki": {
+    "en": "battery item details"
+  },
+  "oleh admin": {
+    "en": "by admin"
+  },
+  "Customer menyetujui perubahan item pesanan": {
+    "en": "Customer approved changes to order items"
+  },
+  "Customer menolak perubahan item pesanan": {
+    "en": "Customer rejected changes to order items"
+  },
+  "Pesanan dibatalkan otomatis.": {
+    "en": "Order was automatically cancelled."
+  },
+  "Pesanan dibatalkan otomatis": {
+    "en": "Order was automatically cancelled"
+  },
+  "Kurir telah mengantarkan aki pesanan ke": {
+    "en": "Courier has delivered the order batteries to"
+  },
+  "telah mengantarkan aki pesanan ke": {
+    "en": "has delivered the order batteries to"
+  },
+  "telah mengantarkan aki pesanan": {
+    "en": "has delivered the order batteries"
+  },
+  "telah mengantarkan": {
+    "en": "has delivered"
+  },
+  "aki pesanan": {
+    "en": "order batteries"
+  },
+  "ke Gudang Utama": {
+    "en": "to Central Warehouse"
+  },
+  "Gudang Utama": {
+    "en": "Main Warehouse"
+  },
+  "Pusat telah mengonfirmasi pengambilan": {
+    "en": "Central has confirmed the pickup of"
+  },
+  "telah mengonfirmasi pengambilan": {
+    "en": "has confirmed the pickup of"
+  },
+  "Admin Pusat mengambil barang yang sudah siap dari gudang cabang": {
+    "en": "Central Admin picked up ready goods from the branch warehouse"
+  },
+  "mengambil barang yang sudah siap dari gudang cabang": {
+    "en": "picked up ready goods from the branch warehouse"
+  },
+  "unit aki dari": {
+    "en": "battery units from"
+  },
+  "unit aki": {
+    "en": "battery units"
+  },
+  "Unit aki": {
+    "en": "Battery units"
+  },
+  "Pembayaran transfer telah diverifikasi dan pesanan selesai": {
+    "en": "Transfer payment has been verified and order completed"
+  },
+  "Pembayaran transfer telah diverifikasi": {
+    "en": "Transfer payment has been verified"
+  },
+  "telah diverifikasi dan pesanan selesai": {
+    "en": "has been verified and order completed"
+  },
+  "telah diverifikasi": {
+    "en": "has been verified"
+  },
+  "dan pesanan selesai": {
+    "en": "and order completed"
+  },
+  "pesanan selesai": {
+    "en": "order completed"
+  },
+  "Admin memperbarui estimasi berat kering dan tipe aki pada pesanan": {
+    "en": "Admin updated dry weight and battery type estimation on order"
+  },
+  "memperbarui estimasi berat kering dan tipe aki pada pesanan": {
+    "en": "updated dry weight and battery type estimation on order"
+  },
+  "estimasi berat kering dan tipe aki pada pesanan": {
+    "en": "dry weight and battery type estimation on order"
+  },
+  "estimasi berat kering dan tipe aki": {
+    "en": "dry weight and battery type estimation"
+  },
+  "estimasi berat kering": {
+    "en": "dry weight estimation"
+  },
+  "berat kering dan tipe aki": {
+    "en": "dry weight and battery type"
+  },
+  "pada pesanan": {
+    "en": "on order"
+  },
+  "Menunggu konfirmasi customer.": {
+    "en": "Waiting for customer confirmation."
+  },
+  "Menunggu konfirmasi customer": {
+    "en": "Waiting for customer confirmation"
+  },
+  "Batas waktu 10 menit konfirmasi perubahan habis": {
+    "en": "The 10-minute change confirmation time limit expired"
+  },
+  "Pesanan Selesai": {
+    "en": "Order Completed"
   }
 }

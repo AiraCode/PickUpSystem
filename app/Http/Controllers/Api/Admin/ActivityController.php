@@ -36,6 +36,27 @@ class ActivityController extends Controller
         ]);
     }
 
+    public function destroyAll(): JsonResponse
+    {
+        $query = Activity::query();
+        
+        $user = auth()->user();
+        if ($user && $user->role === 'warehouse_admin' && $user->warehouse_id) {
+            $warehouseId = $user->warehouse_id;
+            $orderIds = Order::where('storages_id', $warehouseId)->pluck('id');
+            $query->where(function ($q) use ($orderIds) {
+                $q->where('related_type', Order::class)
+                  ->whereIn('related_id', $orderIds);
+            });
+        }
+
+        $query->delete();
+
+        return response()->json([
+            'message' => 'Semua notifikasi aktivitas berhasil dihapus',
+        ]);
+    }
+
     public function destroy(int $id): JsonResponse
     {
         $activity = Activity::findOrFail($id);

@@ -150,7 +150,13 @@ class WarehouseController extends Controller
             ->groupBy('accus.id')
             ->pluck('total_quantity', 'accu_id');
 
-        $allAccus = \App\Models\Accu::orderBy('name', 'asc')->get();
+        $allAccus = \App\Models\Accu::whereNotNull('name')
+            ->where('name', '!=', '')
+            ->orderBy('name', 'asc')
+            ->get()
+            ->filter(function ($accu) {
+                return !empty(trim((string) $accu->name));
+            });
 
         $stocks = $allAccus->map(function ($accu) use ($existingStocks) {
             $qty = (int) ($existingStocks[$accu->id] ?? 0);
