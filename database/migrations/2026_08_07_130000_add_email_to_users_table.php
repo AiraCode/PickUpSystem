@@ -25,7 +25,9 @@ return new class extends Migration
             }
         }
 
-        DB::statement('ALTER TABLE `users` MODIFY `email` VARCHAR(255) NOT NULL');
+        Schema::table('users', function (Blueprint $table) {
+            $table->string('email')->nullable(false)->change();
+        });
     }
 
     public function down(): void

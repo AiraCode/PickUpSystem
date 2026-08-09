@@ -10,14 +10,18 @@ return new class extends Migration
     public function up(): void
     {
         if (Schema::hasTable('storages') && Schema::hasColumn('storages', 'address')) {
-            DB::statement('ALTER TABLE `storages` MODIFY `address` VARCHAR(255) NOT NULL');
+            Schema::table('storages', function (Blueprint $table) {
+                $table->string('address', 255)->nullable(false)->change();
+            });
         }
     }
 
     public function down(): void
     {
         if (Schema::hasTable('storages') && Schema::hasColumn('storages', 'address')) {
-            DB::statement('ALTER TABLE `storages` MODIFY `address` VARCHAR(45) NOT NULL');
+            Schema::table('storages', function (Blueprint $table) {
+                $table->string('address', 45)->nullable(false)->change();
+            });
         }
     }
 };

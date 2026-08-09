@@ -23,6 +23,7 @@ class AdminPickupPricingTest extends TestCase
         $this->admin = User::create([
             'id'       => 1,
             'name'     => 'Test Admin',
+            'email'    => 'admin@example.com',
             'password' => bcrypt('password'),
         ]);
         $this->token = $this->admin->createToken('test')->plainTextToken;
