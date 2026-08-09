@@ -143,7 +143,7 @@ flowchart TD
 
 | Layer | Teknologi / Library | Keterangan |
 |---|---|---|
-| **Backend Framework** | Laravel 12 / 13 | Arsitektur MVC & REST API modern |
+| **Backend Framework** | Laravel 13 | Arsitektur MVC & REST API modern |
 | **Bahasa Pemrograman** | PHP 8.3+ | Fitur type safety & performa tinggi |
 | **Authentication** | Laravel Sanctum | Token-based API Authentication |
 | **Frontend Template** | Blade & Vanilla JS | Ringan, responsif, tanpa overhead SPA |
@@ -220,65 +220,7 @@ Aplikasi didukung oleh 19 model Eloquent yang saling berelasi:
 ---
 
 ## 💻 Panduan Instalasi & Setup
-
-Ikuti langkah-langkah berikut untuk menjalankan proyek di lingkungan pengembangan lokal:
-
-### 1. Prasyarat Sistem
-- **PHP** $\ge$ 8.3 dengan ekstensi: `pdo`, `pdo_mysql`, `mbstring`, `bcmath`, `curl`, `gd`
-- **Composer** $\ge$ 2.x
-- **Node.js** $\ge$ 20.x & **NPM**
-- **MySQL** ($\ge$ 8.0)
-
-### 2. Clone Repositori
-```bash
-git clone https://github.com/username/PickUpSystem.git
-cd PickUpSystem
-```
-
-### 3. Instal Dependensi Backend & Frontend
-```bash
-# Instal dependensi PHP
-composer install
-
-# Instal dependensi JavaScript & CSS
-npm install
-```
-
-### 4. Konfigurasi Lingkungan (.env)
-Salin berkas template environment:
-```bash
-cp .env.example .env
-```
-
-> [!IMPORTANT]
-> Buka file `.env` dan sesuaikan koneksi database (`DB_DATABASE`, `DB_USERNAME`, `DB_PASSWORD`) sesuai konfigurasi server lokal Anda. Jangan pernah meng-commit file `.env` asli ke repositori publik.
-
-Generate application encryption key:
-```bash
-php artisan key:generate
-```
-
-### 5. Jalankan Migrasi & Database Seeder
-Jalankan migrasi tabel dan seeding data awal:
-```bash
-php artisan migrate:fresh --seed
-```
-
-> [!TIP]
-> Database seeder akan otomatis menyiapkan master kota, merek aki, tipe baterai, depo gudang, pengaturan LME/Kurs, dan akun pengelola lokal.
-
-### 6. Menjalankan Server Pengembangan
-Gunakan perintah serentak (Vite + Laravel Server):
-```bash
-# Opsi 1: Menjalankan via composer script
-composer run dev
-
-# Opsi 2: Menjalankan secara terpisah di terminal
-php artisan serve
-npm run dev
-```
-
-Akses aplikasi melalui peramban:
+Akses aplikasi melalui localhost:
 - **Portal Pelanggan**: [`http://localhost:8000/`](http://localhost:8000/)
 - **Portal Admin**: [`http://localhost:8000/admin`](http://localhost:8000/admin)
 
