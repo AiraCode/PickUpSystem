@@ -2411,6 +2411,21 @@
   "Simpan LME &amp; Kurs": {
     "en": "Save LME & Exchange Rate"
   },
+  "Data LME & Kurs berhasil diperbarui!": {
+    "en": "LME & Exchange Rate updated successfully!"
+  },
+  "✓ Data LME & Kurs berhasil diperbarui!": {
+    "en": "✓ LME & Exchange Rate updated successfully!"
+  },
+  "Gagal menyimpan LME & Kurs": {
+    "en": "Failed to save LME & Exchange Rate"
+  },
+  "Terjadi kesalahan sistem saat memperbarui LME & Kurs.": {
+    "en": "A system error occurred while updating LME & Exchange Rate."
+  },
+  "Tersimpan ✓": {
+    "en": "Saved ✓"
+  },
   "Rumus Harga: [(LME &times; Kurs &times; % Kota) / 1000] &times; Berat Kering (kg)": {
     "en": "Price Formula: [(LME × Exchange Rate × % City) / 1000] × Dry Weight (kg)"
   },

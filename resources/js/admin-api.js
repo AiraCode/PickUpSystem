@@ -3,7 +3,11 @@ document.addEventListener("DOMContentLoaded", () => {
     const token = localStorage.getItem("admin_token");
     const user = JSON.parse(localStorage.getItem("admin_user") || "null");
 
-    if (user && user.role === 'warehouse' && window.location.pathname === '/admin/gudang') {
+    if (
+        user &&
+        user.role === "warehouse" &&
+        window.location.pathname === "/admin/gudang"
+    ) {
         window.location.href = `/admin/gudang/${user.warehouse_id}`;
         return;
     }
@@ -99,8 +103,12 @@ document.addEventListener("DOMContentLoaded", () => {
     if (clockEl) {
         const updateClock = () => {
             const now = new Date();
-            const activeLang = localStorage.getItem('app_language') || (window.pageTranslator ? window.pageTranslator.activeLang : 'id');
-            const locale = activeLang === 'en' ? 'en-US' : 'id-ID';
+            const activeLang =
+                localStorage.getItem("app_language") ||
+                (window.pageTranslator
+                    ? window.pageTranslator.activeLang
+                    : "id");
+            const locale = activeLang === "en" ? "en-US" : "id-ID";
             const dateStr = now.toLocaleDateString(locale, {
                 weekday: "short",
                 day: "numeric",
@@ -180,43 +188,221 @@ document.addEventListener("DOMContentLoaded", () => {
             localStorage.removeItem("admin_user");
             window.location.href = "/admin/login";
         }
-        return response.json();
+        const data = await response.json();
+
+        const reqMethod = (options.method || "GET").toUpperCase();
+        if (
+            response.ok &&
+            ["POST", "PUT", "DELETE", "PATCH"].includes(reqMethod)
+        ) {
+            setTimeout(() => {
+                if (typeof window.refreshCurrentPageData === "function") {
+                    window.refreshCurrentPageData();
+                }
+            }, 300);
+        }
+        return data;
+    };
+
+    window.refreshCurrentPageData = function () {
+        const path = window.location.pathname;
+        if (path === "/admin/harga") {
+            if (typeof window.loadSettings === "function")
+                window.loadSettings();
+            if (typeof window.loadPriceHistory === "function")
+                window.loadPriceHistory();
+            if (typeof window.loadCities === "function") window.loadCities();
+            if (typeof window.loadAccus === "function") window.loadAccus();
+            if (typeof window.loadNewAccus === "function")
+                window.loadNewAccus();
+        } else if (path === "/admin/dashboard") {
+            if (typeof window.loadDashboardStats === "function")
+                window.loadDashboardStats();
+            if (typeof window.fetchActivitiesPage === "function")
+                window.fetchActivitiesPage();
+        } else if (path.includes("/admin/transaksi")) {
+            if (typeof window.loadOrders === "function") window.loadOrders();
+        } else if (path.includes("/admin/gudang")) {
+            if (typeof window.loadStorages === "function")
+                window.loadStorages();
+        } else if (path.includes("/admin/pengguna")) {
+            if (typeof window.loadUsers === "function") window.loadUsers();
+        } else if (path.includes("/admin/laporan")) {
+            if (typeof window.loadReportData === "function")
+                window.loadReportData();
+        }
     };
 
     const rupiah = (n) =>
-        window.i18n ? window.i18n.formatCurrency(n) : new Intl.NumberFormat("id-ID", {
-            style: "currency",
-            currency: "IDR",
-            maximumFractionDigits: 0,
-        }).format(n);
+        window.i18n
+            ? window.i18n.formatCurrency(n)
+            : new Intl.NumberFormat("id-ID", {
+                  style: "currency",
+                  currency: "IDR",
+                  maximumFractionDigits: 0,
+              }).format(n);
 
-    window.showToast = (message, type = "success") => {
+    // ── Global Order / Activity Popup Notification System ────────────────────
+    let notifPopupTimeout = null;
+    let notifPopupInterval = null;
+
+    function showOrderPopupNotification(activity) {
+        const popup = document.getElementById("order-notif-popup");
+        if (!popup) return;
+
+        const titleEl = document.getElementById("order-notif-title");
+        const bodyEl = document.getElementById("order-notif-body");
+        const closeBtn = document.getElementById("order-notif-close");
+        const ctaBtn = document.getElementById("order-notif-cta");
+        const progressEl = document.getElementById("order-notif-progress");
+        const timerTextEl = document.getElementById("order-notif-timer-text");
+        const iconWrap = document.getElementById("order-notif-icon-wrap");
+
+        if (titleEl) titleEl.innerText = activity.title || "Notifikasi Admin";
+        if (bodyEl)
+            bodyEl.innerText =
+                activity.description || "Ada pembaruan transaksi terbaru.";
+
+        if (iconWrap) {
+            if (activity.type === "error") {
+                iconWrap.style.background =
+                    "linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%)";
+                iconWrap.innerText = "✕";
+                iconWrap.style.color = "#dc2626";
+            } else if (activity.type === "warning") {
+                iconWrap.style.background =
+                    "linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%)";
+                iconWrap.innerText = "⚠";
+                iconWrap.style.color = "#d97706";
+            } else {
+                iconWrap.style.background =
+                    "linear-gradient(135deg, #eff6ff 0%, #e0e7ff 100%)";
+                iconWrap.innerText = "🔔";
+                iconWrap.style.color = "#2563eb";
+            }
+        }
+
+        if (ctaBtn) {
+            if (activity.related_id) {
+                ctaBtn.style.display = "inline-flex";
+            } else {
+                ctaBtn.style.display = "none";
+            }
+        }
+
+        // Clear existing timers
+        if (notifPopupTimeout) clearTimeout(notifPopupTimeout);
+        if (notifPopupInterval) clearInterval(notifPopupInterval);
+
+        // Show popup with smooth slide & scale animation
+        popup.style.display = "block";
+        requestAnimationFrame(() => {
+            popup.style.opacity = "1";
+            popup.style.transform = "translateX(0) scale(1)";
+        });
+
+        // 5 second timer & progress bar countdown
+        let secondsLeft = 5;
+        if (timerTextEl)
+            timerTextEl.innerText = `Menutup dalam ${secondsLeft} detik...`;
+        if (progressEl) {
+            progressEl.style.transition = "none";
+            progressEl.style.width = "100%";
+            requestAnimationFrame(() => {
+                progressEl.style.transition = "width 5s linear";
+                progressEl.style.width = "0%";
+            });
+        }
+
+        notifPopupInterval = setInterval(() => {
+            secondsLeft -= 1;
+            if (secondsLeft > 0) {
+                if (timerTextEl)
+                    timerTextEl.innerText = `Menutup dalam ${secondsLeft} detik...`;
+            } else {
+                clearInterval(notifPopupInterval);
+            }
+        }, 1000);
+
+        const hidePopup = () => {
+            if (notifPopupTimeout) clearTimeout(notifPopupTimeout);
+            if (notifPopupInterval) clearInterval(notifPopupInterval);
+            popup.style.opacity = "0";
+            popup.style.transform = "translateX(30px) scale(0.97)";
+            setTimeout(() => {
+                popup.style.display = "none";
+            }, 300);
+        };
+
+        if (closeBtn) {
+            closeBtn.onclick = (e) => {
+                e.stopPropagation();
+                hidePopup();
+            };
+        }
+
+        const handleNavigate = () => {
+            hidePopup();
+            const orderId = activity.related_id || 0;
+            if (orderId && orderId !== 0 && orderId !== "0") {
+                window.openActivityOrder(orderId);
+            }
+        };
+
+        if (ctaBtn)
+            ctaBtn.onclick = (e) => {
+                e.stopPropagation();
+                handleNavigate();
+            };
+        popup.onclick = (e) => {
+            if (activity.related_id) {
+                handleNavigate();
+            } else {
+                hidePopup();
+            }
+        };
+
+        notifPopupTimeout = setTimeout(() => {
+            hidePopup();
+        }, 5000);
+    }
+    window.showOrderPopupNotification = showOrderPopupNotification;
+
+    let toastTimeout = null;
+    function showToast(message, type = "success") {
         const toast = document.getElementById("admin-toast");
         const msg = document.getElementById("admin-toast-message");
         const icon = document.getElementById("admin-toast-icon");
         if (!toast) return;
 
-        msg.innerText = message;
+        if (toastTimeout) clearTimeout(toastTimeout);
+
+        if (msg) msg.innerText = message;
         if (type === "error") {
-            toast.style.background = "#ba1b2b";
-            icon.innerText = "✕";
+            toast.style.background = "#dc2626";
+            if (icon) icon.innerText = "✕";
         } else if (type === "warning") {
             toast.style.background = "#f59e0b";
-            icon.innerText = "⚠";
+            if (icon) icon.innerText = "⚠";
         } else {
             toast.style.background = "#10b981";
-            icon.innerText = "✓";
+            if (icon) icon.innerText = "✓";
         }
-        toast.style.display = "flex";
-        toast.style.opacity = "1";
 
-        setTimeout(() => {
+        toast.style.display = "flex";
+        void toast.offsetWidth;
+        toast.style.opacity = "1";
+        toast.style.transform = "translateY(0)";
+
+        toastTimeout = setTimeout(() => {
             toast.style.opacity = "0";
+            toast.style.transform = "translateY(-10px)";
             setTimeout(() => {
                 toast.style.display = "none";
             }, 300);
-        }, 3200);
-    };
+        }, 4000);
+    }
+    window.showToast = showToast;
 
     window.showConfirm = (title, message, onOk) => {
         const modal = document.getElementById("modal-custom-confirm");
@@ -241,12 +427,12 @@ document.addEventListener("DOMContentLoaded", () => {
         };
     };
 
-    window.showConfirmModal = function({
+    window.showConfirmModal = function ({
         title = "Konfirmasi Hapus",
         message = "Apakah Anda yakin ingin menghapus?",
         confirmText = "Hapus",
         cancelText = "Batal",
-        isDanger = true
+        isDanger = true,
     } = {}) {
         return new Promise((resolve) => {
             const modal = document.getElementById("modal-custom-confirm");
@@ -327,12 +513,16 @@ document.addEventListener("DOMContentLoaded", () => {
         if (!isConfirmed) return;
 
         if (e && e.target) {
-            const elem = e.target.closest("div.admin-activity-item") || e.target.closest("tr");
+            const elem =
+                e.target.closest("div.admin-activity-item") ||
+                e.target.closest("tr");
             if (elem) elem.style.opacity = "0.3";
         }
 
         try {
-            const res = await fetchApi(`/activities/${id}`, { method: "DELETE" });
+            const res = await fetchApi(`/activities/${id}`, {
+                method: "DELETE",
+            });
             showToast(res.message || "Notifikasi berhasil dihapus", "success");
 
             // Auto refresh UI immediately
@@ -346,7 +536,9 @@ document.addEventListener("DOMContentLoaded", () => {
             console.error(err);
             showToast(err.message || "Gagal menghapus notifikasi", "error");
             if (e && e.target) {
-                const elem = e.target.closest("div.admin-activity-item") || e.target.closest("tr");
+                const elem =
+                    e.target.closest("div.admin-activity-item") ||
+                    e.target.closest("tr");
                 if (elem) elem.style.opacity = "1";
             }
         }
@@ -360,7 +552,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
         const isConfirmed = await window.showConfirmModal({
             title: "Hapus Semua Notifikasi",
-            message: "Apakah Anda yakin ingin menghapus semua notifikasi aktivitas?",
+            message:
+                "Apakah Anda yakin ingin menghapus semua notifikasi aktivitas?",
             confirmText: "Hapus Semua",
             cancelText: "Batal",
             isDanger: true,
@@ -370,7 +563,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
         try {
             const res = await fetchApi("/activities", { method: "DELETE" });
-            showToast(res.message || "Semua notifikasi berhasil dihapus", "success");
+            showToast(
+                res.message || "Semua notifikasi berhasil dihapus",
+                "success",
+            );
 
             // Auto refresh UI immediately
             if (typeof window.loadDashboardStats === "function") {
@@ -381,96 +577,21 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         } catch (err) {
             console.error(err);
-            showToast(err.message || "Gagal menghapus semua notifikasi", "error");
+            showToast(
+                err.message || "Gagal menghapus semua notifikasi",
+                "error",
+            );
         }
     };
-
     window.dismissActivityNotification = window.confirmDismissActivity;
     window.clearAllActivities = window.confirmClearAllActivities;
 
-    // ── Global Order / Activity Popup Notification System ────────────────────
-    let notifPopupTimeout = null;
-    let notifPopupInterval = null;
-
-    window.showOrderPopupNotification = (activity) => {
-        const popup = document.getElementById("order-notif-popup");
-        if (!popup) return;
-
-        const titleEl = document.getElementById("order-notif-title");
-        const bodyEl = document.getElementById("order-notif-body");
-        const closeBtn = document.getElementById("order-notif-close");
-        const ctaBtn = document.getElementById("order-notif-cta");
-        const progressEl = document.getElementById("order-notif-progress");
-        const timerTextEl = document.getElementById("order-notif-timer-text");
-
-        if (titleEl) titleEl.innerText = activity.title || "Notifikasi Pesanan Baru";
-        if (bodyEl) bodyEl.innerText = activity.description || "Ada pembaruan transaksi terbaru.";
-
-        // Clear existing timers
-        if (notifPopupTimeout) clearTimeout(notifPopupTimeout);
-        if (notifPopupInterval) clearInterval(notifPopupInterval);
-
-        // Show popup with smooth slide & scale animation
-        popup.style.display = "block";
-        requestAnimationFrame(() => {
-            popup.style.opacity = "1";
-            popup.style.transform = "translateX(0) scale(1)";
-        });
-
-        // 5 second timer & progress bar countdown
-        let secondsLeft = 5;
-        if (timerTextEl) timerTextEl.innerText = `Menutup dalam ${secondsLeft} detik...`;
-        if (progressEl) {
-            progressEl.style.transition = "none";
-            progressEl.style.width = "100%";
-            requestAnimationFrame(() => {
-                progressEl.style.transition = "width 5s linear";
-                progressEl.style.width = "0%";
-            });
-        }
-
-        notifPopupInterval = setInterval(() => {
-            secondsLeft -= 1;
-            if (secondsLeft > 0) {
-                if (timerTextEl) timerTextEl.innerText = `Menutup dalam ${secondsLeft} detik...`;
-            } else {
-                clearInterval(notifPopupInterval);
-            }
-        }, 1000);
-
-        const hidePopup = () => {
-            if (notifPopupTimeout) clearTimeout(notifPopupTimeout);
-            if (notifPopupInterval) clearInterval(notifPopupInterval);
-            popup.style.opacity = "0";
-            popup.style.transform = "translateX(30px) scale(0.97)";
-            setTimeout(() => {
-                popup.style.display = "none";
-            }, 300);
-        };
-
-        if (closeBtn) {
-            closeBtn.onclick = (e) => {
-                e.stopPropagation();
-                hidePopup();
-            };
-        }
-
-        const handleNavigate = () => {
-            hidePopup();
-            const orderId = activity.related_id || 0;
-            window.openActivityOrder(orderId);
-        };
-
-        if (ctaBtn) ctaBtn.onclick = (e) => { e.stopPropagation(); handleNavigate(); };
-        popup.onclick = handleNavigate;
-
-        notifPopupTimeout = setTimeout(() => {
-            hidePopup();
-        }, 5000);
-    };
+    // ── Activity Polling (Runs every 10 seconds across all admin pages) ─────────
 
     // Activity Polling (Runs every 10 seconds across all admin pages)
-    let lastActivityId = parseInt(localStorage.getItem("admin_last_activity_id") || "0");
+    let lastActivityId = parseInt(
+        localStorage.getItem("admin_last_activity_id") || "0",
+    );
 
     const pollActivities = async () => {
         if (!token) return;
@@ -481,13 +602,21 @@ document.addEventListener("DOMContentLoaded", () => {
                 if (lastActivityId === 0) {
                     // First load: save highest ID without popping up existing history
                     lastActivityId = latest.id;
-                    localStorage.setItem("admin_last_activity_id", lastActivityId);
+                    localStorage.setItem(
+                        "admin_last_activity_id",
+                        lastActivityId,
+                    );
                 } else if (latest.id > lastActivityId) {
                     lastActivityId = latest.id;
-                    localStorage.setItem("admin_last_activity_id", lastActivityId);
+                    localStorage.setItem(
+                        "admin_last_activity_id",
+                        lastActivityId,
+                    );
 
                     const currentPath = window.location.pathname;
-                    const isDashboard = currentPath === "/admin/dashboard" || currentPath === "/admin";
+                    const isDashboard =
+                        currentPath === "/admin/dashboard" ||
+                        currentPath === "/admin";
                     const isTransaksi = currentPath === "/admin/transaksi";
 
                     // Show pop up notification if NOT on Dashboard and NOT on Transaksi tab
@@ -541,7 +670,10 @@ document.addEventListener("DOMContentLoaded", () => {
             (isDark
                 ? { bg: "rgba(148, 163, 184, 0.25)", color: "#cbd5e1" }
                 : { bg: "#f3f4f6", color: "#374151" });
-        const labelText = status === "arrived_at_warehouse" ? "SAMPAI GUDANG" : status.toUpperCase();
+        const labelText =
+            status === "arrived_at_warehouse"
+                ? "SAMPAI GUDANG"
+                : status.toUpperCase();
         return `<span style="padding:4px 10px; border-radius:20px; font-size:11px; font-weight:600; background:${c.bg}; color:${c.color}; text-transform:uppercase;">${labelText}</span>`;
     };
 
@@ -685,7 +817,15 @@ document.addEventListener("DOMContentLoaded", () => {
                     initialEl.innerText = newName.charAt(0).toUpperCase();
 
                 modalEditProfile.style.display = "none";
-                showToast(window.i18n ? window.i18n.t('toast.updated_successfully', 'Profil berhasil diperbarui!') : "Profil berhasil diperbarui!", "success");
+                showToast(
+                    window.i18n
+                        ? window.i18n.t(
+                              "toast.updated_successfully",
+                              "Profil berhasil diperbarui!",
+                          )
+                        : "Profil berhasil diperbarui!",
+                    "success",
+                );
                 return;
             }
 
@@ -735,7 +875,15 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
 
                 modalEditProfile.style.display = "none";
-                showToast(window.i18n ? window.i18n.t('toast.updated_successfully', 'Profil berhasil diperbarui!') : "Profil berhasil diperbarui!", "success");
+                showToast(
+                    window.i18n
+                        ? window.i18n.t(
+                              "toast.updated_successfully",
+                              "Profil berhasil diperbarui!",
+                          )
+                        : "Profil berhasil diperbarui!",
+                    "success",
+                );
             } else {
                 profileError.innerText =
                     res.message || "Gagal memperbarui profil.";
@@ -868,10 +1016,10 @@ document.addEventListener("DOMContentLoaded", () => {
                             <button type="button" onclick="confirmDismissActivity(event, ${a.id})" title="Hapus Notifikasi" class="activity-delete-btn" aria-label="Hapus Notifikasi" style="position:absolute; top:6px; right:6px;">
                                 &times;
                             </button>
-                        </div>`
+                        </div>`,
                         )
                         .join("");
-                    
+
                     actList.innerHTML += `
                         <a href="/admin/aktivitas" class="all-activities-link-btn">
                             Tampilkan Semua Aktivitas
@@ -952,7 +1100,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
-    const renderGeneralPagination = function(
+    const renderGeneralPagination = function (
         pagination,
         containerId,
         onClickFnName,
@@ -961,8 +1109,7 @@ document.addEventListener("DOMContentLoaded", () => {
         if (!container) return;
         if (!pagination || pagination.last_page <= 1) {
             container.innerHTML = "";
-            window.__adminPaginationState =
-                window.__adminPaginationState || {};
+            window.__adminPaginationState = window.__adminPaginationState || {};
             delete window.__adminPaginationState[containerId];
             return;
         }
@@ -1170,6 +1317,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         const loadOrders = async () => {
+            window.loadOrders = loadOrders;
             const tbody = document.getElementById("orders-tbody");
             if (tbody) {
                 tbody.innerHTML = `<tr><td colspan="7"><div class="admin-table-empty"><strong>Memuat data pesanan...</strong></div></td></tr>`;
@@ -1196,23 +1344,31 @@ document.addEventListener("DOMContentLoaded", () => {
             if (res.counts) {
                 const c = res.counts;
                 if (document.getElementById("count-pending"))
-                    document.getElementById("count-pending").innerText =
-                        (c.pending || 0).toLocaleString("id-ID");
+                    document.getElementById("count-pending").innerText = (
+                        c.pending || 0
+                    ).toLocaleString("id-ID");
                 if (document.getElementById("count-processing"))
-                    document.getElementById("count-processing").innerText =
-                        (c.processing || 0).toLocaleString("id-ID");
+                    document.getElementById("count-processing").innerText = (
+                        c.processing || 0
+                    ).toLocaleString("id-ID");
                 if (document.getElementById("count-arrived_at_warehouse"))
-                    document.getElementById("count-arrived_at_warehouse").innerText =
-                        (c.arrived_at_warehouse || 0).toLocaleString("id-ID");
+                    document.getElementById(
+                        "count-arrived_at_warehouse",
+                    ).innerText = (c.arrived_at_warehouse || 0).toLocaleString(
+                        "id-ID",
+                    );
                 if (document.getElementById("count-completed"))
-                    document.getElementById("count-completed").innerText =
-                        (c.completed || 0).toLocaleString("id-ID");
+                    document.getElementById("count-completed").innerText = (
+                        c.completed || 0
+                    ).toLocaleString("id-ID");
                 if (document.getElementById("count-cancelled"))
-                    document.getElementById("count-cancelled").innerText =
-                        (c.cancelled || 0).toLocaleString("id-ID");
+                    document.getElementById("count-cancelled").innerText = (
+                        c.cancelled || 0
+                    ).toLocaleString("id-ID");
                 if (document.getElementById("count-all"))
-                    document.getElementById("count-all").innerText =
-                        (c.all || 0).toLocaleString("id-ID");
+                    document.getElementById("count-all").innerText = (
+                        c.all || 0
+                    ).toLocaleString("id-ID");
             }
 
             if (activeBadge) {
@@ -1274,7 +1430,9 @@ document.addEventListener("DOMContentLoaded", () => {
                 cachedOrders = res.data;
                 tbody.innerHTML = cachedOrders
                     .map((o) => {
-                        const isEditPending = o.receipt && parseInt(o.receipt.edit_confirmed_by_user) === 0;
+                        const isEditPending =
+                            o.receipt &&
+                            parseInt(o.receipt.edit_confirmed_by_user) === 0;
 
                         let rowStyle = "cursor:pointer;";
                         if (isEditPending) {
@@ -1290,7 +1448,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     <tr onclick="viewOrderDetail(${o.id})" style="${rowStyle}">
                         <td style="font-weight:600; color:#3b82f6;">
                             #${o.id}
-                            ${isEditPending ? '<span style="display:block; font-size:9px; color:#d97706; font-weight:700; margin-top:2px;">[EDITED]</span>' : ''}
+                            ${isEditPending ? '<span style="display:block; font-size:9px; color:#d97706; font-weight:700; margin-top:2px;">[EDITED]</span>' : ""}
                         </td>
                         <td>
                             ${
@@ -1339,7 +1497,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
             // Auto open order detail if order_id URL parameter is present
             const urlParams = new URLSearchParams(window.location.search);
-            const autoOrderId = urlParams.get('order_id');
+            const autoOrderId = urlParams.get("order_id");
             if (autoOrderId && !window.__autoOrderOpened) {
                 window.__autoOrderOpened = true;
                 setTimeout(() => {
@@ -1397,7 +1555,10 @@ document.addEventListener("DOMContentLoaded", () => {
                     : {
                           pending: { border: "#f59e0b", bg: "#fffbeb" },
                           processing: { border: "#3b82f6", bg: "#eff6ff" },
-                          arrived_at_warehouse: { border: "#8b5cf6", bg: "#f3e8ff" },
+                          arrived_at_warehouse: {
+                              border: "#8b5cf6",
+                              bg: "#f3e8ff",
+                          },
                           completed: { border: "#10b981", bg: "#ecfdf5" },
                           cancelled: { border: "#ef4444", bg: "#fef2f2" },
                           all: { border: "#6b7280", bg: "#f9fafb" },
@@ -1526,13 +1687,17 @@ document.addEventListener("DOMContentLoaded", () => {
                 'input[name="order_status"]',
             );
 
-            const isEditPending = order && order.receipt && parseInt(order.receipt.edit_confirmed_by_user) === 0;
+            const isEditPending =
+                order &&
+                order.receipt &&
+                parseInt(order.receipt.edit_confirmed_by_user) === 0;
 
             let allowedOptions = [currentStatus];
-            
+
             if (isEditPending) {
                 if (orderUpdateError) {
-                    orderUpdateError.innerText = "Pesanan sedang menunggu konfirmasi customer, status tidak dapat diubah.";
+                    orderUpdateError.innerText =
+                        "Pesanan sedang menunggu konfirmasi customer, status tidak dapat diubah.";
                     orderUpdateError.style.display = "block";
                 }
             } else if (currentStatus === "pending") {
@@ -1585,21 +1750,29 @@ document.addEventListener("DOMContentLoaded", () => {
             if (uploadPreview) uploadPreview.style.display = "none";
             if (uploadPlaceholder) uploadPlaceholder.style.display = "block";
 
-            const containerProofUpload = document.getElementById("container-proof-upload");
+            const containerProofUpload = document.getElementById(
+                "container-proof-upload",
+            );
             const proofLabel = document.getElementById("proof-label");
 
             const updateModalUIForStatus = (selectedStatus) => {
                 if (containerCancelReason) {
-                    containerCancelReason.style.display = selectedStatus === "cancelled" ? "block" : "none";
-                    if (selectedStatus !== "cancelled" && cancelReasonInput) cancelReasonInput.value = "";
+                    containerCancelReason.style.display =
+                        selectedStatus === "cancelled" ? "block" : "none";
+                    if (selectedStatus !== "cancelled" && cancelReasonInput)
+                        cancelReasonInput.value = "";
                 }
                 if (containerProofUpload) {
-                    if (selectedStatus === "completed" || selectedStatus === "arrived_at_warehouse") {
+                    if (
+                        selectedStatus === "completed" ||
+                        selectedStatus === "arrived_at_warehouse"
+                    ) {
                         containerProofUpload.style.display = "block";
                         if (proofLabel) {
-                            proofLabel.innerText = selectedStatus === "completed"
-                                ? "Bukti Pembayaran / Transfer (Wajib)"
-                                : "Bukti Barang Diterima di Gudang (Wajib)";
+                            proofLabel.innerText =
+                                selectedStatus === "completed"
+                                    ? "Bukti Pembayaran / Transfer (Wajib)"
+                                    : "Bukti Barang Diterima di Gudang (Wajib)";
                         }
                     } else {
                         containerProofUpload.style.display = "none";
@@ -1609,9 +1782,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
             radios.forEach((r) => {
                 r.onchange = () => {
-                    radios.forEach(other => {
+                    radios.forEach((other) => {
                         const card = other.closest("label");
-                        if (card) card.style.borderColor = other.checked ? "#3b82f6" : "#e5e7eb";
+                        if (card)
+                            card.style.borderColor = other.checked
+                                ? "#3b82f6"
+                                : "#e5e7eb";
                     });
                     updateModalUIForStatus(r.value);
                 };
@@ -1752,7 +1928,9 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
             }
             const accuKtpVal = o.accu_ktp || "-";
-            const accuKtpEl = document.getElementById("detail-customer-accu-ktp");
+            const accuKtpEl = document.getElementById(
+                "detail-customer-accu-ktp",
+            );
             if (accuKtpEl) accuKtpEl.innerText = accuKtpVal;
             const accuKtpLinkEl = document.getElementById(
                 "detail-customer-accu-ktp-link",
@@ -1768,7 +1946,8 @@ document.addEventListener("DOMContentLoaded", () => {
                         accuKtpVal.includes("data:image"))
                 ) {
                     const imgUrl =
-                        accuKtpVal.startsWith("http") || accuKtpVal.startsWith("data:")
+                        accuKtpVal.startsWith("http") ||
+                        accuKtpVal.startsWith("data:")
                             ? accuKtpVal
                             : accuKtpVal.startsWith("/")
                               ? accuKtpVal
@@ -1788,23 +1967,36 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
             }
 
-            const rowWarehouseProof = document.getElementById("row-warehouse-proof");
+            const rowWarehouseProof = document.getElementById(
+                "row-warehouse-proof",
+            );
             const proofVal = o.warehouse_proof || "-";
-            const proofStatusEl = document.getElementById("detail-warehouse-proof-status");
-            if (proofStatusEl) proofStatusEl.innerText = proofVal === "-" ? "Belum ada" : "Tersedia";
-            const proofLinkEl = document.getElementById("detail-warehouse-proof-link");
-            
+            const proofStatusEl = document.getElementById(
+                "detail-warehouse-proof-status",
+            );
+            if (proofStatusEl)
+                proofStatusEl.innerText =
+                    proofVal === "-" ? "Belum ada" : "Tersedia";
+            const proofLinkEl = document.getElementById(
+                "detail-warehouse-proof-link",
+            );
+
             if (rowWarehouseProof) {
-                if (["arrived_at_warehouse", "completed"].includes(o.status) || proofVal !== "-") {
+                if (
+                    ["arrived_at_warehouse", "completed"].includes(o.status) ||
+                    proofVal !== "-"
+                ) {
                     rowWarehouseProof.style.display = "table-row";
-                    
+
                     if (proofLinkEl) {
                         if (proofVal !== "-") {
-                            const imgUrl = proofVal.startsWith("http") || proofVal.startsWith("data:")
-                                ? proofVal
-                                : proofVal.startsWith("/")
-                                  ? proofVal
-                                  : `/storage/${proofVal}`;
+                            const imgUrl =
+                                proofVal.startsWith("http") ||
+                                proofVal.startsWith("data:")
+                                    ? proofVal
+                                    : proofVal.startsWith("/")
+                                      ? proofVal
+                                      : `/storage/${proofVal}`;
                             proofLinkEl.onclick = (e) => {
                                 e.preventDefault();
                                 if (typeof openImageViewer === "function") {
@@ -2219,7 +2411,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
         function recordAndCheckSpam() {
             const now = Date.now();
-            updateTimestamps = updateTimestamps.filter(t => now - t < SPAM_WINDOW_MS);
+            updateTimestamps = updateTimestamps.filter(
+                (t) => now - t < SPAM_WINDOW_MS,
+            );
             updateTimestamps.push(now);
 
             if (updateTimestamps.length >= SPAM_LIMIT) {
@@ -2256,18 +2450,23 @@ document.addEventListener("DOMContentLoaded", () => {
                     updateTimestamps = [];
                     if (modalSpam) modalSpam.style.display = "none";
                     disableOrderUpdateUI(false);
-                    showToast("Fungsi update di halaman ini telah aktif kembali.", "success");
+                    showToast(
+                        "Fungsi update di halaman ini telah aktif kembali.",
+                        "success",
+                    );
                 }
             }, 1000);
         }
 
         function disableOrderUpdateUI(disabled) {
-            document.querySelectorAll("button[onclick*='editOrderStatus']").forEach(btn => {
-                btn.disabled = disabled;
-                btn.style.opacity = disabled ? "0.4" : "1";
-                btn.style.cursor = disabled ? "not-allowed" : "pointer";
-                btn.style.pointerEvents = disabled ? "none" : "auto";
-            });
+            document
+                .querySelectorAll("button[onclick*='editOrderStatus']")
+                .forEach((btn) => {
+                    btn.disabled = disabled;
+                    btn.style.opacity = disabled ? "0.4" : "1";
+                    btn.style.cursor = disabled ? "not-allowed" : "pointer";
+                    btn.style.pointerEvents = disabled ? "none" : "auto";
+                });
             const submitBtn = document.getElementById("btn-update-submit");
             if (submitBtn) submitBtn.disabled = disabled;
         }
@@ -2319,16 +2518,20 @@ document.addEventListener("DOMContentLoaded", () => {
                     payload.cancel_reason = reason;
                 }
 
-                if (statusVal === "completed" || statusVal === "arrived_at_warehouse") {
+                if (
+                    statusVal === "completed" ||
+                    statusVal === "arrived_at_warehouse"
+                ) {
                     const hasFile =
                         uploadInput &&
                         uploadInput.files &&
                         uploadInput.files.length > 0;
                     if (!hasFile) {
                         if (orderUpdateError) {
-                            orderUpdateError.innerText = statusVal === "completed"
-                                ? "Wajib mengunggah foto bukti pembayaran / penyerahan untuk status Completed!"
-                                : "Wajib mengunggah foto bukti barang diterima di gudang untuk status Sampai di Gudang!";
+                            orderUpdateError.innerText =
+                                statusVal === "completed"
+                                    ? "Wajib mengunggah foto bukti pembayaran / penyerahan untuk status Completed!"
+                                    : "Wajib mengunggah foto bukti barang diterima di gudang untuk status Sampai di Gudang!";
                             orderUpdateError.style.display = "block";
                         }
                         return;
@@ -2364,7 +2567,9 @@ document.addEventListener("DOMContentLoaded", () => {
                 });
 
                 if (res.data || res.message) {
-                    document.querySelectorAll("div[id^='modal-'], div[id*='modal']").forEach(m => m.style.display = "none");
+                    document
+                        .querySelectorAll("div[id^='modal-'], div[id*='modal']")
+                        .forEach((m) => (m.style.display = "none"));
                     window.location.reload();
                 } else {
                     if (orderUpdateError) {
@@ -2379,9 +2584,15 @@ document.addEventListener("DOMContentLoaded", () => {
         switchOrderTab("pending");
 
         // Admin Edit Order Items Logic
-        const btnOpenEditItems = document.getElementById("btn-open-edit-order-items");
-        const modalEditItems = document.getElementById("modal-edit-order-items");
-        const rowsContainer = document.getElementById("edit-items-rows-container");
+        const btnOpenEditItems = document.getElementById(
+            "btn-open-edit-order-items",
+        );
+        const modalEditItems = document.getElementById(
+            "modal-edit-order-items",
+        );
+        const rowsContainer = document.getElementById(
+            "edit-items-rows-container",
+        );
         const btnAddRow = document.getElementById("btn-add-edit-item-row");
         const formEditItems = document.getElementById("form-edit-order-items");
         const editItemsError = document.getElementById("edit-items-error");
@@ -2392,9 +2603,15 @@ document.addEventListener("DOMContentLoaded", () => {
             if (!rowsContainer) return;
             const rowDiv = document.createElement("div");
             rowDiv.className = "edit-item-row";
-            rowDiv.style.cssText = "display:flex; gap:10px; align-items:center;";
+            rowDiv.style.cssText =
+                "display:flex; gap:10px; align-items:center;";
 
-            let optionsHtml = cityAccusList.map(a => `<option value="${a.id}" ${a.id === selectedAccuId ? 'selected' : ''}>${a.name} (${a.brand || '-'})</option>`).join("");
+            let optionsHtml = cityAccusList
+                .map(
+                    (a) =>
+                        `<option value="${a.id}" ${a.id === selectedAccuId ? "selected" : ""}>${a.name} (${a.brand || "-"})</option>`,
+                )
+                .join("");
             if (!optionsHtml) {
                 optionsHtml = `<option value="">Tidak ada jenis aki...</option>`;
             }
@@ -2407,13 +2624,21 @@ document.addEventListener("DOMContentLoaded", () => {
                 <button type="button" class="btn-remove-row admin-button" style="background:#fee2e2; color:#dc2626; border:1px solid #fecaca; border-radius:6px; width:34px; height:34px; cursor:pointer; font-weight:bold; display:inline-flex; align-items:center; justify-content:center;">✕</button>
             `;
 
-            rowDiv.querySelector(".btn-remove-row").addEventListener("click", () => {
-                if (rowsContainer.querySelectorAll(".edit-item-row").length > 1) {
-                    rowDiv.remove();
-                } else {
-                    showToast("Minimal harus ada 1 jenis aki dalam pesanan.", "warning");
-                }
-            });
+            rowDiv
+                .querySelector(".btn-remove-row")
+                .addEventListener("click", () => {
+                    if (
+                        rowsContainer.querySelectorAll(".edit-item-row")
+                            .length > 1
+                    ) {
+                        rowDiv.remove();
+                    } else {
+                        showToast(
+                            "Minimal harus ada 1 jenis aki dalam pesanan.",
+                            "warning",
+                        );
+                    }
+                });
 
             rowsContainer.appendChild(rowDiv);
         }
@@ -2421,7 +2646,8 @@ document.addEventListener("DOMContentLoaded", () => {
         if (btnOpenEditItems) {
             btnOpenEditItems.addEventListener("click", async () => {
                 if (!currentDetailOrder) return;
-                document.getElementById("edit-order-items-id").value = currentDetailOrder.id;
+                document.getElementById("edit-order-items-id").value =
+                    currentDetailOrder.id;
                 if (editItemsError) editItemsError.style.display = "none";
 
                 const cityId = currentDetailOrder.cities_id || 1;
@@ -2441,26 +2667,34 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 if (!cityAccusList || cityAccusList.length === 0) {
                     try {
-                        const fallbackRes = await fetchApi('/accus');
-                        cityAccusList = (fallbackRes && fallbackRes.data) ? fallbackRes.data : [];
+                        const fallbackRes = await fetchApi("/accus");
+                        cityAccusList =
+                            fallbackRes && fallbackRes.data
+                                ? fallbackRes.data
+                                : [];
                     } catch (e) {
                         console.error("Gagal memuat fallback accus:", e);
                         cityAccusList = [];
                     }
                 }
 
-                const existingAccus = (currentDetailOrder.receipt && currentDetailOrder.receipt.accus) ? currentDetailOrder.receipt.accus : [];
+                const existingAccus =
+                    currentDetailOrder.receipt &&
+                    currentDetailOrder.receipt.accus
+                        ? currentDetailOrder.receipt.accus
+                        : [];
                 rowsContainer.innerHTML = "";
 
                 if (existingAccus.length > 0) {
-                    existingAccus.forEach(item => {
+                    existingAccus.forEach((item) => {
                         addEditItemRow(item.id, item.amount || 1);
                     });
                 } else {
                     addEditItemRow(null, 1);
                 }
 
-                document.getElementById("modal-order-summary").style.display = "none";
+                document.getElementById("modal-order-summary").style.display =
+                    "none";
                 if (modalEditItems) modalEditItems.style.display = "flex";
             });
         }
@@ -2474,12 +2708,16 @@ document.addEventListener("DOMContentLoaded", () => {
                 e.preventDefault();
                 if (editItemsError) editItemsError.style.display = "none";
 
-                const orderId = document.getElementById("edit-order-items-id").value;
+                const orderId = document.getElementById(
+                    "edit-order-items-id",
+                ).value;
                 const rows = rowsContainer.querySelectorAll(".edit-item-row");
                 const itemsPayload = [];
 
-                rows.forEach(r => {
-                    const accuId = parseInt(r.querySelector(".accu-select").value);
+                rows.forEach((r) => {
+                    const accuId = parseInt(
+                        r.querySelector(".accu-select").value,
+                    );
                     const qty = parseInt(r.querySelector(".accu-qty").value);
                     if (accuId && qty > 0) {
                         itemsPayload.push({ accu_id: accuId, amount: qty });
@@ -2495,18 +2733,24 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
 
                 try {
-                    const btnSave = document.getElementById("btn-save-edit-items");
+                    const btnSave = document.getElementById(
+                        "btn-save-edit-items",
+                    );
                     if (btnSave) btnSave.disabled = true;
 
                     const res = await fetchApi(`/orders/${orderId}/items`, {
                         method: "PUT",
-                        body: JSON.stringify({ items: itemsPayload })
+                        body: JSON.stringify({ items: itemsPayload }),
                     });
 
                     if (btnSave) btnSave.disabled = false;
 
                     if (res.data || res.message) {
-                        document.querySelectorAll("div[id^='modal-'], div[id*='modal']").forEach(m => m.style.display = "none");
+                        document
+                            .querySelectorAll(
+                                "div[id^='modal-'], div[id*='modal']",
+                            )
+                            .forEach((m) => (m.style.display = "none"));
                         window.location.reload();
                     } else if (res.message) {
                         if (editItemsError) {
@@ -2517,7 +2761,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 } catch (err) {
                     console.error("Gagal simpan edit item:", err);
                     if (editItemsError) {
-                        editItemsError.innerText = "Terjadi kesalahan saat menyimpan perubahan.";
+                        editItemsError.innerText =
+                            "Terjadi kesalahan saat menyimpan perubahan.";
                         editItemsError.style.display = "block";
                     }
                 }
@@ -2553,15 +2798,67 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         };
 
+        let savedLme = null;
+        let savedKurs = null;
+
+        const updateLmeButtonState = () => {
+            const formSettings = document.getElementById(
+                "form-global-settings",
+            );
+            if (!formSettings) return;
+            const btn = formSettings.querySelector("button[type='submit']");
+            const lmeEl = document.getElementById("setting-lme");
+            const kursEl = document.getElementById("setting-kurs");
+            if (!btn || !lmeEl || !kursEl) return;
+
+            const currentLme = parseFloat(lmeEl.value);
+            const currentKurs = parseFloat(kursEl.value);
+
+            const isValValid =
+                !isNaN(currentLme) &&
+                !isNaN(currentKurs) &&
+                lmeEl.value.trim() !== "" &&
+                kursEl.value.trim() !== "";
+            const isChanged =
+                savedLme === null ||
+                savedKurs === null ||
+                currentLme !== savedLme ||
+                currentKurs !== savedKurs;
+
+            if (isValValid && isChanged) {
+                btn.disabled = false;
+                btn.style.opacity = "1";
+                btn.style.cursor = "pointer";
+            } else {
+                btn.disabled = true;
+                btn.style.opacity = "0.55";
+                btn.style.cursor = "not-allowed";
+            }
+        };
+
         const loadSettings = async () => {
             const res = await fetchApi("/settings");
             if (res && res.data) {
                 const lmeEl = document.getElementById("setting-lme");
                 const kursEl = document.getElementById("setting-kurs");
+                savedLme = parseFloat(res.data.lme);
+                savedKurs = parseFloat(res.data.kurs);
                 if (lmeEl) lmeEl.value = res.data.lme;
                 if (kursEl) kursEl.value = res.data.kurs;
+                updateLmeButtonState();
             }
         };
+
+        const lmeInputEl = document.getElementById("setting-lme");
+        const kursInputEl = document.getElementById("setting-kurs");
+        if (lmeInputEl) {
+            lmeInputEl.addEventListener("input", updateLmeButtonState);
+            lmeInputEl.addEventListener("change", updateLmeButtonState);
+        }
+        if (kursInputEl) {
+            kursInputEl.addEventListener("input", updateLmeButtonState);
+            kursInputEl.addEventListener("change", updateLmeButtonState);
+        }
 
         let priceHistoryPage = 1;
         let priceHistoryPerPage = 20;
@@ -2610,33 +2907,45 @@ document.addEventListener("DOMContentLoaded", () => {
                                         });
                                     }
                                 }
-                            } catch(e) {}
+                            } catch (e) {}
 
                             let lmeStr = "-";
                             try {
-                                const lmeVal = (h && h.lme !== undefined) ? h.lme : ((h && h.LME !== undefined) ? h.LME : null);
+                                const lmeVal =
+                                    h && h.lme !== undefined
+                                        ? h.lme
+                                        : h && h.LME !== undefined
+                                          ? h.LME
+                                          : null;
                                 if (lmeVal !== null && lmeVal !== undefined) {
                                     const num = parseFloat(lmeVal);
                                     if (!isNaN(num)) {
-                                        lmeStr = num.toLocaleString("id-ID") + " USD/Ton";
+                                        lmeStr =
+                                            num.toLocaleString("id-ID") +
+                                            " USD/Ton";
                                     } else {
                                         lmeStr = lmeVal + " USD/Ton";
                                     }
                                 }
-                            } catch(e) {}
+                            } catch (e) {}
 
                             let kursStr = "-";
                             try {
-                                const kursVal = (h && h.new_value !== undefined) ? h.new_value : null;
+                                const kursVal =
+                                    h && h.new_value !== undefined
+                                        ? h.new_value
+                                        : null;
                                 if (kursVal !== null && kursVal !== undefined) {
                                     const num = parseFloat(kursVal);
                                     if (!isNaN(num)) {
-                                        kursStr = num.toLocaleString("id-ID") + " IDR/USD";
+                                        kursStr =
+                                            num.toLocaleString("id-ID") +
+                                            " IDR/USD";
                                     } else {
                                         kursStr = kursVal + " IDR/USD";
                                     }
                                 }
-                            } catch(e) {}
+                            } catch (e) {}
 
                             return `
                         <tr>
@@ -2661,7 +2970,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 console.error("Gagal merender price history:", error);
                 const tbody = document.getElementById("price-history-tbody");
                 if (tbody) {
-                    tbody.innerHTML = `<tr><td colspan="3"><div class="admin-table-empty" style="color:#ef4444;">Gagal memuat data riwayat (Error: ${error.message || 'Unknown'})</div></td></tr>`;
+                    tbody.innerHTML = `<tr><td colspan="3"><div class="admin-table-empty" style="color:#ef4444;">Gagal memuat data riwayat (Error: ${error.message || "Unknown"})</div></td></tr>`;
                 }
             }
         };
@@ -2671,10 +2980,12 @@ document.addEventListener("DOMContentLoaded", () => {
             formSettings.addEventListener("submit", async (e) => {
                 e.preventDefault();
                 const btn = formSettings.querySelector("button[type='submit']");
+                const alertEl = document.getElementById("setting-lme-alert");
                 if (btn) {
                     btn.disabled = true;
                     btn.textContent = "Menyimpan...";
                 }
+                if (alertEl) alertEl.style.display = "none";
 
                 try {
                     const lme = parseFloat(
@@ -2689,24 +3000,64 @@ document.addEventListener("DOMContentLoaded", () => {
                         body: JSON.stringify({ lme, kurs }),
                     });
 
+                    const isEn = (localStorage.getItem("app_language") || (window.pageTranslator ? window.pageTranslator.activeLang : "id")) === "en";
+
                     if (res && res.data) {
-                        showToast("LME & Kurs berhasil diperbarui! (LME & Exchange Rate updated successfully!)", "success");
-                        priceHistoryPage = 1; // Reset to page 1 to see the latest change
+                        savedLme = lme;
+                        savedKurs = kurs;
+                        const successMsg = isEn
+                            ? "LME & Exchange Rate updated successfully!"
+                            : "Data LME & Kurs berhasil diperbarui!";
+                        showToast(successMsg, "success");
+                        if (alertEl) {
+                            alertEl.style.display = "flex";
+                            alertEl.style.background = "#dcfce7";
+                            alertEl.style.color = "#15803d";
+                            alertEl.style.border = "1px solid #bbf7d0";
+                            alertEl.innerHTML = "✓ " + successMsg;
+                        }
+                        if (btn) {
+                            btn.textContent = isEn ? "Saved ✓" : "Tersimpan ✓";
+                        }
+                        priceHistoryPage = 1;
                         await loadPriceHistory();
+                        await loadCities();
+                        await loadAccus();
+                        await loadNewAccus();
                     } else {
-                        showToast(
-                            res.message || "Gagal menyimpan LME & Kurs",
-                            "error",
-                        );
+                        const errMsg =
+                            res?.message || (isEn ? "Failed to save LME & Exchange Rate" : "Gagal menyimpan LME & Kurs");
+                        showToast(errMsg, "error");
+                        if (alertEl) {
+                            alertEl.style.display = "flex";
+                            alertEl.style.background = "#fee2e2";
+                            alertEl.style.color = "#b91c1c";
+                            alertEl.style.border = "1px solid #fca5a5";
+                            alertEl.innerHTML = "✕ " + errMsg;
+                        }
                     }
                 } catch (error) {
-                    showToast("Terjadi kesalahan sistem.", "error");
+                    const isEn = (localStorage.getItem("app_language") || (window.pageTranslator ? window.pageTranslator.activeLang : "id")) === "en";
+                    const sysErrMsg = isEn
+                        ? "A system error occurred while updating LME & Exchange Rate."
+                        : "Terjadi kesalahan sistem saat memperbarui LME & Kurs.";
+                    showToast(sysErrMsg, "error");
+                    if (alertEl) {
+                        alertEl.style.display = "flex";
+                        alertEl.style.background = "#fee2e2";
+                        alertEl.style.color = "#b91c1c";
+                        alertEl.style.border = "1px solid #fca5a5";
+                        alertEl.innerHTML = "✕ " + sysErrMsg;
+                    }
                     console.error(error);
                 } finally {
-                    if (btn) {
-                        btn.disabled = false;
-                        btn.textContent = "Simpan LME & Kurs";
-                    }
+                    setTimeout(() => {
+                        const isEn = (localStorage.getItem("app_language") || (window.pageTranslator ? window.pageTranslator.activeLang : "id")) === "en";
+                        if (btn) {
+                            btn.textContent = isEn ? "Save LME & Exchange Rate" : "Simpan LME & Kurs";
+                        }
+                        updateLmeButtonState();
+                    }, 1200);
                 }
             });
         }
@@ -2811,7 +3162,7 @@ document.addEventListener("DOMContentLoaded", () => {
                         <td><span style="font-weight:600; color:#2563eb;">${a.berat_kering} kg</span></td>
                         <td style="text-align:right;">
                             <div style="display:flex; gap:6px; justify-content:flex-end;">
-                                <button onclick="openEditAccu(${a.id}, '${(a.name||'').replace(/'/g,"&#39;")}', ${a.berat_kering})" class="admin-button admin-button--secondary" style="height:30px; font-size:11px;">Edit</button>
+                                <button onclick="openEditAccu(${a.id}, '${(a.name || "").replace(/'/g, "&#39;")}', ${a.berat_kering})" class="admin-button admin-button--secondary" style="height:30px; font-size:11px;">Edit</button>
                                 <button onclick="deleteAccu(${a.id})" class="admin-button admin-button--secondary" style="height:30px; font-size:11px; color:#ba1b2b;">Delete</button>
                             </div>
                         </td>
@@ -2923,6 +3274,12 @@ document.addEventListener("DOMContentLoaded", () => {
         loadAccus();
         loadNewAccus();
         loadPriceHistory();
+
+        window.loadSettings = loadSettings;
+        window.loadCities = loadCities;
+        window.loadAccus = loadAccus;
+        window.loadNewAccus = loadNewAccus;
+        window.loadPriceHistory = loadPriceHistory;
 
         window.switchAccuTab = (tab) => {
             currentAccuTab = tab;
@@ -3143,10 +3500,10 @@ document.addEventListener("DOMContentLoaded", () => {
         window.openEditAccu = (id, name, berat_kering) => {
             document.getElementById("edit-accu-id").value = id;
             document.getElementById("edit-accu-name").value = name;
-            document.getElementById("edit-accu-berat-kering").value = berat_kering;
+            document.getElementById("edit-accu-berat-kering").value =
+                berat_kering;
             document.getElementById("modal-edit-accu").style.display = "flex";
         };
-
 
         window.deleteNewAccu = (id) => {
             showConfirm(
@@ -3166,7 +3523,9 @@ document.addEventListener("DOMContentLoaded", () => {
                 e.preventDefault();
                 const id = document.getElementById("edit-accu-id").value;
                 const name = document.getElementById("edit-accu-name").value;
-                const berat_kering = document.getElementById("edit-accu-berat-kering").value;
+                const berat_kering = document.getElementById(
+                    "edit-accu-berat-kering",
+                ).value;
 
                 const res = await fetchApi(`/accus/${id}`, {
                     method: "PUT",
@@ -3174,12 +3533,14 @@ document.addEventListener("DOMContentLoaded", () => {
                 });
                 if (res && res.data) {
                     showToast("Battery updated successfully", "success");
-                    document.getElementById("modal-edit-accu").style.display = "none";
+                    document.getElementById("modal-edit-accu").style.display =
+                        "none";
                     formEditAccu.reset();
                     loadAccus();
                 } else {
                     let errMsg = res?.message || "Failed to update battery";
-                    if (res?.errors && res.errors.name) errMsg = res.errors.name[0];
+                    if (res?.errors && res.errors.name)
+                        errMsg = res.errors.name[0];
                     showToast(errMsg, "error");
                 }
             });
@@ -3567,6 +3928,7 @@ document.addEventListener("DOMContentLoaded", () => {
         };
 
         const loadStorages = async () => {
+            window.loadStorages = loadStorages;
             const res = await fetchApi("/storages");
             cachedStorages = res.data || [];
             renderStorages(cachedStorages);
@@ -3602,19 +3964,24 @@ document.addEventListener("DOMContentLoaded", () => {
 
         const loadReadyToPickup = async () => {
             const res = await fetchApi("/storages/ready-to-pickup");
-            
-            const dashboard = document.getElementById("storage-dashboard-summary");
+
+            const dashboard = document.getElementById(
+                "storage-dashboard-summary",
+            );
             if (dashboard) dashboard.style.display = "grid";
-            
+
             const countTaken = document.getElementById("count-total-taken");
             const countUntaken = document.getElementById("count-total-untaken");
             if (countTaken) countTaken.innerText = res.total_taken_all || 0;
-            if (countUntaken) countUntaken.innerText = res.total_untaken_all || 0;
+            if (countUntaken)
+                countUntaken.innerText = res.total_untaken_all || 0;
 
             const listEl = document.getElementById("ready-pickup-list");
             if (listEl) {
                 if (res.ready_warehouses && res.ready_warehouses.length > 0) {
-                    listEl.innerHTML = res.ready_warehouses.map(w => `
+                    listEl.innerHTML = res.ready_warehouses
+                        .map(
+                            (w) => `
                         <div class="ready-pickup-card">
                             <div style="display:flex; justify-content:space-between; align-items:flex-start;">
                                 <div>
@@ -3628,7 +3995,9 @@ document.addEventListener("DOMContentLoaded", () => {
                                 OK
                             </button>
                         </div>
-                    `).join("");
+                    `,
+                        )
+                        .join("");
                 } else {
                     listEl.innerHTML = `
                         <div class="ready-pickup-card ready-pickup-card--empty">
@@ -3640,9 +4009,16 @@ document.addEventListener("DOMContentLoaded", () => {
         };
 
         window.confirmPickup = async (id) => {
-            if (!confirm("Konfirmasi bahwa Anda (Pusat) sudah mengambil seluruh aki yang siap dari gudang ini?")) return;
+            if (
+                !confirm(
+                    "Konfirmasi bahwa Anda (Pusat) sudah mengambil seluruh aki yang siap dari gudang ini?",
+                )
+            )
+                return;
             try {
-                const res = await fetchApi(`/storages/${id}/pickup`, { method: "POST" });
+                const res = await fetchApi(`/storages/${id}/pickup`, {
+                    method: "POST",
+                });
                 showToast(res.message || "Barang berhasil diambil", "success");
                 loadReadyToPickup();
             } catch (err) {
@@ -3830,10 +4206,14 @@ document.addEventListener("DOMContentLoaded", () => {
                 const res = await fetch("/api/customer/storages");
                 const warehouses = res.ok ? await res.json() : null;
                 if (warehouses && warehouses.data && warehouses.data.length) {
-                    warehouseSelect.innerHTML = `<option value="">Admin Utama (akses seluruh gudang)</option>` +
+                    warehouseSelect.innerHTML =
+                        `<option value="">Admin Utama (akses seluruh gudang)</option>` +
                         warehouses.data
                             .sort((a, b) => a.name.localeCompare(b.name))
-                            .map((s) => `<option value="${s.id}">${s.name}</option>`)
+                            .map(
+                                (s) =>
+                                    `<option value="${s.id}">${s.name}</option>`,
+                            )
                             .join("");
                 }
             } catch (error) {
@@ -3842,6 +4222,7 @@ document.addEventListener("DOMContentLoaded", () => {
         };
 
         const loadUsers = async () => {
+            window.loadUsers = loadUsers;
             if (!checkEasterEggLock()) return;
             const res = await fetchApi("/users");
             const tbody = document.getElementById("users-tbody");
@@ -3851,8 +4232,8 @@ document.addEventListener("DOMContentLoaded", () => {
                         (u) => `
                     <tr>
                         <td style="font-weight:500;">${u.name}</td>
-                        <td>${u.email || '-'}</td>
-                        <td>${u.warehouse ? u.warehouse.name : (u.warehouse_id ? 'Gudang #' + u.warehouse_id : 'Admin Utama')}</td>
+                        <td>${u.email || "-"}</td>
+                        <td>${u.warehouse ? u.warehouse.name : u.warehouse_id ? "Gudang #" + u.warehouse_id : "Admin Utama"}</td>
                         <td>${parseSafeDate(u.created_at).toLocaleDateString("id-ID")}</td>
                         <td>
                             <button onclick="deleteUser(${u.id})" class="admin-button admin-button--secondary" style="height:30px; font-size:11px; color:#ba1b2b;">Hapus</button>
@@ -3869,7 +4250,7 @@ document.addEventListener("DOMContentLoaded", () => {
             loadWarehouses();
             loadUsers();
         }
- 
+
         document
             .getElementById("form-add-user")
             .addEventListener("submit", async (e) => {
@@ -3880,7 +4261,8 @@ document.addEventListener("DOMContentLoaded", () => {
                     email: document.getElementById("user-email").value,
                     password: document.getElementById("user-password").value,
                 };
-                const warehouseId = document.getElementById("user-warehouse").value;
+                const warehouseId =
+                    document.getElementById("user-warehouse").value;
                 if (warehouseId) {
                     payload.warehouse_id = parseInt(warehouseId, 10);
                 }
@@ -3890,22 +4272,26 @@ document.addEventListener("DOMContentLoaded", () => {
                     : Math.floor(Math.random() * 1000000);
                 const errorEl = document.getElementById("add-user-error");
                 if (errorEl) errorEl.style.display = "none";
- 
+
                 if (!payload.email || !payload.email.includes("@")) {
                     if (errorEl) {
-                        errorEl.innerText = "Email harus valid dan mengandung @.";
+                        errorEl.innerText =
+                            "Email harus valid dan mengandung @.";
                         errorEl.style.display = "block";
                     } else {
-                        showToast("Email harus valid dan mengandung @.", "error");
+                        showToast(
+                            "Email harus valid dan mengandung @.",
+                            "error",
+                        );
                     }
                     return;
                 }
- 
+
                 const res = await fetchApi("/users", {
                     method: "POST",
                     body: JSON.stringify(payload),
                 });
-                
+
                 if (res && res.errors) {
                     let errMsg = res.message || "Gagal validasi data";
                     const firstKey = Object.keys(res.errors)[0];
@@ -3953,6 +4339,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const yearSelect = document.getElementById("report-year-select");
 
         const loadReportData = async (selectedYear) => {
+            window.loadReportData = loadReportData;
             const endpoint = selectedYear
                 ? `/reports?year=${selectedYear}`
                 : "/reports";
@@ -4097,210 +4484,211 @@ document.addEventListener("DOMContentLoaded", () => {
    Page: /admin/biaya-penjemputan
 ============================================================================= */
 
-    // ── Guards ────────────────────────────────────────────────────────────────
     const formFormula = document.getElementById("form-pricing-formula");
     const formMultiplier = document.getElementById("form-pricing-multiplier");
-    if (!formFormula && !formMultiplier) return; // not on this page
+    if (formFormula || formMultiplier) {
+        // ── DOM refs ──────────────────────────────────────────────────────────────
+        const elInitialFee = document.getElementById("pp-initial-fee");
+        const elDistanceRate = document.getElementById("pp-distance-rate");
+        const elTimeRate = document.getElementById("pp-time-rate");
+        const elDemand = document.getElementById("pp-demand");
+        const elWeather = document.getElementById("pp-weather");
+        const elTraffic = document.getElementById("pp-traffic");
+        const elEvent = document.getElementById("pp-event");
+        const elVersionBadge = document.getElementById("pp-version-badge");
 
-    // ── DOM refs ──────────────────────────────────────────────────────────────
-    const elInitialFee = document.getElementById("pp-initial-fee");
-    const elDistanceRate = document.getElementById("pp-distance-rate");
-    const elTimeRate = document.getElementById("pp-time-rate");
-    const elDemand = document.getElementById("pp-demand");
-    const elWeather = document.getElementById("pp-weather");
-    const elTraffic = document.getElementById("pp-traffic");
-    const elEvent = document.getElementById("pp-event");
-    const elVersionBadge = document.getElementById("pp-version-badge");
+        // Preview formula refs
+        const prevInitialFee = document.getElementById("prev-initial-fee");
+        const prevDistanceRate = document.getElementById("prev-distance-rate");
+        const prevTimeRate = document.getElementById("prev-time-rate");
 
-    // Preview formula refs
-    const prevInitialFee = document.getElementById("prev-initial-fee");
-    const prevDistanceRate = document.getElementById("prev-distance-rate");
-    const prevTimeRate = document.getElementById("prev-time-rate");
+        // Live multiplier preview refs
+        const liveDemand = document.getElementById("live-demand");
+        const liveWeather = document.getElementById("live-weather");
+        const liveTraffic = document.getElementById("live-traffic");
+        const liveEvent = document.getElementById("live-event");
+        const liveTotal = document.getElementById("live-total-multiplier");
 
-    // Live multiplier preview refs
-    const liveDemand = document.getElementById("live-demand");
-    const liveWeather = document.getElementById("live-weather");
-    const liveTraffic = document.getElementById("live-traffic");
-    const liveEvent = document.getElementById("live-event");
-    const liveTotal = document.getElementById("live-total-multiplier");
+        // History refs
+        const historySearch = document.getElementById("pp-history-search");
+        const historyTbody = document.getElementById("pp-history-tbody");
+        const historyPagination = document.getElementById(
+            "pp-history-pagination",
+        );
 
-    // History refs
-    const historySearch = document.getElementById("pp-history-search");
-    const historyTbody = document.getElementById("pp-history-tbody");
-    const historyPagination = document.getElementById("pp-history-pagination");
+        // Toast
+        const ppToast = document.getElementById("pp-toast");
 
-    // Toast
-    const ppToast = document.getElementById("pp-toast");
+        // ── State ─────────────────────────────────────────────────────────────────
+        let historyCurrentPage = 1;
+        let historySearchQuery = "";
+        let historySearchTimer = null;
 
-    // ── State ─────────────────────────────────────────────────────────────────
-    let historyCurrentPage = 1;
-    let historySearchQuery = "";
-    let historySearchTimer = null;
+        // Easter egg refs
+        const modalLock = document.getElementById("modal-easter-egg-lock");
+        const formAuth = document.getElementById("form-easter-egg-auth");
+        const authError = document.getElementById("easter-egg-error");
 
-    // Easter egg refs
-    const modalLock = document.getElementById("modal-easter-egg-lock");
-    const formAuth = document.getElementById("form-easter-egg-auth");
-    const authError = document.getElementById("easter-egg-error");
+        const checkEasterEggLock = () => {
+            const isUnlocked =
+                sessionStorage.getItem("easter_egg_unlocked") === "true";
+            if (!isUnlocked) {
+                if (modalLock) modalLock.style.display = "flex";
+                return false;
+            }
+            if (modalLock) modalLock.style.display = "none";
+            return true;
+        };
 
-    const checkEasterEggLock = () => {
-        const isUnlocked =
-            sessionStorage.getItem("easter_egg_unlocked") === "true";
-        if (!isUnlocked) {
-            if (modalLock) modalLock.style.display = "flex";
-            return false;
-        }
-        if (modalLock) modalLock.style.display = "none";
-        return true;
-    };
-
-    if (formAuth) {
-        formAuth.addEventListener("submit", async (e) => {
-            e.preventDefault();
-            const inputPass = document.getElementById(
-                "easter-egg-password",
-            ).value;
-            try {
-                const verifyRes = await fetch("/api/public-admin/verify", {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                        Accept: "application/json",
-                    },
-                    body: JSON.stringify({ secret: inputPass }),
-                });
-                const verifyData = await verifyRes.json();
-                if (verifyRes.ok && verifyData.valid) {
-                    sessionStorage.setItem("easter_egg_pass", inputPass);
-                    sessionStorage.setItem("easter_egg_unlocked", "true");
-                    sessionStorage.setItem(
-                        "easter_egg_time",
-                        Date.now().toString(),
-                    );
-                    if (authError) authError.style.display = "none";
-                    if (modalLock) modalLock.style.display = "none";
-                    showToast(
-                        "Akses Rahasia Dibuka! Anda dapat mengatur pengiriman.",
-                        "success",
-                    );
-                    loadCurrentSetting();
-                } else {
+        if (formAuth) {
+            formAuth.addEventListener("submit", async (e) => {
+                e.preventDefault();
+                const inputPass = document.getElementById(
+                    "easter-egg-password",
+                ).value;
+                try {
+                    const verifyRes = await fetch("/api/public-admin/verify", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                            Accept: "application/json",
+                        },
+                        body: JSON.stringify({ secret: inputPass }),
+                    });
+                    const verifyData = await verifyRes.json();
+                    if (verifyRes.ok && verifyData.valid) {
+                        sessionStorage.setItem("easter_egg_pass", inputPass);
+                        sessionStorage.setItem("easter_egg_unlocked", "true");
+                        sessionStorage.setItem(
+                            "easter_egg_time",
+                            Date.now().toString(),
+                        );
+                        if (authError) authError.style.display = "none";
+                        if (modalLock) modalLock.style.display = "none";
+                        showToast(
+                            "Akses Rahasia Dibuka! Anda dapat mengatur pengiriman.",
+                            "success",
+                        );
+                        loadCurrentSetting();
+                    } else {
+                        if (authError) {
+                            authError.innerText =
+                                verifyData.message || "Password rahasia salah!";
+                            authError.style.display = "block";
+                        }
+                    }
+                } catch (err) {
                     if (authError) {
-                        authError.innerText =
-                            verifyData.message || "Password rahasia salah!";
+                        authError.innerText = "Gagal menghubungi server.";
                         authError.style.display = "block";
                     }
                 }
-            } catch (err) {
-                if (authError) {
-                    authError.innerText = "Gagal menghubungi server.";
-                    authError.style.display = "block";
+            });
+        }
+
+        // ── Utilities ─────────────────────────────────────────────────────────────
+        function formatRpLocal(val) {
+            return "Rp" + Number(val || 0).toLocaleString("id-ID");
+        }
+
+        function showToast(msg, isError = false) {
+            if (!ppToast) return;
+            ppToast.textContent = msg;
+            ppToast.style.background = isError ? "#dc2626" : "#16a34a";
+            ppToast.style.display = "block";
+            setTimeout(() => {
+                ppToast.style.display = "none";
+            }, 3500);
+        }
+
+        function getAuthHeaders() {
+            const token = localStorage.getItem("admin_token");
+            return {
+                "Content-Type": "application/json",
+                Accept: "application/json",
+                ...(token ? { Authorization: "Bearer " + token } : {}),
+            };
+        }
+
+        // ── Load Current Setting ──────────────────────────────────────────────────
+        async function loadCurrentSetting() {
+            if (!checkEasterEggLock()) return;
+            try {
+                const data = await fetchApi("/pengiriman");
+                const s = data.setting;
+                if (!s) return;
+
+                // Populate formula fields
+                if (elInitialFee) elInitialFee.value = s.initial_fee ?? 5000;
+                if (elDistanceRate)
+                    elDistanceRate.value = s.distance_rate ?? 2300;
+                if (elTimeRate) elTimeRate.value = s.time_rate ?? 25;
+
+                // Populate multiplier fields
+                if (elDemand) elDemand.value = s.demand_multiplier ?? 1.0;
+                if (elWeather) elWeather.value = s.weather_multiplier ?? 1.0;
+                if (elTraffic) elTraffic.value = s.traffic_multiplier ?? 1.0;
+                if (elEvent) elEvent.value = s.event_multiplier ?? 1.0;
+
+                // Version badge
+                if (elVersionBadge) {
+                    elVersionBadge.textContent =
+                        "Versi " + (s.pricing_version ?? 1);
                 }
+
+                updateFormulaPreview();
+                updateLiveMultiplier();
+
+                // Load history from the same response
+                renderHistory(data.history);
+            } catch (e) {
+                console.error("Pickup pricing load error:", e);
+                showToast("Error: " + (e.message || String(e)), true);
             }
-        });
-    }
-
-    // ── Utilities ─────────────────────────────────────────────────────────────
-    function formatRpLocal(val) {
-        return "Rp" + Number(val || 0).toLocaleString("id-ID");
-    }
-
-    function showToast(msg, isError = false) {
-        if (!ppToast) return;
-        ppToast.textContent = msg;
-        ppToast.style.background = isError ? "#dc2626" : "#16a34a";
-        ppToast.style.display = "block";
-        setTimeout(() => {
-            ppToast.style.display = "none";
-        }, 3500);
-    }
-
-    function getAuthHeaders() {
-        const token = localStorage.getItem("admin_token");
-        return {
-            "Content-Type": "application/json",
-            Accept: "application/json",
-            ...(token ? { Authorization: "Bearer " + token } : {}),
-        };
-    }
-
-    // ── Load Current Setting ──────────────────────────────────────────────────
-    async function loadCurrentSetting() {
-        if (!checkEasterEggLock()) return;
-        try {
-            const data = await fetchApi("/pengiriman");
-            const s = data.setting;
-            if (!s) return;
-
-            // Populate formula fields
-            if (elInitialFee) elInitialFee.value = s.initial_fee ?? 5000;
-            if (elDistanceRate) elDistanceRate.value = s.distance_rate ?? 2300;
-            if (elTimeRate) elTimeRate.value = s.time_rate ?? 25;
-
-            // Populate multiplier fields
-            if (elDemand) elDemand.value = s.demand_multiplier ?? 1.0;
-            if (elWeather) elWeather.value = s.weather_multiplier ?? 1.0;
-            if (elTraffic) elTraffic.value = s.traffic_multiplier ?? 1.0;
-            if (elEvent) elEvent.value = s.event_multiplier ?? 1.0;
-
-            // Version badge
-            if (elVersionBadge) {
-                elVersionBadge.textContent =
-                    "Versi " + (s.pricing_version ?? 1);
-            }
-
-            updateFormulaPreview();
-            updateLiveMultiplier();
-
-            // Load history from the same response
-            renderHistory(data.history);
-        } catch (e) {
-            console.error("Pickup pricing load error:", e);
-            showToast("Error: " + (e.message || String(e)), true);
-        }
-    }
-
-    // ── Formula Preview (read-only display update) ────────────────────────────
-    function updateFormulaPreview() {
-        if (prevInitialFee)
-            prevInitialFee.textContent = formatRpLocal(
-                elInitialFee?.value || 5000,
-            );
-        if (prevDistanceRate)
-            prevDistanceRate.textContent =
-                formatRpLocal(elDistanceRate?.value || 2300) + "/km";
-        if (prevTimeRate)
-            prevTimeRate.textContent =
-                formatRpLocal(elTimeRate?.value || 25) + "/detik";
-    }
-
-    // ── Live Multiplier Preview ───────────────────────────────────────────────
-    function updateLiveMultiplier() {
-        const d = parseFloat(elDemand?.value || 1);
-        const w = parseFloat(elWeather?.value || 1);
-        const t = parseFloat(elTraffic?.value || 1);
-        const e = parseFloat(elEvent?.value || 1);
-        const total = (d * w * t * e).toFixed(4);
-
-        if (liveDemand) liveDemand.textContent = d.toFixed(2);
-        if (liveWeather) liveWeather.textContent = w.toFixed(2);
-        if (liveTraffic) liveTraffic.textContent = t.toFixed(2);
-        if (liveEvent) liveEvent.textContent = e.toFixed(2);
-        if (liveTotal) liveTotal.textContent = total;
-    }
-
-    // ── History Rendering ─────────────────────────────────────────────────────
-    function renderHistory(paginatedData) {
-        if (!historyTbody) return;
-        const items = paginatedData?.data || [];
-        if (items.length === 0) {
-            historyTbody.innerHTML = `<tr><td colspan="10"><div class="admin-table-empty"><strong>Belum ada riwayat perubahan.</strong></div></td></tr>`;
-            if (historyPagination) historyPagination.innerHTML = "";
-            return;
         }
 
-        historyTbody.innerHTML = items
-            .map(
-                (h) => `
+        // ── Formula Preview (read-only display update) ────────────────────────────
+        function updateFormulaPreview() {
+            if (prevInitialFee)
+                prevInitialFee.textContent = formatRpLocal(
+                    elInitialFee?.value || 5000,
+                );
+            if (prevDistanceRate)
+                prevDistanceRate.textContent =
+                    formatRpLocal(elDistanceRate?.value || 2300) + "/km";
+            if (prevTimeRate)
+                prevTimeRate.textContent =
+                    formatRpLocal(elTimeRate?.value || 25) + "/detik";
+        }
+
+        // ── Live Multiplier Preview ───────────────────────────────────────────────
+        function updateLiveMultiplier() {
+            const d = parseFloat(elDemand?.value || 1);
+            const w = parseFloat(elWeather?.value || 1);
+            const t = parseFloat(elTraffic?.value || 1);
+            const e = parseFloat(elEvent?.value || 1);
+            const total = (d * w * t * e).toFixed(4);
+
+            if (liveDemand) liveDemand.textContent = d.toFixed(2);
+            if (liveWeather) liveWeather.textContent = w.toFixed(2);
+            if (liveTraffic) liveTraffic.textContent = t.toFixed(2);
+            if (liveEvent) liveEvent.textContent = e.toFixed(2);
+            if (liveTotal) liveTotal.textContent = total;
+        }
+
+        // ── History Rendering ─────────────────────────────────────────────────────
+        function renderHistory(paginatedData) {
+            if (!historyTbody) return;
+            const items = paginatedData?.data || [];
+            if (items.length === 0) {
+                historyTbody.innerHTML = `<tr><td colspan="10"><div class="admin-table-empty"><strong>Belum ada riwayat perubahan.</strong></div></td></tr>`;
+                if (historyPagination) historyPagination.innerHTML = "";
+                return;
+            }
+
+            historyTbody.innerHTML = items
+                .map(
+                    (h) => `
             <tr>
                 <td style="font-size:12px; color:#6d727c; white-space:nowrap;">${formatDateLocal(h.created_at)}</td>
                 <td style="font-size:12px;">${h.created_by || "-"}</td>
@@ -4314,170 +4702,171 @@ document.addEventListener("DOMContentLoaded", () => {
                 <td style="text-align:right; font-weight:700; color:#0369a1;">${parseFloat(h.total_multiplier).toFixed(4)}</td>
             </tr>
         `,
-            )
-            .join("");
+                )
+                .join("");
 
-        renderHistoryPagination(paginatedData);
-    }
-
-    function formatDateLocal(dateStr) {
-        if (!dateStr) return "-";
-        const d = new Date(dateStr);
-        return (
-            d.toLocaleDateString("id-ID", {
-                day: "2-digit",
-                month: "short",
-                year: "numeric",
-            }) +
-            " " +
-            d.toLocaleTimeString("id-ID", {
-                hour: "2-digit",
-                minute: "2-digit",
-            })
-        );
-    }
-
-    function renderHistoryPagination(paginatedData) {
-        if (!historyPagination) return;
-        const last = paginatedData.last_page || 1;
-        const current = paginatedData.current_page || 1;
-        if (last <= 1) {
-            historyPagination.innerHTML = "";
-            return;
+            renderHistoryPagination(paginatedData);
         }
 
-        let html = "";
-        for (let i = 1; i <= last; i++) {
-            html += `<button onclick="ppLoadHistoryPage(${i})"
+        function formatDateLocal(dateStr) {
+            if (!dateStr) return "-";
+            const d = new Date(dateStr);
+            return (
+                d.toLocaleDateString("id-ID", {
+                    day: "2-digit",
+                    month: "short",
+                    year: "numeric",
+                }) +
+                " " +
+                d.toLocaleTimeString("id-ID", {
+                    hour: "2-digit",
+                    minute: "2-digit",
+                })
+            );
+        }
+
+        function renderHistoryPagination(paginatedData) {
+            if (!historyPagination) return;
+            const last = paginatedData.last_page || 1;
+            const current = paginatedData.current_page || 1;
+            if (last <= 1) {
+                historyPagination.innerHTML = "";
+                return;
+            }
+
+            let html = "";
+            for (let i = 1; i <= last; i++) {
+                html += `<button onclick="ppLoadHistoryPage(${i})"
                 style="padding:6px 14px; border-radius:6px; font-size:13px; font-weight:600; cursor:pointer;
                        border:1px solid ${i === current ? "#0369a1" : "#e2e8f0"};
                        background:${i === current ? "#0369a1" : "#fff"};
                        color:${i === current ? "#fff" : "#374151"};">${i}</button>`;
-        }
-        historyPagination.innerHTML = html;
-    }
-
-    // Exposed for pagination button onclick
-    window.ppLoadHistoryPage = async function (page) {
-        historyCurrentPage = page;
-        await loadHistoryPage();
-    };
-
-    async function loadHistoryPage() {
-        if (!checkEasterEggLock()) return;
-        try {
-            const params = new URLSearchParams({
-                page: historyCurrentPage,
-                per_page: 15,
-                ...(historySearchQuery ? { q: historySearchQuery } : {}),
-            });
-            const data = await fetchApi("/pengiriman/history?" + params);
-            renderHistory(data);
-        } catch (e) {
-            console.error("History load error:", e);
-            showToast("Error: " + (e.message || String(e)), true);
-        }
-    }
-
-    // ── Form Submissions ──────────────────────────────────────────────────────
-    async function saveSettings(payload, btnEl) {
-        if (!checkEasterEggLock()) return;
-        if (btnEl) {
-            btnEl.disabled = true;
-            btnEl.textContent = "Menyimpan...";
-        }
-        try {
-            const data = await fetchApi("/pengiriman", {
-                method: "PUT",
-                body: JSON.stringify(payload),
-            });
-            if (data.message === "Unauthenticated" || data.errors) {
-                const errMsg =
-                    data.message ||
-                    Object.values(data.errors || {})
-                        .flat()
-                        .join(" ");
-                showToast(errMsg || "Terjadi kesalahan.", true);
-            } else {
-                showToast(data.message || "Berhasil disimpan.");
-                await loadCurrentSetting();
-                await loadHistoryPage();
             }
-        } catch (e) {
-            showToast("Gagal terhubung ke server.", true);
-        } finally {
+            historyPagination.innerHTML = html;
+        }
+
+        // Exposed for pagination button onclick
+        window.ppLoadHistoryPage = async function (page) {
+            historyCurrentPage = page;
+            await loadHistoryPage();
+        };
+
+        async function loadHistoryPage() {
+            if (!checkEasterEggLock()) return;
+            try {
+                const params = new URLSearchParams({
+                    page: historyCurrentPage,
+                    per_page: 15,
+                    ...(historySearchQuery ? { q: historySearchQuery } : {}),
+                });
+                const data = await fetchApi("/pengiriman/history?" + params);
+                renderHistory(data);
+            } catch (e) {
+                console.error("History load error:", e);
+                showToast("Error: " + (e.message || String(e)), true);
+            }
+        }
+
+        // ── Form Submissions ──────────────────────────────────────────────────────
+        async function saveSettings(payload, btnEl) {
+            if (!checkEasterEggLock()) return;
             if (btnEl) {
-                btnEl.disabled = false;
-                btnEl.textContent = btnEl.dataset.origText || "Simpan";
+                btnEl.disabled = true;
+                btnEl.textContent = "Menyimpan...";
+            }
+            try {
+                const data = await fetchApi("/pengiriman", {
+                    method: "PUT",
+                    body: JSON.stringify(payload),
+                });
+                if (data.message === "Unauthenticated" || data.errors) {
+                    const errMsg =
+                        data.message ||
+                        Object.values(data.errors || {})
+                            .flat()
+                            .join(" ");
+                    showToast(errMsg || "Terjadi kesalahan.", true);
+                } else {
+                    showToast(data.message || "Berhasil disimpan.");
+                    await loadCurrentSetting();
+                    await loadHistoryPage();
+                }
+            } catch (e) {
+                showToast("Gagal terhubung ke server.", true);
+            } finally {
+                if (btnEl) {
+                    btnEl.disabled = false;
+                    btnEl.textContent = btnEl.dataset.origText || "Simpan";
+                }
             }
         }
+
+        // ── Event Listeners ───────────────────────────────────────────────────────
+        if (formFormula) {
+            const btn = formFormula.querySelector("#btn-save-formula");
+            if (btn) btn.dataset.origText = btn.textContent;
+
+            // Live formula preview on input
+            [elInitialFee, elDistanceRate, elTimeRate].forEach((el) => {
+                if (el) el.addEventListener("input", updateFormulaPreview);
+            });
+
+            formFormula.addEventListener("submit", async (e) => {
+                e.preventDefault();
+
+                // We need the current multiplier values too for a combined save
+                const payload = {
+                    initial_fee: parseFloat(elInitialFee?.value || 5000),
+                    distance_rate: parseFloat(elDistanceRate?.value || 2300),
+                    time_rate: parseFloat(elTimeRate?.value || 25),
+                    demand_multiplier: parseFloat(elDemand?.value || 1.0),
+                    weather_multiplier: parseFloat(elWeather?.value || 1.0),
+                    traffic_multiplier: parseFloat(elTraffic?.value || 1.0),
+                    event_multiplier: parseFloat(elEvent?.value || 1.0),
+                };
+                await saveSettings(payload, btn);
+            });
+        }
+
+        if (formMultiplier) {
+            const btn = formMultiplier.querySelector("#btn-save-multiplier");
+            if (btn) btn.dataset.origText = btn.textContent;
+
+            // Live total multiplier preview on input
+            [elDemand, elWeather, elTraffic, elEvent].forEach((el) => {
+                if (el) el.addEventListener("input", updateLiveMultiplier);
+            });
+
+            formMultiplier.addEventListener("submit", async (e) => {
+                e.preventDefault();
+
+                // Combined save: always include formula values alongside new multipliers
+                const payload = {
+                    initial_fee: parseFloat(elInitialFee?.value || 5000),
+                    distance_rate: parseFloat(elDistanceRate?.value || 2300),
+                    time_rate: parseFloat(elTimeRate?.value || 25),
+                    demand_multiplier: parseFloat(elDemand?.value || 1.0),
+                    weather_multiplier: parseFloat(elWeather?.value || 1.0),
+                    traffic_multiplier: parseFloat(elTraffic?.value || 1.0),
+                    event_multiplier: parseFloat(elEvent?.value || 1.0),
+                };
+                await saveSettings(payload, btn);
+            });
+        }
+
+        // History search
+        if (historySearch) {
+            historySearch.addEventListener("input", () => {
+                clearTimeout(historySearchTimer);
+                historySearchTimer = setTimeout(async () => {
+                    historySearchQuery = historySearch.value.trim();
+                    historyCurrentPage = 1;
+                    await loadHistoryPage();
+                }, 350);
+            });
+        }
+
+        // ── Bootstrap ─────────────────────────────────────────────────────────────
+        loadCurrentSetting();
     }
-
-    // ── Event Listeners ───────────────────────────────────────────────────────
-    if (formFormula) {
-        const btn = formFormula.querySelector("#btn-save-formula");
-        if (btn) btn.dataset.origText = btn.textContent;
-
-        // Live formula preview on input
-        [elInitialFee, elDistanceRate, elTimeRate].forEach((el) => {
-            if (el) el.addEventListener("input", updateFormulaPreview);
-        });
-
-        formFormula.addEventListener("submit", async (e) => {
-            e.preventDefault();
-
-            // We need the current multiplier values too for a combined save
-            const payload = {
-                initial_fee: parseFloat(elInitialFee?.value || 5000),
-                distance_rate: parseFloat(elDistanceRate?.value || 2300),
-                time_rate: parseFloat(elTimeRate?.value || 25),
-                demand_multiplier: parseFloat(elDemand?.value || 1.0),
-                weather_multiplier: parseFloat(elWeather?.value || 1.0),
-                traffic_multiplier: parseFloat(elTraffic?.value || 1.0),
-                event_multiplier: parseFloat(elEvent?.value || 1.0),
-            };
-            await saveSettings(payload, btn);
-        });
-    }
-
-    if (formMultiplier) {
-        const btn = formMultiplier.querySelector("#btn-save-multiplier");
-        if (btn) btn.dataset.origText = btn.textContent;
-
-        // Live total multiplier preview on input
-        [elDemand, elWeather, elTraffic, elEvent].forEach((el) => {
-            if (el) el.addEventListener("input", updateLiveMultiplier);
-        });
-
-        formMultiplier.addEventListener("submit", async (e) => {
-            e.preventDefault();
-
-            // Combined save: always include formula values alongside new multipliers
-            const payload = {
-                initial_fee: parseFloat(elInitialFee?.value || 5000),
-                distance_rate: parseFloat(elDistanceRate?.value || 2300),
-                time_rate: parseFloat(elTimeRate?.value || 25),
-                demand_multiplier: parseFloat(elDemand?.value || 1.0),
-                weather_multiplier: parseFloat(elWeather?.value || 1.0),
-                traffic_multiplier: parseFloat(elTraffic?.value || 1.0),
-                event_multiplier: parseFloat(elEvent?.value || 1.0),
-            };
-            await saveSettings(payload, btn);
-        });
-    }
-
-    // History search
-    if (historySearch) {
-        historySearch.addEventListener("input", () => {
-            clearTimeout(historySearchTimer);
-            historySearchTimer = setTimeout(async () => {
-                historySearchQuery = historySearch.value.trim();
-                historyCurrentPage = 1;
-                await loadHistoryPage();
-            }, 350);
-        });
-    }
-
-    // ── Bootstrap ─────────────────────────────────────────────────────────────
-    loadCurrentSetting();
 });

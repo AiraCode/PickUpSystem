@@ -165,8 +165,8 @@
         </div>
 
         <div id="admin-toast"
-            style="display:none; position:fixed; top:24px; right:24px; z-index:999; background:#10b981; color:#fff; padding:12px 20px; border-radius:8px; box-shadow:0 10px 25px rgba(0,0,0,0.18); font-size:13px; font-weight:600; align-items:center; gap:10px; opacity:0; transition:opacity .25s ease;">
-            <span id="admin-toast-icon">✓</span>
+            style="display:none; position:fixed; top:24px; right:24px; z-index:999999; background:#10b981; color:#fff; padding:14px 22px; border-radius:10px; box-shadow:0 12px 35px rgba(0,0,0,0.3); font-size:14px; font-weight:700; align-items:center; gap:10px; opacity:0; transform:translateY(-10px); transition:opacity 0.3s ease, transform 0.3s ease;">
+            <span id="admin-toast-icon" style="font-size:16px;">✓</span>
             <span id="admin-toast-message">Notifikasi</span>
         </div>
 

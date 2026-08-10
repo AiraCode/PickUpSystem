@@ -19,6 +19,7 @@
                     1000] &times; Berat Kering (kg)</p>
             </div>
         </div>
+        <div id="setting-lme-alert" style="display:none; padding:10px 14px; border-radius:6px; font-size:13px; font-weight:600; align-items:center; gap:8px; margin-top:8px;"></div>
         <form id="form-global-settings"
             style="display:flex; flex-wrap:wrap; gap:16px; align-items:flex-end; padding-top:8px;">
             <div style="flex:1; min-width:200px;">
@@ -34,7 +35,7 @@
                     style="width:100%; padding:8px 12px; border-radius:6px;" placeholder="Contoh: 16000" required>
             </div>
             <div>
-                <button type="submit" class="admin-button admin-button--primary" style="height:38px; padding:0 20px;">Simpan
+                <button type="submit" id="btn-save-lme-kurs" class="admin-button admin-button--primary" style="height:38px; padding:0 20px; transition: all 0.2s ease; opacity: 0.55; cursor: not-allowed;" disabled>Simpan
                     LME &amp; Kurs</button>
             </div>
         </form>
