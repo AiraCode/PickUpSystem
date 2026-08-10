@@ -3997,7 +3997,7 @@ document.addEventListener("DOMContentLoaded", () => {
                         )
                         .join("");
                 } else {
-                    topAccusTbody.innerHTML = `<tr><td colspan="3"><div class="admin-table-empty">Belum ada data penjualan</div></td></tr>`;
+                    topAccusTbody.innerHTML = `<tr><td colspan="2"><div class="admin-table-empty">Belum ada data penjualan</div></td></tr>`;
                 }
             }
 

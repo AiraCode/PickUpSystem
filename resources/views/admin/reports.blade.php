@@ -78,13 +78,12 @@
                 <table class="admin-table admin-table--compact">
                     <thead>
                         <tr>
-                            <th>Brand</th>
                             <th>Tipe Aki</th>
                             <th style="text-align:right;">Jumlah Terjual</th>
                         </tr>
                     </thead>
                     <tbody id="top-accus-tbody">
-                        <tr><td colspan="3"><div class="admin-table-empty"><strong>Memuat data...</strong></div></td></tr>
+                        <tr><td colspan="2"><div class="admin-table-empty"><strong>Memuat data...</strong></div></td></tr>
                     </tbody>
                 </table>
             </div>

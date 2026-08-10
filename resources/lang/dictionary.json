@@ -110,6 +110,9 @@
   "Terbaru ke Terlama (Default)": {
     "en": "Newest to Oldest (Default)"
   },
+  "Terlama ke Terbaru": {
+    "en": "Oldest to Newest"
+  },
   "Update Order STATUS": {
     "en": "Update Order Status"
   },
@@ -1270,6 +1273,12 @@
   },
   "Laporan": {
     "en": "Reports"
+  },
+  "Analitik": {
+    "en": "Analytics"
+  },
+  "Laporan Analitik": {
+    "en": "Analytic Reports"
   },
   "Laporan & Analitik": {
     "en": "Reports & Analytics"
@@ -2713,5 +2722,23 @@
   },
   "Pesanan Selesai": {
     "en": "Order Completed"
+  },
+  "Persentase": {
+    "en": "Percentage"
+  },
+  "persentase": {
+    "en": "percentage"
+  },
+  "Gudang": {
+    "en": "Warehouse"
+  },
+  "Buka Tab Baru": {
+    "en": "Open New Tab"
+  },
+  "Jual": {
+    "en": "Sell"
+  },
+  "Nomor WhatsApp":{
+    "en": "WhatsApp Number"
   }
 }
