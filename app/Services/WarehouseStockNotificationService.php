@@ -36,33 +36,82 @@ class WarehouseStockNotificationService
             return;
         }
 
-        $warehouseAdmin = User::where('warehouse_id', $warehouse->id)
+        $warehouseAdmins = User::where('warehouse_id', $warehouse->id)
             ->where('role', 'warehouse')
-            ->first();
+            ->get();
 
-        $centralEmails = User::where('role', 'central')
-            ->pluck('email')
-            ->filter(function ($email) {
-                return filter_var($email, FILTER_VALIDATE_EMAIL);
-            })
+        $warehouseAdminEmails = $warehouseAdmins
+            ->map(fn (User $user) => trim((string) $user->email))
+            ->filter(fn ($email) => $email !== '' && filter_var($email, FILTER_VALIDATE_EMAIL))
+            ->unique()
             ->values()
             ->all();
 
-        if (! $warehouseAdmin || ! filter_var($warehouseAdmin->email, FILTER_VALIDATE_EMAIL) || empty($centralEmails)) {
+        $centralEmails = User::where('role', 'central')
+            ->whereNotNull('email')
+            ->pluck('email')
+            ->map(fn ($email) => trim((string) $email))
+            ->filter(fn ($email) => $email !== '' && filter_var($email, FILTER_VALIDATE_EMAIL))
+            ->unique()
+            ->values()
+            ->all();
+
+        if (empty($centralEmails)) {
+            $centralEmails = collect(explode(',', (string) env('MAIL_NOTIFICATION_RECIPIENTS', '')))
+                ->map(fn ($email) => trim((string) $email))
+                ->filter(fn ($email) => $email !== '' && filter_var($email, FILTER_VALIDATE_EMAIL))
+                ->unique()
+                ->values()
+                ->all();
+        }
+
+        if (empty($warehouseAdminEmails) || empty($centralEmails)) {
             return;
         }
 
         try {
-            Mail::raw(
-                "Gudang cabang {$warehouse->name} memiliki stok aki \u2265 20 unit.\n\nSilakan cek daftar gudang cabang yang siap diambil dan tekan OK untuk mengurangi stok aki pada gudang.\n\nLink: " . url('/admin/gudang'),
-                function ($message) use ($warehouseAdmin, $centralEmails, $warehouse, $untaken) {
-                    $message->from($warehouseAdmin->email, $warehouseAdmin->name ?: 'Admin Gudang');
-                    $message->to($centralEmails);
-                    $message->subject("Gudang {$warehouse->name} Siap Diambil - Stok {$untaken} Aki");
-                },
-            );
-        } catch (\Exception $e) {
-            Log::error('Gagal mengirim email notifikasi stok gudang: ' . $e->getMessage());
+            $sender = $warehouseAdmins->first(function (User $user) {
+                return ! empty($user->smtp_email) && filter_var($user->smtp_email, FILTER_VALIDATE_EMAIL);
+            });
+
+            if ($sender) {
+                // Buat konfigurasi mailer kustom secara langsung tanpa mengganggu mailer global
+                config([
+                    'mail.mailers.dynamic_smtp' => [
+                        'transport' => 'smtp',
+                        'host' => $sender->smtp_host ?: env('MAIL_HOST', 'smtp.gmail.com'),
+                        'port' => (int) ($sender->smtp_port ?: env('MAIL_PORT', 587)),
+                        'encryption' => $sender->smtp_encryption ?: env('MAIL_ENCRYPTION', 'tls'),
+                        'username' => $sender->smtp_email,
+                        'password' => $sender->smtp_password,
+                        'timeout' => null,
+                        'local_domain' => env('MAIL_EHLO_DOMAIN'),
+                    ],
+                    'mail.from.address' => $sender->smtp_email,
+                    'mail.from.name' => $sender->name ?: 'AKIKU',
+                ]);
+
+                // Pakai mailer 'dynamic_smtp' secara eksplisit!
+                Mail::mailer('dynamic_smtp')->raw(
+                    "Gudang cabang {$warehouse->name} memiliki stok aki \u2265 20 unit.\n\nSilakan cek daftar gudang cabang yang siap diambil dan tekan OK untuk mengurangi stok aki pada gudang.\n\nLink: ".url('/admin/gudang'),
+                    function ($message) use ($warehouseAdminEmails, $centralEmails, $warehouse, $untaken, $sender) {
+                        $message->from($sender->smtp_email, $sender->name ?: 'Admin Gudang');
+                        $message->to($centralEmails);
+                        $message->replyTo($warehouseAdminEmails);
+                        $message->subject("Gudang {$warehouse->name} Siap Diambil - Stok {$untaken} Aki");
+                    }
+                );
+            }
+        } catch (\Throwable $e) { // <-- DITARUH DI SINI
+            // Tangkap error secara detail
+            Log::error('SMTP Error Surabaya: ' . $e->getMessage(), [
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
+                'trace' => $e->getTraceAsString()
+            ]);
+            
+            // Un-comment baris di bawah ini jika ingin melempar error langsung ke browser/terminal saat testing:
+            // throw $e; 
             return;
         }
 
@@ -75,7 +124,7 @@ class WarehouseStockNotificationService
                 'related_type' => Warehouse::class,
             ]);
         } catch (\Exception $e) {
-            Log::error('Gagal mencatat aktivitas notifikasi stok gudang: ' . $e->getMessage());
+            Log::error('Gagal mencatat aktivitas notifikasi stok gudang: '.$e->getMessage());
         }
     }
 }

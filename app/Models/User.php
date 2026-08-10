@@ -16,17 +16,23 @@ class User extends Authenticatable
         'id',
         'name',
         'email',
+        'smtp_email',
+        'smtp_password',
+        'smtp_host',
+        'smtp_port',
+        'smtp_encryption',
         'password',
         'role',
         'warehouse_id',
     ];
 
-    protected $hidden = ['password'];
+    protected $hidden = ['password', 'smtp_password'];
 
     protected function casts(): array
     {
         return [
             'password' => 'hashed',
+            'smtp_port' => 'integer',
         ];
     }
 
