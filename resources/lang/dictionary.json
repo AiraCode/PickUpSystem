@@ -467,6 +467,9 @@
   "Atur Percentage (%) untuk City ini di bagian atas. Battery Prices dihitung otomatis dengan rumus.": {
     "en": "Set percentage (%) for this city above. Battery prices are calculated automatically using formula."
   },
+  "Atur persentase (%) untuk kota ini di bagian atas. Harga aki dihitung otomatis dengan rumus.": {
+    "en": "Set percentage (%) for this city above. Battery prices are calculated automatically using formula."
+  },
   "Set persentase (%) untuk kota ini di bagian atas. Harga aki dihitung otomatis dengan rumus.": {
     "en": "Set percentage (%) for this city above. Battery prices are calculated automatically using formula."
   },
@@ -1110,6 +1113,9 @@
     "en": "Best Price"
   },
   "HARGA UNIT": {
+    "en": "UNIT PRICE"
+  },
+  "HARGA SATUAN": {
     "en": "UNIT PRICE"
   },
   "Hubungi Kami": {

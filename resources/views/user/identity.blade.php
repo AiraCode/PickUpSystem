@@ -237,7 +237,7 @@
                                 <tr>
                                     <th style="text-align: left;">AKI</th>
                                     <th style="text-align: center;">QTY</th>
-                                    <th style="text-align: right;">HARGA UNIT</th>
+                                    <th style="text-align: right;">HARGA SATUAN</th>
                                     <th style="text-align: right;">SUBTOTAL</th>
                                 </tr>
                             </thead>

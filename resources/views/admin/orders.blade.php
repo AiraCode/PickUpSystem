@@ -609,7 +609,7 @@
                             <tr style="border-bottom:2px solid #4b5563;">
                                 <th style="text-align:left; padding:8px 0; color:#9ca3af; font-weight:600;">AKI</th>
                                 <th style="text-align:center; padding:8px 0; color:#9ca3af; font-weight:600;">QTY</th>
-                                <th style="text-align:right; padding:8px 0; color:#9ca3af; font-weight:600;">HARGA UNIT</th>
+                                <th style="text-align:right; padding:8px 0; color:#9ca3af; font-weight:600;">HARGA SATUAN</th>
                                 <th style="text-align:right; padding:8px 0; color:#9ca3af; font-weight:600;">SUBTOTAL</th>
                             </tr>
                         </thead>

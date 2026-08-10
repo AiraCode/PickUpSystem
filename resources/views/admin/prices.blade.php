@@ -94,7 +94,7 @@
                 <h3 style="font-size:16px; margin:0;">Daftar Jenis Aki (<span id="accu-total">0</span>)</h3>
                 <div style="display:flex; background:#e2e8f0; border-radius:8px; padding:4px; gap:4px; width: fit-content;">
                     <button class="admin-button" id="btn-old-accu" style="background:#fff; color:#1e293b; box-shadow:0 1px 3px rgba(0,0,0,0.1); border:none; padding:6px 16px; border-radius:6px; font-size:13px; font-weight:600;" onclick="switchAccuTab('old')">Aki Bekas (LME)</button>
-                    <button class="admin-button" id="btn-new-accu" style="background:transparent; color:#64748b; border:none; padding:6px 16px; border-radius:6px; font-size:13px; font-weight:600; box-shadow:none;" onclick="switchAccuTab('new')">Aki Baru</button>
+                    <!-- <button class="admin-button" id="btn-new-accu" style="background:transparent; color:#64748b; border:none; padding:6px 16px; border-radius:6px; font-size:13px; font-weight:600; box-shadow:none;" onclick="switchAccuTab('new')">Aki Baru</button> -->
                 </div>
             </div>
         </div>
@@ -149,7 +149,8 @@
             <div id="accus-pagination" style="display:flex; justify-content:space-between; align-items:center; padding:12px 16px; border-top:1px solid #e5e7eb;"></div>
         </div>
 
-        <!-- Tab Aki Baru -->
+        <!-- Tab Aki Baru (Hidden) -->
+        <!--
         <div id="tab-new-accu" style="display: none;">
             <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin: 16px 20px;">
                 <select id="new-accus-per-page" class="admin-select" style="padding: 6px 10px; font-size:12px; border-radius:6px; background:#fff;">

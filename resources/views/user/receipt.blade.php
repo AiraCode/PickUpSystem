@@ -95,7 +95,7 @@
 
                     <div class="user-receipt__table-wrap">
                         <table class="user-receipt__table">
-                            <thead><tr><th>AKI</th><th>QTY</th><th>HARGA UNIT</th><th>SUBTOTAL</th></tr></thead>
+                            <thead><tr><th>AKI</th><th>QTY</th><th>HARGA SATUAN</th><th>SUBTOTAL</th></tr></thead>
                             <tbody><tr><td colspan="4"><div class="user-receipt__empty"><strong>Detail aki belum tersedia</strong><span>Item akan tampil setelah transaksi terhubung.</span></div></td></tr></tbody>
                         </table>
                     </div>

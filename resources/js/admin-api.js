@@ -2594,39 +2594,48 @@ document.addEventListener("DOMContentLoaded", () => {
                 if (history.length > 0) {
                     tbody.innerHTML = history
                         .map((h) => {
-                            // 1. Format Tanggal
                             let dateStr = "-";
-                            if (h.created_at) {
-                                const d = new Date(h.created_at);
-                                if (!isNaN(d.getTime())) {
-                                    dateStr = d.toLocaleString("id-ID", {
-                                        day: "2-digit",
-                                        month: "2-digit",
-                                        year: "numeric",
-                                        hour: "2-digit",
-                                        minute: "2-digit",
-                                        second: "2-digit",
-                                    });
+                            try {
+                                if (h && h.created_at) {
+                                    const d = new Date(h.created_at);
+                                    if (!isNaN(d.getTime())) {
+                                        dateStr = d.toLocaleString("id-ID", {
+                                            day: "2-digit",
+                                            month: "2-digit",
+                                            year: "numeric",
+                                            hour: "2-digit",
+                                            minute: "2-digit",
+                                            second: "2-digit",
+                                        });
+                                    }
                                 }
-                            }
+                            } catch(e) {}
 
-                            // 2. Kolom LME (Mengambil dari h.lme atau h.LME)
-                            const lmeVal = h.lme ?? h.LME ?? null;
-                            const lmeStr =
-                                lmeVal !== null
-                                    ? parseFloat(lmeVal).toLocaleString(
-                                          "id-ID",
-                                      ) + " USD/Ton"
-                                    : "-";
+                            let lmeStr = "-";
+                            try {
+                                const lmeVal = (h && h.lme !== undefined) ? h.lme : ((h && h.LME !== undefined) ? h.LME : null);
+                                if (lmeVal !== null && lmeVal !== undefined) {
+                                    const num = parseFloat(lmeVal);
+                                    if (!isNaN(num)) {
+                                        lmeStr = num.toLocaleString("id-ID") + " USD/Ton";
+                                    } else {
+                                        lmeStr = lmeVal + " USD/Ton";
+                                    }
+                                }
+                            } catch(e) {}
 
-                            // 3. Kolom KURS (Mengambil dari h.new_value)
-                            const kursVal = h.new_value ?? null;
-                            const kursStr =
-                                kursVal !== null
-                                    ? parseFloat(kursVal).toLocaleString(
-                                          "id-ID",
-                                      ) + " IDR/USD"
-                                    : "-";
+                            let kursStr = "-";
+                            try {
+                                const kursVal = (h && h.new_value !== undefined) ? h.new_value : null;
+                                if (kursVal !== null && kursVal !== undefined) {
+                                    const num = parseFloat(kursVal);
+                                    if (!isNaN(num)) {
+                                        kursStr = num.toLocaleString("id-ID") + " IDR/USD";
+                                    } else {
+                                        kursStr = kursVal + " IDR/USD";
+                                    }
+                                }
+                            } catch(e) {}
 
                             return `
                         <tr>
@@ -2651,7 +2660,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 console.error("Gagal merender price history:", error);
                 const tbody = document.getElementById("price-history-tbody");
                 if (tbody) {
-                    tbody.innerHTML = `<tr><td colspan="3"><div class="admin-table-empty" style="color:#ef4444;">Gagal memuat data riwayat</div></td></tr>`;
+                    tbody.innerHTML = `<tr><td colspan="3"><div class="admin-table-empty" style="color:#ef4444;">Gagal memuat data riwayat (Error: ${error.message || 'Unknown'})</div></td></tr>`;
                 }
             }
         };
@@ -3959,11 +3968,11 @@ document.addEventListener("DOMContentLoaded", () => {
                                 m.revenue > 0
                                     ? m.revenue >= 1000000000
                                         ? (m.revenue / 1000000000).toFixed(1) +
-                                          "M"
+                                          "B"
                                         : m.revenue >= 1000000
-                                          ? (m.revenue / 1000000).toFixed(0) +
-                                            "jt"
-                                          : (m.revenue / 1000).toFixed(0) + "k"
+                                          ? (m.revenue / 1000000).toFixed(1) +
+                                            "M"
+                                          : (m.revenue / 1000).toFixed(0) + "K"
                                     : "0";
 
                             return `
