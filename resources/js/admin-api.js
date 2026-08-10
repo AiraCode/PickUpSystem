@@ -952,6 +952,75 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
+    const renderGeneralPagination = function(
+        pagination,
+        containerId,
+        onClickFnName,
+    ) {
+        const container = document.getElementById(containerId);
+        if (!container) return;
+        if (!pagination || pagination.last_page <= 1) {
+            container.innerHTML = "";
+            window.__adminPaginationState =
+                window.__adminPaginationState || {};
+            delete window.__adminPaginationState[containerId];
+            return;
+        }
+
+        const isDark =
+            document.documentElement.classList.contains("admin-dark-mode");
+        const current = pagination.current_page || 1;
+        const last = pagination.last_page || 1;
+        const total = pagination.total || 0;
+        const from = pagination.from || 0;
+        const to = pagination.to || 0;
+
+        let html = `
+            <div style="font-size:12px; color:${isDark ? "#cbd5e1" : "#64748b"};">
+                <span>Menampilkan</span> <strong>${from}</strong> - <strong>${to}</strong> <span>dari</span> <strong>${total}</strong> <span>data</span>
+            </div>
+            <div style="display:flex; gap:4px; align-items:center;">
+        `;
+
+        const prevNextBase = isDark
+            ? "background:#0f172a; border:1px solid #334155; color:#e2e8f0;"
+            : "background:#fff; border:1px solid #d1d5db; color:#374151;";
+
+        if (current > 1) {
+            html += `<button type="button" onclick="${onClickFnName}(${current - 1})" class="admin-button admin-button--secondary" style="height:28px; padding:0 8px; font-size:11px; ${prevNextBase}">&laquo; Prev</button>`;
+        } else {
+            html += `<button type="button" disabled class="admin-button admin-button--secondary" style="height:28px; padding:0 8px; font-size:11px; opacity:0.5; cursor:not-allowed; ${prevNextBase}">&laquo; Prev</button>`;
+        }
+
+        for (let i = 1; i <= last; i++) {
+            if (
+                i === 1 ||
+                i === last ||
+                (i >= current - 1 && i <= current + 1)
+            ) {
+                const isActive = i === current;
+                html += `<button type="button" onclick="${onClickFnName}(${i})" style="height:28px; min-width:28px; padding:0 6px; border-radius:6px; font-size:11px; font-weight:600; cursor:pointer; border:1px solid ${isActive ? (isDark ? "#60a5fa" : "#2563eb") : isDark ? "#334155" : "#d1d5db"}; background:${isActive ? (isDark ? "#1d4ed8" : "#2563eb") : isDark ? "#0f172a" : "#fff"}; color:${isActive ? "#fff" : isDark ? "#e2e8f0" : "#374151"};">${i}</button>`;
+            } else if (i === current - 2 || i === current + 2) {
+                html += `<span style="align-self:center; color:${isDark ? "#94a3b8" : "#9ca3af"}; font-size:11px; padding:0 2px;">...</span>`;
+            }
+        }
+
+        if (current < last) {
+            html += `<button type="button" onclick="${onClickFnName}(${current + 1})" class="admin-button admin-button--secondary" style="height:28px; padding:0 8px; font-size:11px; ${prevNextBase}">Next &raquo;</button>`;
+        } else {
+            html += `<button type="button" disabled class="admin-button admin-button--secondary" style="height:28px; padding:0 8px; font-size:11px; opacity:0.5; cursor:not-allowed; ${prevNextBase}">Next &raquo;</button>`;
+        }
+
+        html += `</div>`;
+        container.innerHTML = html;
+        window.__adminPaginationState = window.__adminPaginationState || {};
+        window.__adminPaginationState[containerId] = {
+            pagination,
+            onClickFnName,
+        };
+    };
+    window.__renderGeneralPagination = renderGeneralPagination;
+
     if (window.location.pathname === "/admin/transaksi") {
         let activeStatus = "pending";
         let searchQuery = "";
@@ -1082,74 +1151,6 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         };
 
-        function renderGeneralPagination(
-            pagination,
-            containerId,
-            onClickFnName,
-        ) {
-            const container = document.getElementById(containerId);
-            if (!container) return;
-            if (!pagination || pagination.last_page <= 1) {
-                container.innerHTML = "";
-                window.__adminPaginationState =
-                    window.__adminPaginationState || {};
-                delete window.__adminPaginationState[containerId];
-                return;
-            }
-
-            const isDark =
-                document.documentElement.classList.contains("admin-dark-mode");
-            const current = pagination.current_page || 1;
-            const last = pagination.last_page || 1;
-            const total = pagination.total || 0;
-            const from = pagination.from || 0;
-            const to = pagination.to || 0;
-
-            let html = `
-                <div style="font-size:12px; color:${isDark ? "#cbd5e1" : "#64748b"};">
-                    <span>Menampilkan</span> <strong>${from}</strong> - <strong>${to}</strong> <span>dari</span> <strong>${total}</strong> <span>data</span>
-                </div>
-                <div style="display:flex; gap:4px; align-items:center;">
-            `;
-
-            const prevNextBase = isDark
-                ? "background:#0f172a; border:1px solid #334155; color:#e2e8f0;"
-                : "background:#fff; border:1px solid #d1d5db; color:#374151;";
-
-            if (current > 1) {
-                html += `<button type="button" onclick="${onClickFnName}(${current - 1})" class="admin-button admin-button--secondary" style="height:28px; padding:0 8px; font-size:11px; ${prevNextBase}">&laquo; Prev</button>`;
-            } else {
-                html += `<button type="button" disabled class="admin-button admin-button--secondary" style="height:28px; padding:0 8px; font-size:11px; opacity:0.5; cursor:not-allowed; ${prevNextBase}">&laquo; Prev</button>`;
-            }
-
-            for (let i = 1; i <= last; i++) {
-                if (
-                    i === 1 ||
-                    i === last ||
-                    (i >= current - 1 && i <= current + 1)
-                ) {
-                    const isActive = i === current;
-                    html += `<button type="button" onclick="${onClickFnName}(${i})" style="height:28px; min-width:28px; padding:0 6px; border-radius:6px; font-size:11px; font-weight:600; cursor:pointer; border:1px solid ${isActive ? (isDark ? "#60a5fa" : "#2563eb") : isDark ? "#334155" : "#d1d5db"}; background:${isActive ? (isDark ? "#1d4ed8" : "#2563eb") : isDark ? "#0f172a" : "#fff"}; color:${isActive ? "#fff" : isDark ? "#e2e8f0" : "#374151"};">${i}</button>`;
-                } else if (i === current - 2 || i === current + 2) {
-                    html += `<span style="align-self:center; color:${isDark ? "#94a3b8" : "#9ca3af"}; font-size:11px; padding:0 2px;">...</span>`;
-                }
-            }
-
-            if (current < last) {
-                html += `<button type="button" onclick="${onClickFnName}(${current + 1})" class="admin-button admin-button--secondary" style="height:28px; padding:0 8px; font-size:11px; ${prevNextBase}">Next &raquo;</button>`;
-            } else {
-                html += `<button type="button" disabled class="admin-button admin-button--secondary" style="height:28px; padding:0 8px; font-size:11px; opacity:0.5; cursor:not-allowed; ${prevNextBase}">Next &raquo;</button>`;
-            }
-
-            html += `</div>`;
-            container.innerHTML = html;
-            window.__adminPaginationState = window.__adminPaginationState || {};
-            window.__adminPaginationState[containerId] = {
-                pagination,
-                onClickFnName,
-            };
-        }
-        window.__renderGeneralPagination = renderGeneralPagination;
         let cachedOrders = [];
         let ordersPage = 1;
         let ordersPerPage = 20;
@@ -2646,7 +2647,7 @@ document.addEventListener("DOMContentLoaded", () => {
                         })
                         .join("");
                 } else {
-                    tbody.innerHTML = `<tr><td colspan="3"><div class="admin-table-empty">Belum ada riwayat perubahan parameter</div></td></tr>`;
+                    tbody.innerHTML = `<tr><td colspan="3"><div class="admin-table-empty">No parameter change history yet</div></td></tr>`;
                 }
 
                 if (res?.pagination) {
@@ -2669,26 +2670,43 @@ document.addEventListener("DOMContentLoaded", () => {
         if (formSettings) {
             formSettings.addEventListener("submit", async (e) => {
                 e.preventDefault();
-                const lme = parseFloat(
-                    document.getElementById("setting-lme").value,
-                );
-                const kurs = parseFloat(
-                    document.getElementById("setting-kurs").value,
-                );
+                const btn = formSettings.querySelector("button[type='submit']");
+                if (btn) {
+                    btn.disabled = true;
+                    btn.textContent = "Menyimpan...";
+                }
 
-                const res = await fetchApi("/settings", {
-                    method: "PUT",
-                    body: JSON.stringify({ lme, kurs }),
-                });
-
-                if (res && res.data) {
-                    showToast("LME & Kurs berhasil diperbarui!", "success");
-                    loadPriceHistory();
-                } else {
-                    showToast(
-                        res.message || "Gagal menyimpan LME & Kurs",
-                        "error",
+                try {
+                    const lme = parseFloat(
+                        document.getElementById("setting-lme").value,
                     );
+                    const kurs = parseFloat(
+                        document.getElementById("setting-kurs").value,
+                    );
+
+                    const res = await fetchApi("/settings", {
+                        method: "PUT",
+                        body: JSON.stringify({ lme, kurs }),
+                    });
+
+                    if (res && res.data) {
+                        showToast("LME & Kurs berhasil diperbarui! (LME & Exchange Rate updated successfully!)", "success");
+                        priceHistoryPage = 1; // Reset to page 1 to see the latest change
+                        await loadPriceHistory();
+                    } else {
+                        showToast(
+                            res.message || "Gagal menyimpan LME & Kurs",
+                            "error",
+                        );
+                    }
+                } catch (error) {
+                    showToast("Terjadi kesalahan sistem.", "error");
+                    console.error(error);
+                } finally {
+                    if (btn) {
+                        btn.disabled = false;
+                        btn.textContent = "Simpan LME & Kurs";
+                    }
                 }
             });
         }
@@ -2745,7 +2763,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     )
                     .join("");
             } else {
-                tbody.innerHTML = `<tr><td colspan="3"><div class="admin-table-empty"><strong>Belum ada kota</strong></div></td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="3"><div class="admin-table-empty"><strong>No cities found</strong></div></td></tr>`;
             }
         };
 
@@ -2792,13 +2810,16 @@ document.addEventListener("DOMContentLoaded", () => {
                         <td>${a.name}</td>
                         <td><span style="font-weight:600; color:#2563eb;">${a.berat_kering} kg</span></td>
                         <td style="text-align:right;">
-                            <button onclick="deleteAccu(${a.id})" class="admin-button admin-button--secondary" style="height:30px; font-size:11px; color:#ba1b2b;">Hapus</button>
+                            <div style="display:flex; gap:6px; justify-content:flex-end;">
+                                <button onclick="openEditAccu(${a.id}, '${(a.name||'').replace(/'/g,"&#39;")}', ${a.berat_kering})" class="admin-button admin-button--secondary" style="height:30px; font-size:11px;">Edit</button>
+                                <button onclick="deleteAccu(${a.id})" class="admin-button admin-button--secondary" style="height:30px; font-size:11px; color:#ba1b2b;">Delete</button>
+                            </div>
                         </td>
                     </tr>`,
                     )
                     .join("");
             } else {
-                tbody.innerHTML = `<tr><td colspan="4"><div class="admin-table-empty"><strong>Belum ada aki</strong></div></td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="4"><div class="admin-table-empty"><strong>No batteries found</strong></div></td></tr>`;
             }
             updateAccuTotal();
         };
@@ -3119,6 +3140,14 @@ document.addEventListener("DOMContentLoaded", () => {
             );
         };
 
+        window.openEditAccu = (id, name, berat_kering) => {
+            document.getElementById("edit-accu-id").value = id;
+            document.getElementById("edit-accu-name").value = name;
+            document.getElementById("edit-accu-berat-kering").value = berat_kering;
+            document.getElementById("modal-edit-accu").style.display = "flex";
+        };
+
+
         window.deleteNewAccu = (id) => {
             showConfirm(
                 "Hapus Aki Baru",
@@ -3130,6 +3159,31 @@ document.addEventListener("DOMContentLoaded", () => {
                 },
             );
         };
+
+        const formEditAccu = document.getElementById("form-edit-accu");
+        if (formEditAccu) {
+            formEditAccu.addEventListener("submit", async (e) => {
+                e.preventDefault();
+                const id = document.getElementById("edit-accu-id").value;
+                const name = document.getElementById("edit-accu-name").value;
+                const berat_kering = document.getElementById("edit-accu-berat-kering").value;
+
+                const res = await fetchApi(`/accus/${id}`, {
+                    method: "PUT",
+                    body: JSON.stringify({ name, berat_kering }),
+                });
+                if (res && res.data) {
+                    showToast("Battery updated successfully", "success");
+                    document.getElementById("modal-edit-accu").style.display = "none";
+                    formEditAccu.reset();
+                    loadAccus();
+                } else {
+                    let errMsg = res?.message || "Failed to update battery";
+                    if (res?.errors && res.errors.name) errMsg = res.errors.name[0];
+                    showToast(errMsg, "error");
+                }
+            });
+        }
 
         const formAddAccu = document.getElementById("form-add-accu");
         if (formAddAccu) {

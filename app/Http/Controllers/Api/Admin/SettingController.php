@@ -37,10 +37,16 @@ class SettingController extends Controller
         $newLme = (float) $validated['lme'];
         $newKurs = (float) $validated['kurs'];
 
+        if ($newLme == $oldLme && $newKurs == $oldKurs) {
+            return response()->json([
+                'message' => 'Tidak bisa perubahan harga LME dan Kurs. Coba dengan harga berbeda (Cannot change LME and Exchange Rate. Try a different price)',
+            ], 422);
+        }
+
         PriceHistory::create([
             'type' => 'lme',
-            'label' => 'Global LME',
-            'old_value' => $oldKurs,
+            'label' => 'Global LME & Kurs',
+            'old_value' => $oldLme,
             'new_value' => $newKurs,
             'lme' => $newLme,
         ]);

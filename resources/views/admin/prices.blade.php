@@ -150,7 +150,6 @@
         </div>
 
         <!-- Tab Aki Baru (Hidden) -->
-        <!--
         <div id="tab-new-accu" style="display: none;">
             <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin: 16px 20px;">
                 <select id="new-accus-per-page" class="admin-select" style="padding: 6px 10px; font-size:12px; border-radius:6px; background:#fff;">
@@ -316,6 +315,34 @@
                     <button type="button" class="admin-button admin-button--secondary"
                         onclick="document.getElementById('modal-add-city').style.display='none'">Batal</button>
                     <button type="submit" class="admin-button admin-button--primary">Simpan</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="modal-edit-accu"
+        style="display:none; position:fixed; inset:0; background:rgba(0,0,0,.45); z-index:100; align-items:center; justify-content:center;">
+        <div class="admin-panel" style="width:440px; max-width:92vw;">
+            <div class="admin-panel__head">
+                <h2>Edit Battery</h2>
+                <p style="font-size:12px; color:#6d727c; margin-top:2px;">Edit the battery type name and dry weight.</p>
+            </div>
+            <form id="form-edit-accu">
+                <input type="hidden" id="edit-accu-id">
+                <div style="margin-bottom:14px;">
+                    <label style="display:block; font-size:12px; font-weight:600; margin-bottom:6px; color:#4a4f59;">Battery Type</label>
+                    <input type="text" id="edit-accu-name" class="admin-select"
+                        style="width:100%; padding:8px 10px; border-radius:6px;" placeholder="e.g. NS40, NS60, N50Z" required>
+                </div>
+                <div style="margin-bottom:18px;">
+                    <label style="display:block; font-size:12px; font-weight:600; margin-bottom:6px; color:#4a4f59;">Dry Weight (kg)</label>
+                    <input type="number" step="0.01" id="edit-accu-berat-kering" class="admin-select"
+                        style="width:100%; padding:8px 10px; border-radius:6px;" placeholder="e.g. 5.50" required>
+                </div>
+                <div style="display:flex; gap:10px; justify-content:flex-end;">
+                    <button type="button" class="admin-button admin-button--secondary"
+                        onclick="document.getElementById('modal-edit-accu').style.display='none'">Cancel</button>
+                    <button type="submit" class="admin-button admin-button--primary">Save Changes</button>
                 </div>
             </form>
         </div>
