@@ -69,6 +69,18 @@ class WarehouseStockNotificationService
             return;
         }
 
+        // Generate PDF Struk Laporan Stok Aki
+        $pdfBinary = null;
+        try {
+            $pdfService = new WarehouseStockPdfService();
+            $pdfBinary = $pdfService->generatePdfReport($warehouse);
+        } catch (\Throwable $pdfEx) {
+            Log::error('Gagal membuat PDF Struk Laporan Stok Gudang: ' . $pdfEx->getMessage(), [
+                'warehouse_id' => $warehouse->id,
+                'error' => $pdfEx->getMessage(),
+            ]);
+        }
+
         try {
             $sender = $warehouseAdmins->first(function (User $user) {
                 return ! empty($user->smtp_email) && filter_var($user->smtp_email, FILTER_VALIDATE_EMAIL);
@@ -91,27 +103,37 @@ class WarehouseStockNotificationService
                     'mail.from.name' => $sender->name ?: 'AKIKU',
                 ]);
 
-                // Pakai mailer 'dynamic_smtp' secara eksplisit!
-                Mail::mailer('dynamic_smtp')->raw(
-                    "Gudang cabang {$warehouse->name} memiliki stok aki \u2265 20 unit.\n\nSilakan cek daftar gudang cabang yang siap diambil dan tekan OK untuk mengurangi stok aki pada gudang.\n\nLink: ".url('/admin/gudang'),
-                    function ($message) use ($warehouseAdminEmails, $centralEmails, $warehouse, $untaken, $sender) {
-                        $message->from($sender->smtp_email, $sender->name ?: 'Admin Gudang');
-                        $message->to($centralEmails);
-                        $message->replyTo($warehouseAdminEmails);
-                        $message->subject("Gudang {$warehouse->name} Siap Diambil - Stok {$untaken} Aki");
+                $safeWarehouseName = preg_replace('/[^a-zA-Z0-9_-]/', '_', $warehouse->name);
+                $pdfFileName = "Struk_Laporan_Stok_Gudang_{$safeWarehouseName}_" . date('Ymd_His') . ".pdf";
+
+                $htmlContent = "Yth. Tim Operasional Pusat,<br><br>"
+                    . "Gudang cabang <strong>{$warehouse->name}</strong> saat ini telah memiliki stok aki <strong>≥ 20 unit</strong> (Total: <strong>{$untaken} unit</strong>) yang siap diambil.<br><br>"
+                    . "Terlampir berkas PDF <strong>Struk Laporan Stok Aki Gudang</strong> yang berisi rincian jenis aki, merek, jumlah unit, dan estimasi berat.<br><br>"
+                    . "Silakan cek daftar gudang cabang yang siap diambil dan tekan tombol OK pada sistem untuk mengonfirmasi pengambilan barang.<br><br>"
+                    . "<a href='" . url('/admin/gudang') . "' style='display:inline-block; padding:10px 18px; background-color:#2563eb; color:#ffffff; text-decoration:none; border-radius:6px; font-weight:bold;'>Buka Halaman Gudang Admin</a><br><br>"
+                    . "Salam,<br>"
+                    . "<strong>Tim Admin Gudang {$warehouse->name}</strong>";
+
+                Mail::mailer('dynamic_smtp')->send([], [], function ($message) use ($warehouseAdminEmails, $centralEmails, $warehouse, $untaken, $sender, $htmlContent, $pdfBinary, $pdfFileName) {
+                    $message->from($sender->smtp_email, $sender->name ?: 'Admin Gudang');
+                    $message->to($centralEmails);
+                    $message->replyTo($warehouseAdminEmails);
+                    $message->subject("Struk Laporan Stok Gudang {$warehouse->name} Siap Diambil - {$untaken} Aki");
+                    $message->html($htmlContent);
+
+                    if (!empty($pdfBinary)) {
+                        $message->attachData($pdfBinary, $pdfFileName, [
+                            'mime' => 'application/pdf',
+                        ]);
                     }
-                );
+                });
             }
-        } catch (\Throwable $e) { // <-- DITARUH DI SINI
-            // Tangkap error secara detail
+        } catch (\Throwable $e) {
             Log::error('SMTP Error Surabaya: ' . $e->getMessage(), [
                 'file' => $e->getFile(),
                 'line' => $e->getLine(),
                 'trace' => $e->getTraceAsString()
             ]);
-            
-            // Un-comment baris di bawah ini jika ingin melempar error langsung ke browser/terminal saat testing:
-            // throw $e; 
             return;
         }
 
