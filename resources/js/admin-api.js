@@ -3000,7 +3000,11 @@ document.addEventListener("DOMContentLoaded", () => {
                         body: JSON.stringify({ lme, kurs }),
                     });
 
-                    const isEn = (localStorage.getItem("app_language") || (window.pageTranslator ? window.pageTranslator.activeLang : "id")) === "en";
+                    const isEn =
+                        (localStorage.getItem("app_language") ||
+                            (window.pageTranslator
+                                ? window.pageTranslator.activeLang
+                                : "id")) === "en";
 
                     if (res && res.data) {
                         savedLme = lme;
@@ -3026,7 +3030,10 @@ document.addEventListener("DOMContentLoaded", () => {
                         await loadNewAccus();
                     } else {
                         const errMsg =
-                            res?.message || (isEn ? "Failed to save LME & Exchange Rate" : "Gagal menyimpan LME & Kurs");
+                            res?.message ||
+                            (isEn
+                                ? "Failed to save LME & Exchange Rate"
+                                : "Gagal menyimpan LME & Kurs");
                         showToast(errMsg, "error");
                         if (alertEl) {
                             alertEl.style.display = "flex";
@@ -3037,7 +3044,11 @@ document.addEventListener("DOMContentLoaded", () => {
                         }
                     }
                 } catch (error) {
-                    const isEn = (localStorage.getItem("app_language") || (window.pageTranslator ? window.pageTranslator.activeLang : "id")) === "en";
+                    const isEn =
+                        (localStorage.getItem("app_language") ||
+                            (window.pageTranslator
+                                ? window.pageTranslator.activeLang
+                                : "id")) === "en";
                     const sysErrMsg = isEn
                         ? "A system error occurred while updating LME & Exchange Rate."
                         : "Terjadi kesalahan sistem saat memperbarui LME & Kurs.";
@@ -3052,9 +3063,15 @@ document.addEventListener("DOMContentLoaded", () => {
                     console.error(error);
                 } finally {
                     setTimeout(() => {
-                        const isEn = (localStorage.getItem("app_language") || (window.pageTranslator ? window.pageTranslator.activeLang : "id")) === "en";
+                        const isEn =
+                            (localStorage.getItem("app_language") ||
+                                (window.pageTranslator
+                                    ? window.pageTranslator.activeLang
+                                    : "id")) === "en";
                         if (btn) {
-                            btn.textContent = isEn ? "Save LME & Exchange Rate" : "Simpan LME & Kurs";
+                            btn.textContent = isEn
+                                ? "Save LME & Exchange Rate"
+                                : "Simpan LME & Kurs";
                         }
                         updateLmeButtonState();
                     }, 1200);
@@ -4008,21 +4025,102 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         };
 
+        window.closePickupModal = () => {
+            const modal = document.getElementById("modal-pickup-confirmation");
+            if (modal) modal.style.display = "none";
+        };
+
         window.confirmPickup = async (id) => {
-            if (
-                !confirm(
-                    "Konfirmasi bahwa Anda (Pusat) sudah mengambil seluruh aki yang siap dari gudang ini?",
-                )
-            )
-                return;
+            const modal = document.getElementById("modal-pickup-confirmation");
+            const titleEl = document.getElementById("pickup-modal-title");
+            const noticeEl = document.getElementById("pickup-modal-notice");
+            const tbody = document.getElementById("pickup-modal-tbody");
+            const totalCountEl = document.getElementById(
+                "pickup-modal-total-count",
+            );
+            const submitBtn = document.getElementById("btn-submit-pickup");
+
+            if (!modal) return;
+
+            modal.style.display = "flex";
+            tbody.innerHTML = `<tr><td colspan="3" style="text-align:center; padding:15px; color:#6b7280;">Memuat data rincian stok...</td></tr>`;
+            if (totalCountEl) totalCountEl.innerText = "0 Pcs";
+
             try {
-                const res = await fetchApi(`/storages/${id}/pickup`, {
-                    method: "POST",
-                });
-                showToast(res.message || "Barang berhasil diambil", "success");
-                loadReadyToPickup();
+                const res = await fetchApi(`/storages/${id}/stock`);
+                const warehouseName = res.warehouse
+                    ? res.warehouse.name
+                    : "Gudang Cabang";
+                const stocks = res.stocks
+                    ? res.stocks.filter((s) => s.total_quantity > 0)
+                    : [];
+                const totalItems = res.total_items || 0;
+
+                if (titleEl)
+                    titleEl.innerText = `Konfirmasi Pengambilan - ${warehouseName}`;
+                if (totalCountEl) totalCountEl.innerText = `${totalItems} Pcs`;
+
+                let noticeHtml = `<strong>Informasi Pengambilan:</strong> Jumlah aki yang akan diambil adalah <strong>${totalItems} unit</strong> dari ${warehouseName}.`;
+                if (totalItems > 20) {
+                    const extra = totalItems - 20;
+                    noticeHtml += `<br><span style="color:#2563eb; font-weight:bold;">Terdapat tambahan ${extra} unit aki baru</span> yang masuk setelah laporan pengambilan Aki (20 unit). Seluruh ${totalItems} unit ini akan dimasukkan ke dalam Tanda Terima Pengambilan.`;
+                }
+                if (noticeEl) noticeEl.innerHTML = noticeHtml;
+
+                if (stocks.length > 0) {
+                    tbody.innerHTML = stocks
+                        .map(
+                            (s, idx) => `
+                        <tr>
+                            <td style="text-align:center; font-weight:600;">${idx + 1}</td>
+                            <td style="font-weight:600; color:#1e293b;">${s.accu_name}</td>
+                            <td style="text-align:center; font-weight:700; color:#16a34a;">${s.total_quantity} Pcs</td>
+                        </tr>
+                    `,
+                        )
+                        .join("");
+                } else {
+                    tbody.innerHTML = `<tr><td colspan="3" style="text-align:center; padding:15px; color:#9ca3af;">Tidak ada stok aki untuk diambil.</td></tr>`;
+                }
+
+                if (submitBtn) {
+                    submitBtn.onclick = async () => {
+                        submitBtn.disabled = true;
+                        submitBtn.innerText = "Mengirim Tanda Terima...";
+                        try {
+                            const pickupRes = await fetchApi(
+                                `/storages/${id}/pickup`,
+                                {
+                                    method: "POST",
+                                },
+                            );
+                            showToast(
+                                pickupRes.message ||
+                                    "Pengambilan berhasil dikonfirmasi & Tanda Terima telah dikirim!",
+                                "success",
+                            );
+                            closePickupModal();
+                            loadReadyToPickup();
+                            loadStorages();
+                        } catch (err) {
+                            console.error(err);
+                            showToast(
+                                err.message ||
+                                    "Gagal mengonfirmasi pengambilan.",
+                                "error",
+                            );
+                        } finally {
+                            submitBtn.disabled = false;
+                            submitBtn.innerHTML = `
+                                <svg viewBox="0 0 24 24" style="width:14px; height:14px; fill:none; stroke:currentColor; stroke-width:2;"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                                Konfirmasi & Kirim Tanda Terima
+                            `;
+                        }
+                    };
+                }
             } catch (err) {
                 console.error(err);
+                tbody.innerHTML = `<tr><td colspan="3" style="text-align:center; padding:15px; color:#ef4444;">Gagal memuat rincian stok gudang.</td></tr>`;
             }
         };
 

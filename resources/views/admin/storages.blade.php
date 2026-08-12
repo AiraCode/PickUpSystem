@@ -157,6 +157,51 @@
         <div id="map-view" style="height:350px; border-radius:8px; border:1px solid #e5e7eb; z-index:1;"></div>
     </div>
 </div>
+
+<div id="modal-pickup-confirmation" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,.45); z-index:100; align-items:center; justify-content:center;">
+    <div class="admin-panel" style="width:620px; max-height:90vh; display:flex; flex-direction:column;">
+        <div class="admin-panel__head" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+            <div>
+                <h2 id="pickup-modal-title" style="color:#16a34a;">Konfirmasi Pengambilan Aki</h2>
+                <p id="pickup-modal-subtitle" style="font-size:12px; color:#6b7280; margin:2px 0 0 0;">Verifikasi rincian aki yang akan diambil dari gudang cabang.</p>
+            </div>
+            <button type="button" class="admin-button admin-button--secondary" style="padding:4px 8px;" onclick="closePickupModal()">&times;</button>
+        </div>
+
+        <div id="pickup-modal-notice" style="background:#f0fdf4; border:1px solid #bbf7d0; border-radius:6px; padding:10px 14px; margin-bottom:14px; font-size:12px; color:#15803d;">
+            <!-- Render notice dynamically -->
+        </div>
+
+        <div style="flex:1; overflow-y:auto; margin-bottom:16px; border:1px solid #e5e7eb; border-radius:8px;">
+            <table class="admin-table" style="margin:0;">
+                <thead>
+                    <tr>
+                        <th style="width:40px; text-align:center;">#</th>
+                        <th>Jenis Aki</th>
+                        <th style="text-align:center;">Jumlah (Pcs)</th>
+                    </tr>
+                </thead>
+                <tbody id="pickup-modal-tbody">
+                    <tr><td colspan="3" class="text-center">Memuat rincian stok...</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div style="display:flex; justify-content:space-between; align-items:center; border-top:1px solid #e5e7eb; padding-top:14px;">
+            <div>
+                <span style="font-size:12px; color:#6b7280;">Total Aki Diambil:</span>
+                <strong id="pickup-modal-total-count" style="font-size:15px; color:#16a34a; margin-left:4px;">0 Pcs</strong>
+            </div>
+            <div style="display:flex; gap:10px;">
+                <button type="button" class="admin-button admin-button--secondary" onclick="closePickupModal()">Batal</button>
+                <button type="button" id="btn-submit-pickup" class="admin-button admin-button--primary" style="background:#16a34a; border-color:#16a34a;">
+                    <svg viewBox="0 0 24 24" style="width:14px; height:14px; fill:none; stroke:currentColor; stroke-width:2;"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                    Konfirmasi & Kirim Tanda Terima
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
 @endsection
 
 

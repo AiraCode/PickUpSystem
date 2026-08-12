@@ -249,6 +249,22 @@ class WarehouseController extends Controller
     {
         $warehouse = Warehouse::findOrFail($id);
 
+        $untakenTotal = (int) \Illuminate\Support\Facades\DB::table('orders')
+            ->join('receipts', 'orders.id', '=', 'receipts.orders_id')
+            ->join('accus_has_receipts', 'receipts.id', '=', 'accus_has_receipts.receipts_id')
+            ->whereIn('orders.status', ['arrived_at_warehouse', 'completed'])
+            ->where('orders.storages_id', $id)
+            ->where('orders.taken_by_central', false)
+            ->sum('accus_has_receipts.amount');
+
+        // Kirim email tanda terima pengambilan SEBELUM di-update agar data items PDF terambil dengan tepat
+        try {
+            $notificationService = new WarehouseStockNotificationService();
+            $notificationService->sendPickupReceiptEmail($warehouse, $untakenTotal);
+        } catch (\Throwable $e) {
+            \Illuminate\Support\Facades\Log::error('Gagal mengirim email tanda terima pengambilan: ' . $e->getMessage());
+        }
+
         $updatedCount = \App\Models\Order::where('storages_id', $id)
             ->whereIn('status', ['arrived_at_warehouse', 'completed'])
             ->where('taken_by_central', false)
@@ -263,7 +279,7 @@ class WarehouseController extends Controller
             \App\Models\Activity::create([
                 'type' => 'warehouse_pickup',
                 'title' => 'Pengambilan Aki ' . $warehouse->name,
-                'description' => 'Admin Pusat mengambil barang yang sudah siap dari gudang cabang.',
+                'description' => "Admin Pusat mengambil {$untakenTotal} aki yang sudah siap dari gudang cabang.",
                 'related_id' => $id,
                 'related_type' => Warehouse::class,
             ]);
