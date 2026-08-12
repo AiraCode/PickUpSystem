@@ -34,6 +34,7 @@ class NotifMail extends Mailable
      */
     public function envelope(): Envelope
     {
+        return new Envelope();
     }
 
     /**

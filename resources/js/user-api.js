@@ -1121,10 +1121,10 @@ document.addEventListener("DOMContentLoaded", () => {
                     showCustomAlert(window.i18n ? window.i18n.t('error.upload_identity', 'Harap upload foto identitas Anda.') : "Harap upload foto identitas Anda.");
                     return;
                 }
-                
+
                 let ktpBase64 = null;
                 let accuKtpBase64 = null;
-                
+
                 try {
                     if (ktpFile) {
                         ktpBase64 = await new Promise((resolve, reject) => {
@@ -1538,8 +1538,44 @@ document.addEventListener("DOMContentLoaded", () => {
                             dds[0].textContent = isCourier
                                 ? (window.i18n ? window.i18n.t('delivery.courier', 'Dijemput Kurir') : "Dijemput Kurir")
                                 : (window.i18n ? window.i18n.t('delivery.warehouse', 'Antar ke Gudang') : "Antar ke Gudang");
-                        if (dds[1])
-                            dds[1].textContent = o.city ? o.city.name : "-";
+                        if (dds[1]) {
+                            if (isCourier) {
+                                dds[1].textContent = o.city ? o.city.name : "-";
+                            } else {
+                                const cityName = o.city ? o.city.name : (o.warehouse ? o.warehouse.name : "-");
+                                const warehouseAddress = o.warehouse ? o.warehouse.address : null;
+                                const lat = o.warehouse ? o.warehouse.lat : null;
+                                const long = o.warehouse ? o.warehouse.long : null;
+
+                                let mapUrl = "#";
+                                if (lat && long) {
+                                    mapUrl = `https://www.google.com/maps?q=${lat},${long}`;
+                                } else if (warehouseAddress) {
+                                    mapUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(warehouseAddress)}`;
+                                }
+
+                                const mapLinkText = window.i18n ? window.i18n.t('receipt.view_map', 'Lihat Peta') : 'Lihat Peta';
+
+                                let html = `<div>${cityName}</div>`;
+                                if (warehouseAddress) {
+                                    html += `<div class="receipt-warehouse-address">${warehouseAddress}</div>`;
+                                }
+                                if (mapUrl !== "#") {
+                                    html += `
+                                        <div style="margin-top: 4px;">
+                                            <a href="${mapUrl}" target="_blank" rel="noopener noreferrer" class="receipt-map-link">
+                                                <svg style="width:13px; height:13px; fill:none; stroke:currentColor;" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                                </svg>
+                                                <span>${mapLinkText}</span>
+                                            </a>
+                                        </div>
+                                    `;
+                                }
+                                dds[1].innerHTML = html;
+                            }
+                        }
                         if (dds[2])
                             dds[2].textContent =
                                 isCourier && deliveryCost > 0
@@ -2591,33 +2627,33 @@ document.addEventListener("DOMContentLoaded", () => {
                             }
                         }
 
-                    if (results && results.length > 0) {
-                        const lat = parseFloat(results[0].lat);
-                        const lon = parseFloat(results[0].lon);
-                        const fullSearchAddress = results[0].display_name || null;
+                        if (results && results.length > 0) {
+                            const lat = parseFloat(results[0].lat);
+                            const lon = parseFloat(results[0].lon);
+                            const fullSearchAddress = results[0].display_name || null;
 
-                        if (userMap && userMarker) {
-                            userMap.setView([lat, lon], 16);
-                            userMarker.setLatLng([lat, lon]);
+                            if (userMap && userMarker) {
+                                userMap.setView([lat, lon], 16);
+                                userMarker.setLatLng([lat, lon]);
+                            }
+                            await updateLocationFromMarker(lat, lon, true, fullSearchAddress);
+                        } else {
+                            showCustomAlert(
+                                "Lokasi tidak ditemukan. Cobalah hapus nomor rumah atau cari nama jalan utamanya saja, lalu geser pin secara manual.",
+                            );
                         }
-                        await updateLocationFromMarker(lat, lon, true, fullSearchAddress);
-                    } else {
-                        showCustomAlert(
-                            "Lokasi tidak ditemukan. Cobalah hapus nomor rumah atau cari nama jalan utamanya saja, lalu geser pin secara manual.",
-                        );
+                    } catch (e) {
+                        console.error(e);
                     }
-                } catch (e) {
-                    console.error(e);
-                }
-                btnMapSearch.textContent = oldText;
-            });
-            mapSearchInput.addEventListener("keypress", (e) => {
-                if (e.key === "Enter") {
-                    e.preventDefault();
-                    btnMapSearch.click();
-                }
-            });
-        }
+                    btnMapSearch.textContent = oldText;
+                });
+                mapSearchInput.addEventListener("keypress", (e) => {
+                    if (e.key === "Enter") {
+                        e.preventDefault();
+                        btnMapSearch.click();
+                    }
+                });
+            }
 
             const btnDetectLocation = document.getElementById("btn-detect-current-location");
             if (btnDetectLocation && !btnDetectLocation.hasAttribute("data-bound")) {

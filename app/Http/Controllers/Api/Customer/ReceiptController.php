@@ -11,13 +11,25 @@ class ReceiptController extends Controller
 {
     public function show(int $orderId): JsonResponse
     {
-        $order = \App\Models\Order::with(['city', 'customer.bank', 'receipt.accus', 'newAccusItems', 'newAccu'])->find($orderId);
+        $order = \App\Models\Order::with(['city', 'warehouse', 'customer.bank', 'receipt.accus', 'newAccusItems', 'newAccu'])->find($orderId);
 
         if (! $order) {
             return response()->json([
                 'message' => 'Struk / pesanan tidak ditemukan',
                 'data' => null,
             ], 404);
+        }
+
+        $warehouse = $order->warehouse;
+        if (! $warehouse && ($order->delivery_method ?? 'warehouse') !== 'courier') {
+            if ($order->city) {
+                $warehouse = \App\Models\Warehouse::where('name', 'LIKE', '%' . $order->city->name . '%')
+                    ->orWhere('address', 'LIKE', '%' . $order->city->name . '%')
+                    ->first();
+            }
+            if (! $warehouse) {
+                $warehouse = \App\Models\Warehouse::first();
+            }
         }
 
         $receiptData = null;
@@ -107,6 +119,7 @@ class ReceiptController extends Controller
                 'updated_at' => $order->updated_at,
                 'customer' => $order->customer,
                 'city' => $order->city,
+                'warehouse' => $warehouse,
                 'pickup_address' => $order->pickup_address,
                 'pickup_address_note' => $order->pickup_address_note,
                 'cancel_reason' => $order->cancel_reason,
