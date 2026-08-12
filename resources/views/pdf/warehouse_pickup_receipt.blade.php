@@ -219,11 +219,7 @@
         <table class="header-table">
             <tr>
                 <td style="width: 45%;">
-                    @if(!empty($logoBase64))
-                        <img src="data:image/png;base64,{{ $logoBase64 }}" class="company-logo" alt="Logo">
-                    @else
-                        <h3 style="margin:0; color:#14532d; font-size:20px; font-weight:800;">AKIKU SYSTEM</h3>
-                    @endif
+                    <h1>MODERN MULYA MANDIRI</h1>
                 </td>
                 <td class="doc-title" style="width: 55%;">
                     <h2>STRUK TANDA TERIMA PENGAMBILAN AKI</h2>
@@ -282,7 +278,6 @@
                 <tr>
                     <th class="text-center" style="width: 35px;">NO</th>
                     <th>JENIS AKI (BATTERY NAME)</th>
-                    <th>MEREK (BRAND)</th>
                     <th class="text-right">BERAT KERING / UNIT (KG)</th>
                     <th class="text-center">JUMLAH (QTY)</th>
                     <th class="text-right">SUBTOTAL BERAT (KG)</th>
