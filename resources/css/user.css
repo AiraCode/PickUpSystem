@@ -28,6 +28,7 @@ body.user-shell {
         BlinkMacSystemFont,
         "Segoe UI",
         sans-serif;
+    overflow-x: hidden;
 }
 
 body.user-shell *,
@@ -66,8 +67,8 @@ body.user-shell textarea:focus-visible {
 .user-container {
     margin: 0 auto;
     max-width: 1180px;
-    padding: 0 40px;
-    width: 100%;
+    padding-inline: clamp(16px, 3vw, 40px);
+    width: min(100%, 1180px);
 }
 
 .user-header {
@@ -2598,6 +2599,33 @@ body.user-shell textarea:focus-visible {
 /* ===========================================================
    MOBILE (<=720px)
 =========================================================== */
+@media (max-width: 390px) {
+    .user-container {
+        padding-left: 12px;
+        padding-right: 12px;
+    }
+
+    .user-header__inner {
+        padding-left: 10px;
+        padding-right: 10px;
+    }
+
+    .user-brand__copy strong {
+        white-space: normal;
+    }
+
+    .user-hero h1 {
+        letter-spacing: -0.04em;
+    }
+
+    .user-button,
+    .user-header__cta {
+        min-width: 0;
+        padding-left: 14px;
+        padding-right: 14px;
+    }
+}
+
 @media (max-width: 720px) {
     .user-menu-toggle {
         display: inline-flex;
