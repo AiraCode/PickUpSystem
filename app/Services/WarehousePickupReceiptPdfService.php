@@ -7,15 +7,14 @@ use App\Models\Warehouse;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\DB;
 
-class WarehouseStockPdfService
+class WarehousePickupReceiptPdfService
 {
     /**
-     * Generate PDF binary content for the untaken battery report of a warehouse.
+     * Generate PDF binary content for the pickup receipt of a warehouse.
      */
-    public function generatePdfReport(Warehouse $warehouse): string
+    public function generateReceiptPdf(Warehouse $warehouse): string
     {
-
-        // Query untaken battery items currently sitting in this warehouse
+        // Query untaken battery items currently sitting in this warehouse (before marking as taken, or recently taken)
         $items = DB::table('orders')
             ->join('receipts', 'orders.id', '=', 'receipts.orders_id')
             ->join('accus_has_receipts', 'receipts.id', '=', 'accus_has_receipts.receipts_id')
@@ -57,7 +56,7 @@ class WarehouseStockPdfService
             $logoBase64 = base64_encode(file_get_contents($logoPath));
         }
 
-        $reportDate = \Carbon\Carbon::now('Asia/Jakarta')->format('d F Y, H:i') . ' WIB';
+        $receiptDate = \Carbon\Carbon::now('Asia/Jakarta')->format('d F Y, H:i') . ' WIB';
 
         $data = [
             'warehouse' => $warehouse,
@@ -67,10 +66,10 @@ class WarehouseStockPdfService
             'adminName' => $adminName,
             'adminEmail' => $adminEmail,
             'logoBase64' => $logoBase64,
-            'reportDate' => $reportDate,
+            'receiptDate' => $receiptDate,
         ];
 
-        return Pdf::loadView('pdf.warehouse_stock_report', $data)
+        return Pdf::loadView('pdf.warehouse_pickup_receipt', $data)
             ->setPaper('a4', 'portrait')
             ->output();
     }

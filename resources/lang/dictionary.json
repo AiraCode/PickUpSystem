@@ -2761,5 +2761,32 @@
   },
   "Nomor WhatsApp":{
     "en": "WhatsApp Number"
+  },
+  "Informasi Pengambilan: Jumlah aki yang akan diambil adalah":{
+    "en": "Pickup Information: The number of batteries to be picked up are"
+  },
+  "Terdapat tambahan":{
+    "en": "There are additional"
+  },
+  "yang masuk setelah laporan pengambilan Aki": {
+    "en": "added after the battery pickup report"
+  },
+  "Seluruh":{
+    "en": "All"
+  },
+  "ini akan dimasukkan ke dalam Tanda Terima Pengambilan.":{
+    "en": "will be included in the Pickup Receipt."
+  },
+  "Verifikasi rincian aki yang akan diambil dari gudang cabang.":{
+    "en": "Verify the details of the batteries to be picked up from the branch warehouse."
+  },
+  "Konfirmasi Pengambilan":{
+    "en": "Pickup Confirmation"
+  },
+  "yang akan diambil adalah ":{
+    "en": "to be picked up are "
+  },
+  "Konfirmasi & Kirim Tanda Terima":{
+    "en": "Confirm & Send Receipt"
   }
 }

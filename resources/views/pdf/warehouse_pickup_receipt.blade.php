@@ -3,7 +3,7 @@
 
     <head>
         <meta charset="UTF-8">
-        <title>Struk Laporan Stok Aki Gudang - {{ $warehouse->name }}</title>
+        <title>Struk Tanda Terima Pengambilan Aki - {{ $warehouse->name }}</title>
         <style>
             @page {
                 size: A4 portrait;
@@ -18,12 +18,11 @@
                 background-color: #ffffff;
             }
 
-            /* Header Layout */
             .header-table {
                 width: 100%;
                 border-collapse: collapse;
                 margin-bottom: 20px;
-                border-bottom: 2px solid #2563eb;
+                border-bottom: 2px solid #16a34a;
                 padding-bottom: 12px;
             }
 
@@ -44,7 +43,7 @@
                 margin: 0;
                 font-size: 18px;
                 font-weight: 800;
-                color: #1e3a8a;
+                color: #14532d;
                 letter-spacing: 0.5px;
                 text-transform: uppercase;
             }
@@ -69,7 +68,6 @@
                 margin-top: 4px;
             }
 
-            /* Meta Info Card Grid */
             .meta-card {
                 width: 100%;
                 border-collapse: collapse;
@@ -108,7 +106,6 @@
                 margin-top: 1px;
             }
 
-            /* Items Table */
             .items-table {
                 width: 100%;
                 border-collapse: collapse;
@@ -116,14 +113,14 @@
             }
 
             .items-table th {
-                background-color: #1e3a8a;
+                background-color: #15803d;
                 color: #ffffff;
                 font-size: 10px;
                 font-weight: 700;
                 text-transform: uppercase;
                 padding: 8px 10px;
                 text-align: left;
-                border: 1px solid #1e3a8a;
+                border: 1px solid #15803d;
             }
 
             .items-table td {
@@ -145,20 +142,19 @@
             }
 
             .grand-total-row td {
-                background-color: #eff6ff;
-                border-top: 2px solid #2563eb;
+                background-color: #f0fdf4;
+                border-top: 2px solid #16a34a;
                 font-weight: 800;
-                color: #1e3a8a;
+                color: #14532d;
                 font-size: 11px;
             }
 
-            /* Notes & Warning Callout */
             .notice-box {
-                background-color: #fefce8;
-                border-left: 4px solid #eab308;
-                border-top: 1px solid #fef08a;
-                border-right: 1px solid #fef08a;
-                border-bottom: 1px solid #fef08a;
+                background-color: #f0fdf4;
+                border-left: 4px solid #16a34a;
+                border-top: 1px solid #bbf7d0;
+                border-right: 1px solid #bbf7d0;
+                border-bottom: 1px solid #bbf7d0;
                 padding: 10px 12px;
                 border-radius: 4px;
                 margin-bottom: 25px;
@@ -167,10 +163,9 @@
             .notice-box p {
                 margin: 0;
                 font-size: 9.5px;
-                color: #854d0e;
+                color: #14532d;
             }
 
-            /* Signatures Section */
             .signatures-table {
                 width: 100%;
                 border-collapse: collapse;
@@ -227,8 +222,8 @@
                     <h1>MODERN MULYA MANDIRI</h1>
                 </td>
                 <td class="doc-title" style="width: 55%;">
-                    <h2>STRUK LAPORAN STOK GUDANG</h2>
-                    <p>No. Dokumen: REF-WH-{{ $warehouse->id }}-{{ date('YmdHi') }}</p>
+                    <h2>STRUK TANDA TERIMA PENGAMBILAN AKI</h2>
+                    <p>No. Tanda Terima: REC-WH-{{ $warehouse->id }}-{{ date('YmdHi') }}</p>
                 </td>
             </tr>
         </table>
@@ -256,16 +251,16 @@
                 </td>
                 <td style="border-left: 1px solid #e2e8f0;">
                     <div class="meta-item">
-                        <div class="meta-label">Waktu Laporan Diterbitkan</div>
-                        <div class="meta-value">{{ $reportDate }}</div>
+                        <div class="meta-label">Waktu Konfirmasi Pengambilan</div>
+                        <div class="meta-value">{{ $receiptDate }}</div>
                     </div>
                     <div class="meta-item">
-                        <div class="meta-label">Penanggung Jawab Gudang</div>
-                        <div class="meta-value">{{ $adminName }} </div>
+                        <div class="meta-label">Petugas Admin Gudang</div>
+                        <div class="meta-value">{{ $adminName }}</div>
                     </div>
                     <div class="meta-item">
-                        <div class="meta-label">Total Akumulasi Aki Siap Diambil</div>
-                        <div class="meta-value" style="color:#2563eb; font-size:12px;">
+                        <div class="meta-label">Total Unit Diterima Pusat</div>
+                        <div class="meta-value" style="color:#15803d; font-size:12px;">
                             {{ number_format($totalQty, 0, ',', '.') }} Unit
                         </div>
                     </div>
@@ -274,8 +269,8 @@
         </table>
 
         <!-- Rincian Stok Table -->
-        <h4 style="margin: 0 0 8px 0; color:#1e3a8a; font-size:12px; font-weight:700; text-transform:uppercase;">
-            Rincian Stok Jenis Aki Dalam Gudang
+        <h4 style="margin: 0 0 8px 0; color:#14532d; font-size:12px; font-weight:700; text-transform:uppercase;">
+            Rincian Aki Yang Diambil Oleh Pusat
         </h4>
 
         <table class="items-table">
@@ -300,7 +295,7 @@
                         <td style="font-weight:600;">{{ $item->name }}</td>
                         <td>{{ $item->brand ?? '-' }}</td>
                         <td class="text-right">{{ number_format($unitWeight, 2, ',', '.') }} kg</td>
-                        <td class="text-center" style="font-weight:700; color:#1d4ed8;">
+                        <td class="text-center" style="font-weight:700; color:#15803d;">
                             {{ number_format($qty, 0, ',', '.') }} Pcs
                         </td>
                         <td class="text-right" style="font-weight:600;">{{ number_format($subtotalWeight, 2, ',', '.') }} kg
@@ -315,7 +310,7 @@
                 @endforelse
 
                 <tr class="grand-total-row">
-                    <td colspan="4" class="text-right">TOTAL STOK SIAP DIAMBIL:</td>
+                    <td colspan="4" class="text-right">GRAND TOTAL AKI DITERIMA PUSAT:</td>
                     <td class="text-center" style="font-size:12px;">{{ number_format($totalQty, 0, ',', '.') }} Pcs</td>
                     <td class="text-right" style="font-size:12px;">{{ number_format($totalWeight, 2, ',', '.') }} kg
                     </td>
@@ -325,30 +320,30 @@
 
         <!-- Notice Box -->
         <div class="notice-box">
-            <p><strong>Catatan:</strong> Dokumen ini diterbitkan secara otomatis oleh sistem saat jumlah
-                stok aki di gudang mencapai {{ number_format($totalQty, 0, ',', '.') }} unit. Mohon dilakukan verifikasi
-                fisik jumlah unit dan jenis aki saat proses serah terima barang ke Kurir Pusat.</p>
+            <p><strong>Tanda Terima Resmi:</strong> Dokumen ini merupakan bukti sah pengambilan barang oleh Tim Pusat
+                dari Gudang {{ $warehouse->name }}. Seluruh unit aki terlampir telah diverifikasi dan diserahkan secara
+                lengkap.</p>
         </div>
 
         <!-- Signatures -->
         <table class="signatures-table">
             <tr>
                 <td>
-                    <div class="sig-title">Petugas Admin Gudang Cabang</div>
+                    <div class="sig-title">Yang Menyerahkan (Admin Gudang)</div>
                     <div class="sig-name">{{ $adminName }}</div>
                     <div class="sig-role">Gudang {{ $warehouse->name }}</div>
                 </td>
                 <td>
-                    <div class="sig-title">Kurir / Perwakilan Pusat</div>
-                    <div class="sig-name">( &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
-                        &nbsp; &nbsp; &nbsp; &nbsp; )</div>
-                    <div class="sig-role">Tim Operasional Pusat</div>
+                    <div class="sig-title">Yang Menerima (Admin Pusat)</div>
+                    <div class="sig-name">Tim Operasional Pusat</div>
+                    <div class="sig-role">Akiku System Central</div>
                 </td>
             </tr>
         </table>
 
         <div class="footer-note">
-            Struk Resmi Laporan Stok Aki Gudang &bull; Printed via AKIKU &bull; {{ date('d/m/Y H:i:s') }} WIB
+            Struk Resmi Tanda Terima Pengambilan Aki &bull; Printed via AKIKU &bull; {{ date('d/m/Y H:i:s') }}
+            WIB
         </div>
 
     </body>
