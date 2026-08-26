@@ -237,10 +237,10 @@ document.addEventListener("DOMContentLoaded", () => {
         window.i18n
             ? window.i18n.formatCurrency(n)
             : new Intl.NumberFormat("id-ID", {
-                  style: "currency",
-                  currency: "IDR",
-                  maximumFractionDigits: 0,
-              }).format(n);
+                style: "currency",
+                currency: "IDR",
+                maximumFractionDigits: 0,
+            }).format(n);
 
     // ── Global Order / Activity Popup Notification System ────────────────────
     let notifPopupTimeout = null;
@@ -640,31 +640,31 @@ document.addEventListener("DOMContentLoaded", () => {
             document.documentElement.classList.contains("admin-dark-mode");
         const colors = isDark
             ? {
-                  pending: { bg: "rgba(245, 158, 11, 0.25)", color: "#fbbf24" },
-                  processing: {
-                      bg: "rgba(59, 130, 246, 0.25)",
-                      color: "#60a5fa",
-                  },
-                  arrived_at_warehouse: {
-                      bg: "rgba(139, 92, 246, 0.25)",
-                      color: "#c084fc",
-                  },
-                  completed: {
-                      bg: "rgba(16, 185, 129, 0.25)",
-                      color: "#34d399",
-                  },
-                  cancelled: {
-                      bg: "rgba(239, 68, 68, 0.25)",
-                      color: "#f87171",
-                  },
-              }
+                pending: { bg: "rgba(245, 158, 11, 0.25)", color: "#fbbf24" },
+                processing: {
+                    bg: "rgba(59, 130, 246, 0.25)",
+                    color: "#60a5fa",
+                },
+                arrived_at_warehouse: {
+                    bg: "rgba(139, 92, 246, 0.25)",
+                    color: "#c084fc",
+                },
+                completed: {
+                    bg: "rgba(16, 185, 129, 0.25)",
+                    color: "#34d399",
+                },
+                cancelled: {
+                    bg: "rgba(239, 68, 68, 0.25)",
+                    color: "#f87171",
+                },
+            }
             : {
-                  pending: { bg: "#fef3c7", color: "#92400e" },
-                  processing: { bg: "#dbeafe", color: "#1e40af" },
-                  arrived_at_warehouse: { bg: "#f3e8ff", color: "#6b21a8" },
-                  completed: { bg: "#d1fae5", color: "#065f46" },
-                  cancelled: { bg: "#fee2e2", color: "#991b1b" },
-              };
+                pending: { bg: "#fef3c7", color: "#92400e" },
+                processing: { bg: "#dbeafe", color: "#1e40af" },
+                arrived_at_warehouse: { bg: "#f3e8ff", color: "#6b21a8" },
+                completed: { bg: "#d1fae5", color: "#065f46" },
+                cancelled: { bg: "#fee2e2", color: "#991b1b" },
+            };
         const c =
             colors[status] ||
             (isDark
@@ -820,9 +820,9 @@ document.addEventListener("DOMContentLoaded", () => {
                 showToast(
                     window.i18n
                         ? window.i18n.t(
-                              "toast.updated_successfully",
-                              "Profil berhasil diperbarui!",
-                          )
+                            "toast.updated_successfully",
+                            "Profil berhasil diperbarui!",
+                        )
                         : "Profil berhasil diperbarui!",
                     "success",
                 );
@@ -878,9 +878,9 @@ document.addEventListener("DOMContentLoaded", () => {
                 showToast(
                     window.i18n
                         ? window.i18n.t(
-                              "toast.updated_successfully",
-                              "Profil berhasil diperbarui!",
-                          )
+                            "toast.updated_successfully",
+                            "Profil berhasil diperbarui!",
+                        )
                         : "Profil berhasil diperbarui!",
                     "success",
                 );
@@ -976,12 +976,11 @@ document.addEventListener("DOMContentLoaded", () => {
                         <td>${o.customer ? o.customer.name : "-"}</td>
                         <td>${o.city ? o.city.name : "-"}</td>
                         <td>
-                            ${
-                                o.delivery_method === "courier"
-                                    ? '<span style="background:#dbeafe; color:#1e40af; padding:2px 8px; border-radius:12px; font-size:11px; font-weight:600;">Kurir</span>'
-                                    : o.delivery_method === "warehouse"
-                                      ? '<span style="background:#fef3c7; color:#92400e; padding:2px 8px; border-radius:12px; font-size:11px; font-weight:600;">Kirim Sendiri</span>'
-                                      : '<span style="color:#6b7280;">-</span>'
+                            ${o.delivery_method === "courier"
+                                ? '<span style="background:#dbeafe; color:#1e40af; padding:2px 8px; border-radius:12px; font-size:11px; font-weight:600;">Kurir</span>'
+                                : o.delivery_method === "warehouse"
+                                    ? '<span style="background:#fef3c7; color:#92400e; padding:2px 8px; border-radius:12px; font-size:11px; font-weight:600;">Kirim Sendiri</span>'
+                                    : '<span style="color:#6b7280;">-</span>'
                             }
                         </td>
                         <td>${parseSafeDate(o.created_at).toLocaleDateString("id-ID")}</td>
@@ -1451,21 +1450,19 @@ document.addEventListener("DOMContentLoaded", () => {
                             ${isEditPending ? '<span style="display:block; font-size:9px; color:#d97706; font-weight:700; margin-top:2px;">[EDITED]</span>' : ""}
                         </td>
                         <td>
-                            ${
-                                o.order_type === "trade_in"
-                                    ? '<span style="background:#fef3c7; color:#92400e; padding:2px 6px; border-radius:4px; font-size:10px; font-weight:700;">TRADE IN</span>'
-                                    : '<span style="background:#e0e7ff; color:#3730a3; padding:2px 6px; border-radius:4px; font-size:10px; font-weight:700;">JUAL</span>'
+                            ${o.order_type === "trade_in"
+                                ? '<span style="background:#fef3c7; color:#92400e; padding:2px 6px; border-radius:4px; font-size:10px; font-weight:700;">TRADE IN</span>'
+                                : '<span style="background:#e0e7ff; color:#3730a3; padding:2px 6px; border-radius:4px; font-size:10px; font-weight:700;">JUAL</span>'
                             }
                         </td>
                         <td style="font-weight:500;">${o.customer ? o.customer.name : "-"}</td>
                         <td>${o.city ? o.city.name : "-"}</td>
                         <td>
-                            ${
-                                o.delivery_method === "courier"
-                                    ? '<span style="background:#dbeafe; color:#1e40af; padding:2px 8px; border-radius:12px; font-size:11px; font-weight:600;">Kurir</span>'
-                                    : o.delivery_method === "warehouse"
-                                      ? '<span style="background:#fef3c7; color:#92400e; padding:2px 8px; border-radius:12px; font-size:11px; font-weight:600;">Kirim Sendiri</span>'
-                                      : '<span style="color:#6b7280;">-</span>'
+                            ${o.delivery_method === "courier"
+                                ? '<span style="background:#dbeafe; color:#1e40af; padding:2px 8px; border-radius:12px; font-size:11px; font-weight:600;">Kurir</span>'
+                                : o.delivery_method === "warehouse"
+                                    ? '<span style="background:#fef3c7; color:#92400e; padding:2px 8px; border-radius:12px; font-size:11px; font-weight:600;">Kirim Sendiri</span>'
+                                    : '<span style="color:#6b7280;">-</span>'
                             }
                         </td>
                         <td style="max-width:200px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${o.pickup_address || "-"}</td>
@@ -1527,42 +1524,42 @@ document.addEventListener("DOMContentLoaded", () => {
                 activeCard.classList.add("active");
                 const cardColors = isDark
                     ? {
-                          pending: {
-                              border: "#f59e0b",
-                              bg: "rgba(245, 158, 11, 0.18)",
-                          },
-                          processing: {
-                              border: "#3b82f6",
-                              bg: "rgba(59, 130, 246, 0.18)",
-                          },
-                          arrived_at_warehouse: {
-                              border: "#8b5cf6",
-                              bg: "rgba(139, 92, 246, 0.18)",
-                          },
-                          completed: {
-                              border: "#10b981",
-                              bg: "rgba(16, 185, 129, 0.18)",
-                          },
-                          cancelled: {
-                              border: "#ef4444",
-                              bg: "rgba(239, 68, 68, 0.18)",
-                          },
-                          all: {
-                              border: "#94a3b8",
-                              bg: "rgba(148, 163, 184, 0.18)",
-                          },
-                      }
+                        pending: {
+                            border: "#f59e0b",
+                            bg: "rgba(245, 158, 11, 0.18)",
+                        },
+                        processing: {
+                            border: "#3b82f6",
+                            bg: "rgba(59, 130, 246, 0.18)",
+                        },
+                        arrived_at_warehouse: {
+                            border: "#8b5cf6",
+                            bg: "rgba(139, 92, 246, 0.18)",
+                        },
+                        completed: {
+                            border: "#10b981",
+                            bg: "rgba(16, 185, 129, 0.18)",
+                        },
+                        cancelled: {
+                            border: "#ef4444",
+                            bg: "rgba(239, 68, 68, 0.18)",
+                        },
+                        all: {
+                            border: "#94a3b8",
+                            bg: "rgba(148, 163, 184, 0.18)",
+                        },
+                    }
                     : {
-                          pending: { border: "#f59e0b", bg: "#fffbeb" },
-                          processing: { border: "#3b82f6", bg: "#eff6ff" },
-                          arrived_at_warehouse: {
-                              border: "#8b5cf6",
-                              bg: "#f3e8ff",
-                          },
-                          completed: { border: "#10b981", bg: "#ecfdf5" },
-                          cancelled: { border: "#ef4444", bg: "#fef2f2" },
-                          all: { border: "#6b7280", bg: "#f9fafb" },
-                      };
+                        pending: { border: "#f59e0b", bg: "#fffbeb" },
+                        processing: { border: "#3b82f6", bg: "#eff6ff" },
+                        arrived_at_warehouse: {
+                            border: "#8b5cf6",
+                            bg: "#f3e8ff",
+                        },
+                        completed: { border: "#10b981", bg: "#ecfdf5" },
+                        cancelled: { border: "#ef4444", bg: "#fef2f2" },
+                        all: { border: "#6b7280", bg: "#f9fafb" },
+                    };
                 const c = cardColors[currentStatus] || {
                     border: "#3b82f6",
                     bg: "#eff6ff",
@@ -1648,10 +1645,10 @@ document.addEventListener("DOMContentLoaded", () => {
             uploadInput.addEventListener("change", (e) => {
                 const file = e.target.files && e.target.files[0];
                 if (file) {
-                    if (file.size > 10 * 1024 * 1024) {
+                    if (file.size > 5 * 1024 * 1024) {
                         if (orderUpdateError) {
                             orderUpdateError.innerText =
-                                "Ukuran foto terlalu besar (Maksimal 10MB)!";
+                                "Ukuran foto terlalu besar (Maksimal 5 MB)!";
                             orderUpdateError.style.display = "block";
                         }
                         uploadInput.value = "";
@@ -1911,8 +1908,8 @@ document.addEventListener("DOMContentLoaded", () => {
                         ktpVal.startsWith("http") || ktpVal.startsWith("data:")
                             ? ktpVal
                             : ktpVal.startsWith("/")
-                              ? ktpVal
-                              : `/storage/${ktpVal}`;
+                                ? ktpVal
+                                : `/storage/${ktpVal}`;
                     ktpLinkEl.onclick = (e) => {
                         e.preventDefault();
                         if (typeof openImageViewer === "function") {
@@ -1947,11 +1944,11 @@ document.addEventListener("DOMContentLoaded", () => {
                 ) {
                     const imgUrl =
                         accuKtpVal.startsWith("http") ||
-                        accuKtpVal.startsWith("data:")
+                            accuKtpVal.startsWith("data:")
                             ? accuKtpVal
                             : accuKtpVal.startsWith("/")
-                              ? accuKtpVal
-                              : `/storage/${accuKtpVal}`;
+                                ? accuKtpVal
+                                : `/storage/${accuKtpVal}`;
                     accuKtpLinkEl.onclick = (e) => {
                         e.preventDefault();
                         if (typeof openImageViewer === "function") {
@@ -1992,11 +1989,11 @@ document.addEventListener("DOMContentLoaded", () => {
                         if (proofVal !== "-") {
                             const imgUrl =
                                 proofVal.startsWith("http") ||
-                                proofVal.startsWith("data:")
+                                    proofVal.startsWith("data:")
                                     ? proofVal
                                     : proofVal.startsWith("/")
-                                      ? proofVal
-                                      : `/storage/${proofVal}`;
+                                        ? proofVal
+                                        : `/storage/${proofVal}`;
                             proofLinkEl.onclick = (e) => {
                                 e.preventDefault();
                                 if (typeof openImageViewer === "function") {
@@ -2028,12 +2025,12 @@ document.addEventListener("DOMContentLoaded", () => {
                 document.getElementById("detail-order-new-accu").innerText =
                     o.new_accu
                         ? o.new_accu.name +
-                          " - " +
-                          new Intl.NumberFormat("id-ID", {
-                              style: "currency",
-                              currency: "IDR",
-                              minimumFractionDigits: 0,
-                          }).format(o.new_accu.price)
+                        " - " +
+                        new Intl.NumberFormat("id-ID", {
+                            style: "currency",
+                            currency: "IDR",
+                            minimumFractionDigits: 0,
+                        }).format(o.new_accu.price)
                         : "-";
             } else {
                 rowNewAccu.style.display = "none";
@@ -2044,10 +2041,10 @@ document.addEventListener("DOMContentLoaded", () => {
                     ? o.payment_method === "cod"
                         ? "COD (Bayar di Tempat)"
                         : o.payment_method === "transfer"
-                          ? "Transfer Bank"
-                          : o.payment_method === "qris"
-                            ? "QRIS"
-                            : o.payment_method.toUpperCase()
+                            ? "Transfer Bank"
+                            : o.payment_method === "qris"
+                                ? "QRIS"
+                                : o.payment_method.toUpperCase()
                     : "-";
 
             document.getElementById("detail-order-city").innerText = o.city
@@ -2057,8 +2054,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 o.delivery_method === "courier"
                     ? "Kurir PickUpSystem"
                     : o.delivery_method === "warehouse"
-                      ? "Kirim Sendiri (Gudang)"
-                      : o.delivery_method || "-";
+                        ? "Kirim Sendiri (Gudang)"
+                        : o.delivery_method || "-";
             const deliveryMethodEl = document.getElementById(
                 "detail-order-delivery-method",
             );
@@ -2183,8 +2180,8 @@ document.addEventListener("DOMContentLoaded", () => {
                     imgPath.startsWith("http") || imgPath.startsWith("data:")
                         ? imgPath
                         : imgPath.startsWith("/")
-                          ? imgPath
-                          : `/storage/${imgPath}`;
+                            ? imgPath
+                            : `/storage/${imgPath}`;
 
                 if (transferImg) transferImg.src = imgUrl;
                 if (btnDownloadTransfer) {
@@ -2645,6 +2642,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
         if (btnOpenEditItems) {
             btnOpenEditItems.addEventListener("click", async () => {
+                if (["completed", "cancelled"].includes(currentDetailOrder.status)) {
+                    const statusName = currentDetailOrder.status === 'completed' ? 'SELESAI' : 'DIBATALKAN';
+                    showToast(`Pesanan yang sudah ${statusName} tidak dapat diubah itemnya!`, "warning");
+                    return;
+                }
+
+                document.getElementById("edit-order-items-id").value = currentDetailOrder.id;
                 if (!currentDetailOrder) return;
                 document.getElementById("edit-order-items-id").value =
                     currentDetailOrder.id;
@@ -2680,7 +2684,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 const existingAccus =
                     currentDetailOrder.receipt &&
-                    currentDetailOrder.receipt.accus
+                        currentDetailOrder.receipt.accus
                         ? currentDetailOrder.receipt.accus
                         : [];
                 rowsContainer.innerHTML = "";
@@ -2892,7 +2896,10 @@ document.addEventListener("DOMContentLoaded", () => {
                 if (history.length > 0) {
                     tbody.innerHTML = history
                         .map((h) => {
+                            let labelStr = h?.label || "-";
+                            let typeStr = h?.type || "-";
                             let dateStr = "-";
+                            let oldValStr = h?.old_value;
                             try {
                                 if (h && h.created_at) {
                                     const d = new Date(h.created_at);
@@ -2907,56 +2914,58 @@ document.addEventListener("DOMContentLoaded", () => {
                                         });
                                     }
                                 }
-                            } catch (e) {}
+                            } catch (e) { }
 
                             let lmeStr = "-";
                             try {
-                                const lmeVal =
-                                    h && h.lme !== undefined
-                                        ? h.lme
-                                        : h && h.LME !== undefined
-                                          ? h.LME
-                                          : null;
-                                if (lmeVal !== null && lmeVal !== undefined) {
+                                const lmeVal = h?.lme ?? h?.LME ?? null;
+                                if (lmeVal !== null) {
                                     const num = parseFloat(lmeVal);
-                                    if (!isNaN(num)) {
-                                        lmeStr =
-                                            num.toLocaleString("id-ID") +
-                                            " USD/Ton";
-                                    } else {
-                                        lmeStr = lmeVal + " USD/Ton";
-                                    }
+                                    lmeStr = !isNaN(num)
+                                        ? num.toLocaleString("id-ID") + " USD/Ton"
+                                        : lmeVal + " USD/Ton";
                                 }
-                            } catch (e) {}
-
+                            } catch (e) { }
+                            let misceStr = "-";
                             let kursStr = "-";
                             try {
-                                const kursVal =
-                                    h && h.new_value !== undefined
-                                        ? h.new_value
-                                        : null;
-                                if (kursVal !== null && kursVal !== undefined) {
+                                const kursVal = h?.new_value ?? null;
+                                if (kursVal !== null && labelStr == "Global LME & Kurs") {
                                     const num = parseFloat(kursVal);
-                                    if (!isNaN(num)) {
-                                        kursStr =
-                                            num.toLocaleString("id-ID") +
-                                            " IDR/USD";
-                                    } else {
-                                        kursStr = kursVal + " IDR/USD";
-                                    }
+                                    kursStr = !isNaN(num)
+                                        ? num.toLocaleString("id-ID") + " IDR/USD"
+                                        : kursVal + " IDR/USD";
                                 }
-                            } catch (e) {}
+                                else if(kursVal !== null && labelStr.startsWith("Persentase")){
+                                    misceStr = kursVal + " %";
+                                }
+                                else if(kursVal !== null && labelStr.startsWith("Aki") && typeStr == "accu_name_and_weight"){
+                                    misceStr = oldValStr + " kg -> " + kursVal + " kg";
+                                }
+                                else if (kursVal !== null && labelStr.startsWith("Aki") && typeStr == "accu_name"){
+                                    misceStr = kursVal + " kg";
+                                }
+                                else if (kursVal !== null && labelStr.startsWith("Berat Aki") && typeStr == "accu_weight"){
+                                    misceStr = oldValStr + " kg -> " + kursVal + " kg";
+                                }
+                            } catch (e) { }
+
+
+                            let userStr = h?.user?.name || h?.user_name || "-";
 
                             return `
                         <tr>
                             <td>${dateStr} WIB</td>
-                            <td style="color:#64748b; font-weight:600;">${lmeStr}</td>
+                            <td>${labelStr}</td>
+                            <td style="font-weight:600; color:##c0d5e1;">${userStr}</td>                            
+                            <td style="color:##c0d5e1; font-weight:600;">${lmeStr}</td>
                             <td style="font-weight:700; color:#2563eb;">${kursStr}</td>
+                            <td style="font-weight:700; color:#2563eb;">${misceStr}</td>
                         </tr>`;
                         })
                         .join("");
                 } else {
-                    tbody.innerHTML = `<tr><td colspan="3"><div class="admin-table-empty">No parameter change history yet</div></td></tr>`;
+                    tbody.innerHTML = `<tr><td colspan="4"><div class="admin-table-empty">No parameter change history yet</div></td></tr>`;
                 }
 
                 if (res?.pagination) {
@@ -2970,7 +2979,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 console.error("Gagal merender price history:", error);
                 const tbody = document.getElementById("price-history-tbody");
                 if (tbody) {
-                    tbody.innerHTML = `<tr><td colspan="3"><div class="admin-table-empty" style="color:#ef4444;">Gagal memuat data riwayat (Error: ${error.message || "Unknown"})</div></td></tr>`;
+                    tbody.innerHTML = `<tr><td colspan="4"><div class="admin-table-empty" style="color:#ef4444;">Gagal memuat data riwayat (Error: ${error.message || "Unknown"})</div></td></tr>`;
                 }
             }
         };
@@ -3452,7 +3461,7 @@ document.addEventListener("DOMContentLoaded", () => {
                             )
                             .join("");
                 }
-            } catch (e) {}
+            } catch (e) { }
 
             document.getElementById("modal-add-new-accu").style.display =
                 "flex";
@@ -3482,7 +3491,7 @@ document.addEventListener("DOMContentLoaded", () => {
                             )
                             .join("");
                 }
-            } catch (e) {}
+            } catch (e) { }
 
             document.getElementById("modal-add-new-accu").style.display =
                 "flex";
@@ -3807,9 +3816,9 @@ document.addEventListener("DOMContentLoaded", () => {
                 } else {
                     showToast(
                         res.message ||
-                            (res.errors && res.errors.name
-                                ? res.errors.name[0]
-                                : "Gagal menambahkan kota"),
+                        (res.errors && res.errors.name
+                            ? res.errors.name[0]
+                            : "Gagal menambahkan kota"),
                         "error",
                     );
                 }
@@ -4096,7 +4105,7 @@ document.addEventListener("DOMContentLoaded", () => {
                             );
                             showToast(
                                 pickupRes.message ||
-                                    "Pengambilan berhasil dikonfirmasi & Tanda Terima telah dikirim!",
+                                "Pengambilan berhasil dikonfirmasi & Tanda Terima telah dikirim!",
                                 "success",
                             );
                             closePickupModal();
@@ -4106,7 +4115,7 @@ document.addEventListener("DOMContentLoaded", () => {
                             console.error(err);
                             showToast(
                                 err.message ||
-                                    "Gagal mengonfirmasi pengambilan.",
+                                "Gagal mengonfirmasi pengambilan.",
                                 "error",
                             );
                         } finally {
@@ -4236,7 +4245,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 } else {
                     showToast(
                         res.message ||
-                            "Password admin salah / Gagal menghapus gudang",
+                        "Password admin salah / Gagal menghapus gudang",
                         "error",
                     );
                 }
@@ -4507,11 +4516,11 @@ document.addEventListener("DOMContentLoaded", () => {
                                 m.revenue > 0
                                     ? m.revenue >= 1000000000
                                         ? (m.revenue / 1000000000).toFixed(1) +
-                                          "B"
+                                        "B"
                                         : m.revenue >= 1000000
-                                          ? (m.revenue / 1000000).toFixed(1) +
+                                            ? (m.revenue / 1000000).toFixed(1) +
                                             "M"
-                                          : (m.revenue / 1000).toFixed(0) + "K"
+                                            : (m.revenue / 1000).toFixed(0) + "K"
                                     : "0";
 
                             return `

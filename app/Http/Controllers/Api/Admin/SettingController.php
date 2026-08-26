@@ -44,6 +44,7 @@ class SettingController extends Controller
         }
 
         PriceHistory::create([
+            'user_id' => auth()->id(),
             'type' => 'lme',
             'label' => 'Global LME & Kurs',
             'old_value' => $oldLme,
@@ -65,7 +66,7 @@ class SettingController extends Controller
 
     public function history(Request $request): JsonResponse
     {
-        $query = PriceHistory::orderBy('created_at', 'desc');
+        $query = PriceHistory::with('user:id,name')->orderBy('created_at', 'desc');
 
         if ($request->filled('per_page')) {
             $perPage = (int) $request->input('per_page', 20);

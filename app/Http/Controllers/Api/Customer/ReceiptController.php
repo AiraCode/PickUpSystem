@@ -3,15 +3,19 @@
 namespace App\Http\Controllers\Api\Customer;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\CustomerResource;
 use App\Models\Order;
-use App\Models\Receipt;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 
 class ReceiptController extends Controller
 {
-    public function show(int $orderId): JsonResponse
+    public function show(string $orderUuid, Request $request): JsonResponse
     {
-        $order = \App\Models\Order::with(['city', 'warehouse', 'customer.bank', 'receipt.accus', 'newAccusItems', 'newAccu'])->find($orderId);
+        // Kunci query hanya mencari berdasarkan kolom UUID acak
+        $order = Order::with(['city', 'warehouse', 'customer.bank', 'receipt.accus', 'newAccusItems', 'newAccu'])
+            ->where('uuid', $orderUuid)
+            ->first();
 
         if (! $order) {
             return response()->json([
@@ -33,6 +37,7 @@ class ReceiptController extends Controller
         }
 
         $receiptData = null;
+        $rejectSubtotal = 0;
         if ($order->receipt) {
             $lme = (float) \App\Models\Setting::getValue('lme', 2100);
             $kurs = (float) \App\Models\Setting::getValue('kurs', 16000);
@@ -40,18 +45,15 @@ class ReceiptController extends Controller
             $cityPercentage = (float) ($city->percentage ?? 80.00);
             $pricePerKg = ($lme * $kurs * ($cityPercentage / 100)) / 1000.0;
 
-            $rejectSubtotal = 0;
             $formattedAccus = [];
             foreach ($order->receipt->accus as $accu) {
                 $beratKering = (float) ($accu->berat_kering ?? 0);
                 $calculatedPrice = (int) round($pricePerKg * $beratKering);
 
-                $brandName = '-';
-
                 $formattedAccus[] = [
                     'id' => $accu->id,
                     'name' => $accu->name,
-                    'brand' => $brandName,
+                    'brand' => '-',
                     'amount' => $accu->pivot->amount,
                     'price' => $calculatedPrice,
                     'subtotal' => $calculatedPrice * $accu->pivot->amount,
@@ -110,6 +112,7 @@ class ReceiptController extends Controller
             'message' => 'Struk transaksi berhasil diambil',
             'data' => [
                 'order_id' => $order->id,
+                'uuid' => $order->uuid,
                 'order_type' => $order->order_type ?? 'sell',
                 'new_accus_items' => $newAccusFormatted,
                 'payment_method' => $order->payment_method,
@@ -117,7 +120,7 @@ class ReceiptController extends Controller
                 'delivery_method' => $order->delivery_method ?? 'warehouse',
                 'created_at' => $order->created_at,
                 'updated_at' => $order->updated_at,
-                'customer' => $order->customer,
+                'customer' => $order->customer ? (new CustomerResource($order->customer))->toArray($request) : null,
                 'city' => $order->city,
                 'warehouse' => $warehouse,
                 'pickup_address' => $order->pickup_address,
@@ -130,13 +133,16 @@ class ReceiptController extends Controller
         ]);
     }
 
-    public function confirmEdit(\Illuminate\Http\Request $request, int $orderId): JsonResponse
+    public function confirmEdit(Request $request, string $orderUuid): JsonResponse
     {
         $request->validate([
             'action' => 'required|string|in:accept,reject',
         ]);
 
-        $order = Order::with('receipt')->findOrFail($orderId);
+        $order = Order::with('receipt')
+            ->where('uuid', $orderUuid)
+            ->firstOrFail();
+
         $receipt = $order->receipt;
 
         if (! $receipt) {

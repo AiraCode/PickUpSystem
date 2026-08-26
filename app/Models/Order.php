@@ -4,7 +4,9 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Support\Str;
 
 class Order extends Model
 {
@@ -12,6 +14,7 @@ class Order extends Model
 
     protected $fillable = [
         'id',
+        'uuid',
         'cities_id',
         'storages_id',
         'pickup_address',
@@ -28,6 +31,24 @@ class Order extends Model
         'accu_ktp',
         'warehouse_proof',
     ];
+
+    protected static function booted(): void
+    {
+        static::creating(function ($order) {
+            if (empty($order->uuid)) {
+                $order->uuid = (string) Str::uuid();
+            }
+        });
+    }
+
+    /**
+     * Check if the order is editable.
+     * Orders with status 'completed' cannot be modified.
+     */
+    public function isEditable(): bool
+    {
+        return !in_array($this->status, ['completed', 'cancelled']);
+    }
 
     public function warehouse(): BelongsTo
     {
@@ -65,4 +86,10 @@ class Order extends Model
     {
         return $this->hasOne(OrderPickupPricing::class, 'orders_id');
     }
+
+    public function histories(): HasMany
+    {
+        return $this->hasMany(OrderHistory::class, 'order_id');
+    }
+    
 }

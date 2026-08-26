@@ -80,7 +80,7 @@
                                 <span><strong id="ktp-filename-label">Upload foto KTP atau SIM</strong><small>PNG/JPEG</small></span>
                                 <span class="user-upload-field__action">Pilih foto</span>
                             </div>
-                            <p id="ktp-size-hint" class="user-hint" style="display: none; color: #ef4444; margin-top: 4px; font-size: 13px;">*maksimal ukuran file 10 MB</p>
+                            <p id="ktp-size-hint" class="user-hint" style="display: none; color: #ef4444; margin-top: 4px; font-size: 13px;">*maksimal ukuran file 5 MB</p>
 
                             {{-- UI upload Aki + KTP 1 Frame --}}
                             <div class="user-upload-field user-upload-field--desktop-full" id="upload-accu-ktp-trigger" style="cursor: pointer; margin-top: 10px;">
@@ -93,7 +93,7 @@
                                 <span><strong id="accu-ktp-filename-label">Upload foto Aki & KTP dalam 1 Frame</strong><small>PNG/JPEG</small></span>
                                 <span class="user-upload-field__action">Pilih foto</span>
                             </div>
-                            <p id="accu-ktp-size-hint" class="user-hint" style="display: none; color: #ef4444; margin-top: 4px; font-size: 13px;">*maksimal ukuran file 10 MB</p>
+                            <p id="accu-ktp-size-hint" class="user-hint" style="display: none; color: #ef4444; margin-top: 4px; font-size: 13px;">*maksimal ukuran file 5 MB</p>
 
                             {{-- UI OCR nama lengkap --}}
                             <div class="user-ocr-field user-floating-field--full" id="ocr-name-wrapper" style="display: none;">

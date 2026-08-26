@@ -116,9 +116,11 @@ class CityController extends Controller
 
         $oldPercentage = $city->percentage;
         $newPercentage = isset($validated['percentage']) ? (float)$validated['percentage'] : null;
+        $userId = $request->user()?->id ?? auth('sanctum')->id() ?? auth()->id();
 
         if ($newPercentage !== null && (float)$oldPercentage !== $newPercentage) {
             \App\Models\PriceHistory::create([
+                'user_id'  => $userId,
                 'type' => 'percentage',
                 'label' => 'Persentase ' . $city->name,
                 'old_value' => $oldPercentage,

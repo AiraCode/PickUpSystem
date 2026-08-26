@@ -1967,8 +1967,8 @@
   "Informasi ini diperlukan untuk proses verifikasi dan pembayaran. Data pribadi Anda diproses secara terbatas sesuai kebutuhan transaksi.": {
     "en": "This information is required for verification and payment. Your personal data is processed strictly according to transaction needs."
   },
-  "*maksimal ukuran file 10 MB": {
-    "en": "*maximum file size 10 MB"
+  "*maksimal ukuran file 5 MB": {
+    "en": "*maximum file size 5 MB"
   },
   "Nama Lengkap Sesuai KTP / SIM": {
     "en": "Full Name as on ID / Driver License"
@@ -2788,5 +2788,8 @@
   },
   "Konfirmasi & Kirim Tanda Terima":{
     "en": "Confirm & Send Receipt"
+  },
+  "PENGUBAH":{
+    "en": "CHANGER"
   }
 }

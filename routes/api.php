@@ -3,6 +3,7 @@
 use App\Http\Controllers\Api\AuthController;
 
 use App\Http\Controllers\Api\Admin\AccuController as AdminAccuController;
+use App\Http\Controllers\Api\Admin\AuditHistoryController;
 use App\Http\Controllers\Api\Admin\BankController as AdminBankController;
 use App\Http\Controllers\Api\Admin\CityAccuPriceController;
 use App\Http\Controllers\Api\Admin\CityController as AdminCityController;
@@ -23,12 +24,12 @@ use App\Http\Controllers\Api\Customer\CityController as CustomerCityController;
 use App\Http\Controllers\Api\Customer\OrderController as CustomerOrderController;
 use App\Http\Controllers\Api\Customer\ReceiptController as CustomerReceiptController;
 use App\Http\Controllers\Api\Customer\StorageController as CustomerStorageController;
-
+use App\Http\Controllers\Api\Customer\OCRController as CustomerOCRController;
+use App\Http\Middleware\LoginRateLimiterMiddleware;
 use Illuminate\Support\Facades\Route;
 
-
-use App\Http\Controllers\Api\Customer\OCRController as CustomerOCRController;
-Route::post('/login', [AuthController::class, 'login']);
+// Login Admin route with Brute Force Protection (Exponential Backoff Rate Limiter)
+Route::post('/login', [AuthController::class, 'login'])->middleware(LoginRateLimiterMiddleware::class);
 
 Route::prefix('customer')->group(function () {
     Route::get('cities', [CustomerCityController::class, 'index']);
@@ -125,11 +126,8 @@ Route::prefix('public-admin')->group(function () {
     });
 });
 
-
 Route::get('admin/storages/{id}/stock', [WarehouseController::class, 'stockSummary']);
 Route::put('admin/orders/{id}/items', [AdminOrderController::class, 'updateItems']);
-
-Route::post('/login', [AuthController::class, 'login']);
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
@@ -139,6 +137,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('settings', [SettingController::class, 'index']);
         Route::put('settings', [SettingController::class, 'update']);
         Route::get('price-histories', [SettingController::class, 'history']);
+        Route::get('audit-histories', [AuditHistoryController::class, 'index']);
         
         Route::get('activities', [\App\Http\Controllers\Api\Admin\ActivityController::class, 'index']);
         Route::delete('activities', [\App\Http\Controllers\Api\Admin\ActivityController::class, 'destroyAll']);

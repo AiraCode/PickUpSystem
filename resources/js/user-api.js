@@ -1360,11 +1360,16 @@ document.addEventListener("DOMContentLoaded", () => {
                 body: JSON.stringify(payload),
             });
 
-            if (res.data && res.data.order_id) {
+            // Baca data dari res.data.data (response Laravel)
+            const payloadData = res.data?.data || res.data;
+            const targetUuid = payloadData?.uuid;
+
+            if (res.data && targetUuid) {
                 if (modal) modal.hidden = true;
-                // Simpan timestamp setelah sukses submit agar data tidak kadaluarsa sebelum buka receipt
                 localStorage.setItem("pickup_state_timestamp", Date.now().toString());
-                window.location.href = `/receipt?order_id=${res.data.order_id}`;
+
+                // Redirect penuh ke URL menggunakan UUID
+                window.location.href = `/receipt?order_id=${targetUuid}`;
             } else {
                 showCustomAlert(res.message || (window.i18n ? window.i18n.t('error.submit_failed', 'Gagal mengirim pesanan') : "Gagal mengirim pesanan"));
                 const submitBtn = document.getElementById("btn-modal-confirm-submit");
@@ -1422,7 +1427,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     const metaDate = receiptContainer.querySelector(
                         ".user-receipt__meta small",
                     );
-                    if (metaMeta) metaMeta.textContent = `#ORDER-${o.order_id}`;
+                    if (metaMeta) metaMeta.textContent = `#ORDER-${o.order_id || o.id}`;
 
                     const orderStatus = o.status || "pending";
                     const isPaid = orderStatus === "completed";

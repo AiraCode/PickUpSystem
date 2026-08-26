@@ -258,7 +258,7 @@ class OrderController extends Controller
                     'id' => $receiptId,
                     'receipt_number' => 'REC-' . date('Ymd') . '-' . str_pad($orderId, 4, '0', STR_PAD_LEFT),
                     'date' => now(),
-                    'status' => 'unpaid',
+                    'status' => 'UNPAID',
                     'price_received' => 0,
                     'price_owed' => $priceOwed,
                     'users_id' => 1,
@@ -399,7 +399,7 @@ class OrderController extends Controller
             }
 
             $message .= "Untuk melihat rincian pesanan dan bukti transaksi, silakan klik tautan di bawah ini:\n"
-                . "🔗 https://www.onestopsolution.my.id/receipt?order_id={$order->id}\n\n"
+                . "🔗 https://www.onestopsolution.my.id/receipt?order_id={$order->uuid}\n\n"
                 . 'Jika ada pertanyaan lebih lanjut, dapat menghubungi admin di nomor berikut 0812-3456-7891.';
 
             Http::withoutVerifying()
@@ -435,6 +435,7 @@ class OrderController extends Controller
                 'message' => 'Pesanan penjualan aki berhasil dibuat',
                 'data' => [
                     'order_id' => $order->id,
+                    'uuid'     => $order->uuid,
                     'customer' => $customer,
                     'status' => $order->status,
                 ],

@@ -3,11 +3,17 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class PriceHistory extends Model
 {
-    protected $fillable = ['type', 'label', 'old_value', 'new_value', 'lme', 'LME'];
+    protected $fillable = ['user_id', 'type', 'label', 'old_value', 'new_value', 'lme', 'LME'];
     protected $appends = ['lme'];
+
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'user_id');
+    }
 
     public function getLmeAttribute()
     {

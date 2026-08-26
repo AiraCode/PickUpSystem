@@ -206,6 +206,7 @@ class OrderController extends Controller
             ], 403);
         }
 
+        $oldStatus = $order->status;
         $updateData = ['status' => $request->status];
         $cancelReason = $request->cancel_reason;
 
@@ -270,7 +271,22 @@ class OrderController extends Controller
         }
 
         $order->update($updateData);
- 
+
+        // Record Audit Log in order_histories
+        try {
+            \App\Models\OrderHistory::create([
+                'order_id' => $order->id,
+                'user_id' => auth()->id(),
+                'actor_type' => 'admin',
+                'action_type' => 'status_change',
+                'old_values' => ['status' => $oldStatus],
+                'new_values' => ['status' => $request->status],
+                'description' => "Status order #{$order->id} diubah dari {$oldStatus} menjadi {$request->status}",
+            ]);
+        } catch (\Exception $e) {
+            \Illuminate\Support\Facades\Log::error('Gagal mencatat audit log order status: ' . $e->getMessage());
+        }
+
         if (in_array($request->status, ['arrived_at_warehouse', 'completed']) && $order->storages_id) {
             $warehouse = Warehouse::find($order->storages_id);
             if ($warehouse) {
@@ -327,7 +343,7 @@ class OrderController extends Controller
                 } elseif ($request->status === 'completed') {
                     $message .= "Pesanan Anda (ID: #{$order->id}) telah *SELESAI*.\n\nPembayaran untuk aki Anda dapat dilihat melalui link nota. Terima kasih telah mempercayakan layanan tukar tambah aki kepada Pick Up System.
                     \n\nKami tunggu pesanan selanjutnya!
-                    \n🔗 https://www.onestopsolution.my.id/receipt?order_id={$order->id}";
+                    \n🔗 https://www.onestopsolution.my.id/receipt?order_id={$order->uuid}";
 
                     if ($proofPath) {
                         $fonnteData['url'] = url('storage/' . $proofPath);
@@ -379,17 +395,33 @@ class OrderController extends Controller
 
     public function updateItems(Request $request, int $id): JsonResponse
     {
+        $order = Order::with(['city', 'customer', 'receipt.accus', 'pickupPricing', 'newAccu'])->findOrFail($id);
+
+        // Immutability validation check: Completed orders cannot be modified!
+        if (! $order->isEditable() || in_array($order->status, ['completed', 'cancelled'])) {
+            return response()->json([
+                'message' => 'Order yang sudah selesai tidak dapat diubah',
+            ], 422);
+        }
+
         $request->validate([
             'items' => 'required|array|min:1',
             'items.*.accu_id' => 'required|integer|exists:accus,id',
             'items.*.amount' => 'required|integer|min:1',
         ]);
 
-        $order = Order::with(['city', 'customer', 'receipt', 'pickupPricing', 'newAccu'])->findOrFail($id);
         $receipt = $order->receipt;
         if (! $receipt) {
             return response()->json(['message' => 'Receipt order tidak ditemukan.'], 422);
         }
+
+        $oldItems = $receipt->accus->map(function ($accu) {
+            return [
+                'accu_id' => $accu->id,
+                'name' => $accu->name,
+                'amount' => $accu->pivot->amount ?? 1,
+            ];
+        })->toArray();
 
         $lme = (float) \App\Models\Setting::getValue('lme', 2100);
         $kurs = (float) \App\Models\Setting::getValue('kurs', 16000);
@@ -412,6 +444,21 @@ class OrderController extends Controller
 
         $receipt->accus()->sync($accusPivot);
 
+        // Record Audit Log for item modification
+        try {
+            \App\Models\OrderHistory::create([
+                'order_id' => $order->id,
+                'user_id' => auth()->id(),
+                'actor_type' => 'admin',
+                'action_type' => 'items_change',
+                'old_values' => ['items' => $oldItems],
+                'new_values' => ['items' => $request->items],
+                'description' => "Admin memperbarui rincian item aki pada order #{$order->id}",
+            ]);
+        } catch (\Exception $e) {
+            \Illuminate\Support\Facades\Log::error('Gagal mencatat audit log order items: ' . $e->getMessage());
+        }
+
         $pickupFee = 0;
         if ($order->pickupPricing) {
             $pickupFee = (float) $order->pickupPricing->final_pickup_fee;
@@ -432,7 +479,7 @@ class OrderController extends Controller
             if ($customer && $customer->phone_number) {
                 $customerName = $customer->name ?? 'Kak';
                 $baseUrl = url('/');
-                $confirmUrl = "{$baseUrl}/receipt?order_id={$order->id}&confirm_edit=1";
+                $confirmUrl = "{$baseUrl}/receipt?order_id={$order->uuid}&confirm_edit=1";
                 $message = "Halo {$customerName}, 😊\n\nAdmin telah memperbarui rincian item aki pada pesanan Anda (ID: #{$order->id}).\n\nSilakan klik link berikut untuk meninjau dan mengonfirmasi perubahan rincian harga:\n🔗 {$confirmUrl}\n\nTerima kasih!";
 
                 $token = config('services.fonnte.token') ?? env('FONNTE_TOKEN');

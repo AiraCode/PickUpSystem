@@ -222,8 +222,11 @@
                 <thead>
                     <tr>
                         <th style="width:200px;">Tanggal / Waktu</th>
+                        <th>Label</th>
+                        <th>Pengubah</th>
                         <th>LME</th>
                         <th>Kurs</th>
+                        <th>Lain-Lain</th>
                     </tr>
                 </thead>
                 <tbody id="price-history-tbody">

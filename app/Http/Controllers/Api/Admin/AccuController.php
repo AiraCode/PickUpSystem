@@ -120,22 +120,60 @@ class AccuController extends Controller
     public function update(UpdateAccuRequest $request, int $id): JsonResponse
     {
         $accu = Accu::findOrFail($id);
-        $validated = $request->validated();
+    $validated = $request->validated();
+    $userId = $request->user()?->id ?? auth('sanctum')->id() ?? auth()->id() ?? 1;
 
-        $data = [];
-        if (!empty($validated['name'])) {
-            $data['name'] = $validated['name'];
-        }
-        if (isset($validated['berat_kering'])) {
-            $data['berat_kering'] = $validated['berat_kering'];
-        }
+    $oldName = $accu->name;
+    $oldBerat = (float) $accu->berat_kering;
 
-        $accu->update($data);
+    $data = [];
+    if (!empty($validated['name'])) {
+        $data['name'] = $validated['name'];
+    }
+    if (isset($validated['berat_kering'])) {
+        $data['berat_kering'] = (float) str_replace(',', '.', (string)$validated['berat_kering']);
+    }
 
-        return response()->json([
-            'message' => 'Accu berhasil diperbarui',
-            'data' => $accu,
+    $newName = $data['name'] ?? $oldName;
+    $newBerat = isset($data['berat_kering']) ? (float)$data['berat_kering'] : $oldBerat;
+
+    $isNameChanged = isset($data['name']) && $oldName !== $newName;
+    $isBeratChanged = isset($data['berat_kering']) && $oldBerat !== $newBerat;
+
+    if ($isNameChanged && $isBeratChanged) {
+        \App\Models\PriceHistory::create([
+            'user_id'   => $userId,
+            'type'      => 'accu_name_and_weight',
+            'label'     => 'Aki ' . $oldName . ' Menjadi ' . $newName,
+            'old_value' => $oldBerat,
+            'new_value' => $newBerat,
         ]);
+    } 
+    elseif ($isNameChanged) {
+        \App\Models\PriceHistory::create([
+            'user_id'   => $userId,
+            'type'      => 'accu_name',
+            'label'     => 'Aki ' . $oldName . ' Menjadi ' . $newName,
+            'old_value' => $oldBerat,
+            'new_value' => $oldBerat,
+        ]);
+    } 
+    elseif ($isBeratChanged) {
+        \App\Models\PriceHistory::create([
+            'user_id'   => $userId,
+            'type'      => 'accu_weight',
+            'label'     => 'Berat Aki ' . $oldName,
+            'old_value' => $oldBerat,
+            'new_value' => $newBerat,
+        ]);
+    }
+
+    $accu->update($data);
+
+    return response()->json([
+        'message' => 'Accu berhasil diperbarui',
+        'data'    => $accu,
+    ]);
     }
 
     public function destroy(int $id): JsonResponse
