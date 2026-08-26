@@ -89,6 +89,20 @@
                         </svg>
                         <span>Laporan</span>
                     </a>
+                    <a href="{{ url('/admin/audit-log-order') }}"
+                        id="nav-audit-log-order"
+                        class="admin-nav__link {{ request()->is('admin/audit-log-order') ? 'is-active' : '' }}"
+                        data-nav-link
+                        data-role-required="central"
+                        data-tooltip="Audit Log Order"
+                        style="display:none;">
+                        <svg viewBox="0 0 24 24" aria-hidden="true">
+                            <path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2" />
+                            <rect x="9" y="3" width="6" height="4" rx="1" />
+                            <path d="M9 12h6M9 16h4" />
+                        </svg>
+                        <span>Audit Log Order</span>
+                    </a>
                 </nav>
 
                 <div class="admin-sidebar__foot">
@@ -421,6 +435,28 @@
             const isCurrentDark = document.documentElement.classList.contains('admin-dark-mode');
             applyAdminTheme(!isCurrentDark);
         });
+
+        // Role-based sidebar visibility: tampilkan menu dengan data-role-required
+        // hanya jika role admin yang login sesuai.
+        (function applyRoleBasedNav() {
+            try {
+                const adminUser = JSON.parse(localStorage.getItem('admin_user') || 'null');
+                const userRole = adminUser ? adminUser.role : null;
+                document.querySelectorAll('[data-role-required]').forEach(function (el) {
+                    const requiredRole = el.getAttribute('data-role-required');
+                    if (userRole === requiredRole) {
+                        el.style.display = '';
+                    } else {
+                        el.style.display = 'none';
+                    }
+                });
+            } catch (e) {
+                // Gagal parse localStorage — sembunyikan semua menu role-restricted
+                document.querySelectorAll('[data-role-required]').forEach(function (el) {
+                    el.style.display = 'none';
+                });
+            }
+        })();
     </script>
 
 </html>

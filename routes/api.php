@@ -138,6 +138,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::put('settings', [SettingController::class, 'update']);
         Route::get('price-histories', [SettingController::class, 'history']);
         Route::get('audit-histories', [AuditHistoryController::class, 'index']);
+        Route::get('order-histories', [AuditHistoryController::class, 'orderHistories']);
         
         Route::get('activities', [\App\Http\Controllers\Api\Admin\ActivityController::class, 'index']);
         Route::delete('activities', [\App\Http\Controllers\Api\Admin\ActivityController::class, 'destroyAll']);

@@ -74,4 +74,46 @@ class AuditHistoryController extends Controller
             ],
         ]);
     }
+
+    /**
+     * Get paginated and filtered order history for 'central' role.
+     */
+    public function orderHistories(Request $request): JsonResponse
+    {
+        $user = auth()->user();
+
+        if (!$user || $user->role !== 'central') {
+            return response()->json(['message' => 'Akses ditolak.'], 403);
+        }
+
+        $query = OrderHistory::with(['user:id,name', 'order:id,uuid']);
+
+        // Search by description or order uuid
+        if ($request->has('search')) {
+            $search = $request->input('search');
+            $query->where(function ($q) use ($search) {
+                $q->where('description', 'like', "%{$search}%")
+                  ->orWhereHas('order', function ($o) use ($search) {
+                      $o->where('uuid', 'like', "%{$search}%");
+                  });
+            });
+        }
+
+        // Filter by action_type
+        if ($request->has('action_type')) {
+            $query->where('action_type', $request->input('action_type'));
+        }
+
+        // Filter by actor_type
+        if ($request->has('actor_type')) {
+            $query->where('actor_type', $request->input('actor_type'));
+        }
+
+        $histories = $query->latest()->paginate($request->input('per_page', 15));
+
+        return response()->json([
+            'message' => 'Order history berhasil diambil',
+            'data' => $histories,
+        ]);
+    }
 }

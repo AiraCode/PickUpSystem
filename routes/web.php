@@ -68,6 +68,10 @@ Route::prefix('admin')->group(function () {
         return view('admin.reports');
     });
 
+    Route::get('/audit-log-order', function () {
+        return view('admin.audit-log-order');
+    });
+
     Route::get('/pengiriman', function () {
         return view('admin.pickup-pricing');
     });
