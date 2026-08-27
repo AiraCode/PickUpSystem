@@ -489,7 +489,7 @@
                             <td id="detail-order-type" style="font-weight:700;"></td>
                         </tr>
                         <tr>
-                            <td style="width:35%; color:#6d727c; padding:6px 0;">Kota Layanan</td>
+                            <td style="width:35%; color:#6d727c; padding:6px 0;">Gudang Layanan</td>
                             <td id="detail-order-city" style="font-weight:500;"></td>
                         </tr>
                         <tr>

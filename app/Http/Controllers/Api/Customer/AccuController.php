@@ -5,11 +5,12 @@ namespace App\Http\Controllers\Api\Customer;
 use App\Http\Controllers\Controller;
 use App\Models\City;
 use App\Models\Setting;
+use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 
 class AccuController extends Controller
 {
-    public function getByCity(int $cityId): JsonResponse
+    public function getByCity(Request $request, int $cityId): JsonResponse
     {
         $city = City::with('accus')->find($cityId);
 
@@ -20,13 +21,30 @@ class AccuController extends Controller
             ], 404);
         }
 
+        $search = trim($request->query('search', ''));
+
+        // 1. Jika query search kosong, kembalikan array accus kosong
+        if (empty($search)) {
+            return response()->json([
+                'message' => 'Silakan ketik nama aki untuk mencari',
+                'data' => [
+                    'city' => $city->only(['id', 'name', 'percentage']),
+                    'accus' => [],
+                ],
+            ]);
+        }
+
         $lme = (float) Setting::getValue('lme', 2100);
         $kurs = (float) Setting::getValue('kurs', 16000);
         $cityPercentage = (float) ($city->percentage ?? 80.00);
 
+        // 2. Filter aki berdasarkan pencarian (search key) dan berat_kering > 0
         $accus = $city->accus
-            ->filter(function ($accu) {
-                return (float) ($accu->berat_kering ?? 0) > 0;
+            ->filter(function ($accu) use ($search) {
+                $hasWeight = (float) ($accu->berat_kering ?? 0) > 0;
+                $matchesSearch = str_contains(strtolower($accu->name), strtolower($search)) || 
+                                 str_contains(strtolower($accu->brand ?? ''), strtolower($search));
+                return $hasWeight && $matchesSearch;
             })
             ->values()
             ->map(function ($accu) use ($lme, $kurs, $cityPercentage) {
@@ -36,7 +54,7 @@ class AccuController extends Controller
 
                 return [
                     'id' => $accu->id,
-                    'brand' => '-',
+                    'brand' => $accu->brand ?? '-',
                     'name' => $accu->name,
                     'berat_kering' => $beratKering,
                     'percentage' => $cityPercentage,

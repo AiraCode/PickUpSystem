@@ -2047,9 +2047,9 @@ document.addEventListener("DOMContentLoaded", () => {
                                 : o.payment_method.toUpperCase()
                     : "-";
 
-            document.getElementById("detail-order-city").innerText = o.city
-                ? o.city.name
-                : "-";
+            document.getElementById("detail-order-city").innerText = o.warehouse
+                ? o.warehouse.name
+                : (o.city ? o.city.name : "-");
             const deliveryMethodText =
                 o.delivery_method === "courier"
                     ? "Kurir PickUpSystem"

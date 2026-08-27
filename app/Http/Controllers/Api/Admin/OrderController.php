@@ -148,7 +148,7 @@ class OrderController extends Controller
 
     public function show(int $id): JsonResponse
     {
-        $order = Order::with(['city', 'customer.bank', 'receipt.transfer', 'newAccu', 'receipt.accus', 'pickupPricing', 'newAccusItems'])->find($id);
+        $order = Order::with(['city', 'customer.bank', 'receipt.transfer', 'newAccu', 'receipt.accus', 'pickupPricing', 'newAccusItems', 'warehouse',])->find($id);
 
         if (!$order) {
             return response()->json([

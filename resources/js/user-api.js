@@ -93,29 +93,24 @@ document.addEventListener("DOMContentLoaded", () => {
             window.userCart.clear();
         }
     }
+
+    let accuSearchTimeout = null; //debounce
     const citySelect = document.querySelector("[data-city-select]");
     const cityStatus = document.querySelector("[data-city-status]");
     const searchInput = document.getElementById("accu-search-input");
-    searchInput?.addEventListener("input", (e) => {
-        const query = e.target.value.toLowerCase().trim();
-        const productCards = document.querySelectorAll("[data-product-card]");
-        productCards.forEach((card) => {
-            const name =
-                card.getAttribute("data-product-name")?.toLowerCase() || "";
-            const brand =
-                card.getAttribute("data-product-brand")?.toLowerCase() || "";
-            if (query.length > 0 && (name.includes(query) || brand.includes(query))) {
-                card.style.display = "";
-            } else {
-                card.style.display = "none";
-            }
+    if (searchInput) {
+        searchInput.addEventListener("input", () => {
+            const cityId = citySelect ? citySelect.value : localStorage.getItem("pickup_city_id");
+            
+            // Tahan request selama 300ms dari ketikan terakhir
+            clearTimeout(accuSearchTimeout);
+            accuSearchTimeout = setTimeout(() => {
+                if (cityId) {
+                    loadCityPrices(cityId);
+                }
+            }, 300);
         });
-
-        const hintEl = document.getElementById("search-hint-placeholder");
-        if (hintEl) {
-            hintEl.style.display = query.length === 0 ? "block" : "none";
-        }
-    });
+    }
 
     if (citySelect) {
         (async () => {
@@ -148,36 +143,48 @@ document.addEventListener("DOMContentLoaded", () => {
 
             if (cityStatus)
                 cityStatus.textContent = `Data harga ${cityName} mengikuti data yang terhubung pada sistem.`;
+            
+            // Saat ganti kota, panggil pencarian (jika input search sudah diisi)
             loadCityPrices(cityId);
         });
     }
+
     function renderProductCards(accus) {
         const batteryList = document.getElementById("user-battery-list");
         if (!batteryList) return;
 
+        const searchQuery = searchInput?.value.toLowerCase().trim() || "";
+
+        // Jika pencarian kosong, tampilkan pesan placeholder pencarian
+        if (searchQuery.length === 0) {
+            batteryList.innerHTML = `
+                <div id="search-hint-placeholder" style="text-align:center; padding: 40px 20px; color: #64748b;">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:48px;height:48px;margin:0 auto 12px;display:block;opacity:0.4;">
+                        <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                    </svg>
+                    <strong>Silakan mencari jenis aki terlebih dahulu.</strong>
+                    <p style="font-size:13px;">Ketikkan jenis aki pada kolom pencarian di atas.</p>
+                </div>`;
+            return;
+        }
+
+        // Jika pencarian tidak menemukan hasil
         if (!accus || accus.length === 0) {
             batteryList.innerHTML = `
                 <div style="text-align:center; padding: 40px 20px; color: #64748b;">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:48px;height:48px;margin:0 auto 12px;display:block;opacity:0.4;">
                         <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
                     </svg>
-                    <strong>Tidak ada aki tersedia untuk kota ini.</strong>
-                    <p style="font-size:13px;">Silakan pilih kota lain atau hubungi kami untuk informasi lebih lanjut.</p>
+                    <strong>Aki dengan kata kunci "${searchQuery}" tidak ditemukan.</strong>
+                    <p style="font-size:13px;">Silakan periksa kembali kata kunci pengetikan Anda.</p>
                 </div>`;
             return;
         }
 
-        const formatRupiah = (number) =>
-            "Rp " + Number(number).toLocaleString("id-ID");
-
-        const searchQuery = searchInput?.value.toLowerCase().trim() || "";
-
         let cardsHtml = accus
             .map((accu) => {
-                const displayStyle = (searchQuery.length > 0 && (accu.name.toLowerCase().includes(searchQuery) || accu.brand.toLowerCase().includes(searchQuery))) ? "" : "display:none;";
-
                 return `
-                <div class="user-battery-item" data-product-card data-product-name="${accu.name}" data-product-brand="${accu.brand}" data-product-price="${accu.price}" data-accu-id="${accu.id}" style="${displayStyle}">
+                <div class="user-battery-item" data-product-card data-product-name="${accu.name}" data-product-brand="${accu.brand}" data-product-price="${accu.price}" data-accu-id="${accu.id}">
                     <div class="user-battery-item__left">
                         <h3>${accu.name}</h3>
                         <div class="user-quantity">
@@ -193,15 +200,7 @@ document.addEventListener("DOMContentLoaded", () => {
             })
             .join("");
 
-        let hintHtml = `<div id="search-hint-placeholder" style="text-align:center; padding: 40px 20px; color: #64748b; ${searchQuery.length === 0 ? '' : 'display:none;'}">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:48px;height:48px;margin:0 auto 12px;display:block;opacity:0.4;">
-                        <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
-                    </svg>
-                    <strong>Silakan mencari jenis aki terlebih dahulu.</strong>
-                    <p style="font-size:13px;">Ketikkan jenis aki pada kolom pencarian di atas.</p>
-                </div>`;
-
-        batteryList.innerHTML = hintHtml + cardsHtml;
+        batteryList.innerHTML = cardsHtml;
         bindProductCardEvents();
         if (typeof window.updateProductCardButtons === "function") {
             window.updateProductCardButtons();
@@ -308,11 +307,25 @@ document.addEventListener("DOMContentLoaded", () => {
 
     async function loadCityPrices(cityId) {
         if (!cityId) return;
-        const res = await fetchPublicApi(`/cities/${cityId}/accus`);
-        if (!res.data || !res.data.accus) return;
+
+        const query = searchInput ? searchInput.value.trim() : "";
+        
+        // 1. Jika query pencarian kosong, langsung render state kosong tanpa memanggil API
+        if (query === "") {
+            renderProductCards([]);
+            return;
+        }
+
+        // 2. Panggil API dengan query search
+        const res = await fetchPublicApi(`/cities/${cityId}/accus?search=${encodeURIComponent(query)}`);
+        if (!res.data || !res.data.accus) {
+            renderProductCards([]);
+            return;
+        }
 
         const accus = res.data.accus.filter((a) => Number(a.berat_kering || 0) > 0);
         renderProductCards(accus);
+
         if (window.userCart && window.userCart.size > 0) {
             window.userCart.forEach((item, key) => {
                 const matchingAccu = accus.find(
@@ -320,7 +333,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 );
                 if (matchingAccu && matchingAccu.price) {
                     item.price = matchingAccu.price;
-                } else {
                 }
             });
             if (typeof window.renderUserCart === "function") {
