@@ -41,7 +41,7 @@ Route::prefix('customer')->group(function () {
     Route::get('orders/{id}', [CustomerOrderController::class, 'show']);
     Route::put('orders/{id}/note', [CustomerOrderController::class, 'updateNote']);
     Route::get('receipts/{orderId}', [CustomerReceiptController::class, 'show']);
-    Route::post('orders/{id}/confirm-edit', [CustomerReceiptController::class, 'confirmEdit']);
+    Route::post('orders/{orderUuid}/confirm-edit', [CustomerReceiptController::class, 'confirmEdit']);
     Route::post('ocr/extract-name', [CustomerOCRController::class, 'extractName']);
     Route::post('ocr/verify-proof', [CustomerOCRController::class, 'verifyProof']);
     Route::post('calculate-pickup-fee', [CustomerOrderController::class, 'calculatePickupFee']);

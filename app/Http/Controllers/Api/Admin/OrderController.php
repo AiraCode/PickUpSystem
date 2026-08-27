@@ -479,7 +479,7 @@ class OrderController extends Controller
             if ($customer && $customer->phone_number) {
                 $customerName = $customer->name ?? 'Kak';
                 $baseUrl = url('/');
-                $confirmUrl = "{$baseUrl}/receipt?order_id={$order->uuid}&confirm_edit=1";
+                $confirmUrl = "{$baseUrl}/receipt?order_id={$order->uuid}";
                 $message = "Halo {$customerName}, 😊\n\nAdmin telah memperbarui rincian item aki pada pesanan Anda (ID: #{$order->id}).\n\nSilakan klik link berikut untuk meninjau dan mengonfirmasi perubahan rincian harga:\n🔗 {$confirmUrl}\n\nTerima kasih!";
 
                 $token = config('services.fonnte.token') ?? env('FONNTE_TOKEN');

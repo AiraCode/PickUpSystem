@@ -4,9 +4,13 @@ namespace App\Http\Controllers\Api\Customer;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\CustomerResource;
+use App\Models\Activity;
 use App\Models\Order;
+use App\Models\Setting;
+use App\Models\Warehouse;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class ReceiptController extends Controller
 {
@@ -27,20 +31,20 @@ class ReceiptController extends Controller
         $warehouse = $order->warehouse;
         if (! $warehouse && ($order->delivery_method ?? 'warehouse') !== 'courier') {
             if ($order->city) {
-                $warehouse = \App\Models\Warehouse::where('name', 'LIKE', '%' . $order->city->name . '%')
-                    ->orWhere('address', 'LIKE', '%' . $order->city->name . '%')
+                $warehouse = Warehouse::where('name', 'LIKE', '%'.$order->city->name.'%')
+                    ->orWhere('address', 'LIKE', '%'.$order->city->name.'%')
                     ->first();
             }
             if (! $warehouse) {
-                $warehouse = \App\Models\Warehouse::first();
+                $warehouse = Warehouse::first();
             }
         }
 
         $receiptData = null;
         $rejectSubtotal = 0;
         if ($order->receipt) {
-            $lme = (float) \App\Models\Setting::getValue('lme', 2100);
-            $kurs = (float) \App\Models\Setting::getValue('kurs', 16000);
+            $lme = (float) Setting::getValue('lme', 2100);
+            $kurs = (float) Setting::getValue('kurs', 16000);
             $city = $order->city;
             $cityPercentage = (float) ($city->percentage ?? 80.00);
             $pricePerKg = ($lme * $kurs * ($cityPercentage / 100)) / 1000.0;
@@ -61,7 +65,7 @@ class ReceiptController extends Controller
                 $rejectSubtotal += ($calculatedPrice * $accu->pivot->amount);
             }
 
-            $transfer = \Illuminate\Support\Facades\DB::table('transfers')->where('receipts_id', $order->receipt->id)->first();
+            $transfer = DB::table('transfers')->where('receipts_id', $order->receipt->id)->first();
 
             $receiptData = [
                 'id' => $order->receipt->id,
@@ -70,7 +74,7 @@ class ReceiptController extends Controller
                 'status' => $order->receipt->status,
                 'price_received' => $order->receipt->price_received,
                 'price_owed' => $order->receipt->price_owed,
-                'edit_confirmed_by_user' => $order->receipt->edit_confirmed_by_user ?? 1,
+                'edit_confirmed_by_user' => is_null($order->receipt->edit_confirmed_by_user) ? 0 : (int) $order->receipt->edit_confirmed_by_user,
                 'accus' => $formattedAccus,
                 'transfer' => $transfer,
             ];
@@ -134,45 +138,74 @@ class ReceiptController extends Controller
     }
 
     public function confirmEdit(Request $request, string $orderUuid): JsonResponse
-    {
-        $request->validate([
-            'action' => 'required|string|in:accept,reject',
+{
+    $cleanUuid = trim(urldecode($orderUuid));
+
+    $request->validate([
+        'action' => 'required|string|in:accept,reject',
+    ]);
+
+    // 1. CARI ORDER SECARA EKSPLISIT BERDASARKAN UUID ATAU ID
+    $order = Order::where('uuid', $cleanUuid)->first();
+
+    // Fallback jika input berupa Integer ID murni
+    if (! $order && is_numeric($cleanUuid)) {
+        $order = Order::find((int) $cleanUuid);
+    }
+
+    if (! $order) {
+        return response()->json(['message' => 'Pesanan tidak ditemukan.'], 404);
+    }
+
+    // 2. AMBIL RECEIPT DENGAN ELOQUENT QUERY KETAT (BUKAN RELASI BINDING)
+    $receipt = DB::table('receipts')->where('orders_id', $order->id)->first();
+
+    if (! $receipt) {
+        return response()->json(['message' => 'Receipt tidak ditemukan.'], 404);
+    }
+
+    $newStatus = ($request->action === 'accept') ? 1 : 2;
+
+    // 3. PAKAI DB DIRECT UPDATE (BYPASS SEMUA CACHE ELOQUENT & EVENT)
+    DB::table('receipts')
+        ->where('id', $receipt->id)
+        ->update([
+            'edit_confirmed_by_user' => $newStatus,
+            'updated_at' => now(),
         ]);
 
-        $order = Order::with('receipt')
-            ->where('uuid', $orderUuid)
-            ->firstOrFail();
+    if ($request->action === 'accept') {
+        Activity::create([
+            'type' => 'order_edit_accepted',
+            'title' => 'Perubahan Disetujui #' . $order->id,
+            'description' => 'Customer menyetujui perubahan rincian aki dari Admin.',
+            'related_id' => $order->id,
+            'related_type' => Order::class,
+        ]);
 
-        $receipt = $order->receipt;
+        return response()->json([
+            'success' => true,
+            'message' => 'Perubahan pesanan berhasil disetujui!'
+        ]);
+    } else {
+        Order::where('id', $order->id)->update([
+            'status' => 'cancelled',
+            'cancel_reason' => 'Perubahan item pesanan ditolak oleh pelanggan.',
+            'updated_at' => now(),
+        ]);
 
-        if (! $receipt) {
-            return response()->json(['message' => 'Receipt tidak ditemukan.'], 404);
-        }
+        Activity::create([
+            'type' => 'order_edit_rejected',
+            'title' => 'Perubahan Ditolak #' . $order->id,
+            'description' => 'Customer menolak perubahan rincian aki.',
+            'related_id' => $order->id,
+            'related_type' => Order::class,
+        ]);
 
-        if ($request->action === 'accept') {
-            $receipt->update(['edit_confirmed_by_user' => 1]);
-            \App\Models\Activity::create([
-                'type' => 'order_edit_accepted',
-                'title' => 'Perubahan Disetujui #' . $order->id,
-                'description' => 'Customer menyetujui perubahan item pesanan.',
-                'related_id' => $order->id,
-                'related_type' => \App\Models\Order::class,
-            ]);
-            return response()->json(['message' => 'Perubahan pesanan berhasil Anda setujui!']);
-        } else {
-            $receipt->update(['edit_confirmed_by_user' => 2]);
-            $order->update([
-                'status' => 'cancelled',
-                'cancel_reason' => 'Perubahan item pesanan ditolak oleh pelanggan.'
-            ]);
-            \App\Models\Activity::create([
-                'type' => 'order_edit_rejected',
-                'title' => 'Perubahan Ditolak #' . $order->id,
-                'description' => 'Customer menolak perubahan item pesanan. Pesanan dibatalkan otomatis.',
-                'related_id' => $order->id,
-                'related_type' => \App\Models\Order::class,
-            ]);
-            return response()->json(['message' => 'Perubahan pesanan telah Anda tolak dan pesanan dibatalkan.']);
-        }
+        return response()->json([
+            'success' => true,
+            'message' => 'Perubahan pesanan ditolak.'
+        ]);
     }
+}
 }

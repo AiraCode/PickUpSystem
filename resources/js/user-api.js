@@ -1398,26 +1398,14 @@ document.addEventListener("DOMContentLoaded", () => {
                     const c = o.customer || {};
                     const b = c.bank || {};
                     const receipt = o.receipt || {};
-                    const receiptProgressBar = document.getElementById("receipt-progress-bar");
-                    if (receiptProgressBar) {
-                        if (o.order_type === "trade_in") {
-                            receiptProgressBar.innerHTML = `
-                                <div class="user-progress__step is-complete"><span>01</span><small>Aki Reject</small></div>
-                                <span class="user-progress__line is-complete"></span>
-                                <div class="user-progress__step is-complete"><span>02</span><small>Pilih Aki Baru</small></div>
-                                <span class="user-progress__line is-complete"></span>
-                                <div class="user-progress__step is-complete"><span>03</span><small>Identitas</small></div>
-                                <span class="user-progress__line is-complete"></span>
-                                <div class="user-progress__step is-current"><span>04</span><small>Receipt</small></div>
-                            `;
+                    // --- VALIDASI KUNCI DI SINI ---
+                    // Sembunyikan/Tampilkan modal berdasarkan status edit_confirmed_by_user dari DB (harus 0)
+                    const modalConfirmEdit = document.getElementById("modal-confirm-edit"); // sesuaikan ID modalmu
+                    if (modalConfirmEdit) {
+                        if (receipt && Number(receipt.edit_confirmed_by_user) === 0) {
+                            modalConfirmEdit.classList.remove("hidden"); // Tampilkan modal
                         } else {
-                            receiptProgressBar.innerHTML = `
-                                <div class="user-progress__step is-complete"><span>01</span><small>Aki Reject</small></div>
-                                <span class="user-progress__line is-complete"></span>
-                                <div class="user-progress__step is-complete"><span>02</span><small>Identitas</small></div>
-                                <span class="user-progress__line is-complete"></span>
-                                <div class="user-progress__step is-current"><span>03</span><small>Receipt</small></div>
-                            `;
+                            modalConfirmEdit.classList.add("hidden");    // Sembunyikan modal
                         }
                     }
 
@@ -1819,8 +1807,9 @@ document.addEventListener("DOMContentLoaded", () => {
                     }
 
                     // Check if there is an unconfirmed edit from Admin
-                    const editConfirmed = receipt.edit_confirmed_by_user !== undefined ? parseInt(receipt.edit_confirmed_by_user) : 1;
-                    const isConfirmParam = urlParams.get("confirm_edit") === "1";
+                    const editConfirmed = receipt.edit_confirmed_by_user !== undefined && receipt.edit_confirmed_by_user !== null
+                        ? parseInt(receipt.edit_confirmed_by_user)
+                        : 0;
 
                     const editBanner = document.getElementById("receipt-edit-pending-banner");
                     const btnTriggerModal = document.getElementById("btn-trigger-confirm-modal");
@@ -1829,8 +1818,10 @@ document.addEventListener("DOMContentLoaded", () => {
                     const totalOwedEl = document.getElementById("confirm-edit-total-owed");
                     const btnAccept = document.getElementById("btn-accept-edit");
                     const btnReject = document.getElementById("btn-reject-edit");
+                    const targetOrderId = o.uuid || o.order_id || orderId;
 
-                    if (editConfirmed === 0 || isConfirmParam) {
+                    // SYARAT MUTLAK: Modal dan Banner HANYA BOLEH MUNCUL jika editConfirmed BENAR-BENAR 0
+                    if (editConfirmed === 0) {
                         if (editBanner) editBanner.style.display = "block";
 
                         if (confirmModal && itemsListEl) {
@@ -1853,6 +1844,7 @@ document.addEventListener("DOMContentLoaded", () => {
                                 confirmModal.style.bottom = "0";
                             };
 
+                            // Buka modal secara otomatis saat halaman dimuat
                             openModalFunc();
 
                             if (btnTriggerModal) {
@@ -1860,18 +1852,27 @@ document.addEventListener("DOMContentLoaded", () => {
                             }
 
                             if (btnAccept) {
-                                btnAccept.onclick = async () => {
-                                    btnAccept.disabled = true;
-                                    await fetchPublicApi(`/orders/${orderId}/confirm-edit`, {
-                                        method: "POST",
-                                        body: JSON.stringify({ action: "accept" })
-                                    });
-                                    confirmModal.style.display = "none";
-                                    showCustomAlert("Terima kasih! Anda telah menyetujui perubahan rincian pesanan.");
-                                    window.location.href = `/receipt?order_id=${orderId}`;
-                                };
-                            }
+    btnAccept.onclick = async (e) => {
+        e.preventDefault();
+        btnAccept.disabled = true;
+        btnAccept.textContent = "Memproses...";
 
+        const res = await fetchPublicApi(`/orders/${targetOrderId}/confirm-edit`, {
+            method: "POST",
+            body: JSON.stringify({ action: "accept" })
+        });
+        
+        if (res && res.success) {
+            if (confirmModal) confirmModal.style.display = "none";
+            showCustomAlert("Terima kasih! Anda telah menyetujui perubahan rincian pesanan.");
+            window.location.reload();
+        } else {
+            btnAccept.disabled = false;
+            btnAccept.textContent = "Saya Setuju";
+            showCustomAlert(res.message || "Gagal mengonfirmasi perubahan.");
+        }
+    };
+}
                             if (btnReject) {
                                 btnReject.onclick = async () => {
                                     btnReject.disabled = true;
@@ -1886,7 +1887,9 @@ document.addEventListener("DOMContentLoaded", () => {
                             }
                         }
                     } else {
+                        // Jika status 1 atau 2, sembunyikan banner dan pastikan modal tertutup rapat
                         if (editBanner) editBanner.style.display = "none";
+                        if (confirmModal) confirmModal.style.display = "none";
                     }
                 }
             })();
