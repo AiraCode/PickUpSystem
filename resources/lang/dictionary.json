@@ -2791,5 +2791,17 @@
   },
   "PENGUBAH":{
     "en": "CHANGER"
+  },
+  "Gudang Layanan":{
+    "en": "Service Warehouse"
+  },
+  "Lain-Lain":{
+    "en": "Miscellaneous"
+  },
+  "Nilai Lama":{
+    "en": "Old Value"
+  },
+  "Nilai Baru":{
+    "en": "New Value"
   }
 }

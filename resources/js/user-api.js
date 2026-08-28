@@ -2702,54 +2702,65 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         });
 
-        checkoutSubmitBtn?.addEventListener("click", (e) => {
+        checkoutSubmitBtn?.addEventListener("click", async (e) => {
             e.preventDefault();
+
             const cartSize = window.userCart ? window.userCart.size : 0;
             if (cartSize === 0) {
-                showCustomAlert(
-                    window.i18n ? window.i18n.t('error.cart_empty', 'Keranjang belanja kosong! Silakan tambahkan minimal satu aki ke keranjang sebelum melanjutkan.') : "Keranjang belanja kosong! Silakan tambahkan minimal satu aki ke keranjang sebelum melanjutkan.",
-                );
+                showCustomAlert("Keranjang belanja kosong! Silakan tambahkan minimal satu aki.");
                 return;
             }
+
             const address = userAddressInput ? userAddressInput.value.trim() : "";
             const city = userCityInput ? userCityInput.value.trim() : "";
             const zip = userZipInput ? userZipInput.value.trim() : "";
 
             if (!address || !city) {
-                showCustomAlert(
-                    window.i18n ? window.i18n.t('error.location_map_first', 'Harap tentukan lokasi Anda melalui peta terlebih dahulu.') : "Harap tentukan lokasi Anda melalui peta terlebih dahulu.",
-                );
+                showCustomAlert("Harap tentukan lokasi Anda melalui peta terlebih dahulu.");
                 return;
             }
             if (!userLat || !userLng) {
-                showCustomAlert(
-                    window.i18n ? window.i18n.t('error.coordinate_first', 'Harap tentukan lokasi koordinat Anda di peta dengan menekan tombol peta.') : "Harap tentukan lokasi koordinat Anda di peta dengan menekan tombol peta.",
-                );
+                showCustomAlert("Harap tentukan lokasi koordinat Anda di peta.");
                 return;
             }
+
+            // Simpan ke LocalStorage seperti biasa
             localStorage.setItem("pickup_address", address);
             localStorage.setItem("pickup_city", city);
             localStorage.setItem("pickup_zip", zip);
-            const note = userNoteInput ? userNoteInput.value.trim() : "";
-            localStorage.setItem("pickup_address_note", note);
-            localStorage.setItem(
-                "pickup_cart",
-                JSON.stringify(Array.from(window.userCart.values())),
-            );
-            const selectedDelivery =
-                document.querySelector('input[name="delivery_method"]:checked')
-                    ?.value || "warehouse";
-            localStorage.setItem("pickup_delivery_method", selectedDelivery);
+            localStorage.setItem("pickup_address_note", userNoteInput ? userNoteInput.value.trim() : "");
+            localStorage.setItem("pickup_cart", JSON.stringify(Array.from(window.userCart.values())));
 
-            const selectedOrderType =
-                document.querySelector('input[name="order_type_selection"]:checked')
-                    ?.value || "sell";
+            const selectedOrderType = document.querySelector('input[name="order_type_selection"]:checked')?.value || "sell";
             localStorage.setItem("pickup_order_type", selectedOrderType);
 
-            if (selectedOrderType === "trade_in") {
-                window.location.href = "/trade-in";
-            } else {
-                window.location.href = "/user/identitas";
+            // ── SIMPAN KE SESSION LARAVEL SERVER-SIDE ──
+            try {
+                const res = await fetch("/save-checkout-session", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Accept": "application/json",
+                        "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]')?.content || ""
+                    },
+                    body: JSON.stringify({
+                        cart: Array.from(window.userCart.values()),
+                        address: address,
+                        order_type: selectedOrderType
+                    })
+                });
+
+                if (res.ok) {
+                    if (selectedOrderType === "trade_in") {
+                        window.location.href = "/trade-in";
+                    } else {
+                        window.location.href = "/identity";
+                    }
+                } else {
+                    showCustomAlert("Gagal memproses alur checkout. Silakan coba lagi.");
+                }
+            } catch (err) {
+                console.error("Gagal menyimpan session:", err);
             }
         });
 
@@ -2772,30 +2783,50 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         // Trade-In Logic
+        // ── TRADE-IN LOGIC WITH ON-DEMAND SEARCH & DEBOUNCE ──
         if (window.location.pathname === "/trade-in") {
             if (localStorage.getItem("pickup_order_type") !== "trade_in") {
                 localStorage.removeItem("pickup_trade_in_cart");
                 localStorage.removeItem("pickup_cart");
             }
-            let newAccus = [];
             let tradeInCart = JSON.parse(localStorage.getItem("pickup_trade_in_cart") || "[]");
+            let tradeInSearchTimeout = null; // Variable penahan request (Debounce)
 
             const getCartItem = (id) => tradeInCart.find(i => i.id === id);
 
+            // 1. FUNGSI RENDER KATALOG AKI BARU
             const renderNewAccus = (data, searchVal = "") => {
                 const grid = document.getElementById("new-accus-grid");
                 if (!grid) return;
                 grid.innerHTML = "";
 
+                // State 1: Jika pencarian kosong (user belum mengetik)
                 if (!searchVal || searchVal.trim() === "") {
-                    grid.innerHTML = '<div style="padding:40px; text-align:center; color:#64748b; font-size:14px; grid-column:1/-1; background:#f8fafc; border:1px dashed #cbd5e1; border-radius:12px;">Silakan ketik jenis aki baru pada kolom pencarian di atas (contoh: N50, NS40, dll) untuk melihat katalog.</div>';
+                    grid.innerHTML = `
+                        <div style="padding:40px; text-align:center; color:#64748b; font-size:14px; grid-column:1/-1; background:#f8fafc; border:1px dashed #cbd5e1; border-radius:12px;">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:40px;height:40px;margin:0 auto 10px;display:block;opacity:0.4;">
+                                <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                            </svg>
+                            <strong>Silakan mencari jenis aki baru terlebih dahulu.</strong>
+                            <p style="font-size:13px; margin-top:4px;">Ketikkan kata kunci (contoh: N50, NS40, GS, dll) pada kolom pencarian di atas.</p>
+                        </div>`;
                     return;
                 }
 
-                if (data.length === 0) {
-                    grid.innerHTML = '<div style="padding:40px; text-align:center; color:#64748b; font-size:14px; grid-column:1/-1;">Tidak ada aki baru yang cocok dengan kata kunci pencarian.</div>';
+                // State 2: Hasil pencarian tidak ditemukan
+                if (!data || data.length === 0) {
+                    grid.innerHTML = `
+                        <div style="padding:40px; text-align:center; color:#64748b; font-size:14px; grid-column:1/-1; background:#f8fafc; border:1px dashed #cbd5e1; border-radius:12px;">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:40px;height:40px;margin:0 auto 10px;display:block;opacity:0.4;">
+                                <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+                            </svg>
+                            Aki baru dengan kata kunci "<strong>${searchVal}</strong>" tidak ditemukan.
+                            <p style="font-size:13px; margin-top:4px;">Silakan periksa kembali kata kunci pengetikan Anda.</p>
+                        </div>`;
                     return;
                 }
+
+                // State 3: Render kartu produk aki
                 data.forEach(accu => {
                     const existing = getCartItem(accu.id);
                     const currentQty = existing ? existing.quantity : 1;
@@ -2829,8 +2860,7 @@ document.addEventListener("DOMContentLoaded", () => {
                                 ${inCart ? '<button type="button" class="btn-delete-cart user-button" style="font-size:12px; padding:8px 16px; background: #fff1f2; color: #e11d48; border-color: #ffe4e6;">Hapus dari Keranjang</button>' : ''}
                             </div>
                         </div>
-                    </div>
-                `;
+                    </div>`;
 
                     let qtyCounter = currentQty;
                     const qtyValEl = card.querySelector(".qty-val");
@@ -2858,17 +2888,6 @@ document.addEventListener("DOMContentLoaded", () => {
                         const idx = tradeInCart.findIndex(i => i.id === accu.id);
                         if (idx >= 0) {
                             tradeInCart[idx].quantity = qtyCounter;
-                            btnToggle.textContent = "Jumlah telah diupdate!";
-                            btnToggle.style.backgroundColor = "#10b981";
-                            btnToggle.style.color = "#fff";
-                            btnToggle.style.borderColor = "#10b981";
-                            setTimeout(() => {
-                                localStorage.setItem("pickup_trade_in_cart", JSON.stringify(tradeInCart));
-                                const currentSearch = document.getElementById("new-accu-search-input")?.value.toLowerCase().trim() || "";
-                                renderNewAccus(newAccus.filter(a => a.name.toLowerCase().includes(currentSearch)), currentSearch);
-                                updateTradeInSelected();
-                            }, 1000);
-                            return;
                         } else {
                             tradeInCart.push({
                                 id: accu.id,
@@ -2878,9 +2897,11 @@ document.addEventListener("DOMContentLoaded", () => {
                             });
                         }
                         localStorage.setItem("pickup_trade_in_cart", JSON.stringify(tradeInCart));
-                        const currentSearch = document.getElementById("new-accu-search-input")?.value.toLowerCase().trim() || "";
-                        renderNewAccus(newAccus.filter(a => a.name.toLowerCase().includes(currentSearch)), currentSearch);
                         updateTradeInSelected();
+                        
+                        // Refetch dengan kata kunci saat ini untuk meng-update UI kartu
+                        const currentSearch = searchInputTradeIn ? searchInputTradeIn.value.trim() : "";
+                        fetchNewAccusBySearch(currentSearch);
                     };
 
                     if (btnDelete) {
@@ -2888,9 +2909,10 @@ document.addEventListener("DOMContentLoaded", () => {
                             e.stopPropagation();
                             tradeInCart = tradeInCart.filter(i => i.id !== accu.id);
                             localStorage.setItem("pickup_trade_in_cart", JSON.stringify(tradeInCart));
-                            const currentSearch = document.getElementById("new-accu-search-input")?.value.toLowerCase().trim() || "";
-                            renderNewAccus(newAccus.filter(a => a.name.toLowerCase().includes(currentSearch)), currentSearch);
                             updateTradeInSelected();
+                            
+                            const currentSearch = searchInputTradeIn ? searchInputTradeIn.value.trim() : "";
+                            fetchNewAccusBySearch(currentSearch);
                         };
                     }
 
@@ -3021,8 +3043,8 @@ document.addEventListener("DOMContentLoaded", () => {
                             showDeleteConfirmModal("Apakah Anda yakin ingin menghapus aki ini dari pilihan?", () => {
                                 tradeInCart = tradeInCart.filter(i => i.id !== itemId);
                                 localStorage.setItem("pickup_trade_in_cart", JSON.stringify(tradeInCart));
-                                const currentSearch = document.getElementById("new-accu-search-input")?.value.toLowerCase().trim() || "";
-                                renderNewAccus(newAccus.filter(a => a.name.toLowerCase().includes(currentSearch)), currentSearch);
+                                const currentSearch = document.getElementById("new-accu-search-input")?.value.trim() || "";
+                                fetchNewAccusBySearch(currentSearch);
                                 updateTradeInSelected();
                             });
                         };
@@ -3079,23 +3101,49 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
             };
 
-            const initTradeIn = async () => {
-                updateTradeInSelected();
-                const res = await fetchPublicApi("/new-accus");
+            // 2. FUNGSI FETCH KE BACKEND ON-DEMAND MENGGUNAKAN QUERY SEARCH
+            const fetchNewAccusBySearch = async (query) => {
+                const grid = document.getElementById("new-accus-grid");
+                if (!query || query.trim() === "") {
+                    renderNewAccus([], "");
+                    return;
+                }
+
+                if (grid) {
+                    grid.innerHTML = '<div style="padding:40px; text-align:center; color:#64748b; grid-column:1/-1;">Mencari aki baru...</div>';
+                }
+
+                const res = await fetchPublicApi(`/new-accus?search=${encodeURIComponent(query.trim())}`);
                 if (res && res.data) {
-                    newAccus = res.data;
-                    renderNewAccus(newAccus, "");
+                    renderNewAccus(res.data, query.trim());
+                } else {
+                    renderNewAccus([], query.trim());
                 }
             };
 
+            // 3. LISTEN INPUT PENCARIAN DENGAN DEBOUNCE (300ms)
             const searchInputTradeIn = document.getElementById("new-accu-search-input");
             if (searchInputTradeIn) {
                 searchInputTradeIn.addEventListener("input", (e) => {
-                    const q = e.target.value.toLowerCase().trim();
-                    const filtered = newAccus.filter(a => a.name.toLowerCase().includes(q) || (a.brand_relation && a.brand_relation.name.toLowerCase().includes(q)));
-                    renderNewAccus(filtered, q);
+                    const query = e.target.value;
+                    
+                    clearTimeout(tradeInSearchTimeout);
+                    tradeInSearchTimeout = setTimeout(() => {
+                        fetchNewAccusBySearch(query);
+                    }, 500);
                 });
             }
+
+            // 4. INISIALISASI AWAL HALAMAN TRADE-IN
+            const initTradeIn = async () => {
+                updateTradeInSelected();
+                const initialSearch = searchInputTradeIn ? searchInputTradeIn.value.trim() : "";
+                if (initialSearch !== "") {
+                    fetchNewAccusBySearch(initialSearch);
+                } else {
+                    renderNewAccus([], "");
+                }
+            };
 
             const btnContinue = document.getElementById("btn-trade-in-continue");
             if (btnContinue) {

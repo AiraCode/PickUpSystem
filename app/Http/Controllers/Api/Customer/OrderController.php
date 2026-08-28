@@ -34,6 +34,13 @@ class OrderController extends Controller
             'pickup_long' => 'required|numeric',
         ]);
 
+        session([
+            'pickup_cart' => $request->input('cart'),
+            'pickup_address' => $request->input('address'),
+            'pickup_order_type' => $request->input('order_type'),
+            'pickup_trade_in_cart' => $request->input('trade_in_cart', []),
+        ]);
+
         $lat = (float) $request->input('pickup_lat');
         $lng = (float) $request->input('pickup_long');
 

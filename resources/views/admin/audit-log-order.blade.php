@@ -48,30 +48,10 @@
                     <svg viewBox="0 0 24 24" style="position:absolute;left:10px;top:50%;transform:translateY(-50%);width:15px;height:15px;fill:none;stroke:#9ca3af;stroke-width:2;pointer-events:none;">
                         <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
                     </svg>
-                    <input type="text" id="audit-search" placeholder="Cari deskripsi atau Order UUID..."
+                    <input type="text" id="audit-search" placeholder="Cari deskripsi atau Order ID..."
                         style="width:100%;padding:8px 10px 8px 34px;border:1px solid #e5e7eb;border-radius:8px;font-size:13px;box-sizing:border-box;background:inherit;color:inherit;"
                         oninput="debounceAuditFetch()">
                 </div>
-
-                <select id="audit-filter-action" class="admin-select"
-                    style="padding:8px 32px 8px 12px;font-size:13px;border-radius:8px;"
-                    onchange="fetchAuditLog(1)">
-                    <option value="">Semua Tipe Aksi</option>
-                    <option value="status_change">Status Change</option>
-                    <option value="items_change">Items Change</option>
-                    <option value="note_update">Note Update</option>
-                    <option value="created">Created</option>
-                    <option value="cancelled">Cancelled</option>
-                </select>
-
-                <select id="audit-filter-actor" class="admin-select"
-                    style="padding:8px 32px 8px 12px;font-size:13px;border-radius:8px;"
-                    onchange="fetchAuditLog(1)">
-                    <option value="">Semua Aktor</option>
-                    <option value="admin">Admin</option>
-                    <option value="customer">Customer</option>
-                    <option value="system">System</option>
-                </select>
 
                 <button type="button" onclick="fetchAuditLog(1)"
                     class="admin-button admin-button--secondary"
@@ -340,7 +320,7 @@
                     + '<td>' + actionBadge(item.action_type) + '</td>'
                     + '<td style="max-width:180px;overflow:hidden;">' + oldCell + '</td>'
                     + '<td style="max-width:180px;overflow:hidden;">' + newCell + '</td>'
-                    + '<td style="font-size:12px;color:#4b5563;line-height:1.5;">' + (item.description ? escHtml(item.description) : '<span style="color:#9ca3af;">—</span>') + '</td>'
+                    + '<td style="font-size:12px;color:#9ca3af;line-height:1.5;">' + (item.description ? escHtml(item.description) : '<span style="color:#9ca3af;">—</span>') + '</td>'
                     + '</tr>';
             }).join('');
         }
