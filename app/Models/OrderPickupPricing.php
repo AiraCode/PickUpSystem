@@ -9,7 +9,7 @@ class OrderPickupPricing extends Model
 {
     protected $table = 'order_pickup_pricings';
 
-    public $incrementing = false;
+    public $incrementing = true;
 
     protected $keyType = 'integer';
 

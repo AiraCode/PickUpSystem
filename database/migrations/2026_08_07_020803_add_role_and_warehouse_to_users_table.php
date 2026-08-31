@@ -24,7 +24,9 @@ return new class extends Migration
 
         Schema::table('users', function (Blueprint $table) {
             $table->enum('role', ['central', 'warehouse'])->default('central')->after('password');
-            $table->integer('warehouse_id')->nullable()->after('role');
+            
+            // Ganti integer() menjadi unsignedInteger() agar seragam dengan storages.id
+            $table->unsignedInteger('warehouse_id')->nullable()->after('role');
 
             $table->foreign('warehouse_id')->references('id')->on('storages')->onDelete('set null');
         });

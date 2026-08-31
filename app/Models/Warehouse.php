@@ -12,7 +12,7 @@ class Warehouse extends Model
     use SoftDeletes;
     protected $table = 'storages';
 
-    public $incrementing = false;
+    public $incrementing = true;
 
     protected $fillable = ['id', 'name', 'address', 'lat', 'long'];
 

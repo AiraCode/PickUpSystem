@@ -323,7 +323,7 @@ document.addEventListener("DOMContentLoaded", () => {
             return;
         }
 
-        const accus = res.data.accus.filter((a) => Number(a.berat_kering || 0) > 0);
+        const accus = res.data.accus;
         renderProductCards(accus);
 
         if (window.userCart && window.userCart.size > 0) {

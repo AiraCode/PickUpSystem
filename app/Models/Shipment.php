@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Shipment extends Model
 {
-    public $incrementing = false;
+    public $incrementing = true;
 
     protected $fillable = [
         'id',

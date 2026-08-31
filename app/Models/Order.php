@@ -10,7 +10,7 @@ use Illuminate\Support\Str;
 
 class Order extends Model
 {
-    public $incrementing = false;
+    public $incrementing = true;
 
     protected $fillable = [
         'id',

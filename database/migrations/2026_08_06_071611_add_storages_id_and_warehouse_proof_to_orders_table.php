@@ -12,7 +12,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('orders', function (Blueprint $table) {
-            $table->integer('storages_id')->nullable()->after('cities_id');
+            // Ubah integer() menjadi unsignedInteger()
+            $table->unsignedInteger('storages_id')->nullable()->after('cities_id');
             $table->string('warehouse_proof', 255)->nullable()->after('accu_ktp');
 
             $table->foreign('storages_id')->references('id')->on('storages')->onDelete('set null');
@@ -30,4 +31,3 @@ return new class extends Migration
         });
     }
 };
-

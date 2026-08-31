@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Receipt extends Model
 {
-    public $incrementing = false;
+    public $incrementing = true;
 
     protected $fillable = [
         'id',

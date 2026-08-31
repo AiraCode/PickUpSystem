@@ -28,7 +28,7 @@ class AccuController extends Controller
             return response()->json([
                 'message' => 'Silakan ketik nama aki untuk mencari',
                 'data' => [
-                    'city' => $city->only(['id', 'name', 'percentage']),
+                    'city' => $city->only(['id', 'name']),
                     'accus' => [],
                 ],
             ]);
@@ -54,10 +54,8 @@ class AccuController extends Controller
 
                 return [
                     'id' => $accu->id,
-                    'brand' => $accu->brand ?? '-',
                     'name' => $accu->name,
                     'berat_kering' => $beratKering,
-                    'percentage' => $cityPercentage,
                     'price' => $calculatedPrice,
                 ];
             });
@@ -65,7 +63,7 @@ class AccuController extends Controller
         return response()->json([
             'message' => 'Daftar aki dan harga di kota ' . $city->name,
             'data' => [
-                'city' => $city->only(['id', 'name', 'percentage']),
+                'city' => $city->only(['id', 'name']),
                 'accus' => $accus,
             ],
         ]);

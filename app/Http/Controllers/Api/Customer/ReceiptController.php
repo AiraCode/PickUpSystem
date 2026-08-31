@@ -57,7 +57,6 @@ class ReceiptController extends Controller
                 $formattedAccus[] = [
                     'id' => $accu->id,
                     'name' => $accu->name,
-                    'brand' => '-',
                     'amount' => $accu->pivot->amount,
                     'price' => $calculatedPrice,
                     'subtotal' => $calculatedPrice * $accu->pivot->amount,

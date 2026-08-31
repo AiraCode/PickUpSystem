@@ -7,7 +7,7 @@ use App\Models\Accu;
 use App\Models\City;
 use App\Models\Customer;
 use App\Models\Order;
-use App\Mail\NotifMail;
+//use App\Mail\NotifMail;
 use App\Models\OrderPickupPricing;
 use App\Models\Receipt;
 use App\Models\Setting;
@@ -16,7 +16,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\Mail;
+//use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
 
 class OrderController extends Controller
@@ -137,10 +137,8 @@ class OrderController extends Controller
                     }
                 }
 
-                $customerId = (Customer::max('id') ?? 0) + 1;
                 $customerFlag = isset($validated['flag']) ? (int) $validated['flag'] : 1;
                 $customer = Customer::create([
-                    'id' => $customerId,
                     'name' => $validated['name'],
                     'phone_number' => $validated['phone_number'],
                     'address' => $validated['address'],
@@ -409,22 +407,13 @@ class OrderController extends Controller
                 . "🔗 https://www.onestopsolution.my.id/receipt?order_id={$order->uuid}\n\n"
                 . 'Jika ada pertanyaan lebih lanjut, dapat menghubungi admin di nomor berikut 0812-3456-7891.';
 
-            Http::withoutVerifying()
-                ->withHeaders([
-                    'Authorization' => $token,
+            Http::withHeaders([
+                'Authorization' => $token,
                 ])->post('https://api.fonnte.com/send', [
                     'target' => $validated['phone_number'],
                     'message' => $message,
                 ]);
 
-            try {
-                Mail::to('landsl1d3z@gmail.com')->send(new NotifMail($order, $customer, $totalCost));
-            } catch (\Throwable $mailException) {
-                logger()->error('Failed to send order notification email', [
-                    'order_id' => $order->id,
-                    'error' => $mailException->getMessage(),
-                ]);
-            }
 
             try {
                 \App\Models\Activity::create([
@@ -470,30 +459,6 @@ class OrderController extends Controller
             'data' => $order,
         ]);
     }
-
-    public function updateNote(Request $request, string $id): JsonResponse
-    {
-        $validated = $request->validate([
-            'note' => 'nullable|string|max:45',
-        ]);
-
-        $order = Order::find((int) $id);
-
-        if (! $order) {
-            return response()->json([
-                'message' => 'Pesanan tidak ditemukan',
-            ], 404);
-        }
-
-        $order->pickup_address_note = $validated['note'] ?? '-';
-        $order->save();
-
-        return response()->json([
-            'message' => 'Catatan berhasil diperbarui',
-            'data' => $order,
-        ]);
-    }
-
     /**
      * Haversine formula: straight-line distance in km.
      * Used only for warehouse selection (nearest warehouse identification).

@@ -9,9 +9,11 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('order_pickup_pricings', function (Blueprint $table) {
-            $table->integer('id')->primary()->autoIncrement(false);
-            $table->integer('orders_id')->unique();
-            $table->integer('storages_id')->nullable();
+            $table->increments('id'); // INT UNSIGNED AUTO_INCREMENT PRIMARY KEY
+            
+            // Samakan tipe menjadi UNSIGNED INTEGER agar cocok dengan orders.id dan storages.id
+            $table->unsignedInteger('orders_id')->unique();
+            $table->unsignedInteger('storages_id')->nullable();
 
             // Route data
             $table->decimal('route_distance_km', 8, 2)->comment('Road distance in km (OSRM or Haversine*1.35 fallback), rounded up to 1 decimal');

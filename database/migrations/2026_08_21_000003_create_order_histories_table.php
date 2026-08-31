@@ -10,9 +10,9 @@ return new class extends Migration
     {
         if (! Schema::hasTable('order_histories')) {
             Schema::create('order_histories', function (Blueprint $table) {
-                $table->id();
-                $table->integer('order_id');
-                $table->integer('user_id')->nullable();
+                $table->increments('id'); // Konsisten memakai INT AUTO_INCREMENT
+                $table->unsignedInteger('order_id'); // INT UNSIGNED agar cocok dengan orders.id
+                $table->unsignedInteger('user_id')->nullable(); // INT UNSIGNED agar cocok dengan users.id
                 $table->string('actor_type', 45)->default('admin'); // 'admin', 'customer', 'system'
                 $table->string('action_type', 45); // 'status_change', 'items_change'
                 $table->json('old_values')->nullable();

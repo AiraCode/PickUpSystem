@@ -13,7 +13,7 @@ class User extends Authenticatable
 {
     use HasApiTokens;
 
-    public $incrementing = false;
+    public $incrementing = true;
 
     protected $fillable = [
         'id',

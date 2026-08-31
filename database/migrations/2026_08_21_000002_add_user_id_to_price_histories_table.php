@@ -10,7 +10,8 @@ return new class extends Migration
     {
         if (! Schema::hasColumn('price_histories', 'user_id')) {
             Schema::table('price_histories', function (Blueprint $table) {
-                $table->integer('user_id')->nullable()->after('id');
+                // Gunakan unsignedInteger() agar cocok dengan users.id
+                $table->unsignedInteger('user_id')->nullable()->after('id');
                 $table->foreign('user_id')->references('id')->on('users')->nullOnDelete();
             });
         }

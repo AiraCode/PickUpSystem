@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 class Accu extends Model
 {
     use SoftDeletes;
-    public $incrementing = false;
+    public $incrementing = true;
 
     protected $fillable = ['id', 'name', 'berat_kering'];
 

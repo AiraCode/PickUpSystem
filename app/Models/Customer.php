@@ -11,7 +11,8 @@ use Illuminate\Contracts\Encryption\DecryptException;
 
 class Customer extends Model
 {
-    public $incrementing = false;
+    public $incrementing = true;
+    
 
     protected $fillable = [
         'id',

@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Bank extends Model
 {
-    public $incrementing = false;
+    public $incrementing = true;
 
     protected $fillable = ['id', 'name'];
 

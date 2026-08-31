@@ -19,7 +19,7 @@ class AdminPickupPricingTest extends TestCase
     {
         parent::setUp();
 
-        // User model uses $incrementing = false — provide explicit id
+        // User model uses $incrementing = true — provide explicit id
         $this->admin = User::create([
             'id'       => 1,
             'name'     => 'Test Admin',
