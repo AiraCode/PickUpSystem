@@ -277,7 +277,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 window.userCart.set(name, { id, name, brand, price, quantity });
                 if (typeof window.renderUserCart === "function") {
-                    window.renderUserCart();
+                    window.renderUserCart(isUpdate ? "update" : "add");
                 }
 
                 if (typeof window.updateProductCardButtons === "function") {
@@ -366,6 +366,53 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     if (identityForm) {
+        // Helper: Smooth Crossfade for Total and Address updates (500-800ms)
+        const updateWithCrossfade = (element, newText, duration = 600) => {
+            if (!element) return;
+            if (element.textContent === newText) return;
+            // If it's the initial placeholder (e.g. "—" or containing "Menunggu"), update immediately without crossfading
+            if (!element.textContent || element.textContent.trim() === "—" || element.textContent.includes("Menunggu")) {
+                element.textContent = newText;
+                return;
+            }
+            if (window.innerWidth < 1025 || window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+                element.textContent = newText;
+                return;
+            }
+            element.classList.add("is-crossfading");
+            setTimeout(() => {
+                element.textContent = newText;
+                element.classList.remove("is-crossfading");
+            }, duration / 2);
+        };
+
+        // Identity Page Scroll Reveal & Entrance Initialization
+        const formLayout = document.querySelector(".user-form-layout");
+        if (formLayout && window.innerWidth >= 1025) {
+            if (!formLayout.classList.contains("identity-motion-init")) {
+                formLayout.classList.add("identity-motion-init");
+            }
+            const identityObserver = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        requestAnimationFrame(() => {
+                            entry.target.classList.add("is-revealed");
+                        });
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, { threshold: 0.02, rootMargin: "0px 0px 40px 0px" });
+
+            const rect = formLayout.getBoundingClientRect();
+            if (rect.top < window.innerHeight && rect.bottom > 0) {
+                requestAnimationFrame(() => {
+                    formLayout.classList.add("is-revealed");
+                });
+            } else {
+                identityObserver.observe(formLayout);
+            }
+        }
+
         //UI validasi nama pemilik rekening (hanya huruf + spasi)
         const holderInput = identityForm.querySelector(
             'input[name="account_holder"]',
@@ -704,6 +751,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 if (!file) {
                     if (label) label.textContent = "Upload foto Aki & KTP dalam 1 Frame";
                     if (hint) hint.style.display = "none";
+                    uploadAccuKtpTrigger?.classList.remove("has-file-selected");
                     return;
                 }
 
@@ -712,6 +760,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     accuKtpFileInput.value = "";
                     if (label) label.textContent = window.i18n ? window.i18n.t('identity.upload_accu_ktp', 'Upload foto Aki & KTP dalam 1 Frame') : "Upload foto Aki & KTP dalam 1 Frame";
                     if (hint) hint.style.display = "none";
+                    uploadAccuKtpTrigger?.classList.remove("has-file-selected");
                     return;
                 }
 
@@ -720,12 +769,14 @@ document.addEventListener("DOMContentLoaded", () => {
                     if (hint) hint.style.display = "block";
                     accuKtpFileInput.value = "";
                     if (label) label.textContent = window.i18n ? window.i18n.t('identity.upload_accu_ktp', 'Upload foto Aki & KTP dalam 1 Frame') : "Upload foto Aki & KTP dalam 1 Frame";
+                    uploadAccuKtpTrigger?.classList.remove("has-file-selected");
                     return;
                 } else {
                     if (hint) hint.style.display = "none";
                 }
 
                 if (label) label.textContent = "✓ " + file.name;
+                uploadAccuKtpTrigger?.classList.add("has-file-selected");
             });
         }
 
@@ -753,6 +804,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     if (ocrNameWrapper) ocrNameWrapper.style.display = "none";
                     if (ocrNameInput) ocrNameInput.value = "";
                     if (sizeHint) sizeHint.style.display = "none";
+                    uploadKtpTrigger?.classList.remove("has-file-selected");
                     return;
                 }
 
@@ -763,6 +815,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     if (ocrNameWrapper) ocrNameWrapper.style.display = "none";
                     if (ocrNameInput) ocrNameInput.value = "";
                     if (sizeHint) sizeHint.style.display = "none";
+                    uploadKtpTrigger?.classList.remove("has-file-selected");
                     return;
                 }
 
@@ -773,12 +826,14 @@ document.addEventListener("DOMContentLoaded", () => {
                     if (nameEl) nameEl.textContent = window.i18n ? window.i18n.t('identity.upload_ktp', 'Upload foto KTP atau SIM') : "Upload foto KTP atau SIM";
                     if (ocrNameWrapper) ocrNameWrapper.style.display = "none";
                     if (ocrNameInput) ocrNameInput.value = "";
+                    uploadKtpTrigger?.classList.remove("has-file-selected");
                     return;
                 } else {
                     if (sizeHint) sizeHint.style.display = "none";
                 }
 
                 if (nameEl) nameEl.textContent = file.name;
+                uploadKtpTrigger?.classList.add("has-file-selected");
 
                 //Tampilkan loading
                 if (ocrNameWrapper) ocrNameWrapper.style.display = "block";
@@ -874,7 +929,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 .querySelectorAll(".user-flow-summary__item")[2]
                 ?.querySelector("strong");
             if (addressSummary) {
-                addressSummary.textContent = `${address}, ${city} ${zip}`;
+                updateWithCrossfade(addressSummary, `${address}, ${city} ${zip}`);
             }
             const savedCart = JSON.parse(
                 localStorage.getItem("pickup_cart") || "[]",
@@ -900,14 +955,6 @@ document.addEventListener("DOMContentLoaded", () => {
                         <div class="user-progress__step is-current"><span>03</span><small>Identitas</small></div>
                         <span class="user-progress__line"></span>
                         <div class="user-progress__step"><span>04</span><small>Receipt</small></div>
-                    `;
-                } else {
-                    identityProgressBar.innerHTML = `
-                        <div class="user-progress__step is-complete"><span>01</span><small>Aki Reject</small></div>
-                        <span class="user-progress__line is-complete"></span>
-                        <div class="user-progress__step is-current"><span>02</span><small>Identitas</small></div>
-                        <span class="user-progress__line"></span>
-                        <div class="user-progress__step"><span>03</span><small>Receipt</small></div>
                     `;
                 }
             }
@@ -970,9 +1017,9 @@ document.addEventListener("DOMContentLoaded", () => {
                     if (totalLabel) {
                         totalLabel.textContent = isMinus ? "Estimasi Biaya Tambah" : "Total Estimasi Diterima";
                     }
-                    totalSummary.textContent = rupiah(Math.abs(netDiff));
+                    updateWithCrossfade(totalSummary, rupiah(Math.abs(netDiff)));
                 } else {
-                    totalSummary.textContent = rupiah(subtotal - fee);
+                    updateWithCrossfade(totalSummary, rupiah(subtotal - fee));
                 }
 
                 // Upload Bukti Transfer (Tanpa OCR, Verifikasi Manual Admin)
@@ -1009,6 +1056,7 @@ document.addEventListener("DOMContentLoaded", () => {
                                 transferStatusEl.style.borderRadius = "6px";
                                 transferStatusEl.innerHTML = window.i18n ? window.i18n.t('error.unsupported_format', '⚠️ Format file tidak didukung. Silakan gunakan format foto JPG, JPEG, atau PNG.') : "⚠️ Format file tidak didukung. Silakan gunakan format foto JPG, JPEG, atau PNG.";
                             }
+                            uploadTransferTrigger?.classList.remove("has-file-selected");
                             return;
                         }
 
@@ -1017,12 +1065,14 @@ document.addEventListener("DOMContentLoaded", () => {
                             transferInput.value = "";
                             if (transferLabel) transferLabel.textContent = window.i18n ? window.i18n.t('identity.upload_transfer', 'Upload Bukti Transfer Kekurangan Pembayaran') : "Upload Bukti Transfer Kekurangan Pembayaran";
                             if (transferStatusEl) transferStatusEl.style.display = "none";
+                            uploadTransferTrigger?.classList.remove("has-file-selected");
                             return;
                         }
 
                         if (transferLabel) {
                             transferLabel.textContent = file.name;
                         }
+                        uploadTransferTrigger?.classList.add("has-file-selected");
                         if (transferStatusEl) {
                             transferStatusEl.style.display = "block";
                             transferStatusEl.style.color = "#2563eb";
@@ -1404,6 +1454,33 @@ document.addEventListener("DOMContentLoaded", () => {
         const switchToolbar = document.querySelector(".user-receipt-toolbar");
         if (switchToolbar) {
             switchToolbar.style.display = "none";
+        }
+
+        // Receipt Page Scroll Reveal & Entrance Initialization
+        const receiptSection = document.querySelector(".user-receipt-section");
+        if (receiptSection && window.innerWidth >= 1025) {
+            if (!receiptSection.classList.contains("receipt-motion-init")) {
+                receiptSection.classList.add("receipt-motion-init");
+            }
+            const receiptObserver = new IntersectionObserver((entries, observer) => {
+                entries.forEach((entry) => {
+                    if (entry.isIntersecting) {
+                        requestAnimationFrame(() => {
+                            entry.target.classList.add("is-revealed");
+                        });
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, { threshold: 0.02, rootMargin: "0px 0px 40px 0px" });
+
+            const rect = receiptSection.getBoundingClientRect();
+            if (rect.top < window.innerHeight && rect.bottom > 0) {
+                requestAnimationFrame(() => {
+                    receiptSection.classList.add("is-revealed");
+                });
+            } else {
+                receiptObserver.observe(receiptSection);
+            }
         }
 
         const urlParams = new URLSearchParams(window.location.search);

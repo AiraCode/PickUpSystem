@@ -3074,6 +3074,16 @@ body.dark-mode .receipt-map-link:hover,
         border: 0;
         max-width: none;
     }
+
+    .user-receipt,
+    .user-receipt *,
+    .receipt-motion-init * {
+        opacity: 1 !important;
+        transform: none !important;
+        filter: none !important;
+        animation: none !important;
+        box-shadow: none !important;
+    }
 }
 
 @media (min-width: 1024px) {
@@ -3359,32 +3369,37 @@ body.dark-mode .receipt-map-link:hover,
     .delay-1400 { transition-delay: 1400ms; }
     .delay-1600 { transition-delay: 1600ms; }
 
-    /* Summary / Price Update Pop-up Animation (500–800ms, no background flashing) */
-    @keyframes pricePopSlow {
-        0% {
-            opacity: 0.55;
-            transform: scale(0.95);
-        }
-        40% {
-            opacity: 1;
-            transform: scale(1.09);
-            color: var(--user-blue);
-        }
-        75% {
-            opacity: 1;
-            transform: scale(1.02);
-            color: var(--user-blue);
-        }
-        100% {
-            opacity: 1;
-            transform: scale(1);
-            color: inherit;
-        }
+    /* Summary / Price Update Pop-up Animation (500–800ms, no background flash) */
+    @keyframes pricePopSlowBlue {
+        0% { opacity: 1; transform: scale(1); color: inherit; }
+        25% { opacity: 1; transform: scale(1.09); color: var(--user-blue, #2563eb); }
+        75% { opacity: 1; transform: scale(1.02); color: var(--user-blue, #2563eb); }
+        100% { opacity: 1; transform: scale(1); color: inherit; }
+    }
+    @keyframes pricePopSlowOrange {
+        0% { opacity: 1; transform: scale(1); color: inherit; }
+        25% { opacity: 1; transform: scale(1.09); color: #f97316; }
+        75% { opacity: 1; transform: scale(1.02); color: #f97316; }
+        100% { opacity: 1; transform: scale(1); color: inherit; }
+    }
+    @keyframes pricePopSlowRed {
+        0% { opacity: 1; transform: scale(1); color: inherit; }
+        25% { opacity: 1; transform: scale(1.09); color: var(--user-red, #dc2626); }
+        75% { opacity: 1; transform: scale(1.02); color: var(--user-red, #dc2626); }
+        100% { opacity: 1; transform: scale(1); color: inherit; }
     }
 
-    .price-pop-anim {
+    .price-pop-anim-blue {
         display: inline-block;
-        animation: pricePopSlow 0.65s cubic-bezier(0.22, 1, 0.36, 1) both;
+        animation: pricePopSlowBlue 0.65s cubic-bezier(0.22, 1, 0.36, 1) both;
+    }
+    .price-pop-anim-orange {
+        display: inline-block;
+        animation: pricePopSlowOrange 0.65s cubic-bezier(0.22, 1, 0.36, 1) both;
+    }
+    .price-pop-anim-red {
+        display: inline-block;
+        animation: pricePopSlowRed 0.65s cubic-bezier(0.22, 1, 0.36, 1) both;
     }
 
     /* Battery Card & Process Card Micro-Interactions (400–600ms transitions, 4–6px rise) */
@@ -3500,6 +3515,850 @@ body.dark-mode .receipt-map-link:hover,
     }
 }
 
+/* ==========================================================================
+   IDENTITY PAGE DYNAMIC MOTION (Slow, Smooth, Layered, Cinematic)
+   ========================================================================== */
+
+/* Timing variables */
+:root {
+    --identity-ease: cubic-bezier(0.22, 1, 0.36, 1);
+    --identity-ease-soft: cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+/* Keyframes */
+@keyframes identityFadeUpBlur {
+    0% {
+        opacity: 0;
+        transform: translateY(28px);
+        filter: blur(4px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+        filter: blur(0);
+    }
+}
+
+@keyframes identityFadeLeft {
+    0% {
+        opacity: 0;
+        transform: translateX(28px);
+        filter: blur(4px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateX(0);
+        filter: blur(0);
+    }
+}
+
+@keyframes identityFadeUp {
+    0% {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes identityIconPop {
+    0% {
+        opacity: 0;
+        transform: scale(0.85);
+    }
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+@keyframes identitySlideX {
+    0% {
+        opacity: 0;
+        transform: translateX(-14px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+/* 3. Ambient Motion: Subtle Breathe specifically for Main Data Diri Card (box-shadow only, 6-10s cycle) */
+@keyframes subtleBreathe {
+    0%, 100% {
+        box-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.04), 0 1px 3px rgba(0, 0, 0, 0.02);
+    }
+    50% {
+        box-shadow: 0 14px 34px -4px rgba(37, 99, 235, 0.085), 0 2px 6px rgba(0, 0, 0, 0.03);
+    }
+}
+
+/* 5. File Selection Feedback Pop */
+@keyframes identityFileSelected {
+    0% {
+        opacity: 0.7;
+        transform: scale(0.97) translateY(4px);
+    }
+    100% {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+/* 8. Validation / Error Smooth Presentation */
+@keyframes errorSmoothAppear {
+    0% {
+        opacity: 0;
+        transform: translateY(5px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Hero Keyframes */
+@keyframes heroBgDepth {
+    0% {
+        transform: scale(1.06);
+        opacity: 0.85;
+    }
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+@keyframes stepGlowPulse {
+    0%, 100% {
+        box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.45);
+    }
+    50% {
+        box-shadow: 0 0 0 6px rgba(255, 255, 255, 0);
+    }
+}
+
+/* Desktop Entrance Orchestration (>= 1025px) */
+@media (min-width: 1025px) {
+    /* Hero Entrance Orchestration */
+    .user-flow-hero .user-progress {
+        animation: identityFadeUp 900ms var(--identity-ease) 100ms both;
+    }
+
+    .user-flow-hero .user-progress__step.is-current span {
+        animation: stepGlowPulse 3.5s ease-in-out 1000ms infinite;
+    }
+
+    .user-flow-hero .user-kicker {
+        display: inline-block;
+        animation: identitySlideX 800ms var(--identity-ease) 250ms both;
+    }
+
+    .user-flow-hero h1 span {
+        display: inline-block;
+        animation: identityFadeUpBlur 950ms var(--identity-ease) 380ms both;
+    }
+
+    .user-flow-hero h1 em {
+        display: inline-block;
+        animation: identityFadeUpBlur 950ms var(--identity-ease) 520ms both;
+    }
+
+    .user-flow-hero p {
+        animation: identityFadeUp 900ms var(--identity-ease) 680ms both;
+    }
+
+    .user-flow-hero__bg {
+        animation: heroBgDepth 1800ms var(--identity-ease) 0ms both;
+        will-change: transform, opacity;
+    }
+
+    .identity-motion-init .identity-card-main {
+        box-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.04), 0 1px 3px rgba(0, 0, 0, 0.02);
+    }
+
+    .identity-motion-init .identity-card-main,
+    .identity-motion-init .identity-header-icon,
+    .identity-motion-init .identity-header-label,
+    .identity-motion-init .identity-header-title,
+    .identity-motion-init .identity-upload-1,
+    .identity-motion-init .identity-upload-2,
+    .identity-motion-init .identity-field-group-1,
+    .identity-motion-init .identity-field-group-2,
+    .identity-motion-init .identity-summary-card,
+    .identity-motion-init .identity-summary-header,
+    .identity-motion-init .identity-summary-item-aki,
+    .identity-motion-init .identity-summary-item-delivery,
+    .identity-motion-init .identity-summary-item-address,
+    .identity-motion-init .identity-summary-item-total,
+    .identity-motion-init .identity-summary-item-note,
+    .identity-motion-init .identity-privacy-card,
+    .identity-motion-init .identity-privacy-icon,
+    .identity-motion-init .identity-actions {
+        opacity: 0;
+        will-change: opacity, transform, filter;
+    }
+
+    /* Active entrance when revealed — uses 'both' fill-mode so elements stay hidden during delay and stay visible after */
+    /* 3. Main Data Diri Card (900-1100ms) + Ambient motion (6-10s subtleBreathe on box-shadow only) */
+    .user-form-layout.is-revealed .identity-card-main {
+        animation: identityFadeUpBlur 1000ms var(--identity-ease) 100ms both,
+                   subtleBreathe 8s ease-in-out 1100ms infinite alternate;
+    }
+
+    /* 2. Identity Header Sequence (icon -> label -> title, 120-180ms delay steps) */
+    .user-form-layout.is-revealed .identity-header-icon {
+        animation: identityIconPop 600ms var(--identity-ease) 200ms both;
+    }
+
+    .user-form-layout.is-revealed .identity-header-label {
+        animation: identitySlideX 600ms var(--identity-ease) 340ms both;
+    }
+
+    .user-form-layout.is-revealed .identity-header-title {
+        animation: identityFadeUp 650ms var(--identity-ease) 480ms both;
+    }
+
+    /* 4. Upload Fields (900-1100ms duration, stagger: 400ms, 600ms) */
+    .user-form-layout.is-revealed .identity-upload-1 {
+        animation: identityFadeUp 1000ms var(--identity-ease) 400ms both;
+    }
+
+    .user-form-layout.is-revealed .identity-upload-2 {
+        animation: identityFadeUp 1000ms var(--identity-ease) 600ms both;
+    }
+
+    /* 6. Form Fields Group entrance */
+    .user-form-layout.is-revealed .identity-field-group-1 {
+        animation: identityFadeUp 900ms var(--identity-ease) 720ms both;
+    }
+
+    .user-form-layout.is-revealed .identity-field-group-2 {
+        animation: identityFadeUp 900ms var(--identity-ease) 860ms both;
+    }
+
+    /* 9. Order Summary Card (enters from right slowly: 1000-1200ms) */
+    .user-form-layout.is-revealed .identity-summary-card {
+        animation: identityFadeLeft 1100ms var(--identity-ease) 350ms both;
+    }
+
+    /* Staggered items inside Summary (130-150ms delay steps) */
+    .user-form-layout.is-revealed .identity-summary-header {
+        animation: identityFadeUp 800ms var(--identity-ease) 500ms both;
+    }
+
+    .user-form-layout.is-revealed .identity-summary-item-aki {
+        animation: identityFadeUp 800ms var(--identity-ease) 640ms both;
+    }
+
+    .user-form-layout.is-revealed .identity-summary-item-delivery {
+        animation: identityFadeUp 800ms var(--identity-ease) 780ms both;
+    }
+
+    /* 11. Address (enters as single block, 700-900ms) */
+    .user-form-layout.is-revealed .identity-summary-item-address {
+        animation: identityFadeUp 800ms var(--identity-ease) 920ms both;
+    }
+
+    .user-form-layout.is-revealed .identity-summary-item-total {
+        animation: identityFadeUp 850ms var(--identity-ease) 1060ms both;
+    }
+
+    .user-form-layout.is-revealed .identity-summary-item-note {
+        animation: identityFadeUp 850ms var(--identity-ease) 1200ms both;
+    }
+
+    /* 12. Protection Card (enters after main content: 900-1100ms, NO ambient motion) */
+    .user-form-layout.is-revealed .identity-privacy-card {
+        animation: identityFadeUp 1000ms var(--identity-ease) 950ms both;
+    }
+
+    .user-form-layout.is-revealed .identity-privacy-icon {
+        animation: identityIconPop 650ms var(--identity-ease) 1100ms both;
+    }
+
+    /* 13. Bottom Actions (enters last: 800-1000ms) */
+    .user-form-layout.is-revealed .identity-actions {
+        animation: identityFadeUp 900ms var(--identity-ease) 1150ms both;
+    }
+}
+
+/* Mobile / Tablet safety override (< 1025px) */
+@media (max-width: 1024px) {
+    .user-flow-hero .user-progress,
+    .user-flow-hero .user-progress__step.is-current span,
+    .user-flow-hero .user-kicker,
+    .user-flow-hero h1 span,
+    .user-flow-hero h1 em,
+    .user-flow-hero p,
+    .user-flow-hero__bg,
+    .identity-motion-init .identity-card-main,
+    .identity-motion-init .identity-header-icon,
+    .identity-motion-init .identity-header-label,
+    .identity-motion-init .identity-header-title,
+    .identity-motion-init .identity-upload-1,
+    .identity-motion-init .identity-upload-2,
+    .identity-motion-init .identity-field-group-1,
+    .identity-motion-init .identity-field-group-2,
+    .identity-motion-init .identity-summary-card,
+    .identity-motion-init .identity-summary-header,
+    .identity-motion-init .identity-summary-item-aki,
+    .identity-motion-init .identity-summary-item-delivery,
+    .identity-motion-init .identity-summary-item-address,
+    .identity-motion-init .identity-summary-item-total,
+    .identity-motion-init .identity-summary-item-note,
+    .identity-motion-init .identity-privacy-card,
+    .identity-motion-init .identity-privacy-icon,
+    .identity-motion-init .identity-actions {
+        opacity: 1 !important;
+        transform: none !important;
+        filter: none !important;
+        animation: none !important;
+    }
+}
+
+/* 4. Upload Fields Hover & Micro-interactions (450-600ms, existing colors) */
+.user-upload-field {
+    transition: transform 500ms var(--identity-ease),
+                border-color 500ms var(--identity-ease),
+                box-shadow 500ms var(--identity-ease),
+                background-color 500ms var(--identity-ease);
+}
+
+.user-upload-field:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 24px -4px rgba(37, 99, 235, 0.08), 0 2px 6px rgba(0, 0, 0, 0.03);
+    border-color: var(--user-blue) !important;
+}
+
+.user-upload-field__icon {
+    transition: transform 500ms var(--identity-ease),
+                background-color 500ms var(--identity-ease);
+}
+
+.user-upload-field:hover .user-upload-field__icon {
+    transform: scale(1.06);
+}
+
+/* 5. File Selection Feedback */
+.user-upload-field.has-file-selected strong {
+    animation: identityFileSelected 600ms var(--identity-ease) forwards;
+}
+
+/* 6. Form Fields Focus Micro-interactions (450-600ms transition) */
+.user-form-grid .user-floating-field input,
+.user-form-grid .user-floating-field select {
+    transition: border-color 500ms var(--identity-ease),
+                box-shadow 500ms var(--identity-ease),
+                background-color 500ms var(--identity-ease);
+}
+
+.user-form-grid .user-floating-field input:focus,
+.user-form-grid .user-floating-field select:focus {
+    border-color: var(--user-blue);
+    box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.12);
+}
+
+/* 7. Bank Selection State Transition (account_number disabled -> enabled smooth transition, 350-500ms) */
+input[name="account_number"] {
+    transition: opacity 450ms var(--identity-ease),
+                background-color 450ms var(--identity-ease),
+                border-color 450ms var(--identity-ease),
+                box-shadow 450ms var(--identity-ease);
+}
+
+/* 8. Validation / Error Smooth Presentation (500-700ms, NO shake) */
+.user-hint,
+#account-hint,
+#wa-hint-1,
+#wa-hint-2,
+#ocr-status,
+#transfer-ocr-status {
+    transition: opacity 550ms var(--identity-ease),
+                transform 550ms var(--identity-ease);
+}
+
+#account-hint[style*="display: block"],
+#ktp-size-hint[style*="display: block"],
+#accu-ktp-size-hint[style*="display: block"],
+#ocr-status[style*="display: block"],
+#transfer-ocr-status[style*="display: block"],
+#manual-name-wrapper[style*="display: block"] {
+    animation: errorSmoothAppear 600ms var(--identity-ease) forwards;
+}
+
+/* 10. Total Harga Crossfade (500-800ms) */
+.user-flow-summary__total strong,
+.user-flow-summary__item strong {
+    display: inline-block;
+    transition: opacity 300ms cubic-bezier(0.4, 0, 0.2, 1),
+                filter 300ms cubic-bezier(0.4, 0, 0.2, 1),
+                transform 300ms cubic-bezier(0.4, 0, 0.2, 1);
+    will-change: opacity, filter, transform;
+}
+
+.user-flow-summary__total strong.is-crossfading,
+.user-flow-summary__item strong.is-crossfading {
+    opacity: 0;
+    filter: blur(3px);
+    transform: scale(0.98);
+}
+
+/* 13. Bottom Actions Hover & Active Micro-interactions */
+.user-form-actions .user-button--secondary {
+    transition: transform 350ms var(--identity-ease),
+                background-color 350ms var(--identity-ease),
+                border-color 350ms var(--identity-ease),
+                color 350ms var(--identity-ease);
+}
+
+.user-form-actions .user-button--secondary:hover {
+    transform: translateX(-3px);
+}
+
+.user-form-actions .user-button--secondary:active {
+    transform: translateX(-1px) scale(0.98);
+    transition-duration: 150ms;
+}
+
+.user-form-actions .user-button--primary {
+    transition: transform 400ms var(--identity-ease),
+                box-shadow 400ms var(--identity-ease),
+                background-color 350ms var(--identity-ease);
+}
+
+.user-form-actions .user-button--primary [aria-hidden="true"] {
+    display: inline-block;
+    transition: transform 350ms var(--identity-ease);
+}
+
+.user-form-actions .user-button--primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 22px rgba(37, 99, 235, 0.26);
+}
+
+.user-form-actions .user-button--primary:hover [aria-hidden="true"] {
+    transform: translateX(4px);
+}
+
+.user-form-actions .user-button--primary:active {
+    transform: translateY(0) scale(0.98);
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
+    transition-duration: 150ms;
+}
+
+/* ==========================================================================
+   RECEIPT PAGE DYNAMIC MOTION LAYER
+   Slow, fluid, layered, calm, premium & professional
+   ========================================================================== */
+
+:root {
+    --receipt-ease: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Keyframes */
+@keyframes receiptFadeUp {
+    0% {
+        opacity: 0;
+        transform: translateY(16px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes receiptFadeUpBlur {
+    0% {
+        opacity: 0;
+        transform: translateY(25px);
+        filter: blur(4px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+        filter: blur(0);
+    }
+}
+
+@keyframes receiptCardEntrance {
+    0% {
+        opacity: 0;
+        transform: translateY(35px);
+        filter: blur(3px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+        filter: blur(0);
+    }
+}
+
+@keyframes receiptSlideLeft {
+    0% {
+        opacity: 0;
+        transform: translateX(-15px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes receiptSlideRight {
+    0% {
+        opacity: 0;
+        transform: translateX(15px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes receiptFade {
+    0% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+
+@keyframes receiptBadgePop {
+    0% {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+@keyframes receiptTotalPop {
+    0% {
+        opacity: 0;
+        transform: translateY(8px) scale(0.97);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+@keyframes receiptHeroBgSubtle {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.02);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+@keyframes receiptHeaderSlide {
+    0% {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Desktop Motion Sequence (>= 1025px) */
+@media (min-width: 1025px) {
+    /* 3. Header Entrance */
+    .user-header--receipt {
+        animation: receiptHeaderSlide 850ms var(--receipt-ease) 50ms both;
+    }
+
+    /* 4. Progress / Step Indicator Stagger (01 -> 02 -> 03) */
+    .user-flow-hero--receipt .user-progress__step:nth-of-type(1) {
+        animation: receiptFadeUp 850ms var(--receipt-ease) 100ms both;
+    }
+    .user-flow-hero--receipt .user-progress__line:nth-of-type(1) {
+        animation: receiptFade 700ms var(--receipt-ease) 220ms both;
+    }
+    .user-flow-hero--receipt .user-progress__step:nth-of-type(2) {
+        animation: receiptFadeUp 850ms var(--receipt-ease) 320ms both;
+    }
+    .user-flow-hero--receipt .user-progress__line:nth-of-type(2) {
+        animation: receiptFade 700ms var(--receipt-ease) 440ms both;
+    }
+    .user-flow-hero--receipt .user-progress__step:nth-of-type(3) {
+        animation: receiptFadeUp 850ms var(--receipt-ease) 560ms both;
+    }
+
+    /* Step 03 Active Receipt Glow Pulse */
+    .user-flow-hero--receipt .user-progress__step.is-current span {
+        animation: stepGlowPulse 3.5s ease-in-out 1000ms infinite;
+    }
+
+    /* 5. Hero Receipt Content Entrance */
+    .user-flow-hero--receipt .user-kicker {
+        display: inline-block;
+        animation: receiptSlideLeft 800ms var(--receipt-ease) 250ms both;
+    }
+
+    .user-flow-hero--receipt h1 span {
+        display: inline-block;
+        animation: receiptFadeUpBlur 1100ms var(--receipt-ease) 380ms both;
+    }
+
+    .user-flow-hero--receipt h1 em {
+        display: inline-block;
+        animation: receiptFadeUpBlur 1100ms var(--receipt-ease) 560ms both;
+    }
+
+    .user-flow-hero--receipt p {
+        animation: receiptFadeUp 900ms var(--receipt-ease) 720ms both;
+    }
+
+    /* 6. Hero Subtle Ambient Cinematic Movement (16s) */
+    .user-flow-hero--receipt .user-flow-hero__bg {
+        animation: receiptHeroBgSubtle 16s ease-in-out infinite alternate;
+        will-change: transform;
+    }
+
+    /* Initial hidden state for receipt page elements */
+    .receipt-motion-init .receipt-card-main,
+    .receipt-motion-init .receipt-elem-brand,
+    .receipt-motion-init .receipt-elem-meta,
+    .receipt-motion-init .receipt-elem-rule,
+    .receipt-motion-init .receipt-elem-heading,
+    .receipt-motion-init .receipt-elem-seller,
+    .receipt-motion-init .receipt-elem-delivery,
+    .receipt-motion-init .receipt-elem-table,
+    .receipt-motion-init .receipt-elem-summary,
+    .receipt-motion-init .receipt-elem-note,
+    .receipt-motion-init .receipt-elem-actions,
+    .receipt-motion-init .receipt-elem-seller dl > div,
+    .receipt-motion-init .receipt-elem-delivery dl > div {
+        opacity: 0;
+        will-change: opacity, transform, filter;
+    }
+
+    /* 7. Receipt Document Entrance & Settle (1200ms duration, settles without ongoing float) */
+    .user-receipt-section.is-revealed .receipt-card-main {
+        animation: receiptCardEntrance 1200ms var(--receipt-ease) 250ms both;
+    }
+
+    /* 8. Receipt Header: Company Info (left) & Order Info (right) */
+    .user-receipt-section.is-revealed .receipt-elem-brand {
+        animation: receiptSlideLeft 850ms var(--receipt-ease) 400ms both;
+    }
+
+    .user-receipt-section.is-revealed .receipt-elem-meta {
+        animation: receiptSlideRight 850ms var(--receipt-ease) 500ms both;
+    }
+
+    /* 9. Divider Fade */
+    .user-receipt-section.is-revealed .receipt-elem-rule {
+        animation: receiptFade 600ms var(--receipt-ease) 600ms both;
+    }
+
+    /* 10. Receipt Summary Header & Badge */
+    .user-receipt-section.is-revealed .receipt-elem-heading .user-kicker {
+        animation: receiptSlideLeft 750ms var(--receipt-ease) 680ms both;
+    }
+
+    .user-receipt-section.is-revealed .receipt-elem-heading h2 {
+        animation: receiptFadeUp 800ms var(--receipt-ease) 760ms both;
+    }
+
+    .user-receipt-section.is-revealed .receipt-elem-heading [data-receipt-badge] {
+        animation: receiptBadgePop 750ms var(--receipt-ease) 860ms both;
+    }
+
+    /* 11. Seller & Delivery Columns */
+    .user-receipt-section.is-revealed .receipt-elem-seller {
+        animation: receiptSlideLeft 900ms var(--receipt-ease) 820ms both;
+    }
+
+    .user-receipt-section.is-revealed .receipt-elem-delivery {
+        animation: receiptSlideRight 900ms var(--receipt-ease) 960ms both;
+    }
+
+    /* 12. Information Rows Stagger */
+    .user-receipt-section.is-revealed .receipt-elem-seller dl > div:nth-child(1) {
+        animation: receiptFadeUp 700ms var(--receipt-ease) 900ms both;
+    }
+    .user-receipt-section.is-revealed .receipt-elem-seller dl > div:nth-child(2) {
+        animation: receiptFadeUp 700ms var(--receipt-ease) 980ms both;
+    }
+    .user-receipt-section.is-revealed .receipt-elem-seller dl > div:nth-child(3) {
+        animation: receiptFadeUp 700ms var(--receipt-ease) 1060ms both;
+    }
+    .user-receipt-section.is-revealed .receipt-elem-seller dl > div:nth-child(4) {
+        animation: receiptFadeUp 700ms var(--receipt-ease) 1140ms both;
+    }
+    .user-receipt-section.is-revealed .receipt-elem-seller dl > div:nth-child(5) {
+        animation: receiptFadeUp 700ms var(--receipt-ease) 1220ms both;
+    }
+
+    .user-receipt-section.is-revealed .receipt-elem-delivery dl > div:nth-child(1) {
+        animation: receiptFadeUp 700ms var(--receipt-ease) 1040ms both;
+    }
+    .user-receipt-section.is-revealed .receipt-elem-delivery dl > div:nth-child(2) {
+        animation: receiptFadeUp 700ms var(--receipt-ease) 1120ms both;
+    }
+    .user-receipt-section.is-revealed .receipt-elem-delivery dl > div:nth-child(3) {
+        animation: receiptFadeUp 700ms var(--receipt-ease) 1200ms both;
+    }
+    .user-receipt-section.is-revealed .receipt-elem-delivery dl > div:nth-child(4) {
+        animation: receiptFadeUp 700ms var(--receipt-ease) 1280ms both;
+    }
+
+    /* 14. Items Table Entrance */
+    .user-receipt-section.is-revealed .receipt-elem-table {
+        animation: receiptFadeUp 800ms var(--receipt-ease) 1150ms both;
+    }
+
+    .user-receipt-section.is-revealed .receipt-elem-table thead tr {
+        animation: receiptFadeUp 700ms var(--receipt-ease) 1200ms both;
+    }
+
+    .user-receipt-section.is-revealed .receipt-elem-table tbody tr {
+        animation: receiptFadeUp 700ms var(--receipt-ease) 1260ms both;
+    }
+
+    /* 16. Total Section (Financial Focal Point) */
+    .user-receipt-section.is-revealed .receipt-elem-summary {
+        animation: receiptFadeUp 800ms var(--receipt-ease) 1340ms both;
+    }
+
+    .user-receipt-section.is-revealed .receipt-elem-summary > div:not(.user-receipt__grand-total) {
+        animation: receiptFadeUp 750ms var(--receipt-ease) 1400ms both;
+    }
+
+    .user-receipt-section.is-revealed .user-receipt__grand-total span {
+        animation: receiptFadeUp 750ms var(--receipt-ease) 1480ms both;
+    }
+
+    .user-receipt-section.is-revealed .user-receipt__grand-total strong {
+        animation: receiptTotalPop 850ms var(--receipt-ease) 1560ms both;
+    }
+
+    /* 17. Privacy Notice */
+    .user-receipt-section.is-revealed .receipt-elem-note {
+        animation: receiptFadeUp 850ms var(--receipt-ease) 1640ms both;
+    }
+
+    .user-receipt-section.is-revealed .receipt-elem-note svg {
+        animation: receiptBadgePop 700ms var(--receipt-ease) 1720ms both;
+    }
+
+    /* 18. Bottom Actions Entrance */
+    .user-receipt-section.is-revealed .receipt-elem-actions {
+        animation: receiptFadeUp 900ms var(--receipt-ease) 1760ms both;
+    }
+
+    /* 21. Footer Entrance */
+    .user-receipt-page ~ .user-footer {
+        animation: receiptFadeUp 900ms var(--receipt-ease) 1860ms both;
+    }
+}
+
+/* 13. "Lihat Peta" Micro-interaction */
+.receipt-map-link {
+    transition: transform 400ms var(--receipt-ease), color 200ms ease;
+}
+
+.receipt-map-link svg {
+    transition: transform 400ms var(--receipt-ease);
+}
+
+.receipt-map-link:hover {
+    transform: translateX(3px);
+}
+
+.receipt-map-link:hover svg {
+    transform: translateX(2px);
+}
+
+/* 14. Items Table Row Hover Micro-interaction */
+.user-receipt__table tbody tr {
+    transition: background-color 300ms ease;
+}
+
+.user-receipt__table tbody tr:hover {
+    background-color: rgba(34, 80, 252, 0.02);
+}
+
+/* 18. Bottom Actions Hover & Active Micro-interactions */
+.user-receipt-actions .user-button--secondary {
+    transition: transform 400ms var(--receipt-ease),
+                background-color 300ms ease,
+                color 300ms ease,
+                border-color 300ms ease;
+}
+
+.user-receipt-actions .user-button--secondary:hover {
+    transform: translateX(-2px);
+}
+
+.user-receipt-actions .user-button--secondary:active {
+    transform: translateX(-1px) scale(0.98);
+    transition-duration: 150ms;
+}
+
+.user-receipt-actions .user-button--primary {
+    transition: transform 400ms var(--receipt-ease),
+                box-shadow 400ms var(--receipt-ease),
+                background-color 300ms ease;
+}
+
+.user-receipt-actions .user-button--primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 22px rgba(37, 99, 235, 0.26);
+}
+
+.user-receipt-actions .user-button--primary:active {
+    transform: translateY(0) scale(0.98);
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
+    transition-duration: 150ms;
+}
+
+/* Mobile / Tablet Safety Override (< 1025px) */
+@media (max-width: 1024px) {
+    .user-header--receipt,
+    .user-flow-hero--receipt .user-progress,
+    .user-flow-hero--receipt .user-progress__step,
+    .user-flow-hero--receipt .user-progress__line,
+    .user-flow-hero--receipt .user-progress__step span,
+    .user-flow-hero--receipt .user-kicker,
+    .user-flow-hero--receipt h1 span,
+    .user-flow-hero--receipt h1 em,
+    .user-flow-hero--receipt p,
+    .user-flow-hero--receipt .user-flow-hero__bg,
+    .receipt-motion-init .receipt-card-main,
+    .receipt-motion-init .receipt-elem-brand,
+    .receipt-motion-init .receipt-elem-meta,
+    .receipt-motion-init .receipt-elem-rule,
+    .receipt-motion-init .receipt-elem-heading,
+    .receipt-motion-init .receipt-elem-seller,
+    .receipt-motion-init .receipt-elem-delivery,
+    .receipt-motion-init .receipt-elem-table,
+    .receipt-motion-init .receipt-elem-summary,
+    .receipt-motion-init .receipt-elem-note,
+    .receipt-motion-init .receipt-elem-actions,
+    .receipt-motion-init .receipt-elem-seller dl > div,
+    .receipt-motion-init .receipt-elem-delivery dl > div,
+    .user-receipt-page ~ .user-footer {
+        opacity: 1 !important;
+        transform: none !important;
+        filter: none !important;
+        animation: none !important;
+    }
+}
+
 /* Reduced motion preference */
 @media (prefers-reduced-motion: reduce) {
     .reveal-hidden,
@@ -3510,11 +4369,101 @@ body.dark-mode .receipt-map-link:hover,
     .user-field--search:focus-within,
     .user-button:hover,
     .user-battery-item:hover,
-    .user-process-card:hover {
+    .user-process-card:hover,
+    .user-upload-field:hover,
+    .user-upload-field__icon,
+    .user-flow-actions .user-button:hover,
+    .user-flow-hero .user-progress,
+    .user-flow-hero .user-progress__step.is-current span,
+    .user-flow-hero .user-kicker,
+    .user-flow-hero h1 span,
+    .user-flow-hero h1 em,
+    .user-flow-hero p,
+    .user-flow-hero__bg,
+    .user-form-actions .user-button:hover,
+    .identity-motion-init .identity-card-main,
+    .identity-motion-init .identity-header-icon,
+    .identity-motion-init .identity-header-label,
+    .identity-motion-init .identity-header-title,
+    .identity-motion-init .identity-upload-1,
+    .identity-motion-init .identity-upload-2,
+    .identity-motion-init .identity-field-group-1,
+    .identity-motion-init .identity-field-group-2,
+    .identity-motion-init .identity-summary-card,
+    .identity-motion-init .identity-summary-header,
+    .identity-motion-init .identity-summary-item-aki,
+    .identity-motion-init .identity-summary-item-delivery,
+    .identity-motion-init .identity-summary-item-address,
+    .identity-motion-init .identity-summary-item-total,
+    .identity-motion-init .identity-summary-item-note,
+    .identity-motion-init .identity-privacy-card,
+    .identity-motion-init .identity-privacy-icon,
+    .identity-motion-init .identity-actions,
+    .user-form-layout.is-revealed .identity-card-main,
+    .user-form-layout.is-revealed .identity-header-icon,
+    .user-form-layout.is-revealed .identity-header-label,
+    .user-form-layout.is-revealed .identity-header-title,
+    .user-form-layout.is-revealed .identity-upload-1,
+    .user-form-layout.is-revealed .identity-upload-2,
+    .user-form-layout.is-revealed .identity-field-group-1,
+    .user-form-layout.is-revealed .identity-field-group-2,
+    .user-form-layout.is-revealed .identity-summary-card,
+    .user-form-layout.is-revealed .identity-summary-header,
+    .user-form-layout.is-revealed .identity-summary-item-aki,
+    .user-form-layout.is-revealed .identity-summary-item-delivery,
+    .user-form-layout.is-revealed .identity-summary-item-address,
+    .user-form-layout.is-revealed .identity-summary-item-total,
+    .user-form-layout.is-revealed .identity-summary-item-note,
+    .user-form-layout.is-revealed .identity-privacy-card,
+    .user-form-layout.is-revealed .identity-privacy-icon,
+    .user-form-layout.is-revealed .identity-actions,
+    .user-header--receipt,
+    .user-flow-hero--receipt .user-progress,
+    .user-flow-hero--receipt .user-progress__step,
+    .user-flow-hero--receipt .user-progress__line,
+    .user-flow-hero--receipt .user-progress__step span,
+    .user-flow-hero--receipt .user-kicker,
+    .user-flow-hero--receipt h1 span,
+    .user-flow-hero--receipt h1 em,
+    .user-flow-hero--receipt p,
+    .user-flow-hero--receipt .user-flow-hero__bg,
+    .receipt-motion-init .receipt-card-main,
+    .receipt-motion-init .receipt-elem-brand,
+    .receipt-motion-init .receipt-elem-meta,
+    .receipt-motion-init .receipt-elem-rule,
+    .receipt-motion-init .receipt-elem-heading,
+    .receipt-motion-init .receipt-elem-seller,
+    .receipt-motion-init .receipt-elem-delivery,
+    .receipt-motion-init .receipt-elem-table,
+    .receipt-motion-init .receipt-elem-summary,
+    .receipt-motion-init .receipt-elem-note,
+    .receipt-motion-init .receipt-elem-actions,
+    .receipt-motion-init .receipt-elem-seller dl > div,
+    .receipt-motion-init .receipt-elem-delivery dl > div,
+    .user-receipt-section.is-revealed .receipt-card-main,
+    .user-receipt-section.is-revealed .receipt-elem-brand,
+    .user-receipt-section.is-revealed .receipt-elem-meta,
+    .user-receipt-section.is-revealed .receipt-elem-rule,
+    .user-receipt-section.is-revealed .receipt-elem-heading,
+    .user-receipt-section.is-revealed .receipt-elem-seller,
+    .user-receipt-section.is-revealed .receipt-elem-delivery,
+    .user-receipt-section.is-revealed .receipt-elem-table,
+    .user-receipt-section.is-revealed .receipt-elem-summary,
+    .user-receipt-section.is-revealed .receipt-elem-note,
+    .user-receipt-section.is-revealed .receipt-elem-actions,
+    .user-receipt-section.is-revealed .receipt-elem-seller dl > div,
+    .user-receipt-section.is-revealed .receipt-elem-delivery dl > div,
+    .receipt-map-link,
+    .receipt-map-link svg,
+    .user-receipt-actions .user-button--secondary,
+    .user-receipt-actions .user-button--primary,
+    .user-receipt-page ~ .user-footer {
         transform: none !important;
         transition: none !important;
         animation: none !important;
         opacity: 1 !important;
+        filter: none !important;
+        box-shadow: none !important;
     }
 }
 

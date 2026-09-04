@@ -56,22 +56,22 @@
         </section>
 
         <section class="user-form-section">
-            <div class="user-container user-form-layout">
+            <div class="user-container user-form-layout identity-motion-init">
                 <form id="identityForm" class="user-identity-form" data-identity-form>
-                    <div class="user-form-card">
+                    <div class="user-form-card identity-card-main">
                         <div class="user-form-card__head">
-                            <div class="user-form-card__icon user-form-card__icon--blue"><svg viewBox="0 0 24 24"
+                            <div class="user-form-card__icon user-form-card__icon--blue identity-header-icon"><svg viewBox="0 0 24 24"
                                     aria-hidden="true">
                                     <circle cx="12" cy="8" r="3.5" />
                                     <path d="M5 20c.8-3.2 3.1-5 7-5s6.2 1.8 7 5" />
                                 </svg></div>
-                            <div><span class="user-kicker">INFORMASI PENJUAL</span>
-                                <h2>Data diri</h2>
+                            <div><span class="user-kicker identity-header-label">INFORMASI PENJUAL</span>
+                                <h2 class="identity-header-title">Data diri</h2>
                             </div>
                         </div>
                         <div class="user-form-grid">
                             {{-- UI upload KTP/SIM --}}
-                            <div class="user-upload-field user-upload-field--desktop-full" id="upload-ktp-trigger" style="cursor: pointer;">
+                            <div class="user-upload-field user-upload-field--desktop-full identity-upload-1" id="upload-ktp-trigger" style="cursor: pointer;">
                                 <input type="file" id="ktp-file-input" name="identity_document" accept=".png,.jpg,.jpeg" style="display: none;">
                                 <span class="user-upload-field__icon"><svg viewBox="0 0 24 24" aria-hidden="true">
                                         <path d="M5 4.5h14v15H5z" />
@@ -83,7 +83,7 @@
                             <p id="ktp-size-hint" class="user-hint" style="display: none; color: #ef4444; margin-top: 4px; font-size: 13px;">*maksimal ukuran file 5 MB</p>
 
                             {{-- UI upload Aki + KTP 1 Frame --}}
-                            <div class="user-upload-field user-upload-field--desktop-full" id="upload-accu-ktp-trigger" style="cursor: pointer; margin-top: 10px;">
+                            <div class="user-upload-field user-upload-field--desktop-full identity-upload-2" id="upload-accu-ktp-trigger" style="cursor: pointer; margin-top: 10px;">
                                 <input type="file" id="accu-ktp-file-input" name="accu_ktp_document" accept=".png,.jpg,.jpeg" style="display: none;">
                                 <span class="user-upload-field__icon"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2">
                                         <rect x="3" y="3" width="18" height="18" rx="2" />
@@ -114,7 +114,7 @@
                                     <span>Input Nama Manual</span>
                                 </label>
                             </div>
-                            <label class="user-floating-field"><select name="bank_type" required>
+                            <label class="user-floating-field identity-field-group-1"><select name="bank_type" required>
                                     <option value="" selected disabled></option>
                                     <option>BCA</option>
                                     <option>Mandiri</option>
@@ -122,17 +122,17 @@
                                     <option>BNI</option>
                                     <option>Bank lainnya</option>
                                 </select><span>Jenis bank</span></label>
-                            <div>
+                            <div class="identity-field-group-1">
                                 <label class="user-floating-field" style="margin-bottom:0;">
                                     <input type="text" name="account_number" inputmode="numeric" placeholder=" " required disabled style="cursor: not-allowed; background: #f1f5f9;">
                                     <span>Nomor rekening</span>
                                 </label>
                                 <div id="account-hint" style="color: var(--user-red); font-size: 11px; margin-top: 6px; margin-left: 4px;">*pilih bank terlebih dahulu</div>
                             </div>
-                            <label class="user-floating-field user-floating-field--full"><input type="text"
+                            <label class="user-floating-field user-floating-field--full identity-field-group-2"><input type="text"
                                     name="account_holder" placeholder=" " style="text-transform: uppercase;" required><span>Nama pemilik
                                     rekening</span></label>
-                            <div class="user-floating-field--full">
+                            <div class="user-floating-field--full identity-field-group-2">
                                 <label class="user-floating-field" style="margin-bottom:0;">
                                     <input type="tel" name="whatsapp" placeholder=" " required>
                                     <span>Nomor WhatsApp aktif</span>
@@ -165,8 +165,8 @@
                             </div>
                         </div>
 
-                    <div class="user-form-card user-form-card--privacy">
-                        <span class="user-form-card__icon user-form-card__icon--red"><svg viewBox="0 0 24 24"
+                    <div class="user-form-card user-form-card--privacy identity-privacy-card">
+                        <span class="user-form-card__icon user-form-card__icon--red identity-privacy-icon"><svg viewBox="0 0 24 24"
                                 aria-hidden="true">
                                 <path d="M6 10V8a6 6 0 0 1 12 0v2M5 10h14v10H5z" />
                                 <path d="M12 14v2" />
@@ -178,20 +178,20 @@
                     </div>
                 </form>
 
-                <aside class="user-flow-summary">
-                    <span class="user-kicker">RINGKASAN PESANAN</span>
-                    <h2>Data penjualan Anda</h2>
-                    <div class="user-flow-summary__item"><span>Item aki</span><strong>Menunggu data pilihan</strong></div>
-                    <div class="user-flow-summary__item"><span><span>Metode penyerahan</span></span><strong><span>Menunggu pilihan</span></strong>
+                <aside class="user-flow-summary identity-summary-card">
+                    <span class="user-kicker identity-summary-header">RINGKASAN PESANAN</span>
+                    <h2 class="identity-summary-header">Data penjualan Anda</h2>
+                    <div class="user-flow-summary__item identity-summary-item-aki"><span>Item aki</span><strong>Menunggu data pilihan</strong></div>
+                    <div class="user-flow-summary__item identity-summary-item-delivery"><span><span>Metode penyerahan</span></span><strong><span>Menunggu pilihan</span></strong>
                     </div>
-                    <div class="user-flow-summary__item"><span>Alamat</span><strong>Menunggu data alamat</strong></div>
-                    <div class="user-flow-summary__total"><span>Total harga</span><strong>—</strong></div>
-                    <div class="user-flow-summary__note"><svg viewBox="0 0 24 24" aria-hidden="true">
+                    <div class="user-flow-summary__item identity-summary-item-address"><span>Alamat</span><strong>Menunggu data alamat</strong></div>
+                    <div class="user-flow-summary__total identity-summary-item-total"><span>Total harga</span><strong>—</strong></div>
+                    <div class="user-flow-summary__note identity-summary-item-note"><svg viewBox="0 0 24 24" aria-hidden="true">
                             <circle cx="12" cy="12" r="8.5" />
                             <path d="M12 10v5M12 7.5h.01" />
                         </svg><span>Pastikan data rekening dan WhatsApp aktif sebelum melanjutkan.</span></div>
                 </aside>
-                <div class="user-form-actions">
+                <div class="user-form-actions identity-actions">
                     <a href="/user" class="user-button user-button--secondary">← Kembali</a>
                     <button type="button" id="btn-identity-next" class="user-button user-button--primary">
                         <span>Konfirmasi Data</span>

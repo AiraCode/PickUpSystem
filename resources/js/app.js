@@ -258,7 +258,7 @@ const formatRupiah = (number) => {
         });
     };
 
-const renderUserCart = () => {
+const renderUserCart = (actionType = null) => {
     if (!cartItemsContainer || !cartEmpty) return;
 
     if (!userCart.size) {
@@ -297,18 +297,23 @@ const renderUserCart = () => {
     if (cartCount) {
         cartCount.textContent = totalQuantity;
     }
+    let animClass = "";
+    if (actionType === "add") animClass = "price-pop-anim-blue";
+    else if (actionType === "update") animClass = "price-pop-anim-orange";
+    else if (actionType === "delete") animClass = "price-pop-anim-red";
+
     if (cartSubtotal) {
         cartSubtotal.textContent = userCart.size ? formatRupiah(subtotal) : "—";
-        if (typeof window.triggerAnimation === "function") window.triggerAnimation(cartSubtotal, "price-pop-anim");
+        if (animClass && typeof window.triggerAnimation === "function") window.triggerAnimation(cartSubtotal, animClass);
     }
     if (cartTotal) {
         cartTotal.textContent = userCart.size ? formatRupiah(subtotal - effectiveFee) : "—";
-        if (typeof window.triggerAnimation === "function") window.triggerAnimation(cartTotal, "price-pop-anim");
+        if (animClass && typeof window.triggerAnimation === "function") window.triggerAnimation(cartTotal, animClass);
     }
     const pickupLabel = document.getElementById("user-pickup-fee-label") || document.querySelector("[data-cart-pickup]");
     if (pickupLabel && selectedMethod === "courier" && effectiveFee > 0) {
         pickupLabel.textContent = "- " + formatRupiah(effectiveFee);
-        if (typeof window.triggerAnimation === "function") window.triggerAnimation(pickupLabel, "price-pop-anim");
+        if (animClass && typeof window.triggerAnimation === "function") window.triggerAnimation(pickupLabel, animClass);
     }
 
 
@@ -319,7 +324,7 @@ const renderUserCart = () => {
             if (key && userCart.has(key)) {
                 if (await window.userConfirm("Apakah Anda yakin ingin menghapus aki ini dari pesanan?")) {
                     userCart.delete(key);
-                    renderUserCart();
+                    renderUserCart("delete");
                     if (typeof window.updateProductCardButtons === 'function') {
                         window.updateProductCardButtons();
                     }

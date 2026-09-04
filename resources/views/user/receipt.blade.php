@@ -1,7 +1,7 @@
 @extends('user.layouts.app')
 
 @section('content')
-    @include('user.partials.header', ['headerClass' => 'user-header--solid user-header--simple', 'hideNav' => true])
+    @include('user.partials.header', ['headerClass' => 'user-header--solid user-header--simple user-header--receipt', 'hideNav' => true])
 
     <main class="user-flow-page user-receipt-page">
         <section class="user-flow-hero user-flow-hero--receipt">
@@ -29,7 +29,7 @@
             </div>
         </section>
 
-        <section class="user-receipt-section">
+        <section class="user-receipt-section receipt-motion-init">
             <div class="user-container">
                 <div id="receipt-edit-pending-banner" style="display:none; background:#fffbeb; border:1px solid #fde68a; border-radius:12px; padding:16px; margin-bottom:20px; box-shadow:0 4px 12px rgba(217,119,6,0.15);">
                     <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px;">
@@ -54,32 +54,32 @@
                     </div>
                 </div>
 
-                <article class="user-receipt" data-receipt>
+                <article class="user-receipt receipt-card-main" data-receipt>
                     <div class="user-receipt__top">
-                        <div class="user-receipt__brand">
+                        <div class="user-receipt__brand receipt-elem-brand">
                             <img src="{{ asset('img/logo_admin2-removebg-preview.png') }}" alt="Modern Mulya Mandiri" style="height: 45px; width: auto; object-fit: contain;">
                             <div><strong>Modern Mulya Mandiri</strong><small>One Stop Solution</small></div>
                         </div>
-                        <div class="user-receipt__meta">
+                        <div class="user-receipt__meta receipt-elem-meta">
                             <span>RECEIPT PENJUALAN</span>
                             <strong># —</strong>
                             <small><span>Tanggal transaksi</span>: —</small>
                         </div>
                     </div>
 
-                    <div class="user-receipt__rule"></div>
+                    <div class="user-receipt__rule receipt-elem-rule"></div>
 
-                    <div class="user-receipt__heading">
+                    <div class="user-receipt__heading receipt-elem-heading">
                         <div><span class="user-kicker">ORDER RECEIPT</span><h2>Ringkasan penjualan aki</h2></div>
                         <span class="user-receipt__status user-receipt__status--unpaid" data-receipt-badge>UNPAID</span>
                     </div>
 
                     <div class="user-receipt__grid">
-                        <section class="user-receipt__block">
+                        <section class="user-receipt__block receipt-elem-seller">
                             <span class="user-receipt__label">INFORMASI PENJUAL</span>
                             <dl><div><dt>Nama</dt><dd>—</dd></div><div><dt>Nomor WhatsApp</dt><dd>—</dd></div><div><dt>Bank</dt><dd>—</dd></div><div><dt>Nomor rekening</dt><dd>—</dd></div><div><dt>Alamat</dt><dd>—</dd></div></dl>
                         </section>
-                        <section class="user-receipt__block">
+                        <section class="user-receipt__block receipt-elem-delivery">
                             <span class="user-receipt__label">DETAIL PENYERAHAN</span>
                             <dl>
                                 <div><dt>Metode penyerahan</dt><dd>—</dd></div>
@@ -93,14 +93,14 @@
                         </section>
                     </div>
 
-                    <div class="user-receipt__table-wrap">
+                    <div class="user-receipt__table-wrap receipt-elem-table">
                         <table class="user-receipt__table">
                             <thead><tr><th>AKI</th><th>QTY</th><th>HARGA SATUAN</th><th>SUBTOTAL</th></tr></thead>
                             <tbody><tr><td colspan="4"><div class="user-receipt__empty"><strong>Detail aki belum tersedia</strong><span>Item akan tampil setelah transaksi terhubung.</span></div></td></tr></tbody>
                         </table>
                     </div>
 
-                    <div class="user-receipt__summary">
+                    <div class="user-receipt__summary receipt-elem-summary">
                         <div><span>Subtotal</span><strong>—</strong></div>
                         {{-- <div><span>Biaya penjemputan</span><strong>—</strong></div> --}}
                         <div class="user-receipt__grand-total"><span>Total penjualan</span><strong>—</strong></div>
@@ -149,7 +149,7 @@
                         </div>
                     </section>
 
-                    <div class="user-receipt__note"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5" /><path d="M12 10v5M12 7.5h.01" /></svg><p>KTP/SIM dan gambar identitas tidak ditampilkan pada receipt ini untuk menjaga privasi penjual.</p></div>
+                    <div class="user-receipt__note receipt-elem-note"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5" /><path d="M12 10v5M12 7.5h.01" /></svg><p>KTP/SIM dan gambar identitas tidak ditampilkan pada receipt ini untuk menjaga privasi penjual.</p></div>
 
                     <div id="receipt-cancel-reason" style="display:none; background: #fee2e2; border: 1px solid #ef4444; color: #b91c1c; padding: 15px; border-radius: 8px; margin-top: 20px;">
                         <strong>Pesanan Dibatalkan</strong>
@@ -157,7 +157,7 @@
                     </div>
                 </article>
 
-                <div class="user-receipt-actions">
+                <div class="user-receipt-actions receipt-elem-actions">
                     <a href="/user" class="user-button user-button--secondary">Kembali ke Beranda</a>
                     <button type="button" class="user-button user-button--primary" onclick="window.print()">Cetak receipt</button>
                 </div>
