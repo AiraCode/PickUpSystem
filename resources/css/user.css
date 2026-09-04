@@ -499,8 +499,16 @@ body.user-shell textarea:focus-visible {
     width: 100%;
 }
 
-.user-section {
+.user-section,
+#daftar-harga,
+#cara-menjual,
+#faq {
     padding: 116px 0;
+    scroll-margin-top: 110px;
+}
+
+#hubungi-kami {
+    scroll-margin-top: 110px;
 }
 
 .user-process,
@@ -1441,22 +1449,6 @@ body.user-shell textarea:focus-visible {
     line-height: 1.65;
     margin-top: 11px;
     max-width: 580px;
-    overflow: hidden;
-    animation: faqExpand 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-}
-
-@keyframes faqExpand {
-    0% {
-        opacity: 0;
-        transform: translateY(-10px);
-        max-height: 0;
-    }
-
-    100% {
-        opacity: 1;
-        transform: translateY(0);
-        max-height: 300px;
-    }
 }
 
 .user-footer {
@@ -3302,6 +3294,230 @@ body.dark-mode .receipt-map-link:hover,
     transform: scale(0.90);
 }
 
+/* ==========================================================================
+   DYNAMIC UI ANIMATIONS (Laptop/Desktop only - 17-Point Spec)
+   ========================================================================== */
+
+#scroll-progress {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 0%;
+    height: 2.5px;
+    background: linear-gradient(90deg, var(--user-blue), #3b82f6);
+    z-index: 10000;
+    transition: width 0.25s cubic-bezier(0.22, 1, 0.36, 1);
+    pointer-events: none;
+    box-shadow: 0 1px 3px rgba(37, 99, 235, 0.3);
+}
+
+@media (min-width: 1025px) {
+    /* Base reveal classes (800–1200ms duration, 20–40px movement, cubic-bezier easing) */
+    .reveal-hidden {
+        opacity: 0;
+        transform: translateY(28px);
+        transition: opacity 1000ms cubic-bezier(0.22, 1, 0.36, 1), 
+                    transform 1100ms cubic-bezier(0.22, 1, 0.36, 1);
+        will-change: opacity, transform;
+    }
+    
+    .reveal-hidden.reveal-left {
+        transform: translateX(-28px) translateY(0);
+    }
+    
+    .reveal-hidden.reveal-right {
+        transform: translateX(28px) translateY(0);
+    }
+
+    .reveal-hidden.reveal-scale {
+        transform: scale(0.96) translateY(24px);
+    }
+
+    /* Visible state */
+    .reveal-visible {
+        opacity: 1 !important;
+        transform: translate(0) scale(1) !important;
+    }
+
+    /* Stagger delays (150–300ms steps, and hero sequence 0ms - 1600ms) */
+    .delay-0    { transition-delay: 0ms; }
+    .delay-100  { transition-delay: 100ms; }
+    .delay-150  { transition-delay: 150ms; }
+    .delay-200  { transition-delay: 200ms; }
+    .delay-300  { transition-delay: 300ms; }
+    .delay-350  { transition-delay: 350ms; }
+    .delay-400  { transition-delay: 400ms; }
+    .delay-450  { transition-delay: 450ms; }
+    .delay-500  { transition-delay: 500ms; }
+    .delay-550  { transition-delay: 550ms; }
+    .delay-600  { transition-delay: 600ms; }
+    .delay-700  { transition-delay: 700ms; }
+    .delay-800  { transition-delay: 800ms; }
+    .delay-900  { transition-delay: 900ms; }
+    .delay-1000 { transition-delay: 1000ms; }
+    .delay-1200 { transition-delay: 1200ms; }
+    .delay-1400 { transition-delay: 1400ms; }
+    .delay-1600 { transition-delay: 1600ms; }
+
+    /* Summary / Price Update Pop-up Animation (500–800ms, no background flashing) */
+    @keyframes pricePopSlow {
+        0% {
+            opacity: 0.55;
+            transform: scale(0.95);
+        }
+        40% {
+            opacity: 1;
+            transform: scale(1.09);
+            color: var(--user-blue);
+        }
+        75% {
+            opacity: 1;
+            transform: scale(1.02);
+            color: var(--user-blue);
+        }
+        100% {
+            opacity: 1;
+            transform: scale(1);
+            color: inherit;
+        }
+    }
+
+    .price-pop-anim {
+        display: inline-block;
+        animation: pricePopSlow 0.65s cubic-bezier(0.22, 1, 0.36, 1) both;
+    }
+
+    /* Battery Card & Process Card Micro-Interactions (400–600ms transitions, 4–6px rise) */
+    .user-battery-item {
+        transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1), 
+                    box-shadow 0.5s cubic-bezier(0.22, 1, 0.36, 1), 
+                    border-color 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    .user-battery-item:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.07);
+    }
+
+    .user-process-card {
+        transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1), 
+                    box-shadow 0.5s cubic-bezier(0.22, 1, 0.36, 1), 
+                    border-color 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    .user-process-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
+    }
+    .user-process-card__icon {
+        transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    .user-process-card:hover .user-process-card__icon {
+        transform: scale(1.06) translateY(-2px);
+    }
+
+    /* Search Container Interaction (400–600ms transition, subtle elevation & border) */
+    .user-field--search {
+        transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    .user-field--search:focus-within {
+        transform: translateY(-2px);
+    }
+    .user-field--search input {
+        transition: border-color 0.5s cubic-bezier(0.22, 1, 0.36, 1), 
+                    box-shadow 0.5s cubic-bezier(0.22, 1, 0.36, 1), 
+                    background-color 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    .user-field--search input:focus {
+        border-color: var(--user-blue) !important;
+        box-shadow: 0 6px 18px rgba(37, 99, 235, 0.12);
+    }
+    .user-field--search span {
+        transition: color 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    .user-field--search:focus-within span {
+        color: var(--user-blue);
+    }
+
+    /* Button Interactions (Hover 300–500ms, Active 100–200ms) */
+    .user-button {
+        transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1), 
+                    box-shadow 0.4s cubic-bezier(0.22, 1, 0.36, 1), 
+                    background-color 0.3s ease, 
+                    border-color 0.3s ease,
+                    color 0.3s ease;
+    }
+    .user-button:hover {
+        transform: translateY(-2px) scale(1.015);
+        box-shadow: 0 6px 20px rgba(37, 99, 235, 0.22);
+    }
+    .user-button:active {
+        transform: translateY(0) scale(0.985);
+        transition: transform 0.15s ease, box-shadow 0.15s ease;
+    }
+
+    /* Quantity Controls */
+    .user-quantity button {
+        transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1), background-color 0.3s ease;
+    }
+    .user-quantity button:hover {
+        transform: scale(1.08);
+        background: rgba(0, 0, 0, 0.06);
+    }
+    .user-quantity button:active {
+        transform: scale(0.94);
+        transition: transform 0.12s ease;
+    }
+
+    /* Delivery Method Selection (400–600ms transition for border, background, shadow, radio indicator) */
+    .user-radio-card {
+        transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1), 
+                    border-color 0.5s cubic-bezier(0.22, 1, 0.36, 1), 
+                    background-color 0.5s cubic-bezier(0.22, 1, 0.36, 1), 
+                    box-shadow 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    .user-radio-card:hover {
+        border-color: var(--user-blue) !important;
+        box-shadow: 0 6px 18px rgba(0, 0, 0, 0.05);
+        transform: translateY(-2px);
+    }
+    .user-radio-card.is-selected {
+        border-color: var(--user-blue) !important;
+        background-color: #eff6ff !important;
+        box-shadow: 0 4px 14px rgba(37, 99, 235, 0.08);
+    }
+    .user-radio-card input[type="radio"] {
+        transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1), accent-color 0.4s ease;
+    }
+    .user-radio-card input[type="radio"]:checked {
+        transform: scale(1.15);
+    }
+
+    /* FAQ Hover subtle emphasis */
+    .user-faq details summary {
+        transition: color 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    .user-faq details:hover summary {
+        color: var(--user-blue);
+    }
+}
+
+/* Reduced motion preference */
+@media (prefers-reduced-motion: reduce) {
+    .reveal-hidden,
+    .reveal-visible,
+    .price-pop-anim,
+    .user-quantity button:hover,
+    .user-radio-card:hover,
+    .user-field--search:focus-within,
+    .user-button:hover,
+    .user-battery-item:hover,
+    .user-process-card:hover {
+        transform: none !important;
+        transition: none !important;
+        animation: none !important;
+        opacity: 1 !important;
+    }
+}
+
 /* Slide 4: aki4 (Battery PNG cutout - Noticeably smaller) */
 .hero-slide:nth-child(4) {
     background-size: contain;
@@ -3309,4 +3525,5 @@ body.dark-mode .receipt-map-link:hover,
 
 .hero-slide:nth-child(4).is-active {
     transform: scale(0.90);
-}
+} 
+ 

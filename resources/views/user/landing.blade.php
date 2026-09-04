@@ -21,13 +21,13 @@
                 </div>
                 <div class="user-hero__content user-container">
                     <div class="user-hero__copy">
-                        <h1>
+                        <h1 class="reveal-hidden delay-400">
                             <span>Jual Aki Reject Anda dengan</span><br>
                             <em>Harga Terbaik</em>
                         </h1>
-                        <p>Modern Mulya Mandiri membeli aki mobil dan aki motor reject dengan proses cepat, transparan, dan
+                        <p class="reveal-hidden delay-800">Modern Mulya Mandiri membeli aki mobil dan aki motor reject dengan proses cepat, transparan, dan
                             pembayaran langsung ke rekening Anda.</p>
-                        <div class="user-hero__actions">
+                        <div class="user-hero__actions reveal-hidden delay-1200">
                             <a href="#daftar-harga" class="user-button user-button--primary"><span>Jual Sekarang</span> <span
                                     aria-hidden="true">→</span></a>
                         </div>
@@ -38,15 +38,15 @@
             <section class="user-process user-section" id="cara-menjual">
                 <div class="user-container">
                     <div class="user-section-heading user-section-heading--split">
-                        <div>
+                        <div class="reveal-hidden reveal-left delay-150">
                             <span class="user-kicker">CARA MENJUAL</span>
                             <h2><span>Serahkan aki Anda</span><br><em>dalam tiga langkah.</em></h2>
                         </div>
-                        <p>Semua proses dibuat sederhana agar Anda dapat mengetahui estimasi nilai aki dan metode penyerahan
+                        <p class="reveal-hidden delay-300">Semua proses dibuat sederhana agar Anda dapat mengetahui estimasi nilai aki dan metode penyerahan
                             dengan jelas.</p>
                     </div>
                     <div class="user-process-grid">
-                        <article class="user-process-card">
+                        <article class="user-process-card reveal-hidden reveal-scale delay-200">
                             <span class="user-process-card__number">01</span>
                             <div class="user-process-card__icon user-process-card__icon--blue"><svg viewBox="0 0 24 24"
                                     aria-hidden="true">
@@ -56,7 +56,7 @@
                             <h3>Pilih aki dan wilayah</h3>
                             <p>Pilih jenis aki dan kota untuk melihat informasi harga yang tersedia pada sistem.</p>
                         </article>
-                        <article class="user-process-card">
+                        <article class="user-process-card reveal-hidden reveal-scale delay-400">
                             <span class="user-process-card__number">02</span>
                             <div class="user-process-card__icon user-process-card__icon--red"><svg viewBox="0 0 24 24"
                                     aria-hidden="true">
@@ -66,7 +66,7 @@
                             <h3>Lengkapi identitas</h3>
                             <p>Isi informasi penjual dan rekening yang diperlukan untuk verifikasi serta pembayaran.</p>
                         </article>
-                        <article class="user-process-card">
+                        <article class="user-process-card reveal-hidden reveal-scale delay-600">
                             <span class="user-process-card__number">03</span>
                             <div class="user-process-card__icon user-process-card__icon--blue"><svg viewBox="0 0 24 24"
                                     aria-hidden="true">
@@ -82,7 +82,7 @@
 
             <section class="user-catalog user-section" id="daftar-harga">
                 <div class="user-container">
-                    <div class="user-section-heading">
+                    <div class="user-section-heading reveal-hidden delay-150">
                         <span class="user-kicker">KATALOG AKI</span>
                         <h2>Harga jual aki terbaik<br><em><span>se-Indonesia.</span></em></h2>
                         <p style="max-width: none; font-size: 16px;">Pilih kota untuk menampilkan data yang terhubung pada
@@ -90,7 +90,7 @@
                     </div>
 
                     <div class="user-catalog-toolbar">
-                        <label class="user-field user-field--city" for="user-city">
+                        <label class="user-field user-field--city reveal-hidden reveal-left delay-200" for="user-city">
                             <span>PILIH KOTA PENYERAHAN</span>
                             <select id="user-city" data-city-select>
                                 <option value="" disabled selected>-- Pilih Kota Penyerahan --</option>
@@ -104,12 +104,12 @@
                                 <option value="Balikpapan">Balikpapan</option>
                             </select>
                         </label>
-                        <label class="user-field user-field--search" for="accu-search-input">
+                        <label class="user-field user-field--search reveal-hidden reveal-right delay-350" for="accu-search-input">
                             <span>CARI JENIS AKI</span>
                             <input type="text" id="accu-search-input" placeholder="Cari jenis aki (NX100, NS40, dll)..."
                                 style="padding: 10px 14px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 13px; width: 100%; height: 44px; box-sizing: border-box;">
                         </label>
-                        <div class="user-catalog-notice" id="user-city-warning" data-city-warning>
+                        <div class="user-catalog-notice reveal-hidden delay-450" id="user-city-warning" data-city-warning>
                             <strong>*Daftar harga aki berdasarkan wilayah yang dipilih.</strong>
                         </div>
                     </div>
@@ -142,7 +142,7 @@
                             </div>
                         </div>
 
-                        <aside class="user-checkout-card" aria-label="Ringkasan penjualan" id="user-checkout-section">
+                        <aside class="user-checkout-card reveal-hidden reveal-scale delay-200" aria-label="Ringkasan penjualan" id="user-checkout-section">
                             <div class="user-checkout-card__head">
                                 <div>
                                     <span class="user-kicker">RINGKASAN</span>
@@ -200,7 +200,7 @@
                             <div class="user-checkout-totals">
                                 <div><span>Subtotal</span><strong data-cart-subtotal>—</strong></div>
                                 {{-- <div><span>Biaya penjemputan</span><strong id="user-pickup-fee-label"
-                                        data-cart-pickup>Gratis</strong></div> --}}
+                                         data-cart-pickup>Gratis</strong></div> --}}
                                 <div class="user-checkout-totals__total"><span>Total estimasi</span><strong
                                         data-cart-total>—</strong></div>
                             </div>
@@ -262,21 +262,21 @@
 
             <section class="user-faq user-section" id="faq">
                 <div class="user-container user-faq__inner">
-                    <div>
+                    <div class="reveal-hidden reveal-left delay-150">
                         <span class="user-kicker"><span>PERTANYAAN UMUM</span></span>
                         <h2>Siap menjual aki<br><em>tanpa proses rumit?</em></h2>
                     </div>
                     <div class="user-faq__list">
-                        <details>
+                        <details class="reveal-hidden reveal-scale delay-200">
                             <summary>Bagaimana cara mengetahui harga aki?</summary>
                             <p>Pilih kota dan jenis aki pada katalog. Nilai yang tampil mengikuti data wilayah yang tersedia
                                 di sistem.</p>
                         </details>
-                        <details>
+                        <details class="reveal-hidden reveal-scale delay-400">
                             <summary>Apakah aki harus diantar ke gudang?</summary>
                             <p>Ya, untuk saat ini kami hanya melayani penyerahan aki dengan mengantarkannya langsung ke gudang kami.</p>
                         </details>
-                        <details>
+                        <details class="reveal-hidden reveal-scale delay-600">
                             <summary>Data apa yang perlu disiapkan?</summary>
                             <p>Siapkan identitas penjual, alamat penyerahan, dan rekening bank untuk proses verifikasi serta
                                 pembayaran.</p>

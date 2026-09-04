@@ -294,12 +294,21 @@ const renderUserCart = () => {
     const selectedMethod = document.querySelector('input[name="delivery_method"]:checked')?.value;
     const effectiveFee = (selectedMethod === "courier") ? pickupFee : 0;
 
-    if (cartCount) cartCount.textContent = totalQuantity;
-    if (cartSubtotal) cartSubtotal.textContent = userCart.size ? formatRupiah(subtotal) : "—";
-    if (cartTotal) cartTotal.textContent = userCart.size ? formatRupiah(subtotal - effectiveFee) : "—";
+    if (cartCount) {
+        cartCount.textContent = totalQuantity;
+    }
+    if (cartSubtotal) {
+        cartSubtotal.textContent = userCart.size ? formatRupiah(subtotal) : "—";
+        if (typeof window.triggerAnimation === "function") window.triggerAnimation(cartSubtotal, "price-pop-anim");
+    }
+    if (cartTotal) {
+        cartTotal.textContent = userCart.size ? formatRupiah(subtotal - effectiveFee) : "—";
+        if (typeof window.triggerAnimation === "function") window.triggerAnimation(cartTotal, "price-pop-anim");
+    }
     const pickupLabel = document.getElementById("user-pickup-fee-label") || document.querySelector("[data-cart-pickup]");
     if (pickupLabel && selectedMethod === "courier" && effectiveFee > 0) {
         pickupLabel.textContent = "- " + formatRupiah(effectiveFee);
+        if (typeof window.triggerAnimation === "function") window.triggerAnimation(pickupLabel, "price-pop-anim");
     }
 
 
@@ -404,4 +413,133 @@ if (document.readyState === "loading") {
     initHeroSlideshow();
 }
 
+// ==========================================================================
+// DYNAMIC UI ANIMATION HOOKS (Intersection Observer & Scroll Progress)
+// ==========================================================================
 
+const initDynamicUI = () => {
+    // 1. Scroll Progress Indicator
+    const progressEl = document.createElement("div");
+    progressEl.id = "scroll-progress";
+    document.body.appendChild(progressEl);
+
+    window.addEventListener("scroll", () => {
+        const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+        const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+        const scrolled = (winScroll / height) * 100;
+        progressEl.style.width = scrolled + "%";
+    }, { passive: true });
+
+    // 2. Intersection Observer for Scroll Reveals
+    const observerOptions = {
+        root: null,
+        rootMargin: "0px 0px 40px 0px",
+        threshold: 0.02
+    };
+
+    const revealObserver = new IntersectionObserver((entries, observer) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add("reveal-visible");
+                observer.unobserve(entry.target); // Only animate once
+            }
+        });
+    }, observerOptions);
+
+    // Observer will pick up static elements immediately, 
+    // and we provide a global function to observe dynamic ones.
+    window.observeDynamicElements = () => {
+        if (window.innerWidth >= 1025) { // Only animate on laptop/desktop as per requirement
+            document.querySelectorAll(".reveal-hidden:not(.reveal-visible)").forEach(el => {
+                const rect = el.getBoundingClientRect();
+                if (rect.top < window.innerHeight && rect.bottom > 0) {
+                    el.classList.add("reveal-visible");
+                } else {
+                    revealObserver.observe(el);
+                }
+            });
+        } else {
+            // Instantly reveal them on mobile/tablet to prevent them being stuck hidden
+            document.querySelectorAll(".reveal-hidden:not(.reveal-visible)").forEach(el => {
+                el.classList.add("reveal-visible");
+            });
+        }
+    };
+
+    window.triggerAnimation = (element, className) => {
+        if (!element || window.innerWidth < 1025) return;
+        element.classList.remove(className);
+        // Force reflow
+        void element.offsetWidth;
+        element.classList.add(className);
+        
+        setTimeout(() => {
+            if(element) element.classList.remove(className);
+        }, 800); // Matches longest animation duration
+    };
+
+    // 3. Smooth FAQ Details
+    document.querySelectorAll(".user-faq details").forEach(detail => {
+        const summary = detail.querySelector("summary");
+        const content = detail.querySelector("p");
+        let isAnimating = false;
+
+        if (summary && content) {
+            content.style.overflow = "hidden";
+            
+            summary.addEventListener("click", (e) => {
+                e.preventDefault();
+                if (isAnimating) return;
+                isAnimating = true;
+                
+                if (detail.hasAttribute("open")) {
+                    // Close animation (Slow, fluid, cinematic)
+                    content.style.maxHeight = content.scrollHeight + "px";
+                    content.style.opacity = "1";
+                    content.style.transform = "translateY(0)";
+                    
+                    void content.offsetWidth;
+                    
+                    content.style.transition = "max-height 0.5s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.4s cubic-bezier(0.22, 1, 0.36, 1), transform 0.5s cubic-bezier(0.22, 1, 0.36, 1)";
+                    content.style.maxHeight = "0";
+                    content.style.opacity = "0";
+                    content.style.transform = "translateY(-6px)";
+                    
+                    setTimeout(() => {
+                        detail.removeAttribute("open");
+                        content.style = "";
+                        content.style.overflow = "hidden";
+                        isAnimating = false;
+                    }, 500);
+                } else {
+                    // Open animation (Slow, fluid, cinematic)
+                    detail.setAttribute("open", "");
+                    content.style.maxHeight = "0";
+                    content.style.opacity = "0";
+                    content.style.transform = "translateY(-6px)";
+                    
+                    void content.offsetWidth;
+                    
+                    content.style.transition = "max-height 0.6s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.55s cubic-bezier(0.22, 1, 0.36, 1), transform 0.6s cubic-bezier(0.22, 1, 0.36, 1)";
+                    content.style.maxHeight = (content.scrollHeight + 30) + "px";
+                    content.style.opacity = "1";
+                    content.style.transform = "translateY(0)";
+                    
+                    setTimeout(() => {
+                        content.style = "";
+                        content.style.overflow = "hidden";
+                        isAnimating = false;
+                    }, 600);
+                }
+            });
+        }
+    });
+
+    window.observeDynamicElements();
+};
+
+if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", initDynamicUI);
+} else {
+    initDynamicUI();
+}

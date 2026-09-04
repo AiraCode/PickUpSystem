@@ -182,9 +182,11 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         let cardsHtml = accus
-            .map((accu) => {
+            .map((accu, index) => {
+                const delayMs = (index % 4) * 200;
+                const delayClass = `delay-${delayMs}`;
                 return `
-                <div class="user-battery-item" data-product-card data-product-name="${accu.name}" data-product-brand="${accu.brand}" data-product-price="${accu.price}" data-accu-id="${accu.id}">
+                <div class="user-battery-item reveal-hidden reveal-scale ${delayClass}" data-product-card data-product-name="${accu.name}" data-product-brand="${accu.brand}" data-product-price="${accu.price}" data-accu-id="${accu.id}">
                     <div class="user-battery-item__left">
                         <h3>${accu.name}</h3>
                         <div class="user-quantity">
@@ -204,6 +206,11 @@ document.addEventListener("DOMContentLoaded", () => {
         bindProductCardEvents();
         if (typeof window.updateProductCardButtons === "function") {
             window.updateProductCardButtons();
+        }
+        
+        // Trigger IntersectionObserver for newly added elements
+        if (typeof window.observeDynamicElements === "function") {
+            window.observeDynamicElements();
         }
     }
 
@@ -2233,8 +2240,10 @@ document.addEventListener("DOMContentLoaded", () => {
         sorted.forEach((w, idx) => {
             const isSelected = w.id === savedStorageId;
             const isRec = idx === 0;
+            const delay = (idx % 4) * 150;
+            const delayClass = `delay-${delay}`;
             html += `
-                <label class="user-radio-card ${isSelected ? 'is-selected' : ''}" style="padding: 10px 12px; cursor: pointer; border: 1.5px solid ${isSelected ? '#2563eb' : '#e2e8f0'}; border-radius: 8px; background: ${isSelected ? '#eff6ff' : '#fff'}; transition: all 0.15s; display: flex; align-items: flex-start;">
+                <label class="user-radio-card ${isSelected ? 'is-selected' : ''}" style="padding: 10px 12px; cursor: pointer; border-radius: 8px; display: flex; align-items: flex-start;">
                     <input type="radio" name="selected_warehouse_option" value="${w.id}" ${isSelected ? 'checked' : ''} style="margin-top: 3px; accent-color: #2563eb;">
                     <div style="display: flex; flex-direction: column; width: 100%; margin-left: 8px;">
                         <div style="display: flex; justify-content: space-between; align-items: center; gap: 8px;">
@@ -2249,6 +2258,10 @@ document.addEventListener("DOMContentLoaded", () => {
         });
 
         listEl.innerHTML = html;
+        
+        if (typeof window.observeDynamicElements === "function") {
+            window.observeDynamicElements();
+        }
 
         listEl.querySelectorAll('input[name="selected_warehouse_option"]').forEach(radio => {
             radio.addEventListener("change", (e) => {
@@ -2262,7 +2275,10 @@ document.addEventListener("DOMContentLoaded", () => {
                         nearestWarehouseDetail.innerHTML = `<strong>${found.name}</strong><br>${found.address}<br><span style="color:#2563eb; font-weight:700;">Jarak: ${found.distance.toFixed(2)} km</span>`;
                     }
                 }
-                renderWarehouseOptions();
+                listEl.querySelectorAll('.user-radio-card').forEach(card => {
+                    const r = card.querySelector('input');
+                    card.classList.toggle('is-selected', r && r.checked);
+                });
             });
         });
     }
@@ -2369,6 +2385,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
             if (cartTotal && subVal > 0) {
                 cartTotal.textContent = rupiah(subVal - fee);
+                if (typeof window.triggerAnimation === "function") {
+                    window.triggerAnimation(cartTotal, "price-pop-anim");
+                }
             }
         }
     }
