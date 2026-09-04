@@ -43,7 +43,7 @@
             </div>
             <p style="margin:0; font-size:12px; color:#60a5fa; font-weight:600;">Processing</p>
             <strong id="count-processing" style="font-size:22px; color:#3b82f6;">0</strong>
-            <small style="color:#93c5fd; font-size:11px;">Sedang dijemput</small>
+            <small style="color:#93c5fd; font-size:11px;">Proses penyerahan</small>
         </article>
 
         <article id="card-status-arrived_at_warehouse" class="admin-panel admin-stat-card order-status-tab"

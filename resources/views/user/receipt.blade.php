@@ -84,7 +84,7 @@
                             <dl>
                                 <div><dt>Metode penyerahan</dt><dd>—</dd></div>
                                 <div><dt>Gudang / kurir</dt><dd>—</dd></div>
-                                <div><dt>Biaya penjemputan</dt><dd>—</dd></div>
+                                {{-- <div><dt>Biaya penjemputan</dt><dd>—</dd></div> --}}
                                 <div>
                                     <dt>Catatan</dt>
                                     <dd id="receipt-note-display">—</dd>
@@ -102,7 +102,7 @@
 
                     <div class="user-receipt__summary">
                         <div><span>Subtotal</span><strong>—</strong></div>
-                        <div><span>Biaya penjemputan</span><strong>—</strong></div>
+                        {{-- <div><span>Biaya penjemputan</span><strong>—</strong></div> --}}
                         <div class="user-receipt__grand-total"><span>Total penjualan</span><strong>—</strong></div>
                     </div>
 

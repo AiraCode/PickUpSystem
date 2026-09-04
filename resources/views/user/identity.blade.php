@@ -250,7 +250,7 @@
                             <span style="color: #64748b;">Subtotal</span>
                             <span id="modal-subtotal" style="color: #0f172a;">Rp 0</span>
                         </div>
-                        <div style="display: flex; justify-content: space-between; margin-bottom: 6px;">
+                        <div style="display: none; justify-content: space-between; margin-bottom: 6px;">
                             <span style="color: #64748b;">Biaya penjemputan</span>
                             <span id="modal-fee" style="color: #0f172a;">Rp 0</span>
                         </div>

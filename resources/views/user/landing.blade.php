@@ -74,7 +74,7 @@
                                     <path d="M8 7.5V5.8h8v1.7M8 12h8M8 15.5h4" />
                                 </svg></div>
                             <h3>Serahkan aki dan terima pembayaran</h3>
-                            <p>Pilih penyerahan ke gudang atau penjemputan kurir sesuai kebutuhan Anda.</p>
+                            <p>Lakukan penyerahan aki ke gudang kami sesuai dengan lokasi yang dipilih.</p>
                         </article>
                     </div>
                 </div>
@@ -186,7 +186,7 @@
                                     <span><strong>Antar ke gudang</strong><small>Rekomendasi gudang terdekat ·
                                             biaya layanan gratis.</small></span>
                                 </label>
-                                <label class="user-radio-card user-radio-card--disabled" style="opacity: 0.6; cursor: not-allowed; pointer-events: none;">
+                                {{-- <label class="user-radio-card user-radio-card--disabled" style="opacity: 0.6; cursor: not-allowed; pointer-events: none;">
                                     <input type="radio" name="delivery_method" value="courier" disabled data-pickup-method>
                                     <span class="user-radio-card__indicator"></span>
                                     <span class="user-radio-card__content"
@@ -194,13 +194,13 @@
                                         <strong>Dijemput kurir <span style="color: #ea580c; font-size: 11px; font-weight: 700; margin-left: 4px; background: #fff7ed; padding: 2px 6px; border-radius: 4px; border: 1px solid #ffedd5;">(Available Soon)</span></strong>
                                         <small>Biaya penjemputan akan dihitung berdasarkan jarak.</small>
                                     </span>
-                                </label>
+                                </label> --}}
                             </div>
 
                             <div class="user-checkout-totals">
                                 <div><span>Subtotal</span><strong data-cart-subtotal>—</strong></div>
-                                <div><span>Biaya penjemputan</span><strong id="user-pickup-fee-label"
-                                        data-cart-pickup>Gratis</strong></div>
+                                {{-- <div><span>Biaya penjemputan</span><strong id="user-pickup-fee-label"
+                                        data-cart-pickup>Gratis</strong></div> --}}
                                 <div class="user-checkout-totals__total"><span>Total estimasi</span><strong
                                         data-cart-total>—</strong></div>
                             </div>
@@ -246,7 +246,7 @@
                                 <div id="user-warehouse-picker-section" style="margin-top: 14px;">
                                     <div class="user-checkout-label" style="font-size: 11px; font-weight: 700; color: #334155; margin-bottom: 6px;">PILIH ALAMAT GUDANG PENYERAHAN</div>
                                     <p style="font-size: 11px; color: #64748b; margin-bottom: 8px;">Rekomendasi terdekat tampil di paling atas. Anda dapat memilih gudang manapun.</p>
-                                    <div id="user-warehouse-options-list" style="display: flex; flex-direction: column; gap: 8px; max-height: 220px; overflow-y: auto;">
+                                    <div id="user-warehouse-options-list" style="display: flex; flex-direction: column; gap: 8px; max-height: 220px; overflow-y: auto; transform: translateZ(0); -webkit-transform: translateZ(0);">
                                         <div style="font-size: 11px; color: #94a3b8; font-style: italic;">Memuat daftar gudang...</div>
                                     </div>
                                 </div>
@@ -274,8 +274,7 @@
                         </details>
                         <details>
                             <summary>Apakah aki harus diantar ke gudang?</summary>
-                            <p>Anda dapat memilih untuk mengantar aki ke gudang atau menggunakan layanan
-                                penjemputan oleh kurir kami.</p>
+                            <p>Ya, untuk saat ini kami hanya melayani penyerahan aki dengan mengantarkannya langsung ke gudang kami.</p>
                         </details>
                         <details>
                             <summary>Data apa yang perlu disiapkan?</summary>
