@@ -64,7 +64,7 @@ class ReceiptController extends Controller
                 $rejectSubtotal += ($calculatedPrice * $accu->pivot->amount);
             }
 
-            $transfer = DB::table('transfers')->where('receipts_id', $order->receipt->id)->first();
+            $transfer = DB::table('transfers')->select('amount', 'transfer_date', 'status','proof_image')->where('receipts_id', $order->receipt->id)->first();
 
             $receiptData = [
                 'id' => $order->receipt->id,

@@ -1811,7 +1811,6 @@ document.addEventListener("DOMContentLoaded", () => {
                             const tTimeStr = transferDateObj.toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit" }).replace(".", ":");
                             paymentProofDetails.innerHTML = `
                                 <div><strong>Tanggal Transfer:</strong> ${tDateStr} ${tTimeStr} WIB</div>
-                                <div><strong>Nomor Referensi:</strong> ${receipt.transfer.id || "-"}</div>
                             `;
                         }
                     } else if (proofPaymentBox) {
