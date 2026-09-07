@@ -19,6 +19,11 @@
     grid-column: 1 / -1;
 }
 
+html {
+    overflow-x: hidden;
+    scroll-behavior: smooth;
+}
+
 body.user-shell {
     background: var(--user-canvas);
     color: var(--user-ink);
@@ -1998,11 +2003,13 @@ body.user-shell textarea:focus-visible {
     justify-content: center;
     padding: 20px;
     position: fixed;
-    z-index: 100;
+    z-index: 10000;
 }
 
 .user-modal__backdrop {
-    background: rgba(17, 19, 24, 0.68);
+    background: rgba(15, 23, 42, 0.65);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
     inset: 0;
     position: absolute;
 }
@@ -2010,12 +2017,14 @@ body.user-shell textarea:focus-visible {
 .user-modal__dialog {
     background: var(--user-white);
     border-radius: 16px;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
     max-width: 450px;
     padding: 34px;
     position: relative;
     text-align: center;
     width: 100%;
     z-index: 1;
+    animation: modalPopIn 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .user-modal__close {
@@ -2645,17 +2654,24 @@ body.dark-mode .receipt-map-link:hover,
 =========================================================== */
 @media (max-width: 390px) {
     .user-container {
-        padding-left: 12px;
-        padding-right: 12px;
-    }
-
-    .user-header__inner {
         padding-left: 10px;
         padding-right: 10px;
     }
 
+    .user-header__inner {
+        padding-left: 8px;
+        padding-right: 8px;
+        gap: 6px;
+    }
+
     .user-brand__copy strong {
         white-space: normal;
+        font-size: 10px;
+    }
+
+    .user-brand img {
+        height: 32px !important;
+        max-height: 32px !important;
     }
 
     .user-hero h1 {
@@ -2665,44 +2681,101 @@ body.dark-mode .receipt-map-link:hover,
     .user-button,
     .user-header__cta {
         min-width: 0;
-        padding-left: 14px;
-        padding-right: 14px;
+        font-size: 9px;
+        padding: 5px 8px;
+        white-space: nowrap;
+    }
+
+    .user-menu-toggle {
+        margin-right: 4px;
+        padding: 6px;
     }
 }
 
 @media (max-width: 720px) {
     .user-menu-toggle {
         display: inline-flex;
+        align-items: center;
+        justify-content: center;
         margin-left: auto;
         margin-right: 12px;
+        padding: 8px;
+        border-radius: 8px;
+        background: transparent;
+        border: 0;
+        color: currentColor;
+        cursor: pointer;
+        transition: background-color 0.18s ease, transform 0.14s ease, color 0.18s ease;
+    }
+
+    .user-menu-toggle:active {
+        transform: scale(0.92);
+        background: rgba(17, 19, 24, 0.06);
+    }
+
+    .user-menu-toggle svg {
+        transition: transform 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .user-menu-toggle[aria-expanded="true"] svg {
+        transform: rotate(90deg);
     }
 
     .user-nav {
         background: var(--user-white);
         border: 1px solid var(--user-line);
-        border-radius: 10px;
-        box-shadow: 0 14px 30px rgba(17, 19, 24, 0.12);
+        border-radius: 12px;
+        box-shadow: 0 16px 36px rgba(17, 19, 24, 0.12);
         color: var(--user-ink);
-        display: none;
+        display: flex;
         flex-direction: column;
         gap: 0;
-        left: 20px;
-        right: 20px;
-        top: 72px;
+        left: 16px;
+        right: 16px;
+        top: 64px;
         position: absolute;
         padding: 8px;
         margin: 0;
         z-index: 60;
+        opacity: 0;
+        visibility: hidden;
+        pointer-events: none;
+        transform: translateY(-8px) scale(0.98);
+        transition: opacity 0.22s cubic-bezier(0.16, 1, 0.3, 1),
+                    transform 0.22s cubic-bezier(0.16, 1, 0.3, 1),
+                    visibility 0.22s;
     }
 
     .user-nav.is-open {
-        display: flex;
+        opacity: 1;
+        visibility: visible;
+        pointer-events: auto;
+        transform: translateY(0) scale(1);
     }
 
     .user-nav a {
         color: var(--user-ink);
-        padding: 11px 10px;
+        padding: 11px 12px;
         font-size: 14px;
+        border-radius: 6px;
+        transition: background-color 0.15s ease, color 0.15s ease;
+    }
+
+    .user-nav a:active {
+        background: rgba(17, 19, 24, 0.05);
+    }
+
+    /* Lightweight Mobile Interaction Animations */
+    .user-button:active,
+    .user-header__cta:active,
+    .user-catalog-card:active {
+        transform: scale(0.98);
+        transition-duration: 0.08s;
+    }
+
+    .user-quantity button:active {
+        transform: scale(0.90);
+        transition-duration: 0.08s;
     }
 
     .user-nav a::after {
@@ -3322,19 +3395,20 @@ body.dark-mode .receipt-map-link:hover,
 }
 
 @media (min-width: 1025px) {
+
     /* Base reveal classes (800–1200ms duration, 20–40px movement, cubic-bezier easing) */
     .reveal-hidden {
         opacity: 0;
         transform: translateY(28px);
-        transition: opacity 1000ms cubic-bezier(0.22, 1, 0.36, 1), 
-                    transform 1100ms cubic-bezier(0.22, 1, 0.36, 1);
+        transition: opacity 1000ms cubic-bezier(0.22, 1, 0.36, 1),
+            transform 1100ms cubic-bezier(0.22, 1, 0.36, 1);
         will-change: opacity, transform;
     }
-    
+
     .reveal-hidden.reveal-left {
         transform: translateX(-28px) translateY(0);
     }
-    
+
     .reveal-hidden.reveal-right {
         transform: translateX(28px) translateY(0);
     }
@@ -3350,53 +3424,167 @@ body.dark-mode .receipt-map-link:hover,
     }
 
     /* Stagger delays (150–300ms steps, and hero sequence 0ms - 1600ms) */
-    .delay-0    { transition-delay: 0ms; }
-    .delay-100  { transition-delay: 100ms; }
-    .delay-150  { transition-delay: 150ms; }
-    .delay-200  { transition-delay: 200ms; }
-    .delay-300  { transition-delay: 300ms; }
-    .delay-350  { transition-delay: 350ms; }
-    .delay-400  { transition-delay: 400ms; }
-    .delay-450  { transition-delay: 450ms; }
-    .delay-500  { transition-delay: 500ms; }
-    .delay-550  { transition-delay: 550ms; }
-    .delay-600  { transition-delay: 600ms; }
-    .delay-700  { transition-delay: 700ms; }
-    .delay-800  { transition-delay: 800ms; }
-    .delay-900  { transition-delay: 900ms; }
-    .delay-1000 { transition-delay: 1000ms; }
-    .delay-1200 { transition-delay: 1200ms; }
-    .delay-1400 { transition-delay: 1400ms; }
-    .delay-1600 { transition-delay: 1600ms; }
+    .delay-0 {
+        transition-delay: 0ms;
+    }
+
+    .delay-100 {
+        transition-delay: 100ms;
+    }
+
+    .delay-150 {
+        transition-delay: 150ms;
+    }
+
+    .delay-200 {
+        transition-delay: 200ms;
+    }
+
+    .delay-300 {
+        transition-delay: 300ms;
+    }
+
+    .delay-350 {
+        transition-delay: 350ms;
+    }
+
+    .delay-400 {
+        transition-delay: 400ms;
+    }
+
+    .delay-450 {
+        transition-delay: 450ms;
+    }
+
+    .delay-500 {
+        transition-delay: 500ms;
+    }
+
+    .delay-550 {
+        transition-delay: 550ms;
+    }
+
+    .delay-600 {
+        transition-delay: 600ms;
+    }
+
+    .delay-700 {
+        transition-delay: 700ms;
+    }
+
+    .delay-800 {
+        transition-delay: 800ms;
+    }
+
+    .delay-900 {
+        transition-delay: 900ms;
+    }
+
+    .delay-1000 {
+        transition-delay: 1000ms;
+    }
+
+    .delay-1200 {
+        transition-delay: 1200ms;
+    }
+
+    .delay-1400 {
+        transition-delay: 1400ms;
+    }
+
+    .delay-1600 {
+        transition-delay: 1600ms;
+    }
 
     /* Summary / Price Update Pop-up Animation (500–800ms, no background flash) */
     @keyframes pricePopSlowBlue {
-        0% { opacity: 1; transform: scale(1); color: inherit; }
-        25% { opacity: 1; transform: scale(1.09); color: var(--user-blue, #2563eb); }
-        75% { opacity: 1; transform: scale(1.02); color: var(--user-blue, #2563eb); }
-        100% { opacity: 1; transform: scale(1); color: inherit; }
+        0% {
+            opacity: 1;
+            transform: scale(1);
+            color: inherit;
+        }
+
+        25% {
+            opacity: 1;
+            transform: scale(1.09);
+            color: var(--user-blue, #2563eb);
+        }
+
+        75% {
+            opacity: 1;
+            transform: scale(1.02);
+            color: var(--user-blue, #2563eb);
+        }
+
+        100% {
+            opacity: 1;
+            transform: scale(1);
+            color: inherit;
+        }
     }
+
     @keyframes pricePopSlowOrange {
-        0% { opacity: 1; transform: scale(1); color: inherit; }
-        25% { opacity: 1; transform: scale(1.09); color: #f97316; }
-        75% { opacity: 1; transform: scale(1.02); color: #f97316; }
-        100% { opacity: 1; transform: scale(1); color: inherit; }
+        0% {
+            opacity: 1;
+            transform: scale(1);
+            color: inherit;
+        }
+
+        25% {
+            opacity: 1;
+            transform: scale(1.09);
+            color: #f97316;
+        }
+
+        75% {
+            opacity: 1;
+            transform: scale(1.02);
+            color: #f97316;
+        }
+
+        100% {
+            opacity: 1;
+            transform: scale(1);
+            color: inherit;
+        }
     }
+
     @keyframes pricePopSlowRed {
-        0% { opacity: 1; transform: scale(1); color: inherit; }
-        25% { opacity: 1; transform: scale(1.09); color: var(--user-red, #dc2626); }
-        75% { opacity: 1; transform: scale(1.02); color: var(--user-red, #dc2626); }
-        100% { opacity: 1; transform: scale(1); color: inherit; }
+        0% {
+            opacity: 1;
+            transform: scale(1);
+            color: inherit;
+        }
+
+        25% {
+            opacity: 1;
+            transform: scale(1.09);
+            color: var(--user-red, #dc2626);
+        }
+
+        75% {
+            opacity: 1;
+            transform: scale(1.02);
+            color: var(--user-red, #dc2626);
+        }
+
+        100% {
+            opacity: 1;
+            transform: scale(1);
+            color: inherit;
+        }
     }
 
     .price-pop-anim-blue {
         display: inline-block;
         animation: pricePopSlowBlue 0.65s cubic-bezier(0.22, 1, 0.36, 1) both;
     }
+
     .price-pop-anim-orange {
         display: inline-block;
         animation: pricePopSlowOrange 0.65s cubic-bezier(0.22, 1, 0.36, 1) both;
     }
+
     .price-pop-anim-red {
         display: inline-block;
         animation: pricePopSlowRed 0.65s cubic-bezier(0.22, 1, 0.36, 1) both;
@@ -3404,27 +3592,31 @@ body.dark-mode .receipt-map-link:hover,
 
     /* Battery Card & Process Card Micro-Interactions (400–600ms transitions, 4–6px rise) */
     .user-battery-item {
-        transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1), 
-                    box-shadow 0.5s cubic-bezier(0.22, 1, 0.36, 1), 
-                    border-color 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+        transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1),
+            box-shadow 0.5s cubic-bezier(0.22, 1, 0.36, 1),
+            border-color 0.4s cubic-bezier(0.22, 1, 0.36, 1);
     }
+
     .user-battery-item:hover {
         transform: translateY(-5px);
         box-shadow: 0 10px 25px rgba(0, 0, 0, 0.07);
     }
 
     .user-process-card {
-        transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1), 
-                    box-shadow 0.5s cubic-bezier(0.22, 1, 0.36, 1), 
-                    border-color 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+        transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1),
+            box-shadow 0.5s cubic-bezier(0.22, 1, 0.36, 1),
+            border-color 0.4s cubic-bezier(0.22, 1, 0.36, 1);
     }
+
     .user-process-card:hover {
         transform: translateY(-5px);
         box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
     }
+
     .user-process-card__icon {
         transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
     }
+
     .user-process-card:hover .user-process-card__icon {
         transform: scale(1.06) translateY(-2px);
     }
@@ -3433,37 +3625,44 @@ body.dark-mode .receipt-map-link:hover,
     .user-field--search {
         transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
     }
+
     .user-field--search:focus-within {
         transform: translateY(-2px);
     }
+
     .user-field--search input {
-        transition: border-color 0.5s cubic-bezier(0.22, 1, 0.36, 1), 
-                    box-shadow 0.5s cubic-bezier(0.22, 1, 0.36, 1), 
-                    background-color 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+        transition: border-color 0.5s cubic-bezier(0.22, 1, 0.36, 1),
+            box-shadow 0.5s cubic-bezier(0.22, 1, 0.36, 1),
+            background-color 0.4s cubic-bezier(0.22, 1, 0.36, 1);
     }
+
     .user-field--search input:focus {
         border-color: var(--user-blue) !important;
         box-shadow: 0 6px 18px rgba(37, 99, 235, 0.12);
     }
+
     .user-field--search span {
         transition: color 0.4s cubic-bezier(0.22, 1, 0.36, 1);
     }
+
     .user-field--search:focus-within span {
         color: var(--user-blue);
     }
 
     /* Button Interactions (Hover 300–500ms, Active 100–200ms) */
     .user-button {
-        transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1), 
-                    box-shadow 0.4s cubic-bezier(0.22, 1, 0.36, 1), 
-                    background-color 0.3s ease, 
-                    border-color 0.3s ease,
-                    color 0.3s ease;
+        transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1),
+            box-shadow 0.4s cubic-bezier(0.22, 1, 0.36, 1),
+            background-color 0.3s ease,
+            border-color 0.3s ease,
+            color 0.3s ease;
     }
+
     .user-button:hover {
         transform: translateY(-2px) scale(1.015);
         box-shadow: 0 6px 20px rgba(37, 99, 235, 0.22);
     }
+
     .user-button:active {
         transform: translateY(0) scale(0.985);
         transition: transform 0.15s ease, box-shadow 0.15s ease;
@@ -3473,10 +3672,12 @@ body.dark-mode .receipt-map-link:hover,
     .user-quantity button {
         transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1), background-color 0.3s ease;
     }
+
     .user-quantity button:hover {
         transform: scale(1.08);
         background: rgba(0, 0, 0, 0.06);
     }
+
     .user-quantity button:active {
         transform: scale(0.94);
         transition: transform 0.12s ease;
@@ -3484,24 +3685,28 @@ body.dark-mode .receipt-map-link:hover,
 
     /* Delivery Method Selection (400–600ms transition for border, background, shadow, radio indicator) */
     .user-radio-card {
-        transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1), 
-                    border-color 0.5s cubic-bezier(0.22, 1, 0.36, 1), 
-                    background-color 0.5s cubic-bezier(0.22, 1, 0.36, 1), 
-                    box-shadow 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+        transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1),
+            border-color 0.5s cubic-bezier(0.22, 1, 0.36, 1),
+            background-color 0.5s cubic-bezier(0.22, 1, 0.36, 1),
+            box-shadow 0.5s cubic-bezier(0.22, 1, 0.36, 1);
     }
+
     .user-radio-card:hover {
         border-color: var(--user-blue) !important;
         box-shadow: 0 6px 18px rgba(0, 0, 0, 0.05);
         transform: translateY(-2px);
     }
+
     .user-radio-card.is-selected {
         border-color: var(--user-blue) !important;
         background-color: #eff6ff !important;
         box-shadow: 0 4px 14px rgba(37, 99, 235, 0.08);
     }
+
     .user-radio-card input[type="radio"] {
         transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1), accent-color 0.4s ease;
     }
+
     .user-radio-card input[type="radio"]:checked {
         transform: scale(1.15);
     }
@@ -3510,6 +3715,7 @@ body.dark-mode .receipt-map-link:hover,
     .user-faq details summary {
         transition: color 0.4s cubic-bezier(0.22, 1, 0.36, 1);
     }
+
     .user-faq details:hover summary {
         color: var(--user-blue);
     }
@@ -3532,6 +3738,7 @@ body.dark-mode .receipt-map-link:hover,
         transform: translateY(28px);
         filter: blur(4px);
     }
+
     100% {
         opacity: 1;
         transform: translateY(0);
@@ -3545,6 +3752,7 @@ body.dark-mode .receipt-map-link:hover,
         transform: translateX(28px);
         filter: blur(4px);
     }
+
     100% {
         opacity: 1;
         transform: translateX(0);
@@ -3557,6 +3765,7 @@ body.dark-mode .receipt-map-link:hover,
         opacity: 0;
         transform: translateY(20px);
     }
+
     100% {
         opacity: 1;
         transform: translateY(0);
@@ -3568,6 +3777,7 @@ body.dark-mode .receipt-map-link:hover,
         opacity: 0;
         transform: scale(0.85);
     }
+
     100% {
         opacity: 1;
         transform: scale(1);
@@ -3579,6 +3789,7 @@ body.dark-mode .receipt-map-link:hover,
         opacity: 0;
         transform: translateX(-14px);
     }
+
     100% {
         opacity: 1;
         transform: translateX(0);
@@ -3587,9 +3798,12 @@ body.dark-mode .receipt-map-link:hover,
 
 /* 3. Ambient Motion: Subtle Breathe specifically for Main Data Diri Card (box-shadow only, 6-10s cycle) */
 @keyframes subtleBreathe {
-    0%, 100% {
+
+    0%,
+    100% {
         box-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.04), 0 1px 3px rgba(0, 0, 0, 0.02);
     }
+
     50% {
         box-shadow: 0 14px 34px -4px rgba(37, 99, 235, 0.085), 0 2px 6px rgba(0, 0, 0, 0.03);
     }
@@ -3601,6 +3815,7 @@ body.dark-mode .receipt-map-link:hover,
         opacity: 0.7;
         transform: scale(0.97) translateY(4px);
     }
+
     100% {
         opacity: 1;
         transform: scale(1) translateY(0);
@@ -3613,6 +3828,7 @@ body.dark-mode .receipt-map-link:hover,
         opacity: 0;
         transform: translateY(5px);
     }
+
     100% {
         opacity: 1;
         transform: translateY(0);
@@ -3625,6 +3841,7 @@ body.dark-mode .receipt-map-link:hover,
         transform: scale(1.06);
         opacity: 0.85;
     }
+
     100% {
         transform: scale(1);
         opacity: 1;
@@ -3632,9 +3849,12 @@ body.dark-mode .receipt-map-link:hover,
 }
 
 @keyframes stepGlowPulse {
-    0%, 100% {
+
+    0%,
+    100% {
         box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.45);
     }
+
     50% {
         box-shadow: 0 0 0 6px rgba(255, 255, 255, 0);
     }
@@ -3642,6 +3862,7 @@ body.dark-mode .receipt-map-link:hover,
 
 /* Desktop Entrance Orchestration (>= 1025px) */
 @media (min-width: 1025px) {
+
     /* Hero Entrance Orchestration */
     .user-flow-hero .user-progress {
         animation: identityFadeUp 900ms var(--identity-ease) 100ms both;
@@ -3705,7 +3926,7 @@ body.dark-mode .receipt-map-link:hover,
     /* 3. Main Data Diri Card (900-1100ms) + Ambient motion (6-10s subtleBreathe on box-shadow only) */
     .user-form-layout.is-revealed .identity-card-main {
         animation: identityFadeUpBlur 1000ms var(--identity-ease) 100ms both,
-                   subtleBreathe 8s ease-in-out 1100ms infinite alternate;
+            subtleBreathe 8s ease-in-out 1100ms infinite alternate;
     }
 
     /* 2. Identity Header Sequence (icon -> label -> title, 120-180ms delay steps) */
@@ -3787,6 +4008,7 @@ body.dark-mode .receipt-map-link:hover,
 
 /* Mobile / Tablet safety override (< 1025px) */
 @media (max-width: 1024px) {
+
     .user-flow-hero .user-progress,
     .user-flow-hero .user-progress__step.is-current span,
     .user-flow-hero .user-kicker,
@@ -3822,9 +4044,9 @@ body.dark-mode .receipt-map-link:hover,
 /* 4. Upload Fields Hover & Micro-interactions (450-600ms, existing colors) */
 .user-upload-field {
     transition: transform 500ms var(--identity-ease),
-                border-color 500ms var(--identity-ease),
-                box-shadow 500ms var(--identity-ease),
-                background-color 500ms var(--identity-ease);
+        border-color 500ms var(--identity-ease),
+        box-shadow 500ms var(--identity-ease),
+        background-color 500ms var(--identity-ease);
 }
 
 .user-upload-field:hover {
@@ -3835,7 +4057,7 @@ body.dark-mode .receipt-map-link:hover,
 
 .user-upload-field__icon {
     transition: transform 500ms var(--identity-ease),
-                background-color 500ms var(--identity-ease);
+        background-color 500ms var(--identity-ease);
 }
 
 .user-upload-field:hover .user-upload-field__icon {
@@ -3851,8 +4073,8 @@ body.dark-mode .receipt-map-link:hover,
 .user-form-grid .user-floating-field input,
 .user-form-grid .user-floating-field select {
     transition: border-color 500ms var(--identity-ease),
-                box-shadow 500ms var(--identity-ease),
-                background-color 500ms var(--identity-ease);
+        box-shadow 500ms var(--identity-ease),
+        background-color 500ms var(--identity-ease);
 }
 
 .user-form-grid .user-floating-field input:focus,
@@ -3864,9 +4086,9 @@ body.dark-mode .receipt-map-link:hover,
 /* 7. Bank Selection State Transition (account_number disabled -> enabled smooth transition, 350-500ms) */
 input[name="account_number"] {
     transition: opacity 450ms var(--identity-ease),
-                background-color 450ms var(--identity-ease),
-                border-color 450ms var(--identity-ease),
-                box-shadow 450ms var(--identity-ease);
+        background-color 450ms var(--identity-ease),
+        border-color 450ms var(--identity-ease),
+        box-shadow 450ms var(--identity-ease);
 }
 
 /* 8. Validation / Error Smooth Presentation (500-700ms, NO shake) */
@@ -3877,7 +4099,7 @@ input[name="account_number"] {
 #ocr-status,
 #transfer-ocr-status {
     transition: opacity 550ms var(--identity-ease),
-                transform 550ms var(--identity-ease);
+        transform 550ms var(--identity-ease);
 }
 
 #account-hint[style*="display: block"],
@@ -3894,8 +4116,8 @@ input[name="account_number"] {
 .user-flow-summary__item strong {
     display: inline-block;
     transition: opacity 300ms cubic-bezier(0.4, 0, 0.2, 1),
-                filter 300ms cubic-bezier(0.4, 0, 0.2, 1),
-                transform 300ms cubic-bezier(0.4, 0, 0.2, 1);
+        filter 300ms cubic-bezier(0.4, 0, 0.2, 1),
+        transform 300ms cubic-bezier(0.4, 0, 0.2, 1);
     will-change: opacity, filter, transform;
 }
 
@@ -3909,9 +4131,9 @@ input[name="account_number"] {
 /* 13. Bottom Actions Hover & Active Micro-interactions */
 .user-form-actions .user-button--secondary {
     transition: transform 350ms var(--identity-ease),
-                background-color 350ms var(--identity-ease),
-                border-color 350ms var(--identity-ease),
-                color 350ms var(--identity-ease);
+        background-color 350ms var(--identity-ease),
+        border-color 350ms var(--identity-ease),
+        color 350ms var(--identity-ease);
 }
 
 .user-form-actions .user-button--secondary:hover {
@@ -3925,8 +4147,8 @@ input[name="account_number"] {
 
 .user-form-actions .user-button--primary {
     transition: transform 400ms var(--identity-ease),
-                box-shadow 400ms var(--identity-ease),
-                background-color 350ms var(--identity-ease);
+        box-shadow 400ms var(--identity-ease),
+        background-color 350ms var(--identity-ease);
 }
 
 .user-form-actions .user-button--primary [aria-hidden="true"] {
@@ -3964,6 +4186,7 @@ input[name="account_number"] {
         opacity: 0;
         transform: translateY(16px);
     }
+
     100% {
         opacity: 1;
         transform: translateY(0);
@@ -3976,6 +4199,7 @@ input[name="account_number"] {
         transform: translateY(25px);
         filter: blur(4px);
     }
+
     100% {
         opacity: 1;
         transform: translateY(0);
@@ -3989,6 +4213,7 @@ input[name="account_number"] {
         transform: translateY(35px);
         filter: blur(3px);
     }
+
     100% {
         opacity: 1;
         transform: translateY(0);
@@ -4001,6 +4226,7 @@ input[name="account_number"] {
         opacity: 0;
         transform: translateX(-15px);
     }
+
     100% {
         opacity: 1;
         transform: translateX(0);
@@ -4012,6 +4238,7 @@ input[name="account_number"] {
         opacity: 0;
         transform: translateX(15px);
     }
+
     100% {
         opacity: 1;
         transform: translateX(0);
@@ -4022,6 +4249,7 @@ input[name="account_number"] {
     0% {
         opacity: 0;
     }
+
     100% {
         opacity: 1;
     }
@@ -4032,6 +4260,7 @@ input[name="account_number"] {
         opacity: 0;
         transform: scale(0.95);
     }
+
     100% {
         opacity: 1;
         transform: scale(1);
@@ -4043,6 +4272,7 @@ input[name="account_number"] {
         opacity: 0;
         transform: translateY(8px) scale(0.97);
     }
+
     100% {
         opacity: 1;
         transform: translateY(0) scale(1);
@@ -4053,9 +4283,11 @@ input[name="account_number"] {
     0% {
         transform: scale(1);
     }
+
     50% {
         transform: scale(1.02);
     }
+
     100% {
         transform: scale(1);
     }
@@ -4066,6 +4298,7 @@ input[name="account_number"] {
         opacity: 0;
         transform: translateY(-10px);
     }
+
     100% {
         opacity: 1;
         transform: translateY(0);
@@ -4074,6 +4307,7 @@ input[name="account_number"] {
 
 /* Desktop Motion Sequence (>= 1025px) */
 @media (min-width: 1025px) {
+
     /* 3. Header Entrance */
     .user-header--receipt {
         animation: receiptHeaderSlide 850ms var(--receipt-ease) 50ms both;
@@ -4083,15 +4317,19 @@ input[name="account_number"] {
     .user-flow-hero--receipt .user-progress__step:nth-of-type(1) {
         animation: receiptFadeUp 850ms var(--receipt-ease) 100ms both;
     }
+
     .user-flow-hero--receipt .user-progress__line:nth-of-type(1) {
         animation: receiptFade 700ms var(--receipt-ease) 220ms both;
     }
+
     .user-flow-hero--receipt .user-progress__step:nth-of-type(2) {
         animation: receiptFadeUp 850ms var(--receipt-ease) 320ms both;
     }
+
     .user-flow-hero--receipt .user-progress__line:nth-of-type(2) {
         animation: receiptFade 700ms var(--receipt-ease) 440ms both;
     }
+
     .user-flow-hero--receipt .user-progress__step:nth-of-type(3) {
         animation: receiptFadeUp 850ms var(--receipt-ease) 560ms both;
     }
@@ -4139,8 +4377,8 @@ input[name="account_number"] {
     .receipt-motion-init .receipt-elem-summary,
     .receipt-motion-init .receipt-elem-note,
     .receipt-motion-init .receipt-elem-actions,
-    .receipt-motion-init .receipt-elem-seller dl > div,
-    .receipt-motion-init .receipt-elem-delivery dl > div {
+    .receipt-motion-init .receipt-elem-seller dl>div,
+    .receipt-motion-init .receipt-elem-delivery dl>div {
         opacity: 0;
         will-change: opacity, transform, filter;
     }
@@ -4187,32 +4425,39 @@ input[name="account_number"] {
     }
 
     /* 12. Information Rows Stagger */
-    .user-receipt-section.is-revealed .receipt-elem-seller dl > div:nth-child(1) {
+    .user-receipt-section.is-revealed .receipt-elem-seller dl>div:nth-child(1) {
         animation: receiptFadeUp 700ms var(--receipt-ease) 900ms both;
     }
-    .user-receipt-section.is-revealed .receipt-elem-seller dl > div:nth-child(2) {
+
+    .user-receipt-section.is-revealed .receipt-elem-seller dl>div:nth-child(2) {
         animation: receiptFadeUp 700ms var(--receipt-ease) 980ms both;
     }
-    .user-receipt-section.is-revealed .receipt-elem-seller dl > div:nth-child(3) {
+
+    .user-receipt-section.is-revealed .receipt-elem-seller dl>div:nth-child(3) {
         animation: receiptFadeUp 700ms var(--receipt-ease) 1060ms both;
     }
-    .user-receipt-section.is-revealed .receipt-elem-seller dl > div:nth-child(4) {
+
+    .user-receipt-section.is-revealed .receipt-elem-seller dl>div:nth-child(4) {
         animation: receiptFadeUp 700ms var(--receipt-ease) 1140ms both;
     }
-    .user-receipt-section.is-revealed .receipt-elem-seller dl > div:nth-child(5) {
+
+    .user-receipt-section.is-revealed .receipt-elem-seller dl>div:nth-child(5) {
         animation: receiptFadeUp 700ms var(--receipt-ease) 1220ms both;
     }
 
-    .user-receipt-section.is-revealed .receipt-elem-delivery dl > div:nth-child(1) {
+    .user-receipt-section.is-revealed .receipt-elem-delivery dl>div:nth-child(1) {
         animation: receiptFadeUp 700ms var(--receipt-ease) 1040ms both;
     }
-    .user-receipt-section.is-revealed .receipt-elem-delivery dl > div:nth-child(2) {
+
+    .user-receipt-section.is-revealed .receipt-elem-delivery dl>div:nth-child(2) {
         animation: receiptFadeUp 700ms var(--receipt-ease) 1120ms both;
     }
-    .user-receipt-section.is-revealed .receipt-elem-delivery dl > div:nth-child(3) {
+
+    .user-receipt-section.is-revealed .receipt-elem-delivery dl>div:nth-child(3) {
         animation: receiptFadeUp 700ms var(--receipt-ease) 1200ms both;
     }
-    .user-receipt-section.is-revealed .receipt-elem-delivery dl > div:nth-child(4) {
+
+    .user-receipt-section.is-revealed .receipt-elem-delivery dl>div:nth-child(4) {
         animation: receiptFadeUp 700ms var(--receipt-ease) 1280ms both;
     }
 
@@ -4234,7 +4479,7 @@ input[name="account_number"] {
         animation: receiptFadeUp 800ms var(--receipt-ease) 1340ms both;
     }
 
-    .user-receipt-section.is-revealed .receipt-elem-summary > div:not(.user-receipt__grand-total) {
+    .user-receipt-section.is-revealed .receipt-elem-summary>div:not(.user-receipt__grand-total) {
         animation: receiptFadeUp 750ms var(--receipt-ease) 1400ms both;
     }
 
@@ -4261,7 +4506,7 @@ input[name="account_number"] {
     }
 
     /* 21. Footer Entrance */
-    .user-receipt-page ~ .user-footer {
+    .user-receipt-page~.user-footer {
         animation: receiptFadeUp 900ms var(--receipt-ease) 1860ms both;
     }
 }
@@ -4295,9 +4540,9 @@ input[name="account_number"] {
 /* 18. Bottom Actions Hover & Active Micro-interactions */
 .user-receipt-actions .user-button--secondary {
     transition: transform 400ms var(--receipt-ease),
-                background-color 300ms ease,
-                color 300ms ease,
-                border-color 300ms ease;
+        background-color 300ms ease,
+        color 300ms ease,
+        border-color 300ms ease;
 }
 
 .user-receipt-actions .user-button--secondary:hover {
@@ -4311,8 +4556,8 @@ input[name="account_number"] {
 
 .user-receipt-actions .user-button--primary {
     transition: transform 400ms var(--receipt-ease),
-                box-shadow 400ms var(--receipt-ease),
-                background-color 300ms ease;
+        box-shadow 400ms var(--receipt-ease),
+        background-color 300ms ease;
 }
 
 .user-receipt-actions .user-button--primary:hover {
@@ -4328,6 +4573,7 @@ input[name="account_number"] {
 
 /* Mobile / Tablet Safety Override (< 1025px) */
 @media (max-width: 1024px) {
+
     .user-header--receipt,
     .user-flow-hero--receipt .user-progress,
     .user-flow-hero--receipt .user-progress__step,
@@ -4349,9 +4595,9 @@ input[name="account_number"] {
     .receipt-motion-init .receipt-elem-summary,
     .receipt-motion-init .receipt-elem-note,
     .receipt-motion-init .receipt-elem-actions,
-    .receipt-motion-init .receipt-elem-seller dl > div,
-    .receipt-motion-init .receipt-elem-delivery dl > div,
-    .user-receipt-page ~ .user-footer {
+    .receipt-motion-init .receipt-elem-seller dl>div,
+    .receipt-motion-init .receipt-elem-delivery dl>div,
+    .user-receipt-page~.user-footer {
         opacity: 1 !important;
         transform: none !important;
         filter: none !important;
@@ -4361,6 +4607,7 @@ input[name="account_number"] {
 
 /* Reduced motion preference */
 @media (prefers-reduced-motion: reduce) {
+
     .reveal-hidden,
     .reveal-visible,
     .price-pop-anim,
@@ -4438,8 +4685,8 @@ input[name="account_number"] {
     .receipt-motion-init .receipt-elem-summary,
     .receipt-motion-init .receipt-elem-note,
     .receipt-motion-init .receipt-elem-actions,
-    .receipt-motion-init .receipt-elem-seller dl > div,
-    .receipt-motion-init .receipt-elem-delivery dl > div,
+    .receipt-motion-init .receipt-elem-seller dl>div,
+    .receipt-motion-init .receipt-elem-delivery dl>div,
     .user-receipt-section.is-revealed .receipt-card-main,
     .user-receipt-section.is-revealed .receipt-elem-brand,
     .user-receipt-section.is-revealed .receipt-elem-meta,
@@ -4451,13 +4698,13 @@ input[name="account_number"] {
     .user-receipt-section.is-revealed .receipt-elem-summary,
     .user-receipt-section.is-revealed .receipt-elem-note,
     .user-receipt-section.is-revealed .receipt-elem-actions,
-    .user-receipt-section.is-revealed .receipt-elem-seller dl > div,
-    .user-receipt-section.is-revealed .receipt-elem-delivery dl > div,
+    .user-receipt-section.is-revealed .receipt-elem-seller dl>div,
+    .user-receipt-section.is-revealed .receipt-elem-delivery dl>div,
     .receipt-map-link,
     .receipt-map-link svg,
     .user-receipt-actions .user-button--secondary,
     .user-receipt-actions .user-button--primary,
-    .user-receipt-page ~ .user-footer {
+    .user-receipt-page~.user-footer {
         transform: none !important;
         transition: none !important;
         animation: none !important;
@@ -4474,5 +4721,31 @@ input[name="account_number"] {
 
 .hero-slide:nth-child(4).is-active {
     transform: scale(0.90);
-} 
- 
+}
+
+/* User Modals - Backdrop Blur & Focus Overlay */
+#modal-user-confirm-edit,
+#modal-user-map,
+#modal-user-alert,
+#modal-delete-confirm,
+#modal-upload-choice,
+.user-modal__backdrop {
+    background: rgba(15, 23, 42, 0.65) !important;
+    backdrop-filter: blur(8px) !important;
+    -webkit-backdrop-filter: blur(8px) !important;
+}
+
+#modal-user-confirm-edit > div {
+    animation: modalPopIn 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes modalPopIn {
+    from {
+        opacity: 0;
+        transform: scale(0.94) translateY(8px);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}

@@ -202,8 +202,8 @@
         </section>
     </main>
 
-    <div class="user-modal" data-identity-modal hidden>
-        <div class="user-modal__backdrop" data-modal-close></div>
+    <div class="user-modal" data-identity-modal hidden style="z-index: 10000;">
+        <div class="user-modal__backdrop" data-modal-close style="background: rgba(15, 23, 42, 0.65); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);"></div>
         <div class="user-modal__dialog" role="dialog" aria-modal="true" aria-labelledby="identity-modal-title" style="max-width: 800px; width: 95vw; max-height: 90vh; overflow-y: auto;">
             <button type="button" class="user-modal__close" data-modal-close aria-label="Tutup konfirmasi">×</button>
             <span class="user-modal__icon"><svg viewBox="0 0 24 24" aria-hidden="true">
@@ -273,7 +273,7 @@
     @include('user.partials.footer')
 
     <!-- Modal Lihat Foto KTP -->
-    <div id="ktp-overlay" style="display: none; position: fixed; inset: 0; z-index: 10000; background: rgba(17, 19, 24, 0.85); backdrop-filter: blur(4px); align-items: center; justify-content: center; padding: 20px;">
+    <div id="ktp-overlay" style="display: none; position: fixed; inset: 0; z-index: 10000; background: rgba(15, 23, 42, 0.75); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); align-items: center; justify-content: center; padding: 20px;">
         <div style="position: relative; max-width: 90vw; max-height: 90vh; display: flex; flex-direction: column; background: #fff; border-radius: 12px; overflow: hidden; box-shadow: 0 10px 40px rgba(0,0,0,0.5);">
             <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px 16px; background: #111318; color: #fff;">
                 <h3 style="margin: 0; font-size: 14px; font-weight: 600;">Foto KTP/SIM</h3>
@@ -287,7 +287,7 @@
         </div>
     </div>
 
-<div id="modal-upload-choice" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,.6); z-index:10000; align-items:center; justify-content:center; padding: 20px;">
+<div id="modal-upload-choice" style="display:none; position:fixed; inset:0; background:rgba(15, 23, 42, 0.65); backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px); z-index:10000; align-items:center; justify-content:center; padding: 20px;">
     <div style="background:#fff; border-radius:16px; width:360px; max-width:100%; box-shadow: 0 10px 30px rgba(0,0,0,0.3); overflow:hidden; text-align:center; padding: 24px;">
         <span style="font-size: 36px; display:block; margin-bottom: 8px;">📷</span>
         <h3 style="margin:0 0 6px; font-size:17px; font-weight:700; color:#0f172a;">Metode Pengambilan Foto</h3>
@@ -335,7 +335,7 @@
 </div>
 <canvas id="camera-canvas" style="display:none;"></canvas>
 
-<div id="modal-user-alert" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,.55); z-index:10000; align-items:center; justify-content:center; padding: 20px;">
+<div id="modal-user-alert" style="display:none; position:fixed; inset:0; background:rgba(15, 23, 42, 0.65); backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px); z-index:10000; align-items:center; justify-content:center; padding: 20px;">
     <div style="background:#fff; border-radius:12px; width:360px; max-width:100%; box-shadow: 0 10px 25px rgba(0,0,0,0.2); overflow:hidden; border: 1px solid #e2e8f0; text-align:center; padding: 24px;">
         <span style="font-size: 40px; display:block; margin-bottom: 12px;">⚠️</span>
         <h3 style="margin:0 0 8px; font-size:16px; font-weight:700; color:#1e293b;">Pemberitahuan</h3>

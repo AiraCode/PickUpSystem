@@ -1471,15 +1471,16 @@ document.addEventListener("DOMContentLoaded", () => {
                         observer.unobserve(entry.target);
                     }
                 });
-            }, { threshold: 0.02, rootMargin: "0px 0px 40px 0px" });
+            }, { threshold: 0.05, rootMargin: "0px 0px -40px 0px" });
 
-            const rect = receiptSection.getBoundingClientRect();
-            if (rect.top < window.innerHeight && rect.bottom > 0) {
-                requestAnimationFrame(() => {
-                    receiptSection.classList.add("is-revealed");
-                });
-            } else {
+            if (window.scrollY > 10) {
                 receiptObserver.observe(receiptSection);
+            } else {
+                const onFirstScroll = () => {
+                    receiptObserver.observe(receiptSection);
+                    window.removeEventListener("scroll", onFirstScroll);
+                };
+                window.addEventListener("scroll", onFirstScroll, { passive: true });
             }
         }
 
@@ -1937,6 +1938,9 @@ document.addEventListener("DOMContentLoaded", () => {
                                 confirmModal.style.left = "0";
                                 confirmModal.style.right = "0";
                                 confirmModal.style.bottom = "0";
+                                confirmModal.style.backgroundColor = "rgba(15, 23, 42, 0.65)";
+                                confirmModal.style.backdropFilter = "blur(8px)";
+                                confirmModal.style.webkitBackdropFilter = "blur(8px)";
                             };
 
                             // Buka modal secara otomatis saat halaman dimuat
