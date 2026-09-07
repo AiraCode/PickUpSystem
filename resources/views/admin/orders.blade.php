@@ -298,7 +298,7 @@
                                 style="accent-color:#3b82f6; width:16px; height:16px;">
                             <div>
                                 <span style="font-weight:600; font-size:13px; color:#111318;">Processing</span>
-                                <span style="display:block; font-size:11px; color:#6d727c;">Sedang menuju ke gudang / diproses
+                                <span style="display:block; font-size:11px; color:#6d727c;">Sedang dijemput / diproses
                                     admin</span>
                             </div>
                         </label>

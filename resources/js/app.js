@@ -454,25 +454,18 @@ const initDynamicUI = () => {
     // Observer will pick up static elements immediately, 
     // and we provide a global function to observe dynamic ones.
     window.observeDynamicElements = () => {
-        if (window.innerWidth >= 1025) { // Only animate on laptop/desktop as per requirement
-            document.querySelectorAll(".reveal-hidden:not(.reveal-visible)").forEach(el => {
-                const rect = el.getBoundingClientRect();
-                if (rect.top < window.innerHeight && rect.bottom > 0) {
-                    el.classList.add("reveal-visible");
-                } else {
-                    revealObserver.observe(el);
-                }
-            });
-        } else {
-            // Instantly reveal them on mobile/tablet to prevent them being stuck hidden
-            document.querySelectorAll(".reveal-hidden:not(.reveal-visible)").forEach(el => {
+        document.querySelectorAll(".reveal-hidden:not(.reveal-visible)").forEach(el => {
+            const rect = el.getBoundingClientRect();
+            if (rect.top < window.innerHeight && rect.bottom > 0) {
                 el.classList.add("reveal-visible");
-            });
-        }
+            } else {
+                revealObserver.observe(el);
+            }
+        });
     };
 
     window.triggerAnimation = (element, className) => {
-        if (!element || window.innerWidth < 1025) return;
+        if (!element) return;
         element.classList.remove(className);
         // Force reflow
         void element.offsetWidth;

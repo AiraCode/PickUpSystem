@@ -388,7 +388,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         // Identity Page Scroll Reveal & Entrance Initialization
         const formLayout = document.querySelector(".user-form-layout");
-        if (formLayout && window.innerWidth >= 1025) {
+        if (formLayout) {
             if (!formLayout.classList.contains("identity-motion-init")) {
                 formLayout.classList.add("identity-motion-init");
             }
@@ -1458,7 +1458,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         // Receipt Page Scroll Reveal & Entrance Initialization
         const receiptSection = document.querySelector(".user-receipt-section");
-        if (receiptSection && window.innerWidth >= 1025) {
+        if (receiptSection) {
             if (!receiptSection.classList.contains("receipt-motion-init")) {
                 receiptSection.classList.add("receipt-motion-init");
             }
@@ -1471,16 +1471,15 @@ document.addEventListener("DOMContentLoaded", () => {
                         observer.unobserve(entry.target);
                     }
                 });
-            }, { threshold: 0.05, rootMargin: "0px 0px -40px 0px" });
+            }, { threshold: 0.02, rootMargin: "0px 0px 40px 0px" });
 
-            if (window.scrollY > 10) {
-                receiptObserver.observe(receiptSection);
+            const rect = receiptSection.getBoundingClientRect();
+            if (rect.top < window.innerHeight && rect.bottom > 0) {
+                requestAnimationFrame(() => {
+                    receiptSection.classList.add("is-revealed");
+                });
             } else {
-                const onFirstScroll = () => {
-                    receiptObserver.observe(receiptSection);
-                    window.removeEventListener("scroll", onFirstScroll);
-                };
-                window.addEventListener("scroll", onFirstScroll, { passive: true });
+                receiptObserver.observe(receiptSection);
             }
         }
 

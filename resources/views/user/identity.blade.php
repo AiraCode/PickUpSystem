@@ -261,7 +261,7 @@
                     </div>
                 </div>
             </div>
-            <p style="margin: 0 auto; margin-bottom: 16px;">Pastikan nama, rekening, dan nomor WhatsApp sudah sesuai. Data ini akan digunakan untuk proses verifikasi dan pembayaran.</p>
+            <p style="margin: 0 auto; margin-bottom: 16px;">Pastikan nama, rekening, dan nomor WhatsApp sudah sesuai!</p>
             <div class="user-modal__actions">
                 <button type="button" class="user-button user-button--secondary" data-modal-close>Kembali</button>
                 <button type="button" id="btn-modal-confirm-submit" class="user-button user-button--primary"><span>Konfirmasi</span> <span
