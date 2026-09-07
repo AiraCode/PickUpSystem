@@ -18,6 +18,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 //use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
+use App\Rules\ValidBase64Image;
 
 class OrderController extends Controller
 {
@@ -84,8 +85,8 @@ class OrderController extends Controller
             'address' => 'required|string|max:500',
             'address_note' => 'nullable|string|max:500',
             'ktp' => 'nullable|string|max:45',
-            'ktp_base64' => 'nullable|string',
-            'accu_ktp_base64' => 'nullable|string',
+            'ktp_base64' => ['nullable', new ValidBase64Image],
+            'accu_ktp_base64' => ['nullable', new ValidBase64Image],
             'transfer_proof_base64' => 'nullable|string',
             'flag' => 'nullable|integer|in:0,1',
             'flag_reason' => 'nullable|string|max:500',

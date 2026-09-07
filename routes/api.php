@@ -32,19 +32,27 @@ use Illuminate\Support\Facades\Route;
 Route::post('/login', [AuthController::class, 'login'])->middleware(LoginRateLimiterMiddleware::class);
 
 Route::prefix('customer')->group(function () {
+    Route::middleware('throttle:60,1')->group(function () {
     Route::get('cities', [CustomerCityController::class, 'index']);
     Route::get('cities/{cityId}/accus', [CustomerAccuController::class, 'getByCity']);
     Route::get('new-accus', [\App\Http\Controllers\Api\Customer\NewAccuController::class, 'index']);
     Route::get('storages', [CustomerStorageController::class, 'index']);
     Route::get('banks', [CustomerBankController::class, 'index']);
-    Route::post('orders', [CustomerOrderController::class, 'store']);
     Route::get('orders/{id}', [CustomerOrderController::class, 'show']);
-    Route::put('orders/{id}/note', [CustomerOrderController::class, 'updateNote']);
     Route::get('receipts/{orderId}', [CustomerReceiptController::class, 'show']);
+    });
+
+    Route::middleware('throttle:5,1')->group(function () {
+    Route::post('orders', [CustomerOrderController::class, 'store']);
+    Route::put('orders/{id}/note', [CustomerOrderController::class, 'updateNote']);
     Route::post('orders/{orderUuid}/confirm-edit', [CustomerReceiptController::class, 'confirmEdit']);
+    Route::post('calculate-pickup-fee', [CustomerOrderController::class, 'calculatePickupFee']);
+    });
+
+    Route::middleware('throttle:3,1')->group(function () {
     Route::post('ocr/extract-name', [CustomerOCRController::class, 'extractName']);
     Route::post('ocr/verify-proof', [CustomerOCRController::class, 'verifyProof']);
-    Route::post('calculate-pickup-fee', [CustomerOrderController::class, 'calculatePickupFee']);
+    });
 });
 
 Route::prefix('public-admin')->group(function () {
