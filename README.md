@@ -28,6 +28,7 @@
   - [Admin & Gudang Management](#2--admin--manajemen-gudang-portal)
   - [Dynamic Pricing Engine (LME & Kurs)](#3--dynamic-pricing-engine-lme--kurs)
   - [Smart Logistics & OCR AI](#4--smart-logistics--ocr-ai-verification)
+  - [Keamanan & Integritas Data](#5--keamanan--integritas-data-security--data-governance)
 - [Arsitektur & Diagram Sistem](#-arsitektur--diagram-sistem)
 - [Teknologi & Dependensi](#-teknologi--dependensi)
 - [Struktur Database & Model](#-struktur-database--model)
@@ -62,8 +63,12 @@ Sistem ini menghubungkan penjual (customer), depo/gudang penyimpanan kota, kurir
   3. *Metode Pengiriman*: Antar mandiri ke gudang terdekat (**Drop-off**) 
   <!-- atau Dijemput ke lokasi (**Pick-Up**). -->
   <!-- 4. *Kalkulasi Jarak & Ongkir Otomatis*: Geocoding jarak pengguna ke gudang terdekat dengan rumus dinamis. -->
-- **Struk Digital & Pelacakan Transaksi (Digital Receipt)**: Pelacakan status real-time (`Menunggu`, `Dijemput`, `Tiba di Gudang`, `Transfer Berhasil`, `Selesai`, `Dibatalkan`).
-- **Konfirmasi Revisi QC (User Edit Confirmation)**: Jika fisik aki yang diterima gudang berbeda dengan yang diinputkan pelanggan, pelanggan dapat mengonfirmasi atau menolak penyesuaian sebelum pembayaran ditransfer.
+- **Struk Digital & Pelacakan Transaksi (Digital Receipt)**: Pelacakan status real-time via URL ber-token unik / UUID (`Menunggu`, `Dijemput`, `Tiba di Gudang`, `Transfer Berhasil`, `Selesai`, `Dibatalkan`).
+- **Alur Verifikasi Dua Arah (Two-Way Handshake QC Verification)**:
+  - Apabila pemeriksaan fisik aki oleh admin gudang menghasilkan selisih unit, jenis, atau berat riil dari pengajuan awal, sistem menahan proses pencairan dana (*status pending user confirmation*).
+  - Pelanggan menerima notifikasi pada struk digital untuk menyetujui rincian baru (pesanan dilanjutkan ke transfer dana) atau menolak penyesuaian (pesanan dibatalkan).
+- **Internasionalisasi Antarmuka (i18n)**: Dukungan alih bahasa (Bahasa Indonesia & English) secara dinamis melalui modul kamus lokalisasi terpusat.
+- **Optimasi Pencarian (Debounce Mechanism)**: Mekanisme penundaan eksekusi query pencarian katalog aki dan filter wilayah untuk efisiensi transfer data dan pengurangan beban request berlebih ke server.
 
 ### 2. 🛡️ Admin & Manajemen Gudang Portal
 - **Dashboard Statistik & KPI Interaktif**: Grafik omset, total transaksi, total berat timbal aki (kg), pesanan pending, dan status stok.
@@ -71,6 +76,8 @@ Sistem ini menghubungkan penjual (customer), depo/gudang penyimpanan kota, kurir
   - Validasi fisik aki, berat riil, dan penyesuaian harga (QC Adjustment).
   - Unggah bukti transfer & foto serah terima gudang.
   - Pelabelan pelanggan bermasalah (*Customer Flagging*).
+- **Audit Jejak Perubahan Pesanan (Order History Timeline)**: Pencatatan mendalam setiap kali staf admin melakukan perubahan rincian aki, koreksi harga, atau pergeseran status transaksi ke dalam riwayat log pesanan (`order_histories`).
+- **Immutability Terminal State Guard**: Penguncian otomatis pesanan yang telah mencapai status final (`Selesai` atau `Dibatalkan`) agar tidak dapat dimodifikasi kembali.
 - **Manajemen Multi-Depo & Stok Gudang (Warehouse Storage)**:
   - Pelacakan stok aki per depo kota (Jakarta, Bandung, Surabaya, Banyuwangi, dll).
   - Fitur **Batch Central Pick-Up**: Menandai pengiriman stok aki terkumpul dari depo regional menuju gudang pusat.
@@ -96,6 +103,12 @@ Sistem ini menghubungkan penjual (customer), depo/gudang penyimpanan kota, kurir
   - Verifikasi otomatis kesesuaian nama rekening tujuan pada bukti pembayaran / slip transfer.
 - **Security Pass Gate**: Lapisan verifikasi keamanan tambahan untuk akses modul konfigurasi sensitif.
 
+### 5. 🔐 Keamanan Data & Integritas Transaksi (Security & Data Governance)
+- **Proteksi Data Pribadi (PII Masking)**: Penyensoran otomatis pada struk publik dan log (nomor rekening, nomor telepon, serta dokumen identitas KTP/SIM tidak dimuat di nota publik) demi privasi data penjual.
+- **Pengamanan Parameter Struk (UUID / Hashed Token)**: Penggantian ID pesanan numerik menjadi token acak berbobot kriptografis pada URL pelacakan guna menangkal ancaman *ID enumeration*.
+- **Rate Limiter Autentikasi**: Pembatasan percobaan login pada API untuk mengantisipasi potensi serangan *credential stuffing* dan *brute force*.
+- **Audit Riwayat Konfigurasi Global**: Pencatatan riwayat setiap penyesuaian indeks LME, kurs mata uang, persentase kota, dan master berat kering aki untuk kepatuhan tata kelola data.
+
 ---
 
 ## 🏛️ Arsitektur & Diagram Sistem
@@ -103,38 +116,38 @@ Sistem ini menghubungkan penjual (customer), depo/gudang penyimpanan kota, kurir
 ```mermaid
 flowchart TD
     subgraph Pelanggan ["📱 Pelanggan / Seller"]
-        A[Landing Page & Kalkulator] --> B[Input Data & Pilih Aki]
-        B --> C[OCR KTP & Data Diri Penjual]
-        C --> D[Submit Pesanan & Dapatkan Struk]
-        D --> E[Tracking Status & Konfirmasi Revisi]
+        A[Pilih Aki & Kota Layanan] --> B[OCR KTP & Rekening Bank]
+        B --> C[Submit Pesanan & Dapatkan Struk UUID]
+        C --> D[Pantau Status Real-Time di Struk Digital]
+        D --> E{Terdapat Revisi QC?}
+        E -- Ada Selisih --> F[Konfirmasi / Tolak Rincian Baru]
+        F -- Setuju --> G[Menunggu Transfer Dana]
+        F -- Tolak --> H[Pesanan Dibatalkan]
+        E -- Sesuai --> G
+        G --> I[Pencairan Dana Berhasil & Struk Terkunci]
     end
 
-    subgraph API_Layer ["⚡ Laravel REST API & Web Controllers"]
-        F["Customer API (/api/customer/*)"]
-        G["Admin API (/api/admin/*)"]
-        H["Public Secret API (/api/public-admin/*)"]
-        I["Sanctum Auth Middleware"]
+    subgraph Gudang ["🏭 Admin Depo / Gudang"]
+        J[Aki Tiba di Depo Layanan] --> K[Pemeriksaan QC Fisik & Timbang Riil]
+        K --> L{Sesuai Pengajuan?}
+        L -- Berbeda --> M[Input Revisi Fisik Aki & Catat Order History]
+        M --> D
+        L -- Sesuai --> N[Unggah Foto Serah Terima Gudang]
+        N --> O[Proses & Unggah Bukti Transfer Bank]
+        O --> G
     end
 
-    subgraph Admin_Portal ["🖥️ Admin & Warehouse Portal"]
-        J["Admin Pusat (Central Admin)"]
-        K["Admin Depo (Warehouse Admin)"]
-        J --> L[Dashboard, LME Pricing, Users, Reports]
-        K --> M[QC Fisik, Update Status, Bukti Transfer, Stok Depo]
+    subgraph Backend_Security ["⚡ Backend, Security & Storage Layer"]
+        P["Sanctum Auth & Rate Limiter"]
+        Q["Dynamic Pricing Engine (LME & Kurs)"]
+        R[(MySQL: Orders, Order Histories, Receipts, Storages)]
+        S[PII Data Masking & URL Hashing]
     end
 
-    subgraph Database ["🗄️ Database & Storage Layer"]
-        N[(MySQL Database)]
-        O[(Activity Logs & Price Histories)]
-        P[Local / Cloud File Storage]
-    end
-
-    Pelanggan -->|HTTP Requests| F
-    Admin_Portal -->|Sanctum Token| I --> G
-    Admin_Portal -->|Authorized Request| H
-    F --> Database
-    G --> Database
-    H --> Database
+    B -.-> Q
+    C -.-> S
+    M -.-> R
+    O -.-> R
 ```
 
 ---

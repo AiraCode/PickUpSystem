@@ -388,7 +388,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         // Identity Page Scroll Reveal & Entrance Initialization
         const formLayout = document.querySelector(".user-form-layout");
-        if (formLayout && window.innerWidth >= 1025) {
+        if (formLayout) {
             if (!formLayout.classList.contains("identity-motion-init")) {
                 formLayout.classList.add("identity-motion-init");
             }
@@ -1458,7 +1458,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         // Receipt Page Scroll Reveal & Entrance Initialization
         const receiptSection = document.querySelector(".user-receipt-section");
-        if (receiptSection && window.innerWidth >= 1025) {
+        if (receiptSection) {
             if (!receiptSection.classList.contains("receipt-motion-init")) {
                 receiptSection.classList.add("receipt-motion-init");
             }
