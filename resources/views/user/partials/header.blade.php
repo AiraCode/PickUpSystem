@@ -16,7 +16,7 @@
             <nav class="user-nav reveal-hidden delay-200" data-user-menu aria-label="Navigasi user">
                 <a href="/user" data-user-nav-link>Home</a>
                 <a href="/user#faq" data-user-nav-link>FAQ</a>
-                <a href="/user#hubungi-kami" data-user-nav-link>Hubungi Kami</a>
+                {{-- <a href="/user#hubungi-kami" data-user-nav-link>Hubungi Kami</a> --}}
                 <div class="user-nav__language">
                     <div class="lang-switch" data-lang-switch>
                         <button type="button" class="lang-btn is-active" data-lang-btn="id" aria-label="Bahasa Indonesia">ID</button>
