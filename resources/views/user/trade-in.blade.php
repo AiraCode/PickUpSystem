@@ -116,7 +116,7 @@
         </main>
 
         <!-- Modal Konfirmasi Hapus Aki -->
-        <div id="modal-delete-confirm" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,.55); z-index:10000; align-items:center; justify-content:center; padding: 20px;">
+        <div id="modal-delete-confirm" style="display:none; position:fixed; inset:0; background:rgba(15, 23, 42, 0.65); backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px); z-index:10000; align-items:center; justify-content:center; padding: 20px;">
             <div style="background:#fff; border-radius:16px; width:380px; max-width:100%; box-shadow: 0 10px 30px rgba(0,0,0,0.3); overflow:hidden; border: 1px solid #e2e8f0; text-align:center; padding: 24px;">
                 <span style="font-size: 36px; display:block; margin-bottom: 8px;">🗑️</span>
                 <h3 style="margin:0 0 6px; font-size:16px; font-weight:700; color:#0f172a;">Hapus Aki Pilihan</h3>

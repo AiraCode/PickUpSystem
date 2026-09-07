@@ -1937,6 +1937,9 @@ document.addEventListener("DOMContentLoaded", () => {
                                 confirmModal.style.left = "0";
                                 confirmModal.style.right = "0";
                                 confirmModal.style.bottom = "0";
+                                confirmModal.style.backgroundColor = "rgba(15, 23, 42, 0.65)";
+                                confirmModal.style.backdropFilter = "blur(8px)";
+                                confirmModal.style.webkitBackdropFilter = "blur(8px)";
                             };
 
                             // Buka modal secara otomatis saat halaman dimuat

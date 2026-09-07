@@ -164,7 +164,7 @@
             </div>
         </section>
     <div id="modal-user-confirm-edit"
-        style="display:none; position:fixed; inset:0; background:rgba(0,0,0,.6); z-index:10001; align-items:center; justify-content:center; padding:16px;">
+        style="display:none; position:fixed; inset:0; background:rgba(15, 23, 42, 0.65); backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px); z-index:10001; align-items:center; justify-content:center; padding:16px;">
         <div style="background:#fff; border-radius:14px; width:480px; max-width:100%; box-shadow:0 20px 25px -5px rgba(0,0,0,0.2); overflow:hidden; border:1px solid #e2e8f0; padding:24px;">
             <div style="display:flex; align-items:center; gap:10px; margin-bottom:12px;">
                 <span style="font-size:28px;">⚠️</span>

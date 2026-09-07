@@ -2685,6 +2685,11 @@ body.dark-mode .receipt-map-link:hover,
         line-height: 1.2;
     }
 
+    .user-brand img {
+        height: 32px !important;
+        max-height: 32px !important;
+    }
+
     .user-hero h1 {
         letter-spacing: -0.04em;
     }
@@ -4781,7 +4786,8 @@ input[name="account_number"] {
 #modal-user-alert,
 #modal-delete-confirm,
 #modal-upload-choice,
-#ktp-overlay {
+#ktp-overlay,
+.user-modal__backdrop {
     background: rgba(15, 23, 42, 0.65) !important;
     backdrop-filter: blur(8px) !important;
     -webkit-backdrop-filter: blur(8px) !important;
