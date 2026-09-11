@@ -8,7 +8,8 @@
     "scripts": {
         "build": "vite build",
         "dev": "vite",
-        "start": "concurrently \"php artisan serve\" \"npm run dev\""
+        "start": "concurrently \"php artisan serve\" \"npm run dev\"",
+        "i18n:sync": "node scripts/script-i18n-sync.cjs"
     },
     "devDependencies": {
         "@tailwindcss/vite": "^4.0.0",

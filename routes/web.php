@@ -19,23 +19,22 @@ Route::post('/save-checkout-session', [SessionController::class, 'storeCheckoutS
 
 // ── USER FLOW (PROTECTED BY SESSION MIDDLEWARE) ──
 Route::middleware([CheckPickupSession::class])->group(function () {
-    Route::get('/identity', function () {
+    $identityHandler = function () {
         $paymentMethods = \App\Models\PaymentMethod::where('is_active', true)->get();
         return view('user.identity', compact('paymentMethods'));
-    });
+    };
+
+    Route::get('/identity', $identityHandler);
 
     Route::get('/trade-in', function () {
         return view('user.trade-in');
     });
 
-    Route::get('/user/identitas', function () {
-        $paymentMethods = \App\Models\PaymentMethod::where('is_active', true)->get();
-        return view('user.identity', compact('paymentMethods'));
-    });
+    Route::get('/user/identitas', $identityHandler);
 });
 
 // ── RECEIPT ──
-Route::get('/receipt', function (Request $request) {
+$receiptHandler = function (Request $request) {
     $orderUuid = $request->query('order_id');
 
     // 1. Jika parameter order_id tidak ada, langsung 404
@@ -52,23 +51,10 @@ Route::get('/receipt', function (Request $request) {
     }
 
     return view('user.receipt');
-});
+};
 
-Route::get('/user/receipt', function (Request $request) {
-    $orderUuid = $request->query('order_id');
-
-    if (empty($orderUuid)) {
-        abort(404);
-    }
-
-    $exists = Order::where('uuid', $orderUuid)->exists();
-
-    if (!$exists) {
-        abort(404);
-    }
-
-    return view('user.receipt');
-});
+Route::get('/receipt', $receiptHandler);
+Route::get('/user/receipt', $receiptHandler);
 
 // ── ADMIN ROUTES ──
 Route::get('/admin', function () {

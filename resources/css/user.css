@@ -4812,3 +4812,36 @@ input[name="account_number"] {
         transform: scale(1) translateY(0);
     }
 }
+
+/* ── Identity Confirmation Modal Split Layout & Cart Table ─ */
+.modal-split-layout {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 16px;
+    margin: 16px 0;
+    text-align: left;
+}
+
+@media (min-width: 768px) {
+    .modal-split-layout {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+.modal-cart-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.modal-cart-table th,
+.modal-cart-table td {
+    padding: 8px 4px;
+    border-bottom: 1px solid #e2e8f0;
+    font-size: 11px;
+}
+
+.modal-cart-table th {
+    color: #64748b;
+    font-weight: 600;
+    font-size: 10px;
+}

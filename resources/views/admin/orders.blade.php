@@ -706,65 +706,6 @@
         </div>
     </div>
 
-    {{-- Dynamic Island Style --}}
-    <style>
-        .order-status-tab {
-            position: relative;
-            transition: transform 0.25s cubic-bezier(0.25, 1, 0.5, 1), box-shadow 0.25s, border-color 0.25s !important;
-            transform-origin: bottom center;
-        }
-
-        .order-status-tab::after {
-            content: "";
-            position: absolute;
-            bottom: 6px;
-            left: 50%;
-            transform: translateX(-50%) scale(0);
-            width: 6px;
-            height: 6px;
-            border-radius: 50%;
-            background: currentColor;
-            transition: transform 0.25s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.25s;
-            opacity: 0;
-            pointer-events: none;
-        }
-
-        .order-status-tab.active::after {
-            transform: translateX(-50%) scale(1);
-            opacity: 1;
-        }
-    </style>
-
-    <script>
-        document.addEventListener("DOMContentLoaded", () => {
-            const tabs = document.querySelectorAll(".order-status-tab");
-            tabs.forEach((tab, index) => {
-                tab.addEventListener("mouseenter", () => {
-                    tabs.forEach((t, i) => {
-                        if (i === index) {
-                            t.style.transform = "scale(1.05) translateY(-5px)";
-                            t.style.zIndex = "10";
-                            t.style.boxShadow = "0 10px 20px rgba(0, 0, 0, 0.1)";
-                        } else if (i < index) {
-                            t.style.transform = "translateX(-8px) scale(0.98)";
-                            t.style.zIndex = "1";
-                        } else if (i > index) {
-                            t.style.transform = "translateX(8px) scale(0.98)";
-                            t.style.zIndex = "1";
-                        }
-                    });
-                });
-                tab.addEventListener("mouseleave", () => {
-                    tabs.forEach((t) => {
-                        t.style.transform = "";
-                        t.style.zIndex = "";
-                        t.style.boxShadow = "";
-                    });
-                });
-            });
-        });
-    </script>
-
     <div id="modal-edit-order-items"
         style="display:none; position:fixed; inset:0; background:rgba(0,0,0,.65); z-index:180; align-items:center; justify-content:center;">
         <div class="admin-panel"

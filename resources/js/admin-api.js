@@ -4976,4 +4976,676 @@ document.addEventListener("DOMContentLoaded", () => {
         // ── Bootstrap ─────────────────────────────────────────────────────────────
         loadCurrentSetting();
     }
+
+    // =========================================================================
+    // RELOCATED BLADE LOGIC (ACTIVITIES, STORAGE DETAIL, AUDIT LOG, LAYOUT)
+    // =========================================================================
+
+    // ── 1. Activities Page Handler ───────────────────────────────────────────
+    window.fetchActivitiesPage = function fetchActivitiesPage() {
+        const tbody = document.getElementById('activities-tbody');
+        const clearAllBtn = document.getElementById('btn-activities-clear-all');
+        if (!tbody) return;
+        tbody.innerHTML = '<tr><td colspan="5"><div class="admin-table-empty"><strong>Memuat data...</strong></div></td></tr>';
+
+        const token = localStorage.getItem('admin_token');
+        const headers = { 'Accept': 'application/json' };
+        if (token) headers['Authorization'] = 'Bearer ' + token;
+
+        fetch('/api/admin/activities', { headers })
+            .then(res => res.json())
+            .then(res => {
+                const activities = res.data || [];
+                if (clearAllBtn) {
+                    clearAllBtn.style.display = activities.length > 0 ? 'inline-flex' : 'none';
+                }
+
+                if (activities.length > 0) {
+                    tbody.innerHTML = activities.map(a => {
+                        const date = new Date(a.created_at);
+                        const dateStr = date.toLocaleDateString('id-ID') + ' ' + date.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
+
+                        let typeBadge = '';
+                        if (a.type === 'order_created') {
+                            typeBadge = '<span style="background:#dbeafe; color:#1e40af; padding:2px 8px; border-radius:12px; font-size:11px; font-weight:600;">Pesanan Baru</span>';
+                        } else if (a.type === 'order_status_updated') {
+                            typeBadge = '<span style="background:#fef3c7; color:#92400e; padding:2px 8px; border-radius:12px; font-size:11px; font-weight:600;">Update Status</span>';
+                        } else if (a.type === 'order_items_updated') {
+                            typeBadge = '<span style="background:#e0e7ff; color:#3730a3; padding:2px 8px; border-radius:12px; font-size:11px; font-weight:600;">Edit Item</span>';
+                        } else if (a.type === 'order_edit_accepted') {
+                            typeBadge = '<span style="background:#dcfce7; color:#166534; padding:2px 8px; border-radius:12px; font-size:11px; font-weight:600;">Edit Diterima</span>';
+                        } else if (a.type === 'order_edit_rejected') {
+                            typeBadge = '<span style="background:#fee2e2; color:#991b1b; padding:2px 8px; border-radius:12px; font-size:11px; font-weight:600;">Edit Ditolak</span>';
+                        } else if (a.type === 'warehouse_pickup_completed') {
+                            typeBadge = '<span style="background:#ccfbf1; color:#0f766e; padding:2px 8px; border-radius:12px; font-size:11px; font-weight:600;">Pengambilan Pusat</span>';
+                        } else if (a.type === 'stock_threshold_reached') {
+                            typeBadge = '<span style="background:#fed7aa; color:#9a3412; padding:2px 8px; border-radius:12px; font-size:11px; font-weight:600;">Stok Gudang</span>';
+                        } else {
+                            typeBadge = `<span style="background:#f3f4f6; color:#374151; padding:2px 8px; border-radius:12px; font-size:11px; font-weight:600;">${a.type}</span>`;
+                        }
+
+                        return `
+                        <tr onclick="openActivityOrder(${a.related_id || 0})" style="cursor:pointer;">
+                            <td style="font-size:12px; color:#6b7280;">${dateStr}</td>
+                            <td>${typeBadge}</td>
+                            <td style="font-weight:600; color:#2563eb;">${a.title}</td>
+                            <td style="color:#4b5563;">${a.description}</td>
+                            <td style="text-align:center;" onclick="event.stopPropagation();">
+                                <button type="button" onclick="confirmDismissActivity(event, ${a.id})" title="Hapus Notifikasi" class="activity-delete-btn" aria-label="Hapus Notifikasi">
+                                    &times;
+                                </button>
+                            </td>
+                        </tr>
+                        `;
+                    }).join('');
+                } else {
+                    tbody.innerHTML = '<tr><td colspan="5"><div class="admin-table-empty"><strong>Belum ada aktivitas.</strong></div></td></tr>';
+                }
+            })
+            .catch(err => {
+                if (clearAllBtn) clearAllBtn.style.display = 'none';
+                if (tbody) tbody.innerHTML = '<tr><td colspan="5"><div class="admin-table-empty"><strong style="color:red;">Gagal memuat data.</strong></div></td></tr>';
+                console.error(err);
+            });
+    };
+    if (window.location.pathname.includes('/admin/aktivitas')) {
+        window.fetchActivitiesPage();
+    }
+
+    // ── 2. Storage Detail Page Handler ───────────────────────────────────────
+    const storageDetailHeading = document.getElementById("warehouse-title-heading");
+    if (storageDetailHeading) {
+        const warehouseIdMatch = window.location.pathname.match(/\/admin\/gudang\/(\d+)/);
+        const warehouseId = warehouseIdMatch ? warehouseIdMatch[1] : null;
+
+        const addressHeading = document.getElementById("warehouse-address-heading");
+        const statName = document.getElementById("stat-warehouse-name");
+        const statAddr = document.getElementById("stat-warehouse-address");
+        const statTotal = document.getElementById("stat-total-items");
+        const statCoords = document.getElementById("stat-coords");
+        const statTotalTaken = document.getElementById("stat-total-taken");
+        const stocksTbody = document.getElementById("storage-stocks-tbody");
+        const stockBadgeCount = document.getElementById("stock-badge-count");
+        const searchInput = document.getElementById("input-search-warehouse-stock");
+
+        let allStocksData = [];
+        let allTakenStocksData = [];
+
+        function renderStockTable(filteredStocks) {
+            if (!stocksTbody) return;
+            const validStocks = filteredStocks.filter(item => item.accu_name && item.accu_name.trim() !== "");
+            if (validStocks.length > 0) {
+                stocksTbody.innerHTML = validStocks.map(item => {
+                    const qty = parseInt(item.total_quantity || 0);
+                    const badgeHtml = qty > 0
+                        ? `<span class="admin-badge admin-badge--success">Tersedia</span>`
+                        : `<span class="admin-badge admin-badge--muted">Stok 0</span>`;
+
+                    return `
+                        <tr class="stock-table-row ${qty > 0 ? 'stock-table-row--active' : ''}">
+                            <td class="stock-table-name">
+                                ⚡ ${item.accu_name}
+                            </td>
+                            <td class="stock-table-qty ${qty > 0 ? 'stock-table-qty--positive' : ''}">
+                                ${qty} unit
+                            </td>
+                            <td class="stock-table-status">
+                                ${badgeHtml}
+                            </td>
+                        </tr>
+                    `;
+                }).join("");
+            } else {
+                stocksTbody.innerHTML = `<tr><td colspan="3"><div class="admin-table-empty"><strong>Tidak ada jenis aki yang cocok</strong></div></td></tr>`;
+            }
+        }
+
+        (async () => {
+            try {
+                const headers = { "Accept": "application/json" };
+                const token = localStorage.getItem("admin_token");
+                if (token) headers["Authorization"] = `Bearer ${token}`;
+
+                const res = await fetch(`/api/admin/storages/${warehouseId}/stock`, { headers });
+                const json = await res.json();
+
+                if (res.ok) {
+                    const w = json.warehouse || (json.data && json.data.warehouse) || {};
+                    const stocks = (json.stocks || (json.data && json.data.stocks) || []).filter(item => item.accu_name && item.accu_name.trim() !== "");
+                    const takenStocks = (json.taken_stocks || (json.data && json.data.taken_stocks) || []).filter(item => item.accu_name && item.accu_name.trim() !== "");
+                    const totalItems = json.total_items ?? (json.data && json.data.total_items) ?? 0;
+                    const totalTakenItems = json.total_taken_items ?? (json.data && json.data.total_taken_items) ?? 0;
+
+                    storageDetailHeading.innerText = `Detail ${w.name || ''}`;
+                    if (addressHeading) addressHeading.innerText = w.address || "Alamat gudang belum diisi.";
+                    if (statName) statName.innerText = w.name || "-";
+                    if (statAddr) statAddr.innerText = w.address || "-";
+                    if (statTotal) statTotal.innerText = totalItems.toLocaleString("id-ID") + " Unit";
+                    if (statCoords) {
+                        const latVal = w.lat || w.latitude;
+                        const lngVal = w.long || w.longitude;
+                        if (latVal && lngVal) {
+                            statCoords.innerText = `${parseFloat(latVal).toFixed(4)}, ${parseFloat(lngVal).toFixed(4)}`;
+                        } else {
+                            statCoords.innerText = "Belum diatur";
+                        }
+                    }
+                    if (statTotalTaken) statTotalTaken.innerText = totalTakenItems.toLocaleString("id-ID") + " Unit";
+                    if (stockBadgeCount) stockBadgeCount.innerText = `${stocks.length} Jenis Aki`;
+
+                    allStocksData = stocks.sort((a, b) => {
+                        const qtyA = parseInt(a.total_quantity || 0);
+                        const qtyB = parseInt(b.total_quantity || 0);
+                        if (qtyB !== qtyA) return qtyB - qtyA;
+                        return (a.accu_name || "").localeCompare(b.accu_name || "");
+                    });
+
+                    allTakenStocksData = takenStocks.sort((a, b) => {
+                        const qtyA = parseInt(a.total_quantity || 0);
+                        const qtyB = parseInt(b.total_quantity || 0);
+                        if (qtyB !== qtyA) return qtyB - qtyA;
+                        return (a.accu_name || "").localeCompare(b.accu_name || "");
+                    });
+
+                    renderStockTable(allStocksData);
+
+                    const mapEl = document.getElementById("storage-detail-map");
+                    if (mapEl && typeof L !== "undefined") {
+                        const lat = parseFloat(warehouse.latitude) || -6.200000;
+                        const lng = parseFloat(warehouse.longitude) || 106.816666;
+                        const hasCoords = warehouse.latitude && warehouse.longitude;
+
+                        const map = L.map("storage-detail-map").setView([lat, lng], hasCoords ? 15 : 11);
+                        L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+                            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                        }).addTo(map);
+
+                        if (hasCoords) {
+                            const marker = L.marker([lat, lng]).addTo(map);
+                            marker.bindPopup(`<strong>${warehouse.name}</strong><br>${warehouse.address}`).openPopup();
+                        }
+                    }
+
+                    const tabAvailable = document.getElementById("tab-stock-available");
+                    const tabTaken = document.getElementById("tab-stock-taken");
+                    let currentTab = "available";
+
+                    function switchStockTab(tab) {
+                        currentTab = tab;
+                        if (searchInput) searchInput.value = "";
+                        if (tab === "available") {
+                            if (tabAvailable) { tabAvailable.style.background = "#2563eb"; tabAvailable.style.color = "#fff"; }
+                            if (tabTaken) { tabTaken.style.background = "#f1f5f9"; tabTaken.style.color = "#475569"; }
+                            renderStockTable(allStocksData);
+                        } else {
+                            if (tabTaken) { tabTaken.style.background = "#2563eb"; tabTaken.style.color = "#fff"; }
+                            if (tabAvailable) { tabAvailable.style.background = "#f1f5f9"; tabAvailable.style.color = "#475569"; }
+                            renderStockTable(allTakenStocksData);
+                        }
+                    }
+
+                    if (tabAvailable) tabAvailable.addEventListener("click", () => switchStockTab("available"));
+                    if (tabTaken) tabTaken.addEventListener("click", () => switchStockTab("taken"));
+
+                    if (searchInput) {
+                        searchInput.addEventListener("input", (e) => {
+                            const keyword = e.target.value.toLowerCase().trim();
+                            const activeDataset = currentTab === "available" ? allStocksData : allTakenStocksData;
+                            const filtered = activeDataset.filter(item =>
+                                item.accu_name && item.accu_name.toLowerCase().includes(keyword)
+                            );
+                            renderStockTable(filtered);
+                        });
+                    }
+
+                } else {
+                    if (stocksTbody) {
+                        stocksTbody.innerHTML = `<tr><td colspan="3"><div class="admin-table-empty"><strong style="color:red;">Gagal memuat detail stok: ${json.message || 'Error'}</strong></div></td></tr>`;
+                    }
+                }
+            } catch (err) {
+                console.error(err);
+                if (stocksTbody) {
+                    stocksTbody.innerHTML = `<tr><td colspan="3"><div class="admin-table-empty"><strong style="color:red;">Terjadi kesalahan saat memuat data stok.</strong></div></td></tr>`;
+                }
+            }
+        })();
+    }
+
+    // ── 3. Audit Log Order Page Handler ──────────────────────────────────────
+    const auditMainEl = document.getElementById('audit-main-content');
+    if (auditMainEl) {
+        (function initAuditLog() {
+            var adminUser = null;
+            try { adminUser = JSON.parse(localStorage.getItem('admin_user') || 'null'); } catch (e) {}
+            var userRole = adminUser ? adminUser.role : null;
+            var denyEl = document.getElementById('audit-access-denied');
+
+            if (userRole !== 'central') {
+                if (denyEl) denyEl.style.display = 'block';
+                auditMainEl.style.display = 'none';
+                return;
+            }
+            auditMainEl.style.display = 'block';
+            if (denyEl) denyEl.style.display = 'none';
+
+            var API_BASE = '/api/admin/order-histories';
+            var token = localStorage.getItem('admin_token');
+            var currentPage = 1;
+            var debounceTimer = null;
+
+            function authHeaders() {
+                var h = { 'Accept': 'application/json' };
+                if (token) h['Authorization'] = 'Bearer ' + token;
+                return h;
+            }
+
+            function escHtml(str) {
+                return String(str || '')
+                    .replace(/&/g, '&amp;').replace(/</g, '&lt;')
+                    .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+            }
+
+            function fmtDate(val) {
+                if (!val) return '—';
+                var s = String(val);
+                if (!s.includes('T') && s.includes(' ')) s = s.replace(' ', 'T');
+                if (!s.includes('Z') && !s.includes('+')) s += 'Z';
+                var d = new Date(s);
+                return d.toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' })
+                    + '\n' + d.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+            }
+
+            var ACTION_BADGES = {
+                status_change: { bg: '#fef3c7', c: '#92400e', lbl: 'Status Change' },
+                items_change: { bg: '#e0e7ff', c: '#3730a3', lbl: 'Items Change' },
+                note_update: { bg: '#ccfbf1', c: '#0f766e', lbl: 'Note Update' },
+                created: { bg: '#dbeafe', c: '#1e40af', lbl: 'Created' },
+                cancelled: { bg: '#fee2e2', c: '#991b1b', lbl: 'Cancelled' },
+            };
+
+            function actionBadge(type) {
+                var cfg = ACTION_BADGES[type];
+                if (cfg) return '<span style="background:' + cfg.bg + ';color:' + cfg.c + ';padding:2px 8px;border-radius:12px;font-size:11px;font-weight:600;white-space:nowrap;">' + cfg.lbl + '</span>';
+                return '<span style="background:#f3f4f6;color:#374151;padding:2px 8px;border-radius:12px;font-size:11px;font-weight:600;white-space:nowrap;">' + escHtml(type || '—') + '</span>';
+            }
+
+            var ACTOR_BADGES = {
+                admin: { bg: '#ede9fe', c: '#5b21b6' },
+                customer: { bg: '#dcfce7', c: '#166534' },
+                system: { bg: '#f1f5f9', c: '#475569' },
+            };
+
+            function actorBadge(type) {
+                var cfg = ACTOR_BADGES[type];
+                if (cfg) return '<span style="background:' + cfg.bg + ';color:' + cfg.c + ';padding:2px 8px;border-radius:12px;font-size:11px;font-weight:600;">' + escHtml(type) + '</span>';
+                return '<span style="background:#f3f4f6;color:#374151;padding:2px 8px;border-radius:12px;font-size:11px;font-weight:600;">' + escHtml(type || '—') + '</span>';
+            }
+
+            function jsonPreview(obj) {
+                if (!obj) return '<span style="color:#9ca3af;font-size:11px;">—</span>';
+                if (typeof obj === 'object' && Object.keys(obj).length === 0)
+                    return '<span style="color:#9ca3af;font-size:11px;">—</span>';
+                var str = typeof obj === 'string' ? obj : JSON.stringify(obj);
+                var preview = str.length > 70 ? str.substring(0, 68) + '…' : str;
+                return '<span style="font-family:\'Courier New\',monospace;font-size:10px;color:#6366f1;cursor:pointer;line-height:1.5;display:block;">' + escHtml(preview) + '</span>';
+            }
+
+            window.fetchAuditLog = function (page) {
+                page = page || 1;
+                currentPage = page;
+
+                var tbody = document.getElementById('audit-tbody');
+                var search = (document.getElementById('audit-search') || {}).value || '';
+                var actType = (document.getElementById('audit-filter-action') || {}).value || '';
+                var actorT = (document.getElementById('audit-filter-actor') || {}).value || '';
+
+                if (tbody) {
+                    tbody.innerHTML = '<tr><td colspan="8"><div class="admin-table-empty"><strong>Memuat data...</strong></div></td></tr>';
+                }
+
+                var params = 'page=' + page;
+                if (search.trim()) params += '&search=' + encodeURIComponent(search.trim());
+                if (actType) params += '&action_type=' + encodeURIComponent(actType);
+                if (actorT) params += '&actor_type=' + encodeURIComponent(actorT);
+
+                fetch(API_BASE + '?' + params, { headers: authHeaders() })
+                    .then(function (res) {
+                        if (res.status === 403) throw new Error('403');
+                        if (!res.ok) throw new Error('HTTP ' + res.status);
+                        return res.json();
+                    })
+                    .then(function (res) {
+                        var raw = res.data || {};
+                        var items = raw.data || [];
+                        var pg = {
+                            current_page: raw.current_page || 1,
+                            last_page: raw.last_page || 1,
+                            per_page: raw.per_page || 15,
+                            total: raw.total || 0,
+                            from: raw.from,
+                            to: raw.to,
+                        };
+
+                        renderTable(items);
+                        renderPagination(pg);
+
+                        var badge = document.getElementById('audit-total-badge');
+                        if (badge) { badge.textContent = pg.total + ' Record'; badge.style.display = 'inline-block'; }
+
+                        var info = document.getElementById('audit-page-info');
+                        if (info) {
+                            info.textContent = pg.total > 0
+                                ? 'Menampilkan ' + (pg.from || 0) + '–' + (pg.to || 0) + ' dari ' + pg.total + ' record'
+                                : '';
+                        }
+                    })
+                    .catch(function (err) {
+                        if (tbody) {
+                            var msg = err.message === '403'
+                                ? 'Akses ditolak. Hanya role Central.'
+                                : 'Gagal memuat data: ' + err.message;
+                            tbody.innerHTML = '<tr><td colspan="8"><div class="admin-table-empty"><strong style="color:#ba1b2b;">' + escHtml(msg) + '</strong></div></td></tr>';
+                        }
+                        console.error(err);
+                    });
+            };
+
+            function renderTable(items) {
+                var tbody = document.getElementById('audit-tbody');
+                if (!tbody) return;
+
+                if (!items.length) {
+                    tbody.innerHTML = '<tr><td colspan="8"><div class="admin-table-empty"><strong>Tidak ada data riwayat pesanan.</strong></div></td></tr>';
+                    return;
+                }
+
+                tbody.innerHTML = items.map(function (item) {
+                    var dtParts = fmtDate(item.created_at).split('\n');
+                    var dtDate = dtParts[0] || '';
+                    var dtTime = dtParts[1] || '';
+
+                    var orderLabel = item.order_uuid
+                        ? '<span style="color:#2563eb;font-weight:700;">#' + escHtml(item.order_uuid.substring(0, 8).toUpperCase()) + '</span><br><span style="font-size:10px;color:#9ca3af;">' + escHtml(item.order_uuid) + '</span>'
+                        : '<span style="color:#6b7280;">#' + escHtml(String(item.order_id)) + '</span>';
+
+                    var pengubah = item.user_name
+                        ? '<span style="font-weight:600;">' + escHtml(item.user_name) + '</span><br><span style="font-size:10px;color:#9ca3af;">ID: ' + escHtml(String(item.user_id || '—')) + '</span>'
+                        : '<span style="color:#9ca3af;font-size:11px;">System</span>';
+
+                    var oldHas = item.old_values && (typeof item.old_values === 'object' ? Object.keys(item.old_values).length > 0 : true);
+                    var newHas = item.new_values && (typeof item.new_values === 'object' ? Object.keys(item.new_values).length > 0 : true);
+
+                    var oldJsonStr = oldHas ? JSON.stringify(item.old_values, null, 2) : null;
+                    var newJsonStr = newHas ? JSON.stringify(item.new_values, null, 2) : null;
+
+                    var oldCell = oldHas
+                        ? '<div onclick="openAuditJsonModal(\'Nilai Lama\', ' + escHtml(JSON.stringify(oldJsonStr)) + ')" title="Klik untuk detail" style="cursor:pointer;">' + jsonPreview(item.old_values) + '</div>'
+                        : '<span style="color:#9ca3af;font-size:11px;">—</span>';
+
+                    var newCell = newHas
+                        ? '<div onclick="openAuditJsonModal(\'Nilai Baru\', ' + escHtml(JSON.stringify(newJsonStr)) + ')" title="Klik untuk detail" style="cursor:pointer;">' + jsonPreview(item.new_values) + '</div>'
+                        : '<span style="color:#9ca3af;font-size:11px;">—</span>';
+
+                    return '<tr>'
+                        + '<td style="font-size:11px;white-space:nowrap;"><span style="display:block;font-weight:600;">' + escHtml(dtDate) + '</span><span style="color:#9ca3af;">' + escHtml(dtTime) + '</span></td>'
+                        + '<td>' + orderLabel + '</td>'
+                        + '<td>' + pengubah + '</td>'
+                        + '<td>' + actorBadge(item.actor_type) + '</td>'
+                        + '<td>' + actionBadge(item.action_type) + '</td>'
+                        + '<td style="max-width:180px;overflow:hidden;">' + oldCell + '</td>'
+                        + '<td style="max-width:180px;overflow:hidden;">' + newCell + '</td>'
+                        + '<td style="font-size:12px;color:#9ca3af;line-height:1.5;">' + (item.description ? escHtml(item.description) : '<span style="color:#9ca3af;">—</span>') + '</td>'
+                        + '</tr>';
+                }).join('');
+            }
+
+            function renderPagination(pg) {
+                var wrap = document.getElementById('audit-pagination');
+                var summary = document.getElementById('audit-pagination-summary');
+                var btns = document.getElementById('audit-pagination-btns');
+
+                if (!pg || pg.total === 0) {
+                    if (wrap) wrap.style.display = 'none';
+                    return;
+                }
+                if (wrap) wrap.style.display = 'flex';
+                if (summary) summary.textContent = 'Halaman ' + pg.current_page + ' dari ' + pg.last_page + ' (Total: ' + pg.total + ')';
+                if (!btns) return;
+                btns.innerHTML = '';
+
+                function makeBtn(label, page, isActive, disabled) {
+                    var btn = document.createElement('button');
+                    btn.type = 'button';
+                    btn.innerHTML = label;
+                    btn.disabled = disabled || isActive;
+                    btn.style.cssText = [
+                        'height:32px;min-width:32px;padding:0 10px;',
+                        'border:1px solid ' + (isActive ? '#6366f1' : '#e5e7eb') + ';',
+                        'background:' + (isActive ? '#6366f1' : 'transparent') + ';',
+                        'color:' + (isActive ? '#fff' : '#374151') + ';',
+                        'border-radius:6px;cursor:' + (disabled || isActive ? 'default' : 'pointer') + ';',
+                        'font-size:12px;font-weight:600;',
+                        'display:inline-flex;align-items:center;justify-content:center;',
+                        'transition:background 0.15s;',
+                        (disabled ? 'opacity:0.35;' : ''),
+                    ].join('');
+                    if (!isActive && !disabled) {
+                        btn.addEventListener('mouseover', function () { btn.style.background = '#f3f4f6'; });
+                        btn.addEventListener('mouseout', function () { btn.style.background = 'transparent'; });
+                        btn.addEventListener('click', function () { fetchAuditLog(page); });
+                    }
+                    return btn;
+                }
+
+                btns.appendChild(makeBtn('&lsaquo;', pg.current_page - 1, false, pg.current_page <= 1));
+
+                var start = Math.max(1, pg.current_page - 2);
+                var end = Math.min(pg.last_page, pg.current_page + 2);
+
+                if (start > 1) {
+                    btns.appendChild(makeBtn('1', 1, false, false));
+                    if (start > 2) {
+                        var e1 = document.createElement('span');
+                        e1.textContent = '…';
+                        e1.style.cssText = 'padding:0 4px;color:#9ca3af;font-size:12px;align-self:center;';
+                        btns.appendChild(e1);
+                    }
+                }
+
+                for (var i = start; i <= end; i++) {
+                    btns.appendChild(makeBtn(i, i, i === pg.current_page, false));
+                }
+
+                if (end < pg.last_page) {
+                    if (end < pg.last_page - 1) {
+                        var e2 = document.createElement('span');
+                        e2.textContent = '…';
+                        e2.style.cssText = 'padding:0 4px;color:#9ca3af;font-size:12px;align-self:center;';
+                        btns.appendChild(e2);
+                    }
+                    btns.appendChild(makeBtn(pg.last_page, pg.last_page, false, false));
+                }
+
+                btns.appendChild(makeBtn('&rsaquo;', pg.current_page + 1, false, pg.current_page >= pg.last_page));
+            }
+
+            window.openAuditJsonModal = function (title, jsonStr) {
+                var modal = document.getElementById('audit-json-modal');
+                var titleEl = document.getElementById('audit-json-modal-title');
+                var content = document.getElementById('audit-json-modal-content');
+                if (!modal) return;
+                try {
+                    var parsed = JSON.parse(jsonStr);
+                    content.textContent = JSON.stringify(parsed, null, 2);
+                } catch (e) {
+                    content.textContent = jsonStr;
+                }
+                if (titleEl) titleEl.textContent = title;
+                modal.style.display = 'flex';
+            };
+
+            window.closeAuditJsonModal = function () {
+                var modal = document.getElementById('audit-json-modal');
+                if (modal) modal.style.display = 'none';
+            };
+
+            var closeBtn = document.getElementById('audit-json-modal-close');
+            if (closeBtn) closeBtn.addEventListener('click', closeAuditJsonModal);
+
+            var jsonModal = document.getElementById('audit-json-modal');
+            if (jsonModal) {
+                jsonModal.addEventListener('click', function (e) {
+                    if (e.target === jsonModal) closeAuditJsonModal();
+                });
+            }
+
+            document.addEventListener('keydown', function (e) {
+                if (e.key === 'Escape') closeAuditJsonModal();
+            });
+
+            window.debounceAuditFetch = function () {
+                clearTimeout(debounceTimer);
+                debounceTimer = setTimeout(function () { fetchAuditLog(1); }, 380);
+            };
+
+            fetchAuditLog(1);
+        })();
+    }
+
+    // ── 4. Orders Page Status Tab Hover ──────────────────────────────────────
+    const orderStatusTabs = document.querySelectorAll(".order-status-tab");
+    if (orderStatusTabs.length > 0) {
+        orderStatusTabs.forEach((tab, index) => {
+            tab.addEventListener("mouseenter", () => {
+                orderStatusTabs.forEach((t, i) => {
+                    if (i === index) {
+                        t.style.transform = "scale(1.05) translateY(-5px)";
+                        t.style.zIndex = "10";
+                        t.style.boxShadow = "0 10px 20px rgba(0, 0, 0, 0.1)";
+                    } else if (i < index) {
+                        t.style.transform = "translateX(-8px) scale(0.98)";
+                        t.style.zIndex = "1";
+                    } else if (i > index) {
+                        t.style.transform = "translateX(8px) scale(0.98)";
+                        t.style.zIndex = "1";
+                    }
+                });
+            });
+            tab.addEventListener("mouseleave", () => {
+                orderStatusTabs.forEach((t) => {
+                    t.style.transform = "";
+                    t.style.zIndex = "";
+                    t.style.boxShadow = "";
+                });
+            });
+        });
+    }
+
+    // ── 5. Layout Controls (Sidebar, Theme, Role Navigation) ─────────────────
+    const layoutSidebar = document.querySelector('.admin-sidebar');
+    const layoutFooter = document.querySelector('.admin-footer');
+    let sidebarHoverTimeout = null;
+    let sidebarAutoExpanded = false;
+
+    function updateAdminSidebar(collapsed, save = true) {
+        if (!layoutSidebar) return;
+        layoutSidebar.classList.toggle('collapsed', collapsed);
+        if (layoutFooter) {
+            layoutFooter.classList.toggle('expanded', collapsed);
+        }
+        if (save) {
+            localStorage.setItem('sidebarCollapsed', collapsed);
+        }
+    }
+
+    if (layoutSidebar) {
+        const savedSidebarState = localStorage.getItem('sidebarCollapsed') !== 'false';
+        updateAdminSidebar(savedSidebarState);
+
+        const sidebarToggleBtn = document.getElementById('sidebarToggle');
+        if (sidebarToggleBtn) {
+            sidebarToggleBtn.addEventListener('click', () => {
+                const isCurrentlyCollapsed = layoutSidebar.classList.contains('collapsed');
+                updateAdminSidebar(!isCurrentlyCollapsed);
+                sidebarAutoExpanded = false;
+            });
+        }
+
+        if (window.matchMedia('(hover: hover)').matches) {
+            layoutSidebar.addEventListener('mouseenter', () => {
+                if (layoutSidebar.classList.contains('collapsed')) {
+                    sidebarHoverTimeout = setTimeout(() => {
+                        updateAdminSidebar(false, false);
+                        sidebarAutoExpanded = true;
+                    }, 1500);
+                }
+            });
+
+            layoutSidebar.addEventListener('mouseleave', () => {
+                if (sidebarHoverTimeout) {
+                    clearTimeout(sidebarHoverTimeout);
+                    sidebarHoverTimeout = null;
+                }
+                if (sidebarAutoExpanded) {
+                    updateAdminSidebar(true, false);
+                    sidebarAutoExpanded = false;
+                }
+            });
+        }
+    }
+
+    const layoutThemeToggleBtn = document.getElementById('admin-theme-toggle');
+    const layoutThemeText = document.getElementById('admin-theme-text');
+
+    function applyAdminGlobalTheme(isDark) {
+        document.documentElement.classList.toggle('admin-dark-mode', isDark);
+        if (document.body) {
+            document.body.classList.toggle('admin-dark-mode', isDark);
+        }
+        localStorage.setItem('admin_theme', isDark ? 'dark' : 'light');
+        if (layoutThemeText) {
+            layoutThemeText.textContent = isDark ? 'Mode Terang' : 'Mode Gelap';
+        }
+        if (typeof window.updateOrderTabAppearance === 'function') {
+            window.updateOrderTabAppearance();
+        }
+        if (typeof window.__renderGeneralPagination === 'function' && window.__adminPaginationState) {
+            Object.entries(window.__adminPaginationState).forEach(([containerId, state]) => {
+                if (document.getElementById(containerId)) {
+                    window.__renderGeneralPagination(state.pagination, containerId, state.onClickFnName);
+                }
+            });
+        }
+    }
+
+    if (layoutThemeToggleBtn) {
+        const initialIsDark = localStorage.getItem('admin_theme') === 'dark';
+        applyAdminGlobalTheme(initialIsDark);
+
+        layoutThemeToggleBtn.addEventListener('click', () => {
+            const isCurrentDark = document.documentElement.classList.contains('admin-dark-mode');
+            applyAdminGlobalTheme(!isCurrentDark);
+        });
+    }
+
+    // Role-based sidebar visibility
+    (function applyRoleBasedNav() {
+        try {
+            const adminUser = JSON.parse(localStorage.getItem('admin_user') || 'null');
+            const userRole = adminUser ? adminUser.role : null;
+            document.querySelectorAll('[data-role-required]').forEach(function (el) {
+                const requiredRole = el.getAttribute('data-role-required');
+                if (userRole === requiredRole) {
+                    el.style.display = '';
+                } else {
+                    el.style.display = 'none';
+                }
+            });
+        } catch (e) {
+            document.querySelectorAll('[data-role-required]').forEach(function (el) {
+                el.style.display = 'none';
+            });
+        }
+    })();
 });

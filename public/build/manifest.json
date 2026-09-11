@@ -1,7 +1,7 @@
 {
-  "_fonts-C9MNnjVw.css": {
-    "file": "assets/fonts-C9MNnjVw.css",
-    "src": "_fonts-C9MNnjVw.css"
+  "_fonts-DqppEDJS.css": {
+    "file": "assets/fonts-DqppEDJS.css",
+    "src": "_fonts-DqppEDJS.css"
   },
   "_instrument-sans-400-normal-D1W7dsQl.woff": {
     "file": "assets/instrument-sans-400-normal-D1W7dsQl.woff",
@@ -28,17 +28,13 @@
     "src": "_instrument-sans-600-normal-B9e8oLYv.woff"
   },
   "resources/css/app.css": {
-    "file": "assets/app-h2wYSa0t.css",
+    "file": "assets/app-BDLH_GUK.css",
     "name": "app",
     "names": [
       "app.css"
     ],
     "src": "resources/css/app.css",
     "isEntry": true
-  },
-  "resources/img/KTP_WILSON ANTONIUS.jpeg": {
-    "file": "assets/KTP_WILSON ANTONIUS-BnCgkiMD.jpeg",
-    "src": "resources/img/KTP_WILSON ANTONIUS.jpeg"
   },
   "resources/img/Logo_user-removebg-preview.png": {
     "file": "assets/Logo_user-removebg-preview-BvRk9kiK.js",
@@ -93,7 +89,7 @@
     ]
   },
   "resources/js/admin-api.js": {
-    "file": "assets/admin-api-8iSv02mh.js",
+    "file": "assets/admin-api-DU7D2EIi.js",
     "name": "admin-api",
     "src": "resources/js/admin-api.js",
     "isEntry": true

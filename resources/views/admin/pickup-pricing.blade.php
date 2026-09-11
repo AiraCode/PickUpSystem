@@ -206,26 +206,6 @@
                box-shadow:0 4px 20px rgba(0,0,0,.15); z-index:999; max-width:320px;">
     </div>
 
-    <style>
-        .pp-label {
-            display: block;
-            font-size: 12px;
-            font-weight: 600;
-            margin-bottom: 6px;
-            color: #4a4f59;
-        }
-        @media (max-width: 767px) {
-            #pp-history-table th:nth-child(7),
-            #pp-history-table td:nth-child(7),
-            #pp-history-table th:nth-child(8),
-            #pp-history-table td:nth-child(8),
-            #pp-history-table th:nth-child(9),
-            #pp-history-table td:nth-child(9) {
-                display: none;
-            }
-        }
-    </style>
-
     {{-- Easter Egg Modal Lock --}}
     <div id="modal-easter-egg-lock" style="display:none; position:fixed; inset:0; background:rgba(17,19,24,0.92); z-index:999; align-items:center; justify-content:center; backdrop-filter:blur(4px);">
         <div class="admin-panel" style="width:380px; text-align:center; padding:28px 24px; border:1px solid #374151; box-shadow:0 20px 25px -5px rgba(0,0,0,0.5);">
