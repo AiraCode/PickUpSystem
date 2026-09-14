@@ -165,6 +165,19 @@ class OrderController extends Controller
         }
 
         $orderData = $order->toArray();
+
+        // Inject secure streaming URLs for KTP images (admin-only access)
+        if ($order->customer) {
+            $orderData['customer']['ktp_url'] = $order->customer->ktp
+                ? url('/api/admin/secure-file/' . $order->customer->ktp)
+                : null;
+        }
+        if (!empty($order->accu_ktp)) {
+            $orderData['accu_ktp_url'] = url('/api/admin/secure-file/' . $order->accu_ktp);
+        } else {
+            $orderData['accu_ktp_url'] = null;
+        }
+
         if ($order->receipt) {
             $lme = (float) \App\Models\Setting::getValue('lme', 2100);
             $kurs = (float) \App\Models\Setting::getValue('kurs', 16000);

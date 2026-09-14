@@ -33,7 +33,9 @@ class SecurityHeadersMiddleware
 
         // 6. Content Security Policy (CSP) - Mengontrol sumber eksekusi asset/script
         // Catatan: Jika ada CDN external (misal Google Fonts/Tailwind), sesuaikan domainnya di sini
-        $response->headers->set('Content-Security-Policy', "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob: https:; connect-src 'self' https:;");
+        $response->headers->set('Content-Security-Policy', "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://unpkg.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://unpkg.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob: https: https://*.tile.openstreetmap.org https://unpkg.com; connect-src 'self' https:;");
+
+        
 
         return $response;
     }

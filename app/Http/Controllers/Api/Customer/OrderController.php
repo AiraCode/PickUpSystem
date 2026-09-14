@@ -118,7 +118,7 @@ class OrderController extends Controller
                         if (in_array($type, ['jpg', 'jpeg', 'png'])) {
                             $data = base64_decode($data);
                             $filename = 'ktp/' . uniqid() . '.' . $type;
-                            Storage::disk('public')->put($filename, $data);
+                            Storage::disk('local')->put($filename, $data);
                             $ktpPath = substr($filename, 0, 45);
                         }
                     }
@@ -132,7 +132,7 @@ class OrderController extends Controller
                         if (in_array($type, ['jpg', 'jpeg', 'png'])) {
                             $data = base64_decode($data);
                             $filename = 'accu_ktp/' . uniqid() . '.' . $type;
-                            Storage::disk('public')->put($filename, $data);
+                            Storage::disk('local')->put($filename, $data);
                             $accuKtpPath = substr($filename, 0, 45);
                         }
                     }

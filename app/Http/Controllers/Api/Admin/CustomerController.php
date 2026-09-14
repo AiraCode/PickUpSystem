@@ -24,9 +24,16 @@ class CustomerController extends Controller
     {
         $customer = Customer::with('bank')->findOrFail($id);
 
+        $customerData = $customer->toArray();
+        // Provide secure streaming URLs so admin can view KTP images
+        // without exposing raw paths to unauthenticated users
+        $customerData['ktp_url'] = $customer->ktp
+            ? url('/api/admin/secure-file/' . $customer->ktp)
+            : null;
+
         return response()->json([
             'message' => 'Detail customer berhasil diambil',
-            'data' => $customer,
+            'data'    => $customerData,
         ]);
     }
 

@@ -17,6 +17,7 @@ use App\Http\Controllers\Api\Admin\SettingController;
 use App\Http\Controllers\Api\Admin\ShipmentController;
 use App\Http\Controllers\Api\Admin\TransferController;
 use App\Http\Controllers\Api\Admin\UserController;
+use App\Http\Controllers\Api\Admin\SecureFileController;
 use App\Http\Controllers\Api\Admin\WarehouseController;
 use App\Http\Controllers\Api\Customer\AccuController as CustomerAccuController;
 use App\Http\Controllers\Api\Customer\BankController as CustomerBankController;
@@ -192,5 +193,9 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('pengiriman', [PickupPricingController::class, 'index']);
         Route::put('pengiriman', [PickupPricingController::class, 'update']);
         Route::get('pengiriman/history', [PickupPricingController::class, 'history']);
+
+        // Secure private file streaming (KTP/Accu-KTP) — admin only
+        Route::get('secure-file/{path}', [SecureFileController::class, 'stream'])
+            ->where('path', '.+');
     });
 });

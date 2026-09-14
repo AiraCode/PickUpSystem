@@ -21,7 +21,7 @@ class CustomerResource extends JsonResource
             'name' => $this->name,
             'address' => $this->address,
             'address_note' => $this->address_note,
-            'ktp' => $this->ktp,
+            // ktp path intentionally omitted — private, admin-only via /api/admin/secure-file
             'account_name' => $shouldMask ? DataMasker::accountName($this->account_name) : $this->account_name,
             'account_number' => $shouldMask ? DataMasker::accountNumber($this->account_number) : $this->account_number,
             'phone_number' => $shouldMask ? DataMasker::phone($this->phone_number) : $this->phone_number,

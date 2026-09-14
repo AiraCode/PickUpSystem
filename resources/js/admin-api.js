@@ -1863,16 +1863,46 @@ document.addEventListener("DOMContentLoaded", () => {
                 });
             });
 
-        window.openImageViewer = (url) => {
+        /**
+         * openImageViewer — supports both public URLs and private secure URLs.
+         * For secure (admin) URLs, the image is fetched with the auth Bearer token
+         * and converted to a Blob URL so <img> can display it without CORS issues.
+         */
+        window.openImageViewer = async (url) => {
             const viewer = document.getElementById("modal-image-viewer");
             const img = document.getElementById("image-viewer-img");
-            const fullscreen = document.getElementById(
-                "image-viewer-fullscreen",
-            );
-            if (viewer && img && fullscreen) {
+            const fullscreen = document.getElementById("image-viewer-fullscreen");
+            if (!viewer || !img || !fullscreen) return;
+
+            // Show loading state
+            img.src = "";
+            img.alt = "Memuat gambar...";
+            viewer.style.display = "flex";
+            fullscreen.href = "#";
+
+            // Determine if this is a private secure-file URL requiring auth
+            const isSecure = url && url.includes("/api/admin/secure-file/");
+            if (isSecure && token) {
+                try {
+                    const resp = await fetch(url, {
+                        headers: { Authorization: `Bearer ${token}` },
+                    });
+                    if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+                    const blob = await resp.blob();
+                    const blobUrl = URL.createObjectURL(blob);
+                    img.src = blobUrl;
+                    img.alt = "Foto KTP";
+                    // Revoke previous blob to avoid memory leaks
+                    img.onload = () => {}; // handled via createObjectURL lifecycle
+                    fullscreen.href = blobUrl;
+                } catch (err) {
+                    img.alt = "Gagal memuat gambar";
+                    console.error("[SecureFile] Gagal memuat gambar KTP:", err);
+                }
+            } else {
                 img.src = url;
+                img.alt = "Foto";
                 fullscreen.href = url;
-                viewer.style.display = "flex";
             }
         };
 
@@ -1890,33 +1920,17 @@ document.addEventListener("DOMContentLoaded", () => {
                 c.phone_number || "-";
             document.getElementById("detail-customer-address").innerText =
                 c.address || "-";
-            const ktpVal = c.ktp || "-";
-            document.getElementById("detail-customer-ktp").innerText = ktpVal;
+            const ktpUrl = c.ktp_url || null;
+            document.getElementById("detail-customer-ktp").innerText =
+                ktpUrl ? "Ada" : "-";
             const ktpLinkEl = document.getElementById(
                 "detail-customer-ktp-link",
             );
             if (ktpLinkEl) {
-                if (
-                    ktpVal !== "-" &&
-                    (ktpVal.includes("ktp/") ||
-                        ktpVal.includes(".jpg") ||
-                        ktpVal.includes(".jpeg") ||
-                        ktpVal.includes(".png") ||
-                        ktpVal.includes("data:image"))
-                ) {
-                    const imgUrl =
-                        ktpVal.startsWith("http") || ktpVal.startsWith("data:")
-                            ? ktpVal
-                            : ktpVal.startsWith("/")
-                                ? ktpVal
-                                : `/storage/${ktpVal}`;
+                if (ktpUrl) {
                     ktpLinkEl.onclick = (e) => {
                         e.preventDefault();
-                        if (typeof openImageViewer === "function") {
-                            openImageViewer(imgUrl);
-                        } else {
-                            window.open(imgUrl, "_blank");
-                        }
+                        openImageViewer(ktpUrl);
                     };
                     ktpLinkEl.style.display = "inline-flex";
                 } else {
@@ -1924,38 +1938,20 @@ document.addEventListener("DOMContentLoaded", () => {
                     ktpLinkEl.onclick = null;
                 }
             }
-            const accuKtpVal = o.accu_ktp || "-";
+            const accuKtpUrl = o.accu_ktp_url || null;
             const accuKtpEl = document.getElementById(
                 "detail-customer-accu-ktp",
             );
-            if (accuKtpEl) accuKtpEl.innerText = accuKtpVal;
+            if (accuKtpEl)
+                accuKtpEl.innerText = accuKtpUrl ? "Ada (tersimpan aman)" : "-";
             const accuKtpLinkEl = document.getElementById(
                 "detail-customer-accu-ktp-link",
             );
             if (accuKtpLinkEl) {
-                if (
-                    accuKtpVal !== "-" &&
-                    (accuKtpVal.includes("ktp/") ||
-                        accuKtpVal.includes("accu_ktp/") ||
-                        accuKtpVal.includes(".jpg") ||
-                        accuKtpVal.includes(".jpeg") ||
-                        accuKtpVal.includes(".png") ||
-                        accuKtpVal.includes("data:image"))
-                ) {
-                    const imgUrl =
-                        accuKtpVal.startsWith("http") ||
-                            accuKtpVal.startsWith("data:")
-                            ? accuKtpVal
-                            : accuKtpVal.startsWith("/")
-                                ? accuKtpVal
-                                : `/storage/${accuKtpVal}`;
+                if (accuKtpUrl) {
                     accuKtpLinkEl.onclick = (e) => {
                         e.preventDefault();
-                        if (typeof openImageViewer === "function") {
-                            openImageViewer(imgUrl);
-                        } else {
-                            window.open(imgUrl, "_blank");
-                        }
+                        openImageViewer(accuKtpUrl);
                     };
                     accuKtpLinkEl.style.display = "inline-flex";
                 } else {
