@@ -34,7 +34,24 @@ class NotifMail extends Mailable
      */
     public function envelope(): Envelope
     {
-        return new Envelope();
+        return new Envelope(
+            subject: "Pesanan Baru Diterima: #{$this->order->id}",
+        );
+    }
+
+    /**
+     * Get the message content definition.
+     */
+    public function content(): Content
+    {
+        return new Content(
+            view: 'emails.order_notification',
+            with: [
+                'order' => $this->order,
+                'customer' => $this->customer,
+                'totalCost' => $this->totalCost,
+            ],
+        );
     }
 
     /**

@@ -211,15 +211,6 @@
                 </svg></span>
             <span class="user-kicker">KONFIRMASI DATA</span>
             <h2 id="identity-modal-title">Apakah semua data yang Anda masukkan sudah benar?</h2>
-            <style>
-                .modal-split-layout { display: grid; grid-template-columns: 1fr; gap: 16px; margin: 16px 0; text-align: left; }
-                @media (min-width: 768px) {
-                    .modal-split-layout { grid-template-columns: 1fr 1fr; }
-                }
-                .modal-cart-table { width: 100%; border-collapse: collapse; }
-                .modal-cart-table th, .modal-cart-table td { padding: 8px 4px; border-bottom: 1px solid #e2e8f0; font-size: 11px; }
-                .modal-cart-table th { color: #64748b; font-weight: 600; font-size: 10px; }
-            </style>
             <div class="modal-split-layout">
                 <div id="modal-data-summary" style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 16px; font-size: 13px; color: #334155; line-height: 1.5; height: fit-content;">
                     <div style="margin-bottom: 8px;"><strong style="color:#0f172a; display:inline-block; width:110px;">Nama Lengkap</strong>: <span id="summary-nama"></span></div>
