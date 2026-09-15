@@ -39,11 +39,10 @@
                     </div>
                 </div>
 
-                <span class="user-kicker">LANGKAH 02 DARI 03</span>
-
+                <span class="user-kicker slow-fade delay-1">LANGKAH 02 DARI 03</span>
                 <h1>
-                    <span>Lengkapi identitas</span><br>
-                    <em>penjual.</em>
+                    <span class="slow-fade">Lengkapi identitas</span><br>
+                    <em class="slow-fade delay-1">penjual.</em>
                 </h1>
 
                 <p>
@@ -65,7 +64,7 @@
                                     <circle cx="12" cy="8" r="3.5" />
                                     <path d="M5 20c.8-3.2 3.1-5 7-5s6.2 1.8 7 5" />
                                 </svg></div>
-                            <div><span class="user-kicker identity-header-label">INFORMASI PENJUAL</span>
+                            <div><span class="user-kicker identity-header-label slow-fade delay-1">INFORMASI PENJUAL</span>
                                 <h2 class="identity-header-title">Data diri</h2>
                             </div>
                         </div>
@@ -179,7 +178,7 @@
                 </form>
 
                 <aside class="user-flow-summary identity-summary-card">
-                    <span class="user-kicker identity-summary-header">RINGKASAN PESANAN</span>
+                    <span class="user-kicker identity-summary-header slow-fade delay-1">RINGKASAN PESANAN</span>
                     <h2 class="identity-summary-header">Data penjualan Anda</h2>
                     <div class="user-flow-summary__item identity-summary-item-aki"><span>Item aki</span><strong>Menunggu data pilihan</strong></div>
                     <div class="user-flow-summary__item identity-summary-item-delivery"><span><span>Metode penyerahan</span></span><strong><span>Menunggu pilihan</span></strong>

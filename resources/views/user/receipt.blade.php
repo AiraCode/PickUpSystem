@@ -23,8 +23,8 @@
                     <span class="user-progress__line is-complete"></span>
                     <div class="user-progress__step is-current"><span>03</span><small>Receipt</small></div>
                 </div>
-                <span class="user-kicker">DOKUMEN PENJUALAN</span>
-                <h1><span>Receipt pesanan</span><br><em>One Stop Solution.</em></h1>
+                <span class="user-kicker slow-fade delay-1">DOKUMEN PENJUALAN</span>
+                <h1><span class="slow-fade">Receipt pesanan</span><br><em class="slow-fade delay-2">One Stop Solution.</em></h1>
                 <p>Simpan receipt ini sebagai referensi transaksi. Informasi identitas sensitif tidak ditampilkan pada dokumen ini.</p>
             </div>
         </section>
@@ -47,7 +47,7 @@
                 </div>
 
                 <div class="user-receipt-toolbar">
-                    <div><span class="user-kicker">PREVIEW RECEIPT</span><p>Pilih status untuk melihat variasi dokumen yang sesuai.</p></div>
+                    <div><span class="user-kicker slow-fade delay-1">PREVIEW RECEIPT</span><p>Pilih status untuk melihat variasi dokumen yang sesuai.</p></div>
                     <div class="user-receipt-switch" role="group" aria-label="Status pembayaran">
                         <button type="button" class="is-active" data-receipt-status="unpaid">UNPAID</button>
                         <button type="button" data-receipt-status="paid">PAID</button>
@@ -70,7 +70,7 @@
                     <div class="user-receipt__rule receipt-elem-rule"></div>
 
                     <div class="user-receipt__heading receipt-elem-heading">
-                        <div><span class="user-kicker">ORDER RECEIPT</span><h2>Ringkasan penjualan aki</h2></div>
+                        <div><span class="user-kicker slow-fade delay-1">ORDER RECEIPT</span><h2><span class="slow-fade">Ringkasan penjualan aki</span></h2></div>
                         <span class="user-receipt__status user-receipt__status--unpaid" data-receipt-badge>UNPAID</span>
                     </div>
 

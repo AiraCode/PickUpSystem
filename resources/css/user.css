@@ -3501,12 +3501,12 @@ body.dark-mode .receipt-map-link:hover,
 }
 
 @media (min-width: 1025px) {
-    /* Base reveal classes (800–1200ms duration, 20–40px movement, cubic-bezier easing) */
+    /* Base reveal classes (Slower, smoother: 1400–1600ms duration) */
     .reveal-hidden {
         opacity: 0;
         transform: translateY(28px);
-        transition: opacity 1000ms cubic-bezier(0.22, 1, 0.36, 1), 
-                    transform 1100ms cubic-bezier(0.22, 1, 0.36, 1);
+        transition: opacity 1400ms cubic-bezier(0.22, 1, 0.36, 1), 
+                    transform 1600ms cubic-bezier(0.22, 1, 0.36, 1);
         will-change: opacity, transform;
     }
     
@@ -3528,25 +3528,25 @@ body.dark-mode .receipt-map-link:hover,
         transform: translate(0) scale(1) !important;
     }
 
-    /* Stagger delays (150–300ms steps, and hero sequence 0ms - 1600ms) */
+    /* Stagger delays (More spaced out for less rushed feel) */
     .delay-0    { transition-delay: 0ms; }
-    .delay-100  { transition-delay: 100ms; }
-    .delay-150  { transition-delay: 150ms; }
-    .delay-200  { transition-delay: 200ms; }
-    .delay-300  { transition-delay: 300ms; }
-    .delay-350  { transition-delay: 350ms; }
-    .delay-400  { transition-delay: 400ms; }
-    .delay-450  { transition-delay: 450ms; }
-    .delay-500  { transition-delay: 500ms; }
-    .delay-550  { transition-delay: 550ms; }
-    .delay-600  { transition-delay: 600ms; }
-    .delay-700  { transition-delay: 700ms; }
-    .delay-800  { transition-delay: 800ms; }
-    .delay-900  { transition-delay: 900ms; }
-    .delay-1000 { transition-delay: 1000ms; }
-    .delay-1200 { transition-delay: 1200ms; }
-    .delay-1400 { transition-delay: 1400ms; }
-    .delay-1600 { transition-delay: 1600ms; }
+    .delay-100  { transition-delay: 150ms; }
+    .delay-150  { transition-delay: 250ms; }
+    .delay-200  { transition-delay: 350ms; }
+    .delay-300  { transition-delay: 500ms; }
+    .delay-350  { transition-delay: 600ms; }
+    .delay-400  { transition-delay: 700ms; }
+    .delay-450  { transition-delay: 800ms; }
+    .delay-500  { transition-delay: 900ms; }
+    .delay-550  { transition-delay: 1000ms; }
+    .delay-600  { transition-delay: 1100ms; }
+    .delay-700  { transition-delay: 1300ms; }
+    .delay-800  { transition-delay: 1500ms; }
+    .delay-900  { transition-delay: 1700ms; }
+    .delay-1000 { transition-delay: 1900ms; }
+    .delay-1200 { transition-delay: 2200ms; }
+    .delay-1400 { transition-delay: 2600ms; }
+    .delay-1600 { transition-delay: 3000ms; }
 }
 
 /* ==========================================================================
@@ -3557,8 +3557,8 @@ body.dark-mode .receipt-map-link:hover,
     .reveal-hidden {
         opacity: 0;
         transform: translateY(16px);
-        transition: opacity 800ms cubic-bezier(0.16, 1, 0.3, 1), 
-                    transform 850ms cubic-bezier(0.16, 1, 0.3, 1);
+        transition: opacity 1200ms cubic-bezier(0.16, 1, 0.3, 1), 
+                    transform 1400ms cubic-bezier(0.16, 1, 0.3, 1);
         will-change: opacity, transform;
     }
 
@@ -3579,25 +3579,25 @@ body.dark-mode .receipt-map-link:hover,
         transform: translate(0) scale(1) !important;
     }
 
-    /* Calmer, rhythmic stagger delays for smooth mobile experience */
+    /* Slower delays for mobile to prevent motion sickness */
     .delay-0    { transition-delay: 0ms; }
-    .delay-100  { transition-delay: 70ms; }
-    .delay-150  { transition-delay: 110ms; }
-    .delay-200  { transition-delay: 150ms; }
-    .delay-300  { transition-delay: 200ms; }
-    .delay-350  { transition-delay: 240ms; }
-    .delay-400  { transition-delay: 280ms; }
-    .delay-450  { transition-delay: 320ms; }
-    .delay-500  { transition-delay: 360ms; }
-    .delay-550  { transition-delay: 400ms; }
-    .delay-600  { transition-delay: 440ms; }
-    .delay-700  { transition-delay: 480ms; }
-    .delay-800  { transition-delay: 520ms; }
-    .delay-900  { transition-delay: 560ms; }
-    .delay-1000 { transition-delay: 600ms; }
-    .delay-1200 { transition-delay: 650ms; }
-    .delay-1400 { transition-delay: 700ms; }
-    .delay-1600 { transition-delay: 750ms; }
+    .delay-100  { transition-delay: 120ms; }
+    .delay-150  { transition-delay: 180ms; }
+    .delay-200  { transition-delay: 240ms; }
+    .delay-300  { transition-delay: 360ms; }
+    .delay-350  { transition-delay: 420ms; }
+    .delay-400  { transition-delay: 480ms; }
+    .delay-450  { transition-delay: 540ms; }
+    .delay-500  { transition-delay: 600ms; }
+    .delay-550  { transition-delay: 660ms; }
+    .delay-600  { transition-delay: 720ms; }
+    .delay-700  { transition-delay: 840ms; }
+    .delay-800  { transition-delay: 960ms; }
+    .delay-900  { transition-delay: 1080ms; }
+    .delay-1000 { transition-delay: 1200ms; }
+    .delay-1200 { transition-delay: 1440ms; }
+    .delay-1400 { transition-delay: 1680ms; }
+    .delay-1600 { transition-delay: 1920ms; }
 }
 
 @media (min-width: 1025px) {
@@ -4843,5 +4843,52 @@ input[name="account_number"] {
 .modal-cart-table th {
     color: #64748b;
     font-weight: 600;
-    font-size: 10px;
 }
+
+/* ==========================================================================
+   NEW ANIMATIONS (Typewriter & Slow Fade)
+   ========================================================================== */
+@keyframes typewriter-clip {
+    0% { clip-path: inset(0 100% 0 0); opacity: 1; }
+    100% { clip-path: inset(0 -5% 0 0); opacity: 1; }
+}
+
+.typewriter-text {
+    display: inline-block;
+    opacity: 0;
+    /* steps(25) gives it the choppy 'typing' feel */
+    animation: typewriter-clip 1.5s steps(25, end) 0.3s forwards;
+    /* Optional: add a pseudo element for a cursor if you want, but clip-path makes the reveal itself look like typing */
+}
+
+/* Add an animated cursor via pseudo-element that follows the text */
+.typewriter-text::after {
+    content: '';
+    display: inline-block;
+    width: 2px;
+    height: 1.2em;
+    background-color: rgba(37, 99, 235, 0.8);
+    vertical-align: bottom;
+    margin-left: 4px;
+    animation: blinkTextCursor 600ms steps(40, end) infinite;
+}
+
+@keyframes blinkTextCursor {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
+}
+
+/* Fallback/alternative for multiline typewriter - just use slow-fade */
+@keyframes slowFadeIn {
+    0% { opacity: 0; transform: translateY(20px); }
+    100% { opacity: 1; transform: translateY(0); }
+}
+
+.slow-fade {
+    opacity: 0;
+    animation: slowFadeIn 2.5s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+.slow-fade.delay-1 { animation-delay: 0.5s; }
+.slow-fade.delay-2 { animation-delay: 1.2s; }
+.slow-fade.delay-3 { animation-delay: 1.8s; }

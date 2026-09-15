@@ -22,8 +22,8 @@
                 <div class="user-hero__content user-container">
                     <div class="user-hero__copy">
                         <h1 class="reveal-hidden delay-400">
-                            <span>Jual Aki Reject Anda dengan</span><br>
-                            <em>Harga Terbaik</em>
+                            <span class="slow-fade">Jual Aki Reject Anda dengan</span><br>
+                            <em class="slow-fade delay-1">Harga Terbaik</em>
                         </h1>
                         <p class="reveal-hidden delay-800">Modern Mulya Mandiri membeli aki mobil dan aki motor reject dengan proses cepat, transparan, dan
                             pembayaran langsung ke rekening Anda.</p>
@@ -39,8 +39,8 @@
                 <div class="user-container">
                     <div class="user-section-heading user-section-heading--split">
                         <div class="reveal-hidden reveal-left delay-150">
-                            <span class="user-kicker">CARA MENJUAL</span>
-                            <h2><span>Serahkan aki Anda</span><br><em>dalam tiga langkah.</em></h2>
+                            <span class="user-kicker slow-fade delay-1">CARA MENJUAL</span>
+                            <h2><span class="slow-fade">Serahkan aki Anda</span><br><em class="slow-fade delay-2">dalam tiga langkah.</em></h2>
                         </div>
                         <p class="reveal-hidden delay-300">Semua proses dibuat sederhana agar Anda dapat mengetahui estimasi nilai aki dan metode penyerahan
                             dengan jelas.</p>
@@ -83,8 +83,8 @@
             <section class="user-catalog user-section" id="daftar-harga">
                 <div class="user-container">
                     <div class="user-section-heading reveal-hidden delay-150">
-                        <span class="user-kicker">KATALOG AKI</span>
-                        <h2>Harga jual aki terbaik<br><em><span>se-Indonesia.</span></em></h2>
+                        <span class="user-kicker slow-fade delay-1">KATALOG AKI</span>
+                        <h2><span class="slow-fade">Harga jual aki terbaik</span><br><em class="slow-fade delay-2"><span>se-Indonesia.</span></em></h2>
                         <p style="max-width: none; font-size: 16px;">Pilih kota untuk menampilkan data yang terhubung pada
                             sistem.</p>
                     </div>
