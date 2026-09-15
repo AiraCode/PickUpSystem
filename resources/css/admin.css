@@ -2569,6 +2569,13 @@ html.admin-dark-mode #confirm-message {
     margin-bottom: 20px;
 }
 
+.admin-grid-6col {
+    display: grid;
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    gap: 16px;
+    margin-bottom: 20px;
+}
+
 /* ── Tablet: iPad Pro & similar (1024px–1200px) ────────────
    Only grids collapse here, laptop styles untouched          */
 @media (max-width: 1200px) {
@@ -2581,6 +2588,7 @@ html.admin-dark-mode #confirm-message {
     .admin-grid-5col {
         grid-template-columns: repeat(3, minmax(0, 1fr));
     }
+
     .admin-grid-2-1 {
         grid-template-columns: 1fr;
     }
